@@ -1,0 +1,3 @@
+[submodule "event_horizon"]
+	path = event_horizon
+	url = git@github.com:ateventhorizon/event_horizon.git
