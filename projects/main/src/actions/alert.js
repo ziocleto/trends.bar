@@ -1,4 +1,4 @@
-import {SET_ALERT, REMOVE_ALERT, ENTITY_ERROR} from "./types";
+import {SET_ALERT, REMOVE_ALERT} from "./types";
 import uuid from "uuid";
 
 export const setAlert = (msg, alertType, duration = 0) => dispatch => {
@@ -7,11 +7,6 @@ export const setAlert = (msg, alertType, duration = 0) => dispatch => {
   dispatch({
     type: SET_ALERT,
     payload: { msg, alertType, id }
-  });
-
-  dispatch({
-    type: ENTITY_ERROR,
-    payload: id
   });
 
   if ( duration > 0 ) {

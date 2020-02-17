@@ -1,69 +1,42 @@
-import React, { Fragment } from "react";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { logoffFromProject } from "../../actions/auth";
+import React, {Fragment} from "react";
 import Spinner from "react-bootstrap/Spinner";
+import {useSelector, useDispatch} from "react-redux";
+import {loadTrend} from "../../actions/TrendActions";
+import Landing from "./Landing";
+import {Link} from "react-router-dom";
 
-const Navbar = ({ userstate, logoffFromProject, loading, loading2 }) => {
-  let userName = "";
+const Navbar = () => {
+  const dispatch= useDispatch();
+  const loading = useSelector(state => state.auth.loading);
+  const trend = useSelector(state => state.trend);
 
-  if (userstate.isAuthenticated) {
-    if (userstate.userdata && userstate.userdata.user.name) {
-      userName = userstate.userdata.user.name;
-    }
-  }
-
-  const authlinks = (
-    <Fragment>
-      <div className="navbaruser-a">
-        <a onClick={logoffFromProject} href="/#/dashboarduser">
-          <i className="fas fa-user" /> {userName}
-        </a>
-      </div>
-    </Fragment>
-  );
-
-  const nolinks = <Fragment />;
-  const title = userstate.userdata ? userstate.userdata.project : "";
+  const title = trend && trend.name ? trend.name : "";
 
   return (
     <div className="navbarGrid">
       <div className="navbarlogo-a">
-        {loading || loading2 ? (
+        <a href="/#" onClick={() =>{dispatch(loadTrend(null))}}>
+        {loading ? (
           <Fragment>
-            <Spinner animation="border" variant="warning" size="sm" />
-            <div className="backdropModal" />
+            <Spinner animation="border" variant="warning" size="sm"/>
+            <div className="backdropModal"/>
           </Fragment>
         ) : (
-          <img src="/ehlogo.svg" alt="" />
+          <img src="/ehlogo.svg" alt=""/>
         )}
+        </a>
       </div>
       <div className="navbareh-a navdiv-titletext">
+        <a href="/#" onClick={() =>{dispatch(loadTrend(null))}}>
         {" "}
-        <span className="colorLogo1">E</span>
-        <span>vent</span> <span className="colorLogo2">H</span>
-        <span>orizon</span>
+        <span className="colorLogo1">T</span>
+        <span>rends</span> <span className="colorLogo2">B</span>
+        <span>ar</span>
+        </a>
       </div>
       <div className="navbartitle-a">{title}</div>
-      {userstate.isAuthenticated ? authlinks : nolinks}
     </div>
   );
 };
 
-Navbar.propTypes = {
-  userstate: PropTypes.object,
-  loading: PropTypes.bool,
-  loading2: PropTypes.bool,
-  logoffFromProject: PropTypes.func.isRequired
-};
-
-const mapStateToProps = state => ({
-  userstate: state.auth,
-  loading: state.auth.loading,
-  loading2: state.entities.loading
-});
-
-export default connect(
-  mapStateToProps,
-  { logoffFromProject }
-)(Navbar);
+export default Navbar;

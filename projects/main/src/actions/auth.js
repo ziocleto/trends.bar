@@ -1,11 +1,9 @@
 import { setAlert } from "./alert";
-import { setLocalAlert } from "./localalert";
 import {
   REGISTER_SUCCESS,
   REGISTER_FAIL,
   USER_LOADED,
   AUTH_ERROR,
-  CLEAR_ENTITIES,
   LOGOFF_FROM_PROJECT,
   LOGIN_SUCCESS,
   LOGIN_FAIL,
@@ -118,7 +116,6 @@ export const logout = () => async dispatch => {
 
 export const logoffFromProject = () => dispatch => {
   dispatch({ type: LOGOFF_FROM_PROJECT });
-  dispatch({ type: CLEAR_ENTITIES });
 };
 
 // Create Project
@@ -244,32 +241,3 @@ export const setCurrentProject = projectName => async dispatch => {
   }
 };
 
-export const sendInvitationToProject = (
-  adminuser,
-  project,
-  personToAdd
-) => async dispatch => {
-  try {
-    const config = {
-      headers: {
-        "Content-Type": "application/json"
-      }
-    };
-
-    const body = {
-      adminuser: adminuser,
-      project: project,
-      persontoadd: personToAdd
-    };
-
-    const res = await axios.put("/api/user/invitetoproject", body, config);
-    console.log(res);
-    dispatch(
-      setLocalAlert(res.data.msg, res.data.code === 200 ? "success" : "danger")
-    );
-  } catch (ex) {
-    dispatch(
-      setLocalAlert("Server responded 400, it means it's bonker :'(", "danger")
-    );
-  }
-};
