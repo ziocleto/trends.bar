@@ -1,12 +1,10 @@
 import React, {Fragment} from "react";
 import Spinner from "react-bootstrap/Spinner";
-import {useSelector, useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {loadTrend} from "../../actions/TrendActions";
-import Landing from "./Landing";
-import {Link} from "react-router-dom";
 
 const Navbar = () => {
-  const dispatch= useDispatch();
+  const dispatch = useDispatch();
   const loading = useSelector(state => state.auth.loading);
   const trend = useSelector(state => state.trend);
 
@@ -15,23 +13,27 @@ const Navbar = () => {
   return (
     <div className="navbarGrid">
       <div className="navbarlogo-a">
-        <a href="/#" onClick={() =>{dispatch(loadTrend(null))}}>
-        {loading ? (
-          <Fragment>
-            <Spinner animation="border" variant="warning" size="sm"/>
-            <div className="backdropModal"/>
-          </Fragment>
-        ) : (
-          <img src="/ehlogo.svg" alt=""/>
-        )}
+        <a href="/#" onClick={() => {
+          dispatch(loadTrend(null))
+        }}>
+          {loading ? (
+            <Fragment>
+              <Spinner animation="border" variant="warning" size="sm"/>
+              <div className="backdropModal"/>
+            </Fragment>
+          ) : (
+            <img src="/ehlogo.svg" alt=""/>
+          )}
         </a>
       </div>
       <div className="navbareh-a navdiv-titletext">
-        <a href="/#" onClick={() =>{dispatch(loadTrend(null))}}>
-        {" "}
-        <span className="colorLogo1">T</span>
-        <span>rends</span> <span className="colorLogo2">B</span>
-        <span>ar</span>
+        <a href="/#" onClick={() => {
+          dispatch(loadTrend(null))
+        }}>
+          {" "}
+          <span className="colorLogo1">T</span>
+          <span>rends</span> <span className="colorLogo2">B</span>
+          <span>ar</span>
         </a>
       </div>
       <div className="navbartitle-a">{title}</div>
