@@ -1,5 +1,5 @@
-# portal for event horizon
+# Trending now...
 
-![Build and Deploy](https://github.com/ateventhorizon/portal/workflows/Build%20and%20Deploy/badge.svg?event=push)
+![Build and Deploy](https://github.com/trends.bar/portal/workflows/Build%20and%20Deploy/badge.svg?event=push)
 
-this is a templated implementation of a fully functional website that handles all event horizon resources.
+It will be epic
