@@ -29,6 +29,19 @@ services:
   portal:
     image: "eventhorizonprojects/${EH_CLOUD_HOST}"
     container_name: "portal"
+  graphql-api:
+    image: "eventhorizonprojects/${EH_CLOUD_HOST}-graphql-api"
+    container_name: "graphql-api"
+    environment:
+      - EH_MONGO_PATH=${EH_MONGO_PATH} 
+      - EH_MONGO_DEFAULT_DB=${EH_MONGO_DEFAULT_DB}
+      - EH_MONGO_REPLICA_SET_NAME=${EH_MONGO_REPLICA_SET_NAME}
+      - EH_MASTER_TOKEN=${EH_MASTER_TOKEN}
+      - EH_SEND_GRID_TOKEN=${EH_SEND_GRID_TOKEN}
+    depends_on:
+      - mongo1
+      - mongo2
+      - mongo3
   asset_daemon:
     image: "ateventhorizon/asset_daemon"
     container_name: "asset-daemon"

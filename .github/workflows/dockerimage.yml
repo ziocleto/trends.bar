@@ -17,13 +17,19 @@ jobs:
         ssh-private-key: ${{ secrets.SECRET_PRIVATE_DEPLOY_KEY }}
     
     - name: Build portal
-      run: docker build -t ${{ secrets.DOCKER_HUB_ID }}/${{ secrets.EH_CLOUD_HOST }} --build-arg REACT_APP_EH_CLOUD_HOST_ARG=${{ secrets.EH_CLOUD_HOST }} ./projects/main
+      run: docker build -t ${{ secrets.DOCKER_HUB_ID }}/${{ secrets.EH_CLOUD_HOST }} --build-arg REACT_APP_EH_CLOUD_HOST_ARG=${{ secrets.EH_CLOUD_HOST }} ./projects/${{ secrets.EH_CLOUD_HOST }}
+
+    - name: Build portal-graphql-api
+      run: docker build -t ${{ secrets.DOCKER_HUB_ID }}/${{ secrets.EH_CLOUD_HOST }}-graphql-api ./projects/${{ secrets.EH_CLOUD_HOST }}-graphql-api
 
     - name: Docker hub login
       run: echo ${{ secrets.DOCKER_HUB_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_ID }} --password-stdin
               
     - name: Docker Push portal
       run: docker push ${{ secrets.DOCKER_HUB_ID }}/${{ secrets.EH_CLOUD_HOST }}
+
+    - name: Docker Push portal-graphql-api
+      run: docker push ${{ secrets.DOCKER_HUB_ID }}/${{ secrets.EH_CLOUD_HOST }}-graphql-api
 
     - name: Copy deploy script via scp.
       run: scp -oStrictHostKeyChecking=no ${{ github.workspace }}/deploy/docker-compose/docker-compose.yml ${{ secrets.DROPLET_USER}}@${{ secrets.DROPLET_IP }}:/
