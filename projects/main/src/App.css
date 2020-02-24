@@ -21,6 +21,9 @@
   --middle-grey-color: #7f7f7f;
   --navbar-height: 50px;
   --material-texture-size: 128px;
+  --scheme-color-1: #D1793F;
+  --scheme-color-2: #fccb7b;
+  --scheme-color-3: #8ae9e9;
   height: 100vh;
 }
 
