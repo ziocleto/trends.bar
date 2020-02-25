@@ -5,6 +5,7 @@ const md5 = require("md5");
 const streamifier = require('streamifier');
 const stream = require('stream');
 const util = require('util');
+const utils = require('./utils/utils');
 const logger = require('./logger');
 // const socketController = require('./controllers/socketController');
 const globalConfig = require("./config_api.js");
@@ -218,5 +219,6 @@ exports.objectId = (objString) => {
 }
 
 exports.upsert = async ( model, data, query = {}, options = {}) => {
-  return model.findOneAndUpdate(query, data, {upsert: true, ...options});
+  const queryFinal = utils.isObjectEmpty(query) ? data : query;
+  return model.findOneAndUpdate(queryFinal, data, {new: true,upsert: true, ...options});
 }

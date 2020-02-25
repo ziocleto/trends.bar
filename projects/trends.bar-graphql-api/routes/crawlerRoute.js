@@ -3,6 +3,7 @@ const router = express.Router();
 const graphAssistant = require("../assistants/graph-assistant");
 const datasetAssistant = require("../assistants/dataset-assistant");
 const parserAssistant = require("../assistants/parser-assistant");
+const regExAssistant = require("../assistants/regex-assistant");
 const crawler = require('crawler-request');
 
 const exampleText = `
@@ -323,48 +324,57 @@ with their health care provider.
 
 router.get("/:trendId/:org/:what/:timestamp", async (req, res, next) => {
   try {
-    // const response = await crawler("https://www.who.int/docs/default-source/coronaviruse/situation-reports/20200223-sitrep-34-covid-19.pdf");
+    const datestamp = req.params.timestamp;
+    const rid = 34;
+    const response = await crawler(`https://www.who.int/docs/default-source/coronaviruse/situation-reports/${datestamp}-sitrep-${rid}-covid-19.pdf`);
     // const text = response.text;
     // if ( text.length === 0 ) {
     //   res.sendStatus(204);
     // } else {
-    const text = exampleText;
+    const text = response.text;
     const inputs = {
       values: [parserAssistant.timeStampFrom8Digits(req.params.timestamp)]
     };
 
-    const dataset = datasetAssistant.declare(req.params.trendId, text, req.params.org, req.params.what);
+    const dataset = datasetAssistant.declare(req.params.trendId, req.params.org, req.params.what);
+    const casesGraph = graphAssistant.declare(graphAssistant.xyDateInt(), "Cases", "global");
+    const deathsGraph = graphAssistant.declare(graphAssistant.xyDateInt(), "Deaths", "global");
 
-    const cases = await parserAssistant.parse({
+    const casesRegEx = regExAssistant.declare(
+      text,
+      /SITUATION IN NUMBERS[\n\r\s\w\W\d\D]*Globally[\n\r\s]*(\d+\s*\d*)(\s*)confirmed/gmi,
+      1,
+      [1],
+      parserAssistant.parseIntWithSpaces
+    );
+
+    const deathsRegEx = regExAssistant.declare(
+      text,
+      /(\d+\s*\d*)(\s*)(death|dead)/gmi,
+      2,
+      [1],
+      parserAssistant.parseAddIntWithSpaces
+    );
+
+    const parsers = [{
       dataset: dataset,
-      graph: graphAssistant.declare(graphAssistant.xyDateInt(), "Cases", "global"),
-      regEx: {
-        expression: /SITUATION IN NUMBERS[\n\r\s\w\W\d\D]*Globally[\n\r\s]*(\d+\s*\d*)(\s*)confirmed/gmi,
-        expectedResultCount: 1,
-        resultIndices: [1],
-        parseFunction: parserAssistant.parseIntWithSpaces
-      },
+      graph: casesGraph,
+      regEx: casesRegEx,
       inputs: inputs
-    });
-
-    const deaths = await parserAssistant.parse({
+    }, {
       dataset: dataset,
-      graph: graphAssistant.declare(graphAssistant.xyDateInt(), "Deaths", "global"),
-      regEx: {
-        expression: /(\d+\s*\d*)(\s*)(death|dead)/gmi,
-        expectedResultCount: 2,
-        resultIndices: [1],
-        parseFunction: parserAssistant.parseAddIntWithSpaces
-      },
+      graph: deathsGraph,
+      regEx: deathsRegEx,
       inputs: inputs
-    });
+    }];
 
-    // const deaths = await parseData( dataset, "Deaths", "global", regexp2);
+    let results = [];
+    for (const parser of parsers) {
+      const result = await parserAssistant.parse(parser);
+      results.push(result);
+    }
 
-    res.send({
-      cases: cases,
-      deaths: deaths
-    });
+    res.send(results);
     // }
   } catch (ex) {
     console.log("Crawling error: ", ex);

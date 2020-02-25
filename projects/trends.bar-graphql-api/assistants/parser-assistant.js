@@ -44,12 +44,12 @@ module.exports = {
     });
   },
 
-  regexFind: (source, regEx) => {
+  regexFind: regEx => {
 
     let m;
     let results = [];
 
-    while ((m = regEx.expression.exec(source)) !== null) {
+    while ((m = regEx.expression.exec(regEx.source)) !== null) {
       // This is necessary to avoid infinite loops with zero-width matches
       if (m.index === regEx.lastIndex) {
         regex.lastIndex++;
@@ -76,11 +76,11 @@ module.exports = {
     const datasetElem = await db.upsert(datasetModel, dataset);
     const graphElem = await db.upsert(graphLayoutModel, graph);
 
-    const resultResolved = regEx.parseFunction(module.exports.regexFind(dataset.source, regEx));
+    const resultResolved = regEx.parseFunction(module.exports.regexFind(regEx));
 
-    const value = graphAssistant.prepareValue( graph.type, inputs, resultResolved );
+    const value = graphAssistant.prepareValue(graph.type, inputs, resultResolved);
 
-    return await dataEntry(mongoose.Types.ObjectId(datasetElem._id), mongoose.Types.ObjectId(graphElem._id), value );
+    return await dataEntry(mongoose.Types.ObjectId(datasetElem._id), mongoose.Types.ObjectId(graphElem._id), value);
   }
 
 };
