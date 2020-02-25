@@ -5,8 +5,8 @@ module.exports = {
     return {
       datasetOrg: orgKey,
       datasetName: datasetName,
-      datasetInfo: "cases",
-      datasetSubInfoA: "global",
+      datasetInfo: info,
+      datasetSubInfoA: subInfoA,
       datasetType: datasetType,
     }
 

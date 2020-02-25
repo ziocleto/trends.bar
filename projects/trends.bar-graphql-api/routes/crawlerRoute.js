@@ -3,7 +3,7 @@ const router = express.Router();
 const crawler = require('crawler-request');
 const trendModel = require("../models/trend-model");
 const dataSet = require("../assistants/dataSet");
-const md5 = require("md5");
+const hash = require('object-hash');
 
 const dataEntry = async (dkey, timestamp, rvalue, dataset) => {
   const value = {
@@ -14,15 +14,19 @@ const dataEntry = async (dkey, timestamp, rvalue, dataset) => {
     valueX: timestamp,
     valueY: rvalue
   };
-  const hash = md5(dataset + value);
+  const hashV = hash({
+    key: dkey,
+    dataset: dataset,
+    value: value
+  });
   const data = {
     trendId: dkey,
-    hash: hash,
+    hash: hashV,
     dataSet: dataset,
     value: value
   };
   const options = {upsert: true};
-  const query = {hash: hash};
+  const query = {hash: hashV};
   await trendModel.updateOne(query, data, options);
 
   return data;
@@ -39,6 +43,48 @@ const timeStampFrom8Digits = datasetTimestamp => {
   const timeStampMonth = datasetTimestamp.substr(4, 2);
   const timeStampDay = datasetTimestamp.substr(6, 2);
   return Date.UTC(parseInt(timeStampYear), parseInt(timeStampMonth), parseInt(timeStampDay));
+}
+
+const valuePerserIntWithSpaces = value => {
+  if (value.length == 0) throw "Parsing empty array in crawling";
+  return parseInt(value[0].replace(/ /g, ''));
+}
+
+const valuePerserAddIntWithSpaces = value => {
+  if (value.length == 0) throw "Parsing empty array in crawling";
+  let total = 0;
+  return value.reduce( (total, num) => {
+    return parseInt(total) + parseInt(num.replace(/ /g, ''));
+  });
+}
+
+const parseData = async (text, datasetSource, info, subInfo, regex) => {
+  const dsd = datasetSource.dataset;
+  const dataset = dataSet.maker(dsd.orgKey, dsd.datasetName, info, subInfo, dsd.datasetType);
+
+  let m;
+  let results = [];
+
+  while ((m = regex.expression.exec(text)) !== null) {
+    // This is necessary to avoid infinite loops with zero-width matches
+    if (m.index === regex.lastIndex) {
+      regex.lastIndex++;
+    }
+    // The result can be accessed through the `m`-variable.
+    m.forEach((match, groupIndex) => {
+      if (regex.resultIndices.includes(groupIndex) ) {
+        results.push(match);
+      }
+    });
+  }
+
+  if (results.length < regex.expectedResultCount) {
+    return null;
+  }
+
+  let resultResolved = regex.parseFunction(results);
+
+  return await dataEntry(datasetSource.dkey, datasetSource.timestamp, resultResolved, dataset);
 }
 
 router.get("/:trendId/:org/:what/:timestamp/:graphType", async (req, res, next) => {
@@ -363,24 +409,40 @@ WHO does not recommend any specific health measures for travellers. In case of s
 illness either during or after travel, travellers are encouraged to seek medical attention and share their travel history 
 with their health care provider.  
  `;
-    let crawledData = {};
-    const dkey = req.params.trendId;
-    const orgKey = req.params.org;
-    const datasetName = req.params.what;
-    const datasetTimestamp = req.params.timestamp;
-    const datasetType = req.params.graphType;
+    const dataset = {
+      dkey: req.params.trendId,
+      timestamp: timeStampFrom8Digits(req.params.timestamp),
+      dataset: {
+        orgKey: req.params.org,
+        datasetName: req.params.what,
+        datasetType: req.params.graphType
+      }
+    };
 
-    const dataset = dataSet.maker(orgKey, datasetName, datasetType, "cases", "global", datasetType);
+    const regexp = {
+      expression: /SITUATION IN NUMBERS[\n\r\s\w\W\d\D]*Globally[\n\r\s]*(\d+\s*\d*)(\s*)confirmed/gmi,
+      expectedResultCount: 1,
+      resultIndices: [1],
+      parseFunction: valuePerserIntWithSpaces
+    };
 
-    const regex = /SITUATION IN NUMBERS[\n\r\s\w\W\d\D]*Globally[\n\r\s]*(\d+\s*\d*)(\s*)confirmed/i;
-    const str = text;
-    const m = str.match(regex);
-    if (m !== null && m.length > 1) {
-      const rvalue = parseInt(m[1].replace(/ /g, ''));
-      const timestamp = timeStampFrom8Digits(datasetTimestamp);
-      crawledData = {...await dataEntry(dkey, timestamp, rvalue, dataset)};
-    }
-    res.send(crawledData);
+    const regexp2 = {
+      expression: /(\d+\s*\d*)(\s*)(death|dead)/gmi,
+      expectedResultCount: 2,
+      resultIndices: [1],
+      parseFunction: valuePerserAddIntWithSpaces
+    };
+
+    const cases = await parseData(text, dataset, "cases", "global", regexp);
+    const deaths = await parseData(text, dataset, "deaths", "global", regexp2);
+
+    // const deaths = await parseData(text, dataset, "death", "global",
+    //   /(\d+\s*\d*)(\s*)(death|dead)/gmi);
+
+    res.send({
+      cases: cases,
+      deaths: deaths
+    });
     // }
   } catch (ex) {
     console.log("Crawling error: ", ex);
