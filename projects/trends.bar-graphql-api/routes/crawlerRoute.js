@@ -1,26 +1,23 @@
 const express = require("express");
 const router = express.Router();
+const mongoose = require("mongoose");
 const crawler = require('crawler-request');
 const trendModel = require("../models/trend-model");
-const dataSet = require("../assistants/dataSet");
+const datasetModel = require("../models/dataset-model");
 const hash = require('object-hash');
 
-const dataEntry = async (dkey, timestamp, rvalue, dataset) => {
+const dataEntry = async (trendId, dataset, xValue, yValue) => {
   const value = {
-    valueYType: "Number",
-    valueXType: "DateTime",
-    valueYName: "Count",
-    valueXName: "Date",
-    valueX: timestamp,
-    valueY: rvalue
-  };
+    x: xValue,
+    y: yValue
+  }
   const hashV = hash({
-    key: dkey,
-    dataset: dataset,
+    key: trendId,
+    dataset: dataset.toString(),
     value: value
   });
   const data = {
-    trendId: dkey,
+    trendId: trendId,
     hash: hashV,
     dataSet: dataset,
     value: value
@@ -53,14 +50,30 @@ const valuePerserIntWithSpaces = value => {
 const valuePerserAddIntWithSpaces = value => {
   if (value.length == 0) throw "Parsing empty array in crawling";
   let total = 0;
-  return value.reduce( (total, num) => {
+  return value.reduce((total, num) => {
     return parseInt(total) + parseInt(num.replace(/ /g, ''));
   });
 }
 
 const parseData = async (text, datasetSource, info, subInfo, regex) => {
-  const dsd = datasetSource.dataset;
-  const dataset = dataSet.maker(dsd.orgKey, dsd.datasetName, info, subInfo, dsd.datasetType);
+  const dataset = {
+    ...datasetSource.dataset,
+    datasetInfo: info,
+    datasetSubInfoA: subInfo
+  };
+  const datasetHash = hash(dataset);
+  const datasetWithHash = {
+    ...dataset,
+    hash: datasetHash
+  }
+
+  const options = {upsert: true};
+  const query = {hash: datasetHash};
+  await datasetModel.updateOne(query, datasetWithHash, options);
+
+  const datasetElem = await datasetModel.findOne(query);
+
+  console.log(datasetElem);
 
   let m;
   let results = [];
@@ -72,7 +85,7 @@ const parseData = async (text, datasetSource, info, subInfo, regex) => {
     }
     // The result can be accessed through the `m`-variable.
     m.forEach((match, groupIndex) => {
-      if (regex.resultIndices.includes(groupIndex) ) {
+      if (regex.resultIndices.includes(groupIndex)) {
         results.push(match);
       }
     });
@@ -84,7 +97,7 @@ const parseData = async (text, datasetSource, info, subInfo, regex) => {
 
   let resultResolved = regex.parseFunction(results);
 
-  return await dataEntry(datasetSource.dkey, datasetSource.timestamp, resultResolved, dataset);
+  return await dataEntry(datasetSource.dkey, mongoose.Types.ObjectId(datasetElem._id), datasetSource.timestamp, resultResolved);
 }
 
 router.get("/:trendId/:org/:what/:timestamp/:graphType", async (req, res, next) => {
@@ -415,7 +428,11 @@ with their health care provider.
       dataset: {
         orgKey: req.params.org,
         datasetName: req.params.what,
-        datasetType: req.params.graphType
+        datasetType: req.params.graphType,
+        valueYType: "Number",
+        valueXType: "DateTime",
+        valueYName: "Count",
+        valueXName: "Date",
       }
     };
 
@@ -435,9 +452,6 @@ with their health care provider.
 
     const cases = await parseData(text, dataset, "cases", "global", regexp);
     const deaths = await parseData(text, dataset, "deaths", "global", regexp2);
-
-    // const deaths = await parseData(text, dataset, "death", "global",
-    //   /(\d+\s*\d*)(\s*)(death|dead)/gmi);
 
     res.send({
       cases: cases,
