@@ -21,7 +21,8 @@ exports.initDB = async () => {
     try {
       await mongoose.connect(mongoDBUrl, {
         useNewUrlParser: true,
-        useUnifiedTopology: true
+        useUnifiedTopology: true,
+        useFindAndModify: false
       });
       exports.bucketSourceAssets = new mongodb.GridFSBucket(mongoose.connection.client.db('event_horizon'), {bucketName: "fs_assets_to_elaborate"});
       exports.bucketEntities = new mongodb.GridFSBucket(mongoose.connection.client.db('event_horizon'), {bucketName: "fs_entity_assets"});
@@ -214,4 +215,8 @@ exports.fsDownloadWithId = async (bucketFSModel, id) => {
 
 exports.objectId = (objString) => {
   return mongodb.ObjectId(objString);
+}
+
+exports.upsert = async ( model, data, query = {}, options = {}) => {
+  return model.findOneAndUpdate(query, data, {upsert: true, ...options});
 }

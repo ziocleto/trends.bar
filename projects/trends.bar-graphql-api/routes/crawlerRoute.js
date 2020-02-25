@@ -1,113 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const mongoose = require("mongoose");
+const graphAssistant = require("../assistants/graph-assistant");
+const datasetAssistant = require("../assistants/dataset-assistant");
+const parserAssistant = require("../assistants/parser-assistant");
 const crawler = require('crawler-request');
-const trendModel = require("../models/trend-model");
-const datasetModel = require("../models/dataset-model");
-const hash = require('object-hash');
 
-const dataEntry = async (trendId, dataset, xValue, yValue) => {
-  const value = {
-    x: xValue,
-    y: yValue
-  }
-  const hashV = hash({
-    key: trendId,
-    dataset: dataset.toString(),
-    value: value
-  });
-  const data = {
-    trendId: trendId,
-    hash: hashV,
-    dataSet: dataset,
-    value: value
-  };
-  const options = {upsert: true};
-  const query = {hash: hashV};
-  await trendModel.updateOne(query, data, options);
-
-  return data;
-}
-
-const timeStampFrom8Digits = datasetTimestamp => {
-
-  if (datasetTimestamp.length != 8) {
-    throw "6 digits timestamp is not... 6 digits! It's value is: " + datasetTimestamp;
-    return;
-  }
-
-  const timeStampYear = datasetTimestamp.substr(0, 4);
-  const timeStampMonth = datasetTimestamp.substr(4, 2);
-  const timeStampDay = datasetTimestamp.substr(6, 2);
-  return Date.UTC(parseInt(timeStampYear), parseInt(timeStampMonth), parseInt(timeStampDay));
-}
-
-const valuePerserIntWithSpaces = value => {
-  if (value.length == 0) throw "Parsing empty array in crawling";
-  return parseInt(value[0].replace(/ /g, ''));
-}
-
-const valuePerserAddIntWithSpaces = value => {
-  if (value.length == 0) throw "Parsing empty array in crawling";
-  let total = 0;
-  return value.reduce((total, num) => {
-    return parseInt(total) + parseInt(num.replace(/ /g, ''));
-  });
-}
-
-const parseData = async (text, datasetSource, info, subInfo, regex) => {
-  const dataset = {
-    ...datasetSource.dataset,
-    datasetInfo: info,
-    datasetSubInfoA: subInfo
-  };
-  const datasetHash = hash(dataset);
-  const datasetWithHash = {
-    ...dataset,
-    hash: datasetHash
-  }
-
-  const options = {upsert: true};
-  const query = {hash: datasetHash};
-  await datasetModel.updateOne(query, datasetWithHash, options);
-
-  const datasetElem = await datasetModel.findOne(query);
-
-  console.log(datasetElem);
-
-  let m;
-  let results = [];
-
-  while ((m = regex.expression.exec(text)) !== null) {
-    // This is necessary to avoid infinite loops with zero-width matches
-    if (m.index === regex.lastIndex) {
-      regex.lastIndex++;
-    }
-    // The result can be accessed through the `m`-variable.
-    m.forEach((match, groupIndex) => {
-      if (regex.resultIndices.includes(groupIndex)) {
-        results.push(match);
-      }
-    });
-  }
-
-  if (results.length < regex.expectedResultCount) {
-    return null;
-  }
-
-  let resultResolved = regex.parseFunction(results);
-
-  return await dataEntry(datasetSource.dkey, mongoose.Types.ObjectId(datasetElem._id), datasetSource.timestamp, resultResolved);
-}
-
-router.get("/:trendId/:org/:what/:timestamp/:graphType", async (req, res, next) => {
-  try {
-    // const response = await crawler("https://www.who.int/docs/default-source/coronaviruse/situation-reports/20200223-sitrep-34-covid-19.pdf");
-    // const text = response.text;
-    // if ( text.length === 0 ) {
-    //   res.sendStatus(204);
-    // } else {
-    const text = `
+const exampleText = `
 
  
  
@@ -422,36 +320,46 @@ WHO does not recommend any specific health measures for travellers. In case of s
 illness either during or after travel, travellers are encouraged to seek medical attention and share their travel history 
 with their health care provider.  
  `;
-    const dataset = {
-      dkey: req.params.trendId,
-      timestamp: timeStampFrom8Digits(req.params.timestamp),
-      dataset: {
-        orgKey: req.params.org,
-        datasetName: req.params.what,
-        datasetType: req.params.graphType,
-        valueYType: "Number",
-        valueXType: "DateTime",
-        valueYName: "Count",
-        valueXName: "Date",
-      }
+
+router.get("/:trendId/:org/:what/:timestamp", async (req, res, next) => {
+  try {
+    // const response = await crawler("https://www.who.int/docs/default-source/coronaviruse/situation-reports/20200223-sitrep-34-covid-19.pdf");
+    // const text = response.text;
+    // if ( text.length === 0 ) {
+    //   res.sendStatus(204);
+    // } else {
+    const text = exampleText;
+    const inputs = {
+      values: [parserAssistant.timeStampFrom8Digits(req.params.timestamp)]
     };
 
-    const regexp = {
-      expression: /SITUATION IN NUMBERS[\n\r\s\w\W\d\D]*Globally[\n\r\s]*(\d+\s*\d*)(\s*)confirmed/gmi,
-      expectedResultCount: 1,
-      resultIndices: [1],
-      parseFunction: valuePerserIntWithSpaces
-    };
+    const dataset = datasetAssistant.declare(req.params.trendId, text, req.params.org, req.params.what);
 
-    const regexp2 = {
-      expression: /(\d+\s*\d*)(\s*)(death|dead)/gmi,
-      expectedResultCount: 2,
-      resultIndices: [1],
-      parseFunction: valuePerserAddIntWithSpaces
-    };
+    const cases = await parserAssistant.parse({
+      dataset: dataset,
+      graph: graphAssistant.declare(graphAssistant.xyDateInt(), "Cases", "global"),
+      regEx: {
+        expression: /SITUATION IN NUMBERS[\n\r\s\w\W\d\D]*Globally[\n\r\s]*(\d+\s*\d*)(\s*)confirmed/gmi,
+        expectedResultCount: 1,
+        resultIndices: [1],
+        parseFunction: parserAssistant.parseIntWithSpaces
+      },
+      inputs: inputs
+    });
 
-    const cases = await parseData(text, dataset, "cases", "global", regexp);
-    const deaths = await parseData(text, dataset, "deaths", "global", regexp2);
+    const deaths = await parserAssistant.parse({
+      dataset: dataset,
+      graph: graphAssistant.declare(graphAssistant.xyDateInt(), "Deaths", "global"),
+      regEx: {
+        expression: /(\d+\s*\d*)(\s*)(death|dead)/gmi,
+        expectedResultCount: 2,
+        resultIndices: [1],
+        parseFunction: parserAssistant.parseAddIntWithSpaces
+      },
+      inputs: inputs
+    });
+
+    // const deaths = await parseData( dataset, "Deaths", "global", regexp2);
 
     res.send({
       cases: cases,
@@ -465,5 +373,3 @@ with their health care provider.
 });
 
 module.exports = router;
-
-
