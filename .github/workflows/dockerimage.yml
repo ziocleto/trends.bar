@@ -44,7 +44,6 @@ jobs:
         export EH_MASTER_TOKEN="${{ secrets.EH_MASTER_TOKEN }}" && 
         export EH_SEND_GRID_TOKEN="${{ secrets.EH_SEND_GRID_TOKEN }}" && 
         export EH_CLOUD_HOST=${{ secrets.EH_CLOUD_HOST }} && 
-        docker rm -f $(docker ps -aq) && 
-        docker network rm $(docker network ls -q) && 
+        docker-compose down &&        
         docker-compose pull && 
         docker-compose up -d'
