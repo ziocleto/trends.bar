@@ -19,18 +19,6 @@ const dataEntry = async (datasetId, graphId, value) => {
 
 module.exports = {
 
-  timeStampFrom8Digits: datasetTimestamp => {
-
-    if (datasetTimestamp.length != 8) {
-      throw "6 digits timestamp is not... 6 digits! It's value is: " + datasetTimestamp;
-    }
-
-    const timeStampYear = datasetTimestamp.substr(0, 4);
-    const timeStampMonth = datasetTimestamp.substr(4, 2);
-    const timeStampDay = datasetTimestamp.substr(6, 2);
-    return Date.UTC(parseInt(timeStampYear), parseInt(timeStampMonth), parseInt(timeStampDay));
-  },
-
   parseIntWithSpaces: value => {
     if (value.length === 0) throw "Parsing empty array in crawling";
     return parseInt(value[0].replace(/ /g, ''));

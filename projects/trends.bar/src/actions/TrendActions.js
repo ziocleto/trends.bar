@@ -21,3 +21,16 @@ export const loadTrend = (trendName) => async dispatch => {
   }
 };
 
+export const loadTrendData = (trendName) => async dispatch => {
+  try {
+    const state = store.getState();
+    console.log( "Loading trend data for: ", state.trend.name);
+  } catch (err) {
+    console.log(err);
+    dispatch({
+      type: TREND_ERROR,
+      payload: {msg: err.response}
+    });
+  }
+};
+

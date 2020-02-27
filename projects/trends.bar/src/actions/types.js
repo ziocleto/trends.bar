@@ -1,4 +1,5 @@
 export const LOAD_TREND = "LOAD_TREND";
+export const LOAD_TREND_DATA = "LOAD_TREND_DATA";
 export const TREND_ERROR = "TREND_ERROR";
 
 export const REGISTER_SUCCESS = "REGISTER_SUCCESS";
