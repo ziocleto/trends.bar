@@ -3,11 +3,11 @@ import {GraphQLObjectType} from "graphql";
 const express = require('express');
 const {ApolloServer, gql} = require('apollo-server-express');
 const crawlerRoute = require("./routes/crawlerRoute");
-import { MongoDataSource } from 'apollo-datasource-mongodb'
+import {MongoDataSource} from 'apollo-datasource-mongodb'
+
 const db = require("./db");
-const trendModel = require("./models/trend-model");
-const mongoose = require('mongoose');
 import BigInt from "apollo-type-bigint";
+import {trendGraphsModel} from "./models/models";
 
 const Long = new GraphQLObjectType({
   name: 'Long',
@@ -22,7 +22,7 @@ const Long = new GraphQLObjectType({
 
 const typeDefs = gql`
     scalar BigInt
-    
+
     type Dataset {
         trendId: String!
         source: String
@@ -35,36 +35,40 @@ const typeDefs = gql`
         subLabel: String
         type: String!
     }
-    
-    type Trend {
+
+    type TrendGraph {
         _id: ID!
-        datasetId: Dataset!
-        graphId: GraphLayout!
+        trendId: String!
+        dataset: Dataset!
+        graph: GraphLayout!
         values: [ [BigInt] ]
     }
 
     type Query {
-        hello: String
-        trend(trendId: ID!): Trend
+        trendGraphs(trendId: String!): [TrendGraph]
     }
 
 `;
 
 const resolvers = {
   Query: {
-    hello: () => 'Hello world!',
-    trend: (_, {trendId}, {dataSources}) => dataSources.trends.getTrendTopic(trendId)
+    trendGraphs: (_, {trendId}, {dataSources}) => dataSources.trends.getTrendGraphs(trendId)
   },
 };
 
 db.initDB();
 
 class Trends extends MongoDataSource {
-    async getTrendTopic(topicId) {
-        const pop = trendModel.findOne({ _id: mongoose.Types.ObjectId(topicId)} ).populate('datasetId').populate('graphId');
-        const res = await pop.exec();
-        return res.toObject();
+  async getTrendGraphs(trendId) {
+    const pop = trendGraphsModel.find({ trendId: trendId} ).populate('dataset').populate('graph');
+    const res = await pop.exec();
+    let resO = [];
+    for await ( const r of res ) {
+      resO.push( r.toObject() );
     }
+    console.log(resO);
+    return resO;
+  }
 }
 
 const server = new ApolloServer(
@@ -72,7 +76,7 @@ const server = new ApolloServer(
     typeDefs,
     resolvers,
     dataSources: () => ({
-        trends: new Trends(trendModel)
+      trends: new Trends(trendGraphsModel)
     })
   }
 );
@@ -86,4 +90,3 @@ app.use("/crawler", crawlerRoute);
 app.listen({port: 4500}, () =>
   console.log('Now browse to http://localhost:4500' + server.graphqlPath)
 );
-

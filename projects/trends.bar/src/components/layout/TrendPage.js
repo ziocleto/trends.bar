@@ -1,29 +1,42 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {Map, TileLayer} from "react-leaflet";
 import CanvasJSReact from '../../assets/canvasjs.react';
-import {FlexContainer, H2, TrendGrid} from "./TrendPageStyle";
-import {useDispatch, useSelector} from "react-redux";
+import {FlexContainer, H2, TrendGraph, TrendGrid} from "./TrendPageStyle";
 import gql from "graphql-tag";
 import {useQuery} from "@apollo/react-hooks";
+import {useGlobal} from "reactn";
+
 const CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
-const TrendPage = () => {
+const TrendPage = props => {
 
-    const dispatch = useDispatch();
-    const trendId = useSelector(state => state.trend.name);
-    const [casesGraph, setCasesGraph] = useState({});
+  const [trendId, setTrendId] = useGlobal('trendId');
+  const [loading, setLoading] = useGlobal('loading');
 
-  const HELLO_QUERY = gql` 
-        {
-          hello
-        }`;
+  if (!trendId) {
+    setTrendId(props.match.params.id);
+  }
 
-  const { loading, data } = useQuery( HELLO_QUERY );
+  const TREND_QUERY = gql`
+      {
+          trendGraphs (trendId: "${trendId}") {
+              dataset {
+                  source
+                  sourceName
+              }
+              graph {
+                  label
+                  subLabel
+              }
+              values
+          }
+      }
+  `;
 
-  //
-  // const entities = useSelector(state => state.entities.entries);
-  // const group = useSelector(state => state.entities.groupSelected);
-  // const hasResized = useSelector(state => state.wasm.resize);
+  const {data, loadingStatus} = useQuery(TREND_QUERY);
+  if (loadingStatus !== loading) {
+    setLoading(loadingStatus);
+  }
 
   const position = [51.505, -0.09];
   const mapStyle = {
@@ -33,24 +46,45 @@ const TrendPage = () => {
     border: "1px solid var(--middle-grey-color)"
   }
 
-  const options = {
-    title: {
-      text: "Cases"
+  const optionsBase = {
+    axisX: {
+      valueFormatString: "DD MMM"
     },
-    theme: "dark2",
+    axisY: {
+      title: "Number"
+    },
     backgroundColor: "#343a40",
     animationEnabled: true,
     interactivityEnabled: true,
-    data: [{
-      type: "column",
-      dataPoints: [
-        {  y: 10  },
-        {  y: 15  },
-        {  y: 25  },
-        {  y: 30  },
-        {  y: 28  }
-      ]
-    }]
+  }
+
+  let chartsOptions = [];
+
+  if (data) {
+    let counter = 0;
+    for (const trendGraph of data.trendGraphs) {
+      let dpoints = [];
+      const themeIndex = (counter%2+1);
+      const titleColor = themeIndex !== 1 ? "#8ae9e9" : "#e76848";
+      for (const p of trendGraph.values) {
+        dpoints.push({x: new Date(p[0]), y: p[1]});
+      }
+
+      const option = {
+        ...optionsBase,
+        title: {
+          text: trendGraph.graph.label,
+          fontColor: titleColor
+        },
+        theme: "dark" + themeIndex.toString(),
+        data: [{
+          type: "splineArea",
+          dataPoints: dpoints
+        }]
+      };
+      chartsOptions.push(option);
+      counter++;
+    }
   }
 
   return (
@@ -58,28 +92,21 @@ const TrendPage = () => {
       <TrendGrid>
         <FlexContainer>
           <div>
-            Let's see what we got:
-            {loading ? <p>Loading</p> : <p>Timestamp: {data.hello}</p>}
             <H2>
               Novel Coronavirus (2019-nCoV)
             </H2>
           </div>
-          <div>
-            Globally 78811 confirmed (1017 new)<br/>
-
-            China 77042 confirmed (650 new)
-            2445 deaths (97 new)<br/>
-
-            Outside of China 1769 confirmed (367 new)
-            28 countries
-            17 deaths (6 new)
-          </div>
-          <CanvasJSChart options = {options}
-            /* onRef = {ref => this.chart = ref} */
-          />
+          {chartsOptions && chartsOptions.map(item =>
+            <TrendGraph>
+              <CanvasJSChart key={item.title.text} options={item}/>
+            </TrendGraph>
+          )}
         </FlexContainer>
         <FlexContainer>
-          <Map center={position} zoom="3" style={mapStyle}>
+          <Map
+            center={position}
+            zoom="3"
+            style={mapStyle}>
             <TileLayer
               attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -93,9 +120,10 @@ const TrendPage = () => {
 
 export default TrendPage;
 
-//
+// //
+// //
 // <JqxBarGauge
-//   className="myCustomClass myCustomClassTwo"
-//   style={{marginTop: 100, marginLeft: 100}}
-//   width={600} height={600} max={barState.max} values={barState.values}
-// />
+// //   className="myCustomClass myCustomClassTwo"
+// //   style={{marginTop: 100, marginLeft: 100}}
+// //   width={600} height={600} max={barState.max} values={barState.values}
+// // />

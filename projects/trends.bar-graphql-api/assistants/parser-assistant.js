@@ -1,8 +1,5 @@
 const mongoose = require("mongoose");
 const db = require("../db");
-const trendModel = require("../models/trend-model");
-const datasetModel = require("../models/dataset-model");
-const graphLayoutModel = require("../models/graph_layout-model");
 const graphAssistant = require("../assistants/graph-assistant");
 
 const dataEntry = async (datasetId, graphId, value) => {

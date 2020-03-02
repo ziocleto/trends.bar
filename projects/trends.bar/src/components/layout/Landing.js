@@ -1,18 +1,13 @@
 import React from "react";
-import {useDispatch, useSelector} from "react-redux";
-import {loadTrend} from "../../actions/TrendActions";
 import {Redirect} from "react-router-dom";
+import {useGlobal} from 'reactn';
 
 const Landing = () => {
-  // if (auth.auth && auth.auth.isAuthenticated === true) {
-  //   return <Redirect to="/dashboarduser" />;
-  // }
-  const dispatch = useDispatch();
+  const [trend, setTrend] = useGlobal('trendId');
 
-  const trend = useSelector(state => state.trend);
-
-  if (trend.name) {
-    const rto = "/" + trend.name;
+  console.log(" Ctrrent trend: ", trend);
+  if (trend) {
+    const rto = "/" + trend;
     return <Redirect to={rto}/>
   }
 
@@ -32,7 +27,7 @@ const Landing = () => {
             onKeyUp={e => {
               if (e.keyCode === 13) {
                 const tvalue = e.target.value.toLowerCase();
-                dispatch(loadTrend(tvalue));
+                setTrend(tvalue);
               }
             }}
           />

@@ -1,12 +1,12 @@
 import React, {Fragment} from "react";
-import Spinner from "react-bootstrap/Spinner";
-import {useDispatch, useSelector} from "react-redux";
-import {loadTrend} from "../../actions/TrendActions";
+import {useGlobal} from "reactn";
+import Spinner from "./Spinner";
 
 const Navbar = () => {
-  const dispatch = useDispatch();
-  const loading = useSelector(state => state.auth.loading);
-  const trend = useSelector(state => state.trend);
+
+  const [trend, setTrend] = useGlobal('trendId');
+  // eslint-disable-next-line
+  const [loading] = useGlobal('loading');
 
   const title = trend && trend.name ? trend.name : "";
 
@@ -14,7 +14,7 @@ const Navbar = () => {
     <div className="navbarGrid">
       <div className="navbarlogo-a">
         <a href="/#" onClick={() => {
-          dispatch(loadTrend(null))
+          setTrend(null);
         }}>
           {loading ? (
             <Fragment>
@@ -28,7 +28,7 @@ const Navbar = () => {
       </div>
       <div className="navbareh-a navdiv-titletext">
         <a href="/#" onClick={() => {
-          dispatch(loadTrend(null))
+          setTrend(null);
         }}>
           {" "}
           <span className="colorLogo1">T</span>

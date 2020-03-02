@@ -32,6 +32,11 @@ export const TrendGrid = styled.div` {
     margin: 10px;
   }`;
 
+export const TrendGraph = styled.div` {
+    width: 100%;
+    padding-top: 30px;
+  }`;
+
 export const FlexContainer = styled.div` {
     display: flex;
     flex-flow: row wrap;
