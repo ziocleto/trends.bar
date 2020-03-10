@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-export const datasetMode = mongoose.model("dataset", new mongoose.Schema({}, {strict: false}));
+export const datasetModel = mongoose.model("dataset", new mongoose.Schema({}, {strict: false}));
 
 export const graphLayoutModel = mongoose.model("graph_layout", new mongoose.Schema({}, {strict: false}));
 

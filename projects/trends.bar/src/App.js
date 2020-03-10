@@ -1,20 +1,16 @@
 import React, {Fragment} from "react";
-import {HashRouter as Router, Route, Switch} from "react-router-dom";
+import { useHistory, useLocation } from 'react-router-dom';
 import Landing from "./components/layout/Landing";
 import Navbar from "./components/layout/Navbar";
-import Routes from "./components/routing/Routes";
 
 import {initHostEnv} from "./HostEnv";
 
 import {DBConfig} from "./DBConfig";
 import {initDB} from "react-indexed-db";
-import { setGlobal } from 'reactn';
-
-// Redux
-import {Provider} from "react-redux";
-import store from "./store";
-
+import {setGlobal, useGlobal} from 'reactn';
 import "./App.css";
+import TrendPage from "./components/layout/TrendPage";
+import {sanitize} from "./utils/utils";
 
 setGlobal({
   trendId: null,
@@ -24,20 +20,32 @@ setGlobal({
 initHostEnv();
 initDB(DBConfig);
 
+const router = (path, trendId, history) => {
+  let ret = (<Landing/>);
+
+  if (path !== "/") {
+    ret = <TrendPage trendId={trendId}/>
+  }
+
+  if ( path !== history.location.pathname ) {
+    history.push(path);
+  }
+
+  return ret;
+}
+
 const App = () => {
+  let history = useHistory();
+  let location = useLocation();
+  const [trend] = useGlobal('trendId');
+  const path = trend ? "/"+ trend : location.pathname;
+  const trendId = sanitize(path);
 
   return (
-    <Provider store={store}>
-      <Router>
-        <Navbar/>
-        <Fragment>
-          <Switch>
-            <Route exact path="/" component={Landing}/>
-            <Route component={Routes}/>
-          </Switch>
-        </Fragment>
-      </Router>
-    </Provider>
+    <Fragment>
+      <Navbar trendId={trendId}/>
+      {router(path, trendId, history)}
+    </Fragment>
   );
 };
 

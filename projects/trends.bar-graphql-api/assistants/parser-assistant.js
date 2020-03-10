@@ -1,16 +1,19 @@
+import {datasetModel, graphLayoutModel, trendGraphsModel} from "../models/models";
+
 const mongoose = require("mongoose");
 const db = require("../db");
 const graphAssistant = require("../assistants/graph-assistant");
 
-const dataEntry = async (datasetId, graphId, value) => {
+const dataEntry = async (trendId, datasetId, graphId, value) => {
   let data = {
-    datasetId: datasetId,
-    graphId: graphId,
+    dataset: datasetId,
+    graph: graphId,
     '$addToSet': {values: value}
   };
-  return await db.upsert(trendModel, data, {
-    datasetId: data.datasetId,
-    graphId: data.graphId
+  return await db.upsert(trendGraphsModel, data, {
+    trendId,
+    dataset: data.dataset,
+    graph: data.graph
   });
 }
 
@@ -54,7 +57,7 @@ module.exports = {
     return results;
   },
 
-  parse: async (parser) => {
+  parse: async (trendId, parser) => {
 
     const {dataset, graph, regEx, inputs} = parser;
 
@@ -65,7 +68,7 @@ module.exports = {
 
     const value = graphAssistant.prepareValue(graph.type, inputs, resultResolved);
 
-    return await dataEntry(mongoose.Types.ObjectId(datasetElem._id), mongoose.Types.ObjectId(graphElem._id), value);
+    return await dataEntry(trendId, mongoose.Types.ObjectId(datasetElem._id), mongoose.Types.ObjectId(graphElem._id), value);
   }
 
 };

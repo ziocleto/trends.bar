@@ -13,6 +13,7 @@ router.get("/:trendId/:org/:what/:timestamp", async (req, res, next) => {
     const timestamp = moment(req.params.timestamp, 'YYYYMMDD');
     const beginningOfReportstimetamp = moment('20200120', 'YYYYMMDD');
     const reportIndex = timestamp.diff(beginningOfReportstimetamp, 'days');
+    const trendId = req.params.trendId;
     if ( reportIndex < 1 || isNaN(reportIndex)) {
       throw "Invalid date selected for report";
     }
@@ -26,7 +27,7 @@ router.get("/:trendId/:org/:what/:timestamp", async (req, res, next) => {
       values: [timestamp]
     };
 
-    const dataset = datasetAssistant.declare(req.params.trendId, req.params.org, req.params.what);
+    const dataset = datasetAssistant.declare(trendId, req.params.org, req.params.what);
     const casesGraph = graphAssistant.declare(graphAssistant.xyDateInt(), "Cases", "global");
     const deathsGraph = graphAssistant.declare(graphAssistant.xyDateInt(), "Deaths", "global");
 
@@ -60,7 +61,7 @@ router.get("/:trendId/:org/:what/:timestamp", async (req, res, next) => {
 
     let results = [];
     for (const parser of parsers) {
-      const result = await parserAssistant.parse(parser);
+      const result = await parserAssistant.parse(trendId, parser);
       results.push(result);
     }
 

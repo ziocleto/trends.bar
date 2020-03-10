@@ -1,15 +1,17 @@
-import React from "react";
-import {Redirect} from "react-router-dom";
+import React, {useEffect, useRef} from "react";
 import {useGlobal} from 'reactn';
+import {sanitize} from "../../utils/utils";
 
 const Landing = () => {
-  const [trend, setTrend] = useGlobal('trendId');
+  const [,setTrend] = useGlobal('trendId');
+  const searchBox = useRef(null);
 
-  console.log(" Ctrrent trend: ", trend);
-  if (trend) {
-    const rto = "/" + trend;
-    return <Redirect to={rto}/>
-  }
+  useEffect(() => {
+    if (searchBox.current) {
+      searchBox.current.focus();
+      searchBox.current.select();
+    }
+  }, []);
 
   return (
     <section className="landing">
@@ -18,16 +20,16 @@ const Landing = () => {
           <span className="colorLogo1">Search </span>
           <span className="colorLogo2">trend</span>
         </div>
-        <div className="my-2"></div>
+        <div className="my-2"/>
         <div className="searchbar-a searchTrend small">
           <input
+            ref={searchBox}
             type="text"
             className="search-bar"
             id="search-bar"
             onKeyUp={e => {
               if (e.keyCode === 13) {
-                const tvalue = e.target.value.toLowerCase();
-                setTrend(tvalue);
+                setTrend(sanitize(e.target.value));
               }
             }}
           />

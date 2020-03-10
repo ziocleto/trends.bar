@@ -25,9 +25,6 @@ export const H6 = styled.h6` {
   }`;
 
 export const TrendGrid = styled.div` {
-    display: grid;
-    grid-template-columns: 50% 50%;
-    grid-template-areas: "trendLeft trendRight";
     box-sizing: border-box;
     margin: 10px;
   }`;

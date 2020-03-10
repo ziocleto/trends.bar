@@ -2,18 +2,15 @@ import React, {Fragment} from "react";
 import {useGlobal} from "reactn";
 import Spinner from "./Spinner";
 
-const Navbar = () => {
+const Navbar = (props) => {
 
-  const [trend, setTrend] = useGlobal('trendId');
-  // eslint-disable-next-line
+  const [, setTrend] = useGlobal('trendId');
   const [loading] = useGlobal('loading');
-
-  const title = trend && trend.name ? trend.name : "";
 
   return (
     <div className="navbarGrid">
       <div className="navbarlogo-a">
-        <a href="/#" onClick={() => {
+        <a href="/" onClick={() => {
           setTrend(null);
         }}>
           {loading ? (
@@ -27,7 +24,7 @@ const Navbar = () => {
         </a>
       </div>
       <div className="navbareh-a navdiv-titletext">
-        <a href="/#" onClick={() => {
+        <a href="/" onClick={() => {
           setTrend(null);
         }}>
           {" "}
@@ -36,7 +33,7 @@ const Navbar = () => {
           <span>ar</span>
         </a>
       </div>
-      <div className="navbartitle-a">{title}</div>
+      <div className="navbartitle-a">{props.trendId}</div>
     </div>
   );
 };
