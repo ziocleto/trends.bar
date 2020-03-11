@@ -222,3 +222,7 @@ exports.upsert = async ( model, data, query = {}, options = {}) => {
   const queryFinal = utils.isObjectEmpty(query) ? data : query;
   return model.findOneAndUpdate(queryFinal, data, {new: true,upsert: true, ...options});
 }
+
+exports.findOne = async ( model, query ) => {
+  return model.findOne(query);
+}

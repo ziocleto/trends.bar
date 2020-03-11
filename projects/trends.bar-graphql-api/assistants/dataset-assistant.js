@@ -1,13 +1,9 @@
+import {datasetModel} from "../models/models";
+import * as db from "../db";
 
 module.exports = {
-  declare: (trendId, source, sourceName, sourceDocument) => {
-
-    return {
-      trendId: trendId,
-      source: source,
-      sourceName: sourceName,
-      sourceDocument: sourceDocument,
-    }
-
+  acquire: async (trendId, source, sourceName) => {
+    const res = await db.upsert(datasetModel, {trendId, source, sourceName});
+    return res.toObject();
   }
 };

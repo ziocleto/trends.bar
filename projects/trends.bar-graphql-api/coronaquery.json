@@ -1,0 +1,76 @@
+{
+    "trendId": "coronavirus",
+    "source": "World Health Organization",
+    "sourceName": "situation-report",
+    "timestamp": "20200309",
+    "timestampFormat": "YYYYMMDD",
+    "parsers": [
+        {
+            "title": "Worldwide Cases",
+            "regex": {
+                "body": "Globally[\\n\\r\\s]*(\\d+\\s*\\d*)\\sconfirmed",
+                "flags": "mi"
+            }
+        },
+        {
+            "title": "Worldwide Deaths",
+            "regex": {
+                "body": "Globally[\\n\\r\\s]+\\d+\\s*\\d*\\sconfirmed[\\n*\\s\\/\\)\\(\\D&-]+\\d+[\\n*\\s\\/\\)\\(\\D&-]+(\\d+\\s*\\d*)",
+                "flags": "mi"
+            }
+        },
+        {
+            "title": "China Cases",
+            "regex": {
+                "body": "total \\d+\\s*\\d* \\d+ \\d+ \\d+ (\\d+) \\d+",
+                "flags": "mi"
+            }
+        },
+        {
+            "title": "China Deaths",
+            "regex": {
+                "body": "total \\d+\\s*\\d* \\d+ \\d+ \\d+ \\d+ (\\d+)",
+                "flags": "mi"
+            }
+        },
+        {
+            "title": "Rest of the World Cases",
+            "regex": {
+                "body": "grand total (\\d+\\s*\\d*) \\d+ \\d+ \\d+",
+                "flags": "mi"
+            }
+        },
+        {
+            "title": "Rest of the World Deaths",
+            "regex": {
+                "body": "grand total \\d+\\s*\\d* \\d+ (\\d+) \\d+",
+                "flags": "mi"
+            }
+        }
+    ],
+    "parsersCombiners" : [
+        {
+            "title": "$country Cases",
+            "startRegex": {
+                "body": "table 2\\.",
+                "flags": "mi"
+            },
+            "endRegex": {
+                "body": "grand total",
+                "flags": "mi"
+            },
+            "regex": {
+                "body": "[\\s\\/\\)\\(\\D&-]+(\\d+) \\d+ \\d+ \\d+ \\D+ \\d+",
+                "flags": "gmi"
+            },
+            "postTransform": {
+                "transform": "replace",
+                "source": "regexp",
+                "sourceIndex": 0,
+                "valueIndex": 1,
+                "dest": "$country",
+                "algo": "matchCountryName"
+            }
+        }
+    ]
+}

@@ -4,60 +4,50 @@ const mongoose = require("mongoose");
 const db = require("../db");
 const graphAssistant = require("../assistants/graph-assistant");
 
-const dataEntry = async (trendId, datasetId, graphId, value) => {
-  let data = {
-    dataset: datasetId,
-    graph: graphId,
-    '$addToSet': {values: value}
-  };
-  return await db.upsert(trendGraphsModel, data, {
-    trendId,
-    dataset: data.dataset,
-    graph: data.graph
-  });
-}
+export class Parser {
+  constructor(text) {
+    this.text = text;
+  }
 
-module.exports = {
+  parseIntWithSpaces(value) {
+    return parseInt(value.replace(/ /g, ''));
+  }
 
-  parseIntWithSpaces: value => {
-    if (value.length === 0) throw "Parsing empty array in crawling";
-    return parseInt(value[0].replace(/ /g, ''));
-  },
+  sanitizeNewLines(value) {
+    return value.replace(/\n/g, '');
+  }
 
-  parseAddIntWithSpaces: value => {
-    if (value.length === 0) throw "Parsing empty array in crawling";
-    let total = 0;
-    return value.reduce((total, num) => {
-      return parseInt(total) + parseInt(num.replace(/ /g, ''));
-    });
-  },
+  regexFind(regEx) {
 
-  regexFind: regEx => {
+    let result = 0;
 
-    let m;
-    let results = [];
-
-    while ((m = regEx.expression.exec(regEx.source)) !== null) {
-      // This is necessary to avoid infinite loops with zero-width matches
-      if (m.index === regEx.lastIndex) {
-        regex.lastIndex++;
-      }
-      // The result can be accessed through the `m`-variable.
-      m.forEach((match, groupIndex) => {
-        if (regEx.resultIndices.includes(groupIndex)) {
-          results.push(match);
-        }
-      });
+    const matches = [...this.text.matchAll( regEx )];
+    if ( matches.length === 0 ) {
+      return null;
+    }
+    for ( const match of matches ) {
+        result += this.parseIntWithSpaces(match[1]);
     }
 
-    if (results.length < regEx.expectedResultCount) {
-      throw "RegEx find failed";
-    }
+    return result;
+  }
 
-    return results;
-  },
+  find(regEx) {
+    return this.text.match( regEx );
+  }
 
-  parse: async (trendId, parser) => {
+  findAll(regEx) {
+    return [...this.text.matchAll( regEx )];
+  }
+
+  findIndex(regEx) {
+
+    const match = this.text.match( regEx );
+
+    return match.index;
+  }
+
+  async parse(trendId, parser) {
 
     const {dataset, graph, regEx, inputs} = parser;
 
@@ -70,5 +60,4 @@ module.exports = {
 
     return await dataEntry(trendId, mongoose.Types.ObjectId(datasetElem._id), mongoose.Types.ObjectId(graphElem._id), value);
   }
-
-};
+}
