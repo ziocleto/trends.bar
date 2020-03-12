@@ -68,6 +68,7 @@ export const countryListSimple = [
   "Curaçao",
   "Cyprus",
   "Czechia",
+  "Czech Republic",
   "Côte d'Ivoire",
   "Denmark",
   "Djibouti",
@@ -250,6 +251,7 @@ export const countryListSimple = [
   "United Kingdom",
   "United States Minor Outlying Islands",
   "United States of America",
+  "the United States",
   "Uruguay",
   "Uzbekistan",
   "Vanuatu",
@@ -1551,7 +1553,7 @@ export const findInternal = (source, list) => {
       return country;
     }
   }
-  return "";
+  throw "country " + source + " not found in our database";
 }
 
 export const find = source => {

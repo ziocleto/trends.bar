@@ -1,15 +1,15 @@
 import {GraphQLObjectType} from "graphql";
+import {MongoDataSource} from 'apollo-datasource-mongodb'
+import BigInt from "apollo-type-bigint";
+import {trendGraphsModel, trendsModel} from "./models/models";
 
 const express = require('express');
 const bodyParser = require("body-parser");
 
 const {ApolloServer, gql} = require('apollo-server-express');
 const crawlerRoute = require("./routes/crawlerRoute");
-import {MongoDataSource} from 'apollo-datasource-mongodb'
 
 const db = require("./db");
-import BigInt from "apollo-type-bigint";
-import {trendGraphsModel, trendsModel} from "./models/models";
 
 const Long = new GraphQLObjectType({
   name: 'Long',
@@ -29,7 +29,7 @@ const typeDefs = gql`
         trendId: ID!
         source: String
         sourceDocument: String
-        sourceName: String!
+        sourceName: String
     }
 
     type GraphLayout {
@@ -40,7 +40,7 @@ const typeDefs = gql`
 
     type TrendGraph {
         _id: ID!
-        trendId: ID!
+        trendId: String!
         dataset: Dataset!
         graph: GraphLayout!
         values: [ [BigInt!]! ]!
@@ -50,10 +50,11 @@ const typeDefs = gql`
         _id: ID!
         trendId: String!
         aliases: [ String! ]!
+        trendGraphs: [TrendGraph]
     }
 
     type Query {
-        trendGraphs(trendId: String!): [TrendGraph]
+        trendGraph(id: ID!): TrendGraph
         trend(trendId: String!): Trend
     }
 
@@ -61,28 +62,27 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    trendGraphs: (_, {trendId}, {dataSources}) => dataSources.trends.getTrendGraphs(trendId),
+    trendGraph: (_, {id}, {dataSources}) => dataSources.trendGraphs.getTrendGraph(id),
     trend: (_, {trendId}, {dataSources}) => dataSources.trends.getTrend(trendId)
   },
 };
 
 db.initDB();
 
-class Trends extends MongoDataSource {
-  async getTrendGraphs(trendId) {
-    const pop = trendGraphsModel.find({ trendId: trendId} ).populate('dataset').populate('graph');
+class TrendsDataSource extends MongoDataSource {
+  async getTrendGraph(id) {
+    const pop = trendGraphsModel.findById(id).populate('dataset').populate('graph');
     const res = await pop.exec();
-    let resO = [];
-    for await ( const r of res ) {
-      resO.push( r.toObject() );
-    }
-    console.log(resO);
-    return resO;
+    return res.toObject();
   }
 
   async getTrend(trendId) {
-    const res = await trendsModel.find({ trendId: trendId} );
-    return res;
+    const pop = trendsModel.findOne({trendId: trendId}).populate( {
+      path: 'trendGraphs',
+      populate: { path: 'dataset graph'}
+    });
+    const res = await pop.exec();
+    return res.toObject();
   }
 }
 
@@ -91,7 +91,8 @@ const server = new ApolloServer(
     typeDefs,
     resolvers,
     dataSources: () => ({
-      trends: new Trends(trendsModel, trendGraphsModel),
+      trends: new TrendsDataSource(trendsModel),
+      trendGraphs: new TrendsDataSource(trendGraphsModel),
     })
   }
 );
@@ -100,7 +101,7 @@ const app = express();
 
 server.applyMiddleware({app});
 
-app.use(bodyParser.raw({limit: "500mb", type:'application/octet-stream'}));
+app.use(bodyParser.raw({limit: "500mb", type: 'application/octet-stream'}));
 app.use(bodyParser.text({limit: "500mb"}));
 app.use(bodyParser.json({limit: "100mb"}));
 app.use(bodyParser.urlencoded({limit: "100mb", extended: true}));

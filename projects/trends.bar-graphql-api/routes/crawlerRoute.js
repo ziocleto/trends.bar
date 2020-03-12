@@ -32,29 +32,28 @@ const str = `
  
  
  
-Data as reported by national authorities by 10 AM CET 09 March 2020       
+Data as reported by national authorities by 10AM CET 08 March 2020       
 Coronavirus disease 2019 (COVID-19) 
-Situation Report – 49 
+Situation Report – 48 
  
 SITUATION IN NUMBERS 
 total and new cases in last 24 
 hours 
  
 Globally  
-109 578 confirmed (3994 new) 
-      3809 deaths (225 new) 
+105 586 confirmed (3656 new) 
  
 China 
-80 904 confirmed (45 new) 
-   3123 deaths (23 new)
+80 859 confirmed (46 new) 
+  3100 deaths (27 new)
  
  
  
 Outside of China 
-28 674 confirmed (3949 new) 
-     686 deaths (202 new) 
-     104 countries/territories/   
-             areas (3 new) 
+24 727 confirmed (3610 new) 
+  484 deaths (71 new) 
+    101 Countries/territories/   
+    areas (8 new) 
  
 WHO RISK ASSESSMENT 
  
@@ -87,80 +86,26 @@ Global Level Very High
  
 HIGHLIGHTS 
  
-• 3  new  countries/territories/areas  (Bangladesh,  Albania  and Paraguay)  have 
-reported cases of COVID-19 in the past 24 hours.  
+• 8 new countries/territories/areas (Bulgaria, Costa Rica, Faroe Islands, French 
+Guiana, Maldives, Malta, Martinique, and Republic of Moldova) have reported 
+cases of COVID-19 in the past 24 hours.  
  
-• WHO continues to support Samoa and Tokelau with preparations for COVID-
-19. More information can be found here.  
+• Over 100 countries have now reported laboratory-confirmed cases of COVID-
+19.  
  
-• WHO  Operations  Supply  and  Logistics  (OSL)  continues to  support  COVID-19 
-emergency  operations  where  global  demand  for  critical  items  continues  to 
-outpace  global  supply  availability. Since  the  beginning  of  the  outbreak,  OSL 
-have shipped more than 584,000 surgical masks, 47,000 N95 masks, 620,000 
-gloves, 72,000 gowns and 11,000 goggles to 57 countries. 
- 
- 
- 
- 
- 
-Figure 1. Countries, territories or areas with reported confirmed cases of COVID-19, 09 March 2020   
- 
- 
- 
- 
-
- 
- 
- 
-SUBJECT IN FOCUS: Operations Supply and Logistics (OSL) 
- 
-WHO Operations Supply and Logistics (OSL) continues to support COVID-19 emergency operations where global 
-demand for critical items continues to outpace global supply.  
- 
-WHO continues to highlight the need for prioritization of personal protective equipment (PPE) supplies for frontline 
-healthcare workers.  To help make supplies available, OSL and partners in the Pandemic Supply Chain Network 
-(PSCN) have agreed on mechanisms to secure global warehousing for donated COVID-19 emergency supplies.  
- 
-OSL are also working with ventilator and respirator equipment manufacturers to develop technical guidance for 
-oxygen therapy and related equipment in the context of COVID-19. 
- 
-Together with WFP, UNICEF and the World Bank, OSL continues to work on a proposal for a Supply Chain 
-Coordination Cell to support the UN Crisis Management Team with improved information and coordination to 
-support strategic guidance, operational decision-making, and overall monitoring.   
- 
-Since the beginning of the outbreak, OSL have shipped more than 584,000 surgical masks, 47,000 N95 masks, 
-620,000 gloves, 72,000 gowns and 11,000 goggles to 57 countries. 
- 
-OSL have also shipped laboratory tests to more than 120 countries to facilitate COVID-19 testing, 
- 
-In cooperation with the International Humanitarian City (IHC) in Dubai and with aircraft provided by the government 
-of the UAE, OSL organized a flight from Dubai to Iran on March 2, to support the first delivery of emergency PPE and 
-lab tests. 
- 
-In collaboration with WHO Health Operations, an Intensive Care Unit-assessment form is being finalized in order to 
-facilitate independent assessment of ICUs and identify existing supplies to support COVID-19 response activities. 
+• WHO has issued   a consolidated   package   of   existing   preparedness   and 
+response  guidance for countries  to  enable them  to  slow  and  stop  COVID-19 
+transmission  and  save lives. WHO  is  urging  all  countries  to  prepare  for  the 
+potential  arrival  of  COVID-19  by  readying  emergency  response  systems; 
+increasing capacity to detect and care for patients; ensuring hospitals have the 
+space,  supplies  and  necessary  personnel;  and  developing  life-saving medical 
+interventions.  
  
  
  
  
  
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
+Figure 1. Countries, territories or areas with reported confirmed cases of COVID-19, 08 March 2020   
  
  
  
@@ -171,7 +116,7 @@ facilitate independent assessment of ICUs and identify existing supplies to supp
 SURVEILLANCE  
  
 Table 1. Confirmed and suspected cases of COVID-19 acute respiratory disease reported by provinces, regions and 
-cities in China, Data as of 09 March 2020 
+cities in China, Data as of 08 March 2020 
 Province/  
 Region/  
 City 
@@ -187,8 +132,8 @@ Deaths
 Confirmed 
 cases 
 Deaths 
-Hubei 5917 36 28 21 67743 3007 
-Guangdong 11346 0 0 1 1352 8 
+Hubei 5917 41 42 27 67707 2986 
+Guangdong 11346 0 0 0 1352 7 
 Henan 9605 0 0 0 1272 22 
 Zhejiang 5737 0 0 0 1215 1 
 Hunan 6899 0 0 0 1018 4 
@@ -197,23 +142,23 @@ Jiangxi 4648 0 0 0 935 1
 Shandong 10047 0 0 0 758 6 
 Jiangsu 8051 0 0 0 631 0 
 Chongqing 3102 0 0 0 576 6 
-Sichuan 8341 0 0 0 539 3 
-Heilongjiang 3773 0 1 0 481 13 
-Beijing 2154 0 8 0 428 8 
-Shanghai 2424 0 10 0 342 3 
+Sichuan 8341 0 1 0 539 3 
+Heilongjiang 3773 0 0 0 481 13 
+Beijing 2154 2 3 0 428 8 
+Shanghai 2424 0 25 0 342 3 
 Hebei 7556 0 0 0 318 6 
 Fujian 3941 0 0 0 296 1 
 Guangxi 4926 0 0 0 252 2 
 Shaanxi 3864 0 0 0 245 1 
-Yunnan 4830 0 0 0 174 2 
+Yunnan 4830 0 1 0 174 2 
 Hainan 934 0 0 0 168 6 
 Guizhou 3600 0 0 0 146 2 
-Tianjin 1560 0 10 0 136 3 
+Tianjin 1560 0 9 0 136 3 
 Shanxi 3718 0 0 0 133 0 
-Liaoning 4359 0 2 0 125 1 
-Gansu 2637 4 0 0 124 2 
-Hong Kong SAR 745 5 0 1 114 3 
-Jilin 2704 0 1 0 93 1 
+Liaoning 4359 0 3 0 125 1 
+Gansu 2637 1 0 0 120 2 
+Hong Kong SAR 745 2 0 0 109 2 
+Jilin 2704 0 0 0 93 1 
 Xinjiang 2487 0 0 0 76 3 
 Inner Mongolia 2534 0 0 0 75 1 
 Ningxia 688 0 0 0 75 0 
@@ -221,7 +166,7 @@ Taipei and environs 2359 0 0 0 45 1
 Qinghai 603 0 0 0 18 0 
 Macao SAR 66 0 0 0 10 0 
 Xizang 344 0 0 0 1 0 
-Total 142823 45 60 23 80904 3123 
+Total 142823 46 84 27 80859 3100 
  
  
  
@@ -231,7 +176,7 @@ Total 142823 45 60 23 80904 3123
  
  
 Table 2. Countries, territories or areas outside China with reported laboratory-confirmed COVID-19 cases and 
-deaths. Data as of 09 March 2020
+deaths. Data as of 08 March 2020
 *
  
 Reporting Country/ 
@@ -260,146 +205,149 @@ last reported
 case
  
 Western Pacific Region 
-Republic of Korea 7382 248 51 1 Local transmission 0 
-Japan 488 33 7 1 Local transmission 0 
-Singapore 150 12 0 0 Local transmission 0 
-Malaysia 93 0 0 0 Local transmission 1 
-Australia 77 3 3 0 Local transmission 0 
-Viet Nam 30 9 0 0 Local transmission 0 
-Philippines 10 4 1 0 Local transmission 0 
-New Zealand 5 0 0 0 Local transmission 2 
-Cambodia 2 0 0 0 Local transmission 1 
+Republic of Korea 7134 367 50 6 Local transmission 0 
+Japan 455 48 6 0 Local transmission 0 
+Singapore 138 8 0 0 Local transmission 0 
+Malaysia 93 10 0 0 Local transmission 0 
+Australia 74 12 3 1 Local transmission 0 
+Viet Nam 21 4 0 0 Local transmission 0 
+Philippines 6 1 1 0 Local transmission 0 
+New Zealand 5 0 0 0 Local transmission 1 
+Cambodia 2 1 0 0 Local transmission 0 
 European Region  
-Italy 7375 1492 366 132 Local transmission 0 
-France 1116 410 19 9 Local transmission 0 
-Germany 1112 317 0 0 Local transmission 0 
-Spain 589 159 10 5 Local transmission 0 
+Italy 5883 1247 234 37 Local transmission 0 
+Germany 795 156 0 0 Local transmission 0 
+France 706 93 10 1 Local transmission 0 
+Spain 430 56 5 0 Local transmission 0 
 Switzerland
  
-332 68 2 0 Local transmission 0 
-The United Kingdom 277 67 2 0 Local transmission 0 
-Netherlands 265 77 3 2 Local transmission 0 
-Sweden 203 42 0 0 Local transmission 0 
-Belgium 200 31 0 0 Local transmission 0 
-Norway 169 22 0 0 Local transmission 0 
-Austria 112 10 0 0 Local transmission 0 
-Greece 73 7 0 0 Local transmission 0 
-Iceland 55 10 0 0 Local transmission 0 
-Israel 39 14 0 0 Local transmission 0 
-San Marino 37 10 1 0 Local transmission 0 
-Denmark 36 5 0 0 Local transmission 0 
-Czechia 32 6 0 0 Local transmission 0 
-Finland 30 11 0 0 Local transmission 0 
-Portugal 30 9 0 0 Local transmission 0 
-Ireland 21 2 0 0 Local transmission 0 
-Slovenia 16 4 0 0 Local transmission 0 
-Romania 15 2 0 0 Local transmission 0 
-Georgia 13 1 0 0 Imported cases only 0 
-Croatia 11 0 0 0 Local transmission 2 
-Poland 11 5 0 0 Imported cases only 0 
-Estonia 10 0 0 0 Imported cases only 2 
-Azerbaijan 9 0 0 0 Imported cases only 2 
-Hungary 9 2 0 0 Local transmission 0 
-Russian Federation 7 0 0 0 Imported cases only 2 
-Belarus 6 0 0 0 Local transmission 4 
-Slovakia 5 2 0 0 Local transmission 0 
-Bulgaria 4 2 0 0 Local transmission 0 
-Latvia 3 2 0 0 Imported cases only 0 
-Malta 3 0 0 0 Imported cases only 1 
-North Macedonia 3 0 0 0 Imported cases only 2 
-Albania 2 2 0 0 Imported cases only 0 
-Bosnia and 2 0 0 0 Local transmission 4 
+264 55 2 1 Local transmission 0 
+The United Kingdom 210 43 2 1 Local transmission 0 
+Netherlands 188 60 1 0 Local transmission 0 
+Belgium 169 60 0 0 Local transmission 0 
+Sweden 161 24 0 0 Local transmission 0 
+Norway 147 34 0 0 Local transmission 0 
+Austria 104 38 0 0 Local transmission 0 
+Greece 66 34 0 0 Local transmission 0 
+Iceland 45 0 0 0 Local transmission 1 
+Denmark 31 8 0 0 Local transmission 0 
+San Marino 27 3 1 1 Local transmission 0 
+Czechia 26 14 0 0 Local transmission 0 
+Israel 25 6 0 0 Local transmission 0 
+Portugal 21 8 0 0 Local transmission 0 
+Finland 19 0 0 0 Local transmission 1 
+Ireland 19 1 0 0 Local transmission 0 
+Romania 13 6 0 0 Local transmission 0 
+Georgia 12 3 0 0 Imported cases only 0 
+Slovenia 12 3 0 0 Local transmission 0 
+Croatia 11 0 0 0 Local transmission 1 
+Estonia 10 0 0 0 Imported cases only 1 
+Azerbaijan 9 0 0 0 Imported cases only 1 
+Hungary 7 3 0 0 Local transmission 0 
+Russian Federation 7 0 0 0 Imported cases only 1 
+Belarus 6 0 0 0 Local transmission 3 
+Poland 6 1 0 0 Imported cases only 0 
+Malta 3 3 0 0 Imported cases only 0 
+North Macedonia 3 0 0 0 Imported cases only 1 
+Slovakia 3 2 0 0 Local transmission 0 
+Bosnia and 
+Herzegovina 
+2 0 0 0 Local transmission 3 
+Bulgaria 2 2 0 0 Local transmission 0 
+Luxembourg 2 0 0 0 Imported cases only 1 
 
  
  
-Herzegovina 
-Luxembourg 2 0 0 0 Imported cases only 2 
-Andorra 1 0 0 0 Imported cases only 6 
-Armenia 1 0 0 0 Imported cases only 7 
-Holy See 1 0 0 0 Under investigation 3 
-Liechtenstein 1 0 0 0 Imported cases only 3 
-Lithuania 1 0 0 0 Imported cases only 10 
-Monaco 1 0 0 0 Under investigation 8 
-Republic of Moldova 1 0 0 0 Imported cases only 1 
-Serbia 1 0 0 0 Under investigation 3 
-Ukraine 1 0 0 0 Imported cases only 5 
+Andorra 1 0 0 0 Imported cases only 5 
+Armenia 1 0 0 0 Imported cases only 6 
+Holy See 1 0 0 0 Under investigation 2 
+Latvia 1 0 0 0 Imported cases only 5 
+Liechtenstein 1 0 0 0 Imported cases only 2 
+Lithuania 1 0 0 0 Imported cases only 9 
+Monaco 1 0 0 0 Under investigation 7 
+Republic of Moldova 1 1 0 0 Imported cases only 0 
+Serbia 1 0 0 0 Under investigation 2 
+Ukraine 1 0 0 0 Imported cases only 4 
 Territories
 **
  
-Faroe Islands 3 2 0 0 Imported cases only 0 
-Gibraltar 1 0 0 0 Under investigation 5 
+Faroe Islands 1 0 0 0 Imported cases only 2 
+Gibraltar 1 0 0 0 Under investigation 4 
 South-East Asia Region 
-Thailand 50 0 1 0 Local transmission 1 
-India 43 9 0 0 Local transmission 0 
-Indonesia 6 2 0 0 Local transmission 0 
-Maldives 4 2 0 0 Local transmission 0 
-Bangladesh 3 3 0 0 Local transmission 0 
-Bhutan 1 0 0 0 Imported cases only 3 
-Nepal 1 0 0 0 Imported cases only 45 
-Sri Lanka 1 0 0 0 Imported cases only 42 
+Thailand 50 2 1 0 Local transmission 0 
+India 34 3 0 0 Local transmission 0 
+Indonesia 4 0 0 0 Local transmission 1 
+Maldives 2 2 0 0 Local transmission 0 
+Bhutan 1 0 0 0 Imported cases only 2 
+Nepal 1 0 0 0 Imported cases only 44 
+Sri Lanka 1 0 0 0 Imported cases only 41 
 Eastern Mediterranean Region 
 Iran (Islamic 
-Republic of) 6566 743 194 49 Local transmission 0 
-Bahrain 79 23 0 0 Local transmission 0 
-Kuwait 64 2 0 0 Imported cases only 0 
-Iraq 60 6 6 2 Local transmission 0 
-Egypt 55 7 1 1 Local transmission 0 
+Republic of) 
+5823 1076 145 21 Local transmission 0 
+Kuwait 62 4 0 0 Imported cases only 0 
+Bahrain 56 7 0 0 Imported cases only 0 
+Iraq 54 10 4 0 Imported cases only 0 
+Egypt 48 45 0 0 Local transmission
+††
+ 0 
 United Arab 
 Emirates 
-45 0 0 0 Local transmission 2 
-Lebanon 32 4 0 0 Local transmission 0 
-Oman 16 0 0 0 Imported cases only 3 
-Qatar 15 3 0 0 Imported cases only 0 
-Saudi Arabia 15 8 0 0 Imported cases only 0 
-Pakistan 6 1 0 0 Imported cases only 0 
-Afghanistan 4 0 0 0 Imported cases only 1 
-Morocco 2 0 0 0 Imported cases only 4 
-Tunisia 2 1 0 0 Imported cases only 0 
-Jordan 1 0 0 0 Imported cases only 6 
+45 0 0 0 Local transmission 1 
+Lebanon 28 6 0 0 Local transmission 0 
+Oman 16 0 0 0 Imported cases only 2 
+Qatar 12 1 0 0 Imported cases only 0 
+Saudi Arabia 7 2 0 0 Imported cases only 0 
+Pakistan 5 0 0 0 Imported cases only 5 
+Afghanistan 4 3 0 0 Imported cases only 0 
+Morocco 2 0 0 0 Imported cases only 3 
+Jordan 1 0 0 0 Imported cases only 5 
+Tunisia 1 0 0 0 Imported cases only 5 
 Territories
 **
  
-occupied Palestinian 
-territory 19 3 0 0 Local transmission 0 
+Occupied 
+Palestinian Territory 
+16 0 0 0 Local transmission 1 
 Region of the Americas 
 United States of 
-America 213 0 11 0 Local transmission 2 
-Canada 62 5 0 0 Local transmission 0 
-Brazil 25 6 0 0 Local transmission 0 
-Ecuador 15 1 0 0 Local transmission 0 
-Argentina 12 3 1 0 Imported cases only 0 
-Chile 10 5 0 0 Local transmission 0 
-Costa Rica 9 4 0 0 Local transmission 0 
+America 
+213 0 11 0 Local transmission 1 
+Canada 57 6 0 0 Local transmission 0 
+Brazil 19 6 0 0 Local transmission 0 
+Ecuador 14 0 0 0 Local transmission 1 
+Argentina 9 7 1 1 Imported cases only 0 
+Mexico 7 2 0 0 Imported cases only 0 
+Peru 6 0 0 0 Local transmission 1 
+Chile 5 0 0 0 Imported cases only 1 
+Costa Rica 5 5 0 0 Imported cases only 0 
 
  
  
-Mexico 7 0 0 0 Imported cases only 1 
-Peru 6 0 0 0 Local transmission 2 
-Colombia 1 0 0 0 Imported cases only 2 
-Dominican Republic 1 0 0 0 Imported cases only 7 
-Paraguay 1 1 0 0 Imported cases only 0 
+Colombia 1 0 0 0 Imported cases only 1 
+Dominican Republic 1 0 0 0 Imported cases only 6 
 Territories
 **
  
-French Guiana 5 0 0 0 Imported cases only 1 
-Martinique 2 0 0 0 Imported cases only 1 
-Saint Martin 2 0 0 0 Under investigation 6 
-Saint Barthelemy 1 0 0 0 Under investigation 6 
+French Guiana 5 5 0 0 Imported cases only 0 
+Martinique 2 2 0 0 Imported cases only 0 
+Saint Martin 2 0 0 0 Under investigation 5 
+Saint Barthélemy 1 0 0 0 Under investigation 5 
 African Region 
-Algeria 20 3 0 0 Local transmission 0 
-Senegal 4 0 0 0 Imported cases only 4 
-South Africa 3 1 0 0 Imported cases only 0 
-Cameroon 2 0 0 0 Local transmission 2 
-Nigeria 2 1 0 0 Imported cases only 0 
-Togo 1 0 0 0 Imported cases only 2 
+Algeria 17 0 0 0 Local transmission 1 
+Senegal 4 0 0 0 Imported cases only 3 
+Cameroon 2 0 0 0 Local transmission 1 
+South Africa 2 1 0 0 Imported cases only 0 
+Nigeria 1 0 0 0 Imported cases only 9 
+Togo 1 0 0 0 Imported cases only 1 
 Subtotal for all 
-regions 27 978 3949 679 202 
-  
+regions 
+24031 3610 477 70   
 International 
 conveyance 
 (Diamond Princess) 
-696 0 7 0 Local transmission 1 
-Grand total 28 674 3949 686 202   
+696 0 7 1 Local transmission 0 
+Grand total 24727 3610 484 71   
 *
 Numbers include both domestic and repatriated cases 
 †
@@ -411,7 +359,7 @@ frontiers or boundaries. Dotted and dashed lines on maps represent approximate b
 Case classifications are based on WHO case definitions for COVID-19.  
 §
 Transmission classification is based on WHO analysis of available official data and may be subject to reclassification as additional data become 
-available.  Countries/territories/areas  experiencing  multiple  types  of  transmission  are  classified  in  the  highest  category  for  which  there  is 
+available.  Countries/territories/areas  experiencing  multiple  types  of transmission  are  classified  in  the  highest  category  for  which  there  is 
 evidence; they may be removed from a given category if interruption of transmission can be demonstrated. It should be noted that even within 
 categories, different countries/territories/areas may have differing degrees of transmission as indicated by the differing numbers of cases and 
 other factors. Not all locations within a given country/territory/area are equally affected. 
@@ -423,14 +371,17 @@ increasing positive tests through sentinel samples (routine systematic testing o
 - Under investigation indicates locations where type of transmission has not been determined for any cases. 
 - Interrupted transmission indicates locations where interruption of transmission has been demonstrated (details to be determined) 
 ** “Territories” include territories, areas, overseas dependencies and other jurisdictions of similar status 
+††
+Egypt is classified as “Imported cases only” with the exception of a Nile Cruise ship currently in Egyptian international waters that is 
+experiencing local transmission.  
  
  
   
 
  
  
-Figure 2. Epidemic curve of confirmed COVID-19 cases reported outside of China (n=28 674), by date of report and 
-WHO region through 09 March 2020  
+Figure 2. Epidemic curve of confirmed COVID-19 cases reported outside of China (n=24,727), by date of report and 
+WHO region through 08 March 2020  
  
  
  
@@ -461,7 +412,6 @@ and management of the cases, identification and follow up of the contacts, infec
 health care settings, implementation of health measures for travelers, awareness-raising in the population and 
 risk communication. 
 
- 
  
  
 PREPAREDNESS AND RESPONSE 
@@ -507,20 +457,15 @@ COVID-19 infection detected in any individual country, to inform the development
 guidance to manage cases and reduce the potential spread and impact of infection. 
  
  
- 
- 
- 
- 
- 
-
- 
- 
 RECOMMENDATIONS AND ADVICE FOR THE PUBLIC 
  
 If you are not in an area where COVID-19 is spreading or have not travelled from an area where COVID-19 is 
 spreading or have not been in contact with an infected patient, your risk of infection is low. It is understandable that 
 you may feel anxious about the outbreak. Get the facts from reliable sources to help you accurately determine your 
 risks so that you can take reasonable precautions (see Frequently Asked Questions). Seek guidance from WHO, your 
+
+ 
+ 
 healthcare provider, your national public health authority or your employer for accurate information on COVID-19 
 and whether COVID-19 is circulating where you live. It is important to be informed of the situation and take 
 appropriate measures to protect yourself and your family (see Protection measures for everyone). 
@@ -565,6 +510,10 @@ A person with laboratory confirmation of COVID-19 infection, irrespective of cli
  
  `;
 
+"total\\s*\\n*\\d+\\s*\\d* \\d+ \\d+ \\d+ (\\d+) \\d+"
+"grand total\\n*\\S*\\n* \\d+\\s*\\d* \\d+ (\\d+) \\d+"
+"total\\s*\\n*\\d+\\s*\\n*\\d+ \\d+ \\d+ (\\d+) \\d+"
+
 router.get("/test", async (req, res, next) => {
   let m;
 
@@ -591,7 +540,7 @@ const findTrendByStringId = async (trendId) => {
   return trend._id;
 }
 
-const findParseURLForTrendId = (trendId, timestamp) => {
+const findParseURLForTrendId = (timestamp, timestampURL) => {
   const beginningOfReportstimetamp = moment('20200120', 'YYYYMMDD');
   const reportIndex = timestamp.diff(beginningOfReportstimetamp, 'days');
   if (reportIndex < 1 || isNaN(reportIndex)) {
@@ -599,17 +548,14 @@ const findParseURLForTrendId = (trendId, timestamp) => {
   }
 
   const mainURL = 'https://www.who.int/docs/default-source/coronaviruse/situation-reports/';
-  const finalURL = `${mainURL}${timestampURL}-sitrep-${reportIndex}-covid-19.pdf`;
+  return `${mainURL}${timestampURL}-sitrep-${reportIndex}-covid-19.pdf`;
 }
 
-const crawlTrendId = async (trendId, timestampURL) => {
-  const finalURL = findParseURLForTrendId(trendId, timestampURL);
+const crawlTrendId = async (timestamp, timestampURL) => {
+  const finalURL = findParseURLForTrendId(timestamp, timestampURL);
   const response = await crawler(finalURL);
   return response.text;
 }
-
-// const countryRegExp = /[\s\/\)\(\D&-]+(\d+) (\d+) (\d+) (\d+) (\D+) (\d+)/gmi;
-// const countryRegChina = `((?:\\w+\\s)+)(\\d+)\\s+(\\d+)\\s(\\d+)\\s(\\d+)\\s(\\d+)\\s(\\d+)`;
 
 class Cruncher {
   constructor(trendId, text, datasetElem, graphType, defaultXValue) {
@@ -626,90 +572,99 @@ class Cruncher {
       graph: mongoose.Types.ObjectId(graph._id),
       '$addToSet': {values: value}
     };
-    return await db.upsert(trendGraphsModel, data, {
-      trendId: this.trendId,
+    const graphElem = await db.upsert(trendGraphsModel, data, {
       dataset: data.dataset,
       graph: data.graph
     });
+    return await db.upsert(trendsModel, {
+      '$addToSet': {trendGraphs: graphElem._id}
+    }, { trendId: this.trendId});
+  }
+
+  async finaliseCrunch(dataName, wc) {
+    const graphElem = await graphAssistant.acquire(this.graphType, dataName);
+    const value = graphAssistant.prepareSingleValue(graphElem.type, this.defaultXValue, wc);
+    console.log( dataName + ", " + wc );
+    return await this.dataEntry(graphElem, value);
   }
 
   async crunch(dataName, regEx) {
     const wc = this.parser.regexFind(regEx);
-    if (wc === null) throw "cannot parse";
-    const graphElem = await graphAssistant.acquire(this.graphType, dataName);
-    const value = graphAssistant.prepareSingleValue(graphElem.type, this.defaultXValue, wc);
-    return await this.dataEntry(graphElem, value);
+    return await this.finaliseCrunch(dataName, wc);
   }
 
   async crunchParsed(dataName, wc) {
-    const graphElem = await graphAssistant.acquire(this.graphType, dataName);
-    const value = graphAssistant.prepareSingleValue(graphElem.type, this.defaultXValue, wc);
-    return await this.dataEntry(graphElem, value);
+    return await this.finaliseCrunch(dataName, wc);
   }
 
-  applyCountryPostTransformRule( nparse, source ) {
-     return countryAssistant.findSimple( nparse.sanitizeNewLines(source));
+  async crunchFromParser(dataName, regEx, nparser) {
+    const wc = nparser.regexFind(regEx);
+    return await this.finaliseCrunch(dataName, wc);
   }
 
-  applyPostTransformRule( nparse, pbt, match ) {
-    if ( pbt.algo === "matchCountryName" ) {
-      return this.applyCountryPostTransformRule( nparse, match );
+  getParserStartIndex(regex) {
+    if (regex) {
+      const pbr = RegExp(regex.body, regex.flags);
+      return this.parser.findIndex(pbr);
+    }
+    return 0;
+  }
+
+  getParserEndIndex(regex) {
+    if (regex) {
+      const pbr = RegExp(regex.body, regex.flags);
+      return this.parser.findIndex(pbr);
+    }
+    return this.parser.text.length;
+  }
+
+  checkTimeStampValid(validFrom, currTime) {
+    if (validFrom === undefined) return true;
+    return ( currTime >= moment(validFrom, "YYYYMMDD") );
+  }
+
+  applyCountryPostTransformRule(nparse, source) {
+    return countryAssistant.findSimple(nparse.sanitizeNewLines(source));
+  }
+
+  applyPostTransformRule(nparse, pbt, match) {
+    if (pbt.algo === "matchCountryName") {
+      return this.applyCountryPostTransformRule(nparse, match);
     }
     return match;
   }
 
-  async applyPost( match, nparse, pbt, title ) {
-    const elem = this.applyPostTransformRule( nparse, pbt, match[pbt.sourceIndex] );
+  async applyPost(match, nparse, pbt, title) {
+    const elem = this.applyPostTransformRule(nparse, pbt, match[pbt.sourceIndex]);
     const titleFinal = title.replace(pbt.dest, elem);
-    return await this.crunchParsed(titleFinal, match[pbt.valueIndex] );
+    return await this.crunchParsed(titleFinal, match[pbt.valueIndex]);
   }
 }
 
 router.post("/", async (req, res, next) => {
   try {
-    const trendId = await findTrendByStringId(req.body.trendId);
+    const trendId = req.body.trendId;
     const timestamp = moment(req.body.timestamp, req.body.timestampFormat);
-    const text = str;// crawlTrendId(trendId, req.body.timestamp)
+    const text = await crawlTrendId(timestamp, req.body.timestamp)
 
-    const datasetElem = await datasetAssistant.acquire(trendId, req.body.source, req.body.sourceName);
-    const crouncher = new Cruncher(trendId, text, datasetElem, graphAssistant.xyDateInt(), timestamp);
+    const datasetElem = await datasetAssistant.acquire( req.body.source, req.body.sourceName);
+    const cruncher = new Cruncher(trendId, text, datasetElem, graphAssistant.xyDateInt(), timestamp);
 
-    // const result = await crouncher.crunch("Worldwide Cases", /Globally[\n\r\s]*(\d+\s*\d*)\sconfirmed/mi );
     let results = [];
 
-    // for ( const p of req.body.parsers ) {
-    //   // const result = await crouncher.crunch("Worldwide Cases", /Globally[\n\r\s]*(\d+\s*\d*)\sconfirmed/mi );
-    //   const regEx = RegExp(p.regex.body, p.regex.flags);
-    //   const result = await crouncher.crunch(p.title, regEx );
-    //   results.push( result );
-    // }
-
-    const combinedParsers = req.body.parsersCombiners;
-    for (const pb of combinedParsers) {
-      let pi = 0;
-      let pe = crouncher.parser.text.length;
-      const startReg = pb.startRegex;
-      if (startReg) {
-        const pbr = RegExp(startReg.body, startReg.flags);
-        pi = crouncher.parser.findIndex(pbr);
-      }
-      const endReg = pb.endRegex;
-      if (endReg) {
-        const pbr = RegExp(endReg.body, endReg.flags);
-        pe = crouncher.parser.findIndex(pbr);
-      }
-      const nparse = new Parser(crouncher.parser.text.substring(pi, pe));
-      const regex = RegExp(pb.regex.body, pb.regex.flags);
-      const allres = nparse.findAll(regex);
-      const pbt = pb.postTransform;
-      for (const r of allres) {
-        const result = await crouncher.applyPost(r, nparse, pbt, pb.title);
-        results.push(result);
+    for (const p of req.body.parsers) {
+      if (cruncher.checkTimeStampValid(p.validFrom, timestamp)) {
+        const nparse = new Parser(cruncher.parser.text.substring(cruncher.getParserStartIndex(p.startRegex), cruncher.getParserEndIndex(p.endRegex)));
+        results.push(await cruncher.crunchFromParser(p.title, RegExp(p.regex.body, p.regex.flags), nparse));
       }
     }
 
-    // const worldWideDeaths = /Globally[\n\r\s]+\d+\s*\d*\sconfirmed[\n*\s\/\)\(\D&-]+\d+[\n*\s\/\)\(\D&-]+(\d+\s*\d*)/mi;
-    // const wd = parser.regexFind( worldWideDeaths );
+    for (const pb of req.body.parsersCombiners) {
+      const nparse = new Parser(cruncher.parser.text.substring(cruncher.getParserStartIndex(pb.startRegex), cruncher.getParserEndIndex(pb.endRegex)));
+      for (const r of nparse.findAll(RegExp(pb.regex.body, pb.regex.flags))) {
+        results.push(await cruncher.applyPost(r, nparse, pb.postTransform, pb.title));
+      }
+    }
 
     res.send(results);
   } catch (ex) {

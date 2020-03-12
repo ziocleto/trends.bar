@@ -29,6 +29,8 @@ export class Parser {
         result += this.parseIntWithSpaces(match[1]);
     }
 
+    if (result === null) throw "cannot parse " + regEx;
+
     return result;
   }
 

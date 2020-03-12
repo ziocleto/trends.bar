@@ -14,16 +14,19 @@ const TrendPage = props => {
   const trendId = props.trendId;
 
   const TREND_QUERY = gql`{
-      trendGraphs (trendId: "${trendId}") {
-          dataset {
-              source
-              sourceName
+      trend (trendId: "${trendId}") {
+          trendId
+          aliases
+          trendGraphs {
+              dataset {
+                  source
+                  sourceName
+              }
+              graph {
+                  label
+              }
+              values
           }
-          graph {
-              label
-              subLabel
-          }
-          values
       }
   }`;
 
@@ -32,8 +35,7 @@ const TrendPage = props => {
     setLoading(loadingStatus);
   }
 
-  console.log(data);
-  if ( data === undefined || data.trendGraphs.length === 0 ) {
+  if ( data === undefined || data.trend.trendGraphs.length === 0 ) {
     return <Fragment/>
   }
 
@@ -63,7 +65,7 @@ const TrendPage = props => {
 
   if (data) {
     let allPoints = [];
-    for (const trendGraph of data.trendGraphs) {
+    for (const trendGraph of data.trend.trendGraphs) {
       let dpoints = [];
       for (const p of trendGraph.values) {
         dpoints.push({x: new Date(p[0]), y: p[1]});
