@@ -24,6 +24,7 @@ const TrendPage = props => {
               }
               graph {
                   label
+                  subLabel
               }
               values
           }
@@ -35,7 +36,7 @@ const TrendPage = props => {
     setLoading(loadingStatus);
   }
 
-  if ( data === undefined || data.trend.trendGraphs.length === 0 ) {
+  if (data === undefined || data.trend.trendGraphs.length === 0) {
     return <Fragment/>
   }
 
@@ -67,15 +68,21 @@ const TrendPage = props => {
     let allPoints = [];
     for (const trendGraph of data.trend.trendGraphs) {
       let dpoints = [];
-      for (const p of trendGraph.values) {
-        dpoints.push({x: new Date(p[0]), y: p[1]});
+      if ((trendGraph.graph.label === "Cases" && trendGraph.graph.subLabel === "Worldwide") ||
+        (trendGraph.graph.label === "Deaths" && trendGraph.graph.subLabel === "Worldwide")) {
+        for (const p of trendGraph.values) {
+          dpoints.push({x: new Date(p[0]), y: p[1]});
+        }
+        dpoints.sort(sortByXGraph);
+        allPoints.push(dpoints);
       }
-      dpoints.sort(sortByXGraph);
-      allPoints.push(dpoints);
     }
 
     const option = {
       ...optionsBase,
+      title: {
+        text:"Worldwide situation",
+      },
       theme: "dark1",
       data: [{
         type: "splineArea",
@@ -87,7 +94,9 @@ const TrendPage = props => {
         }]
     };
     chartsOptions.push(option);
+    console.log(allPoints);
   }
+
 
   return (
     <div className="trend-layout">

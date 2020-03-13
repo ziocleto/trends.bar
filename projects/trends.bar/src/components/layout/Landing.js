@@ -3,7 +3,7 @@ import {useGlobal} from 'reactn';
 import {sanitize} from "../../utils/utils";
 
 const Landing = () => {
-  const [,setTrend] = useGlobal('trendId');
+  const [,setTrend] = useGlobal("trendId");
   const searchBox = useRef(null);
 
   useEffect(() => {
@@ -29,7 +29,7 @@ const Landing = () => {
             id="search-bar"
             onKeyUp={e => {
               if (e.keyCode === 13) {
-                setTrend(sanitize(e.target.value));
+                setTrend(sanitize(e.target.value)).then();
               }
             }}
           />
