@@ -1,6 +1,13 @@
 import {trendGraphsModel, trendsModel} from "../models/models";
 import moment from "moment";
-import {Parser} from "../assistants/parser-assistant";
+import {
+  parseIntWithSpaces,
+  Parser,
+  regExResolver,
+  regExResolverAccumulator,
+  regExResolverPostTransform,
+  regExResolverSingle, sanitizeNewLines
+} from "../assistants/parser-assistant";
 import * as countryAssistant from "../assistants/country-assistant";
 
 const express = require("express");
@@ -13,12 +20,6 @@ const db = require("../db");
 const crawler = require('crawler-request');
 const mongoose = require("mongoose");
 
-"total (\\d+\\s*\\d*) \\d+ \\d+ \\d+ \\d+ \\d+"
-
-"[\\s\\/\\)\\(\\D&-]+(\\d+) (\\d+) (\\d+) (\\d+) (\\D+) (\\d+)"
-"table 2\\."
-
-const regex = /[\s\/\)\(\D&-]+(\d+) (\d+) (\d+) (\d+) (\D+) (\d+)/gmi;
 const str = `
 
  
@@ -510,31 +511,6 @@ A person with laboratory confirmation of COVID-19 infection, irrespective of cli
  
  `;
 
-"total\\s*\\n*\\d+\\s*\\d* \\d+ \\d+ \\d+ (\\d+) \\d+"
-"grand total\\n*\\S*\\n* \\d+\\s*\\d* \\d+ (\\d+) \\d+"
-"total\\s*\\n*\\d+\\s*\\n*\\d+ \\d+ \\d+ (\\d+) \\d+"
-
-router.get("/test", async (req, res, next) => {
-  let m;
-
-  const startIndex = str.search("Table 2.");
-  if (startIndex != -1) {
-    const str1 = str.slice(startIndex, str.length);
-    while ((m = regex.exec(str1)) !== null) {
-      // This is necessary to avoid infinite loops with zero-width matches
-      if (m.index === regex.lastIndex) {
-        regex.lastIndex++;
-      }
-
-      // The result can be accessed through the `m`-variable.
-      m.forEach((match, groupIndex) => {
-        console.log(`Found match, group ${groupIndex}: ${match}`);
-      });
-    }
-  }
-  res.send();
-});
-
 const findTrendByStringId = async (trendId) => {
   const trend = await db.findOne(trendsModel, {trendId: trendId});
   return trend._id;
@@ -555,6 +531,10 @@ const crawlTrendId = async (timestamp, timestampURL) => {
   const finalURL = findParseURLForTrendId(timestamp, timestampURL);
   const response = await crawler(finalURL);
   return response.text;
+}
+
+const makeRegExpFromJSON = json => {
+  return RegExp(json.body, json.flags);
 }
 
 class Cruncher {
@@ -578,33 +558,37 @@ class Cruncher {
     });
     return await db.upsert(trendsModel, {
       '$addToSet': {trendGraphs: graphElem._id}
-    }, { trendId: this.trendId});
+    }, {trendId: this.trendId});
   }
 
-  async finaliseCrunch(dataName, wc) {
-    const graphElem = await graphAssistant.acquire(this.graphType, dataName);
+  checkTimeStampValid(validRange, currTime) {
+    if (validRange === undefined) return true;
+    const from = moment(validRange.from, "YYYYMMDD");
+    const to = moment(validRange.to, "YYYYMMDD");
+    return currTime.isBetween(from, to, null, '[]');
+  }
+
+  applyCountryPostTransformRule(source) {
+    return countryAssistant.findSimple(sanitizeNewLines(source));
+  }
+
+  applyPostTransformRule(pbt, match) {
+    if (pbt.algo === "matchCountryName") {
+      return this.applyCountryPostTransformRule(match);
+    }
+    return match;
+  }
+
+  async finaliseCrunch(key, title, wc) {
+    const graphElem = await graphAssistant.acquire(this.graphType, key, title);
     const value = graphAssistant.prepareSingleValue(graphElem.type, this.defaultXValue, wc);
-    console.log( dataName + ", " + wc );
+    console.log(key, title + ", " + wc);
     return await this.dataEntry(graphElem, value);
-  }
-
-  async crunch(dataName, regEx) {
-    const wc = this.parser.regexFind(regEx);
-    return await this.finaliseCrunch(dataName, wc);
-  }
-
-  async crunchParsed(dataName, wc) {
-    return await this.finaliseCrunch(dataName, wc);
-  }
-
-  async crunchFromParser(dataName, regEx, nparser) {
-    const wc = nparser.regexFind(regEx);
-    return await this.finaliseCrunch(dataName, wc);
   }
 
   getParserStartIndex(regex) {
     if (regex) {
-      const pbr = RegExp(regex.body, regex.flags);
+      const pbr = makeRegExpFromJSON(regex);
       return this.parser.findIndex(pbr);
     }
     return 0;
@@ -612,65 +596,100 @@ class Cruncher {
 
   getParserEndIndex(regex) {
     if (regex) {
-      const pbr = RegExp(regex.body, regex.flags);
+      const pbr = makeRegExpFromJSON(regex);
       return this.parser.findIndex(pbr);
     }
     return this.parser.text.length;
   }
 
-  checkTimeStampValid(validFrom, currTime) {
-    if (validFrom === undefined) return true;
-    return ( currTime >= moment(validFrom, "YYYYMMDD") );
-  }
-
-  applyCountryPostTransformRule(nparse, source) {
-    return countryAssistant.findSimple(nparse.sanitizeNewLines(source));
-  }
-
-  applyPostTransformRule(nparse, pbt, match) {
-    if (pbt.algo === "matchCountryName") {
-      return this.applyCountryPostTransformRule(nparse, match);
+  async applyPost(match, pbt, title) {
+    let r1 = title;
+    let r2 = match[1];
+    if (pbt) {
+      const elem = this.applyPostTransformRule(pbt, match[pbt.sourceIndex]);
+      const titleFinal = title.replace(pbt.dest, elem);
+      r1 = titleFinal;
+      r2 = match[pbt.valueIndex];
     }
-    return match;
+    return {title: r1, y: parseIntWithSpaces(r2)}
   }
 
-  async applyPost(match, nparse, pbt, title) {
-    const elem = this.applyPostTransformRule(nparse, pbt, match[pbt.sourceIndex]);
-    const titleFinal = title.replace(pbt.dest, elem);
-    return await this.crunchParsed(titleFinal, match[pbt.valueIndex]);
+  async crunchAction(key, title, action) {
+    const nparse = new Parser(this.parser.text.substring(this.getParserStartIndex(action.startRegex),
+      this.getParserEndIndex(action.endRegex)));
+
+    let results = [];
+    const resolver = regExResolver(action.regex);
+    const regex = makeRegExpFromJSON(action.regex);
+    if (resolver === regExResolverSingle) {
+      results.push( { y: parseIntWithSpaces(nparse.find(regex)[1]), title });
+    } else if (resolver === regExResolverAccumulator) {
+      results.push( { y: nparse.findAllAccumulate(regex), title });
+    } else if (resolver === regExResolverPostTransform) {
+      for (const r of nparse.findAll(regex)) {
+        results.push( await this.applyPost(r, action.postTransform, title) );
+      }
+    }
+
+    for ( const result of results ) {
+      await this.finaliseCrunch(key, result.title, result.y);
+    }
+
+  }
+
+  async crunchFunctions(f, xValue) {
+    for (const dataset of f.datasets) {
+      const title = dataset.title;
+      for (const action of dataset.actions) {
+        if (this.checkTimeStampValid(action.validRange, xValue)) {
+          this.crunchAction(f.key, title, action);
+          break;
+        }
+      }
+    }
+  }
+
+  async crunch(query) {
+    for (const f of query.functions) {
+      await this.crunchFunctions(f, this.defaultXValue);
+    }
   }
 }
+
+router.get("/hm/:timestamp", async (req, res, next) => {
+  try {
+    await db.delete(trendGraphsModel, moment(req.body.timestamp, "YYYYMMDD"));
+  } catch (e) {
+    console.log("Error: ", e);
+    res.sendStatus(400);
+  }
+});
 
 router.post("/", async (req, res, next) => {
   try {
     const trendId = req.body.trendId;
     const timestamp = moment(req.body.timestamp, req.body.timestampFormat);
-    const text = await crawlTrendId(timestamp, req.body.timestamp)
+    const text = str;//await crawlTrendId(timestamp, req.body.timestamp)
 
-    const datasetElem = await datasetAssistant.acquire( req.body.source, req.body.sourceName);
+    const datasetElem = await datasetAssistant.acquire(req.body.source, req.body.sourceName);
     const cruncher = new Cruncher(trendId, text, datasetElem, graphAssistant.xyDateInt(), timestamp);
 
-    let results = [];
+    await cruncher.crunch(req.body);
 
-    for (const p of req.body.parsers) {
-      if (cruncher.checkTimeStampValid(p.validFrom, timestamp)) {
-        const nparse = new Parser(cruncher.parser.text.substring(cruncher.getParserStartIndex(p.startRegex), cruncher.getParserEndIndex(p.endRegex)));
-        results.push(await cruncher.crunchFromParser(p.title, RegExp(p.regex.body, p.regex.flags), nparse));
-      }
-    }
+    // for (const pb of req.body.parsersCombiners) {
+    //   const nparse = new Parser(cruncher.parser.text.substring(cruncher.getParserStartIndex(pb.startRegex), cruncher.getParserEndIndex(pb.endRegex)));
+    //   for (const r of nparse.findAll(RegExp(pb.regex.body, pb.regex.flags))) {
+    //     results.push(await cruncher.applyPost(r, nparse, pb.postTransform, pb.title));
+    //   }
+    // }
 
-    for (const pb of req.body.parsersCombiners) {
-      const nparse = new Parser(cruncher.parser.text.substring(cruncher.getParserStartIndex(pb.startRegex), cruncher.getParserEndIndex(pb.endRegex)));
-      for (const r of nparse.findAll(RegExp(pb.regex.body, pb.regex.flags))) {
-        results.push(await cruncher.applyPost(r, nparse, pb.postTransform, pb.title));
-      }
-    }
-
-    res.send(results);
-  } catch (ex) {
+    res.send("OK");
+  } catch
+    (ex) {
     console.log("Crawling error: ", ex);
     res.sendStatus(400);
   }
-});
+})
+;
 
 module.exports = router;

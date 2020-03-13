@@ -223,6 +223,17 @@ exports.upsert = async ( model, data, query = {}, options = {}) => {
   return model.findOneAndUpdate(queryFinal, data, {new: true,upsert: true, ...options});
 }
 
+exports.delete = async ( model, timestamp ) => {
+  const graphs = await model.find({});
+  console.log(graphs)
+  for ( let graph of graphs ) {
+    const filtered = graph.values.filter( (v) => { return v[0] <= timestamp;});
+    graph.values = filtered;
+    console.log("graph new:", graph);
+    await exports.upsert(model, graph, { _id: graph._id} );
+  }
+}
+
 exports.findOne = async ( model, query ) => {
   return model.findOne(query);
 }

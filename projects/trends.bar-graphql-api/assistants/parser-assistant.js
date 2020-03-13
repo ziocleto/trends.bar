@@ -4,33 +4,44 @@ const mongoose = require("mongoose");
 const db = require("../db");
 const graphAssistant = require("../assistants/graph-assistant");
 
+export const regExResolverSingle = "single";
+export const regExResolverAccumulator = "accumulator";
+export const regExResolverPostTransform = "postTransform";
+
+export const regExResolver = ( jsonRegEx ) => {
+  if ( jsonRegEx.resolver ) {
+    if ( jsonRegEx.resolver === "accumulator" ) {
+      return regExResolverAccumulator;
+    } else if ( jsonRegEx.resolver === "postTransform" ) {
+      return regExResolverPostTransform;
+    }
+  }
+  return regExResolverSingle;
+}
+
+export const parseIntWithSpaces = (value) => {
+  return parseInt(value.replace(/ /g, ''));
+}
+
+export const sanitizeNewLines = (value) => {
+  return value.replace(/\n/g, '');
+}
+
 export class Parser {
   constructor(text) {
     this.text = text;
   }
 
-  parseIntWithSpaces(value) {
-    return parseInt(value.replace(/ /g, ''));
-  }
-
-  sanitizeNewLines(value) {
-    return value.replace(/\n/g, '');
-  }
-
-  regexFind(regEx) {
-
-    let result = 0;
-
+  findAllAccumulate(regEx) {
     const matches = [...this.text.matchAll( regEx )];
     if ( matches.length === 0 ) {
-      return null;
+      throw "findAllAccumulate failed";
     }
+
+    let result = 0;
     for ( const match of matches ) {
-        result += this.parseIntWithSpaces(match[1]);
+        result += parseIntWithSpaces(match[1]);
     }
-
-    if (result === null) throw "cannot parse " + regEx;
-
     return result;
   }
 
