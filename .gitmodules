@@ -1,3 +1,6 @@
 [submodule "event_horizon"]
 	path = event_horizon
 	url = git@github.com:ateventhorizon/event_horizon.git
+[submodule "projects/trends.bar/src/futuremodules"]
+	path = projects/trends.bar/src/futuremodules
+	url = git@github.com:ziocleto/futuremodules.git

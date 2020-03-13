@@ -1,11 +1,9 @@
-import React, {Fragment} from "react";
+import React from "react";
 import {useGlobal} from "reactn";
-import Spinner from "./Spinner";
 
 const Navbar = (props) => {
 
   const [, setTrend] = useGlobal('trendId');
-  const [loading] = useGlobal('loading');
 
   return (
     <div className="navbarGrid">
@@ -13,14 +11,7 @@ const Navbar = (props) => {
         <a href="/" onClick={() => {
           setTrend(null);
         }}>
-          {loading ? (
-            <Fragment>
-              <Spinner animation="border" variant="warning" size="sm"/>
-              <div className="backdropModal"/>
-            </Fragment>
-          ) : (
             <img src="/ehlogo.svg" alt=""/>
-          )}
         </a>
       </div>
       <div className="navbareh-a navdiv-titletext">

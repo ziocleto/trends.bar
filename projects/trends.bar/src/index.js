@@ -9,7 +9,7 @@ import {InMemoryCache} from 'apollo-cache-inmemory'
 import {BrowserRouter} from "react-router-dom";
 
 const httpLink = createHttpLink({
-  uri: `http://${process.env.REACT_APP_EH_CLOUD_HOST}:4500/graphql`
+  uri: `https://${process.env.REACT_APP_EH_CLOUD_HOST}/gapi/graphql/`
 })
 
 const client = new ApolloClient({

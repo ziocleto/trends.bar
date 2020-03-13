@@ -1,7 +1,7 @@
 import React, {Fragment} from "react";
 import { useHistory, useLocation } from 'react-router-dom';
-import Landing from "./components/layout/Landing";
-import Navbar from "./components/layout/Navbar";
+import Landing from "./components/Landing";
+import Navbar from "./components/Navbar";
 
 import {initHostEnv} from "./HostEnv";
 
@@ -9,7 +9,7 @@ import {DBConfig} from "./DBConfig";
 import {initDB} from "react-indexed-db";
 import {setGlobal, useGlobal} from 'reactn';
 import "./App.css";
-import TrendPage from "./components/layout/TrendPage";
+import TrendPage from "./components/TrendPage";
 import {sanitize} from "./utils/utils";
 
 setGlobal({

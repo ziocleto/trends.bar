@@ -1,6 +1,6 @@
 import React, {useEffect, useRef} from "react";
 import {useGlobal} from 'reactn';
-import {sanitize} from "../../utils/utils";
+import {sanitize} from "../utils/utils";
 
 const Landing = () => {
   const [,setTrend] = useGlobal("trendId");

@@ -1,9 +1,10 @@
 import React, {Fragment} from "react";
-import CanvasJSReact from '../../assets/canvasjs.react';
+import CanvasJSReact from '../assets/canvasjs.react';
 import {FlexContainer, TrendGraph, TrendGrid} from "./TrendPageStyle";
 import gql from "graphql-tag";
 import {useQuery} from "@apollo/react-hooks";
 import {useGlobal} from "reactn";
+import {Button} from "react-bootstrap";
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
@@ -97,13 +98,13 @@ const TrendPage = props => {
     console.log(allPoints);
   }
 
+  const updateTrend = () => {};
 
   return (
     <div className="trend-layout">
       <TrendGrid>
+        <Button onClick={updateTrend}>Update</Button>
         <FlexContainer>
-          <div>
-          </div>
           {chartsOptions && chartsOptions.map(item =>
             <TrendGraph>
               <CanvasJSChart key={item.key} options={item}/>
