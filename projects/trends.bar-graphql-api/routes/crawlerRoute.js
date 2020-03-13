@@ -669,7 +669,7 @@ router.post("/", async (req, res, next) => {
   try {
     const trendId = req.body.trendId;
     const timestamp = moment(req.body.timestamp, req.body.timestampFormat);
-    const text = str;//await crawlTrendId(timestamp, req.body.timestamp)
+    const text = await crawlTrendId(timestamp, req.body.timestamp)
 
     const datasetElem = await datasetAssistant.acquire(req.body.source, req.body.sourceName);
     const cruncher = new Cruncher(trendId, text, datasetElem, graphAssistant.xyDateInt(), timestamp);
