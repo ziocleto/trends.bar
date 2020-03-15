@@ -49,7 +49,7 @@ const typeDefs = gql`
     type Trend {
         _id: ID!
         trendId: String!
-        aliases: [ String! ]!
+        aliases: [ String! ]
         trendGraphs: [TrendGraph]
     }
 
@@ -58,6 +58,9 @@ const typeDefs = gql`
         trend(trendId: String!): Trend
     }
 
+    type Mutation {
+        createTrend(trendId: String!): Trend
+    }
 `;
 
 const resolvers = {
@@ -65,6 +68,12 @@ const resolvers = {
     trendGraph: (_, {id}, {dataSources}) => dataSources.trendGraphs.getTrendGraph(id),
     trend: (_, {trendId}, {dataSources}) => dataSources.trends.getTrend(trendId)
   },
+
+  Mutation: {
+    createTrend(parent, args, {dataSources}) {
+      return dataSources.trends.createTrend(args.trendId);
+    },
+  }
 };
 
 db.initDB();
@@ -84,6 +93,11 @@ class TrendsDataSource extends MongoDataSource {
     const res = await pop.exec();
     return res.toObject();
   }
+
+  async createTrend( trendId ) {
+    return await db.upsert(this.model,{trendId} );
+  }
+
 }
 
 const server = new ApolloServer(

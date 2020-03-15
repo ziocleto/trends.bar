@@ -1,24 +1,19 @@
 import React, {Fragment} from "react";
-import { useHistory, useLocation } from 'react-router-dom';
+import {useHistory, useLocation} from 'react-router-dom';
 import Landing from "./components/Landing";
 import Navbar from "./components/Navbar";
-
-import {initHostEnv} from "./HostEnv";
-
-import {DBConfig} from "./DBConfig";
-import {initDB} from "react-indexed-db";
 import {setGlobal, useGlobal} from 'reactn';
 import "./App.css";
 import TrendPage from "./components/TrendPage";
-import {sanitize} from "./utils/utils";
+import {sanitizePathRoot} from "./futuremodules/utils/utils";
+import {initEH} from "./init";
 
 setGlobal({
   trendId: null,
   loading: false
 });
 
-initHostEnv();
-initDB(DBConfig);
+initEH();
 
 const router = (path, trendId, history) => {
   let ret = (<Landing/>);
@@ -39,7 +34,7 @@ const App = () => {
   let location = useLocation();
   const [trend] = useGlobal('trendId');
   const path = trend ? "/"+ trend : location.pathname;
-  const trendId = sanitize(path);
+  const trendId = sanitizePathRoot(path);
 
   return (
     <Fragment>

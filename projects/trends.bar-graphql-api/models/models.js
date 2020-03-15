@@ -19,7 +19,6 @@ export const trendGraphsModel = mongoose.model("trend_graphs", new mongoose.Sche
 }, {strict: false}));
 
 export const trendsModel = mongoose.model("trends", new mongoose.Schema({
-  trendId: {type: String},
-  values: [String],
+  trendId: {type: String, unique: true},
   trendGraphs: [{type: mongoose.Schema.Types.ObjectId, ref: 'trend_graphs'}]
 }, {strict: false}));

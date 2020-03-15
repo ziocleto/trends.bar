@@ -1,9 +1,11 @@
 import React, {useEffect, useRef} from "react";
 import {useGlobal} from 'reactn';
-import {sanitize} from "../utils/utils";
+import {sanitizePathRoot} from "../futuremodules/utils/utils";
+import gql from "graphql-tag";
+import {useMutation} from "@apollo/react-hooks";
 
 const Landing = () => {
-  const [,setTrend] = useGlobal("trendId");
+  const [, setTrend] = useGlobal("trendId");
   const searchBox = useRef(null);
 
   useEffect(() => {
@@ -12,6 +14,16 @@ const Landing = () => {
       searchBox.current.select();
     }
   }, []);
+
+  const CREATE_TREND = gql`
+      mutation CreateTrend($trendId: String!) {
+          createTrend(trendId: $trendId) {
+              _id,
+              trendId
+          }
+      }`;
+
+  const [createTrend] = useMutation(CREATE_TREND);
 
   return (
     <section className="landing">
@@ -29,7 +41,9 @@ const Landing = () => {
             id="search-bar"
             onKeyUp={e => {
               if (e.keyCode === 13) {
-                setTrend(sanitize(e.target.value)).then();
+                const trendId = sanitizePathRoot(e.target.value);
+                setTrend(trendId).then();
+                createTrend({ variables: { trendId: trendId } }).then();
               }
             }}
           />
