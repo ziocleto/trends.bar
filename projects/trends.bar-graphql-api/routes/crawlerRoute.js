@@ -522,10 +522,18 @@ const findParseURLForTrendId = (timestamp, timestampURL) => {
   if (reportIndex < 1 || isNaN(reportIndex)) {
     throw "Invalid date selected for report";
   }
+  let mainURL = 'https://www.who.int/docs/default-source/coronaviruse/situation-reports/';
 
-  const mainURL = 'https://www.who.int/docs/default-source/coronaviruse/situation-reports/';
+  // Well this is a weird case WHO... They've totally got the wrong URL :O
+  if ( timestampURL === "20200312" ) {
+    mainURL = 'https://www.who.int/docs/default-source/wrindia/situation-report/';
+  }
+
   return `${mainURL}${timestampURL}-sitrep-${reportIndex}-covid-19.pdf`;
 }
+
+//https://www.who.int/docs/default-source/coronaviruse/situation-reports/20200312-sitrep-52-covid-19.pdf
+//https://www.who.int/docs/default-source/wrindia/situation-report/20200312-sitrep-52-covid-19.pdf
 
 const crawlTrendId = async (timestamp, timestampURL) => {
   const finalURL = findParseURLForTrendId(timestamp, timestampURL);

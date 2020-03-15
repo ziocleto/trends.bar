@@ -1,5 +1,5 @@
 import React, {Fragment} from "react";
-import {useHistory, useLocation} from 'react-router-dom';
+import {Route, Switch, useLocation} from 'react-router-dom';
 import Landing from "./components/Landing";
 import Navbar from "./components/Navbar";
 import {setGlobal, useGlobal} from 'reactn';
@@ -15,31 +15,20 @@ setGlobal({
 
 initEH();
 
-const router = (path, trendId, history) => {
-  let ret = (<Landing/>);
-
-  if (path !== "/") {
-    ret = <TrendPage trendId={trendId}/>
-  }
-
-  if ( path !== history.location.pathname ) {
-    history.push(path);
-  }
-
-  return ret;
-}
-
 const App = () => {
-  let history = useHistory();
   let location = useLocation();
   const [trend] = useGlobal('trendId');
-  const path = trend ? "/"+ trend : location.pathname;
-  const trendId = sanitizePathRoot(path);
+  const trendId = sanitizePathRoot(trend ? trend : location.pathname);
 
   return (
     <Fragment>
       <Navbar trendId={trendId}/>
-      {router(path, trendId, history)}
+      <Switch>
+        <Route exact path="/">
+          <Landing/>
+        </Route>
+        <Route path="/:trendId" component={TrendPage}/>
+      </Switch>
     </Fragment>
   );
 };

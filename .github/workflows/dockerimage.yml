@@ -12,6 +12,7 @@ jobs:
     - uses: actions/checkout@master
       with:
         lfs: true
+        submodules: true
     - uses: webfactory/ssh-agent@v0.2.0
       with:
         ssh-private-key: ${{ secrets.SECRET_PRIVATE_DEPLOY_KEY }}

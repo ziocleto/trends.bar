@@ -1,11 +1,10 @@
 import React, {useEffect, useRef} from "react";
 import {useGlobal} from 'reactn';
 import {sanitizePathRoot} from "../futuremodules/utils/utils";
-import gql from "graphql-tag";
-import {useMutation} from "@apollo/react-hooks";
+import {Redirect} from "react-router-dom";
 
 const Landing = () => {
-  const [, setTrend] = useGlobal("trendId");
+  const [trendId, setTrend] = useGlobal("trendId");
   const searchBox = useRef(null);
 
   useEffect(() => {
@@ -15,15 +14,17 @@ const Landing = () => {
     }
   }, []);
 
-  const CREATE_TREND = gql`
-      mutation CreateTrend($trendId: String!) {
-          createTrend(trendId: $trendId) {
-              _id,
-              trendId
-          }
-      }`;
+  if ( trendId !== null ) {
+    return <Redirect push={true} to={`/${trendId}`}/>
+  }
+  console.log( "TrendId current: ", trendId);
 
-  const [createTrend] = useMutation(CREATE_TREND);
+  const keyUpCallback = (e) => {
+    if (e.keyCode === 13) {
+      const trendId = sanitizePathRoot(e.target.value);
+      setTrend(trendId).then();
+    }
+  }
 
   return (
     <section className="landing">
@@ -39,13 +40,7 @@ const Landing = () => {
             type="text"
             className="search-bar"
             id="search-bar"
-            onKeyUp={e => {
-              if (e.keyCode === 13) {
-                const trendId = sanitizePathRoot(e.target.value);
-                setTrend(trendId).then();
-                createTrend({ variables: { trendId: trendId } }).then();
-              }
-            }}
+            onKeyUp={e=>keyUpCallback(e)}
           />
         </div>
       </div>
