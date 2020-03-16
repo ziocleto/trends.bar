@@ -8,3 +8,10 @@ export const CREATE_TREND = gql`
         }
     }`;
 
+export const UPSERT_TREND_GRAPH = gql`
+    mutation UpsertTrendGraph($script: CrawlingScript!) {
+        upsertTrendGraph(script: $script) {
+            _id,
+            trendId
+        }
+    }`;

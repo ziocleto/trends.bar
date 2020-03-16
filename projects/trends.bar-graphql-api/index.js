@@ -3,6 +3,11 @@ import {MongoDataSource} from 'apollo-datasource-mongodb'
 import BigInt from "apollo-type-bigint";
 import {trendGraphsModel, trendsModel} from "./models/models";
 import {PubSub} from "graphql-subscriptions";
+import moment from "moment";
+const graphAssistant = require("./assistants/graph-assistant");
+const datasetAssistant = require("./assistants/dataset-assistant");
+
+import {crawlTrendId, Cruncher} from "./assistants/cruncher-assistant";
 const http = require('http');
 
 const pubsub = new PubSub();
@@ -22,17 +27,18 @@ const db = require("./db");
 // }
 
 const TREND_MUTATED = 'trendMutated';
+const TREND_GRAPH_MUTATED = 'trenGraphMutated';
 
-const Long = new GraphQLObjectType({
-  name: 'Long',
-  fields: {
-    numberField: {
-      type: BigInt,
-      // this would throw an error with the GraphQLInt
-      resolve: () => Number.MAX_SAFE_INTEGER
-    }
-  }
-})
+// const Long = new GraphQLObjectType({
+//   name: 'Long',
+//   fields: {
+//     numberField: {
+//       type: BigInt,
+//       // this would throw an error with the GraphQLInt
+//       resolve: () => Number.MAX_SAFE_INTEGER
+//     }
+//   }
+// })
 
 const typeDefs = gql`
     scalar BigInt
@@ -57,7 +63,7 @@ const typeDefs = gql`
         graph: GraphLayout!
         values: [ [BigInt!]! ]!
     }
-
+    
     type Trend {
         _id: ID!
         trendId: String!
@@ -70,12 +76,63 @@ const typeDefs = gql`
         trend(trendId: String!): Trend
     }
 
+    input CrawlingRegexp {
+        body: String!
+        flags: String
+        resolver: String
+    }
+    
+    input CrawlingDateRange {
+        from: String!
+        to: String!
+    }
+    
+    input CrawlingPostTransform {
+        transform: String
+        source: String
+        sourceIndex: Int
+        valueIndex: Int
+        dest: String
+        algo: String
+    }
+    
+    input CrawlingActions {
+        regex: CrawlingRegexp
+        startRegex: CrawlingRegexp
+        endRegex: CrawlingRegexp
+        validRange: CrawlingDateRange
+        postTransform: CrawlingPostTransform
+    }
+    
+    input CrawlingDatasets {
+        title: String
+        actions: [CrawlingActions]
+    }
+    
+    input CrawlingFunctions {
+        type: String
+        key: String
+        datasets: [CrawlingDatasets]
+    }
+    
+    input CrawlingScript {
+        trendId: String
+        source: String
+        sourceName: String
+        graphType: [String]
+        timestamp: String
+        timestampFormat: String
+        functions: [CrawlingFunctions]        
+    }
+
     type Mutation {
         createTrend(trendId: String!): Trend
+        upsertTrendGraph(script: CrawlingScript!): TrendGraph
     }
 
     type Subscription {
         trendMutated: trendMutationPayload
+        trendGraphMutated: trendMutationPayload
     }
 
     type trendMutationPayload {
@@ -92,9 +149,10 @@ const resolvers = {
   },
 
   Mutation: {
+
     async createTrend(parent, args, {dataSources}) {
       const newTrend = await dataSources.trends.createTrend(args.trendId);
-      pubsub.publish(TREND_MUTATED, {
+      await pubsub.publish(TREND_MUTATED, {
         trendMutated: {
           mutation: 'CREATED',
           node: newTrend
@@ -102,11 +160,26 @@ const resolvers = {
       });
       return newTrend;
     },
+
+    async upsertTrendGraph(parent, args, {dataSources}) {
+      const ret = await dataSources.trendGraphs.upsertTrendGraph(args.script);
+      console.log("Sending to pubsub: ", ret );
+      await pubsub.publish(TREND_GRAPH_MUTATED, {
+        trendGraphMutated: {
+          mutation: 'UPDATED',
+          node: ret
+        }
+      });
+      return ret;
+    },
   },
 
   Subscription: {
     trendMutated: {
       subscribe: () => pubsub.asyncIterator([TREND_MUTATED])
+    },
+    trendGraphMutated: {
+      subscribe: () => pubsub.asyncIterator([TREND_GRAPH_MUTATED])
     }
   },
 
@@ -132,6 +205,19 @@ class TrendsDataSource extends MongoDataSource {
 
   async createTrend( trendId ) {
     return await db.upsert(this.model,{trendId} );
+  }
+
+  async upsertTrendGraph( script ) {
+    const trendId = script.trendId;
+    const timestamp = moment(script.timestamp, script.timestampFormat);
+    const text = await crawlTrendId(timestamp,script.timestamp);
+
+    const datasetElem = await datasetAssistant.acquire(script.source, script.sourceName);
+    const cruncher = new Cruncher(trendId, text, datasetElem, graphAssistant.xyDateInt(), timestamp);
+
+    await cruncher.crunch(script);
+
+    return await this.getTrend(trendId);
   }
 
 }

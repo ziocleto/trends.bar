@@ -12,6 +12,11 @@ export const graphLayoutModel = mongoose.model("graph_layouts", new mongoose.Sch
   type: {type: String}
 }, {strict: false}));
 
+export const crawlingScriptModel = mongoose.model("crawling_scripts", new mongoose.Schema({
+  name: {type: String},
+  script: {type: String},
+}, {strict: false}));
+
 export const trendGraphsModel = mongoose.model("trend_graphs", new mongoose.Schema({
   values: [[Number]],
   dataset: {type: mongoose.Schema.Types.ObjectId, ref: 'datasets'},
