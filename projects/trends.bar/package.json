@@ -10,6 +10,7 @@
     "bootstrap": "^4.4.1",
     "codemirror": "^5.52.0",
     "graphql": "^14.6.0",
+    "graphql-tag": "latest",
     "jqwidgets-scripts": "^9.0.0",
     "js-base64": "^2.5.2",
     "jszip": "^3.2.2",
@@ -39,9 +40,9 @@
     "redux-devtools-extension": "^2.13.8",
     "redux-thunk": "^2.3.0",
     "styled-components": "^5.0.1",
+    "subscriptions-transport-ws": "^0.9.16",
     "tar-stream": "^2.1.0",
-    "websocket": "^1.0.31",
-    "graphql-tag": "latest"
+    "websocket": "^1.0.31"
   },
   "scripts": {
     "start": "react-scripts start",

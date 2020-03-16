@@ -11,10 +11,32 @@ import {CREATE_TREND} from "../modules/trends/trendMutations";
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
+// const TREND_MUTATED = gql`
+//     subscription TrendMutated {
+//         trendMutated {
+//             mutation
+//             node {
+//                 _id
+//                 trendId
+//             }
+//         }
+//     }
+// `;
+
 const TrendPage = props => {
 
   const trendId = sanitizePathRoot(props.match.url);
   const [createTrend] = useMutation(CREATE_TREND);
+
+  // const subres = useSubscription(TREND_MUTATED,
+  //   // {
+  //   //   onSubscriptionData: ({client, subscriptionData}) => {
+  //   //     // Get the current value of authors query
+  //   //     console.log(subscriptionData);
+  //   //   }
+  //   // }
+  // );
+  // console.log("Subscription: ", subres);
 
   useEffect(() => {
     createTrend({variables: {trendId: trendId}}).then();

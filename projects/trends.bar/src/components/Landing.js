@@ -17,7 +17,6 @@ const Landing = () => {
   if ( trendId !== null ) {
     return <Redirect push={true} to={`/${trendId}`}/>
   }
-  console.log( "TrendId current: ", trendId);
 
   const keyUpCallback = (e) => {
     if (e.keyCode === 13) {
