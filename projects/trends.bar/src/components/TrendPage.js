@@ -1,6 +1,6 @@
-import React, {Fragment, useEffect, useReducer, useState} from "react";
+import React, {Fragment, useEffect, useReducer} from "react";
 import CanvasJSReact from '../assets/canvasjs.react';
-import {FlexContainer, TrendGrid} from "./TrendPageStyle";
+import {FlexContainer, TrendGrid, TrendLayout} from "./TrendPageStyle";
 import {Button} from "react-bootstrap";
 import {useQueryData} from "../futuremodules/graphqlclient/query";
 import {elaborateDataGraphs, getTrendGraphs, isEmptyGraph,} from "../modules/trends/dataGraphs";
@@ -8,7 +8,7 @@ import {sanitizePathRoot} from "../futuremodules/utils/utils";
 import {useMutation, useSubscription} from "@apollo/react-hooks";
 import {CREATE_TREND, UPSERT_TREND_GRAPH} from "../modules/trends/mutations";
 import {DateRangeInput} from '@datepicker-react/styled'
-import {trendGraphSubcription, trendSubcription} from "../modules/trends/subscriptions";
+import {trendGraphSubcription} from "../modules/trends/subscriptions";
 import moment from "moment";
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart;
@@ -56,10 +56,6 @@ const TrendPage = props => {
   if (isEmptyGraph(graphData)) {
     return <Fragment/>
   }
-
-  // console.log( "Trend mutation: ", data );
-  // console.log( "Trend mutation loading: ", loading );
-  // console.log( "ChoosenDate: ", state.chosenDate && state.chosenDate.format("YYYYMMDD") );
 
   const chartOptions = elaborateDataGraphs(graphData);
 
@@ -270,7 +266,7 @@ const TrendPage = props => {
   }
 
   return (
-    <div className="trend-layout">
+    <TrendLayout>
       <TrendGrid>
         <FlexContainer>
           <CanvasJSChart options={chartOptions}/>
@@ -286,7 +282,7 @@ const TrendPage = props => {
           <Button disabled={!state.chosenDate} onClick={() => updateTrend()}>Update</Button>
         </FlexContainer>
       </TrendGrid>
-    </div>
+    </TrendLayout>
   );
 }
 

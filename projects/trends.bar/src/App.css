@@ -5,6 +5,7 @@
   --font-size-medium: 1.25rem;
   --font-size-small: 0.7rem;
   --font-size-extrasmall: 0.55rem;
+  --font-family-default: Aileron;
   --primary-color: rgb(23, 162, 184);
   --secondary-alt-color: #e76848;
   --primary-color-dark: rgb(20, 100, 112);
@@ -39,11 +40,9 @@
 }
 
 body {
-  /* min-width: 1280px;
-  min-height: 720px; */
   margin: 0 auto;
   height: 100vh;
-  font-family: "Aileron", sans-serif;
+  font-family: var(--font-family-default);
   font-size: 1rem;
   background-color: #343a40;
   color: #e0e0e0;
@@ -58,14 +57,13 @@ body {
   -ms-overflow-style: none;
 }
 
-::-webkit-scrollbar {
-  width: 0 !important;
-}
-
 a, a:link, a:visited, a:focus, a:hover, a:active{
   text-decoration: none;
   text-decoration-color: inherit;
   color: inherit;
+}
+::-webkit-scrollbar {
+  width: 0 !important;
 }
 
 .Canvas {
@@ -80,7 +78,7 @@ a, a:link, a:visited, a:focus, a:hover, a:active{
   position: absolute;
   background-color: black;
   /* border: 2px solid var(--secondary-alt-color); */
-  z-index: 500;
+  /*z-index: 500;*/
 }
 
 .backdropModal {
@@ -95,58 +93,6 @@ a, a:link, a:visited, a:focus, a:hover, a:active{
 
 .blooming {
   text-shadow: -1px -1px 4px white;
-}
-
-.navbarlogo-a {
-  grid-area: navbarlogo;
-  align-self: center;
-  justify-self: center;
-}
-
-.logofont {
-  font-family: "Aileron";
-}
-
-.navbareh-a {
-  grid-area: navbareh;
-  align-self: center;
-  justify-self: start;
-  font-family: "Aileron";
-  font-size: 1.3rem;
-  padding-left: 1.5%;
-}
-
-.navbaruser-a {
-  grid-area: navbaruser;
-  align-self: center;
-  justify-self: end;
-  color: var(--light-color);
-}
-
-.navbartitle-a {
-  grid-area: navbartitle;
-  align-self: center;
-  justify-self: center;
-  font-family: "Aileron", sans-serif;
-  font-size: 1.3rem;
-  color: var(--secondary-alt-color);
-}
-
-.navbarGrid {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 50000;
-  height: var(--navbar-height);
-  background: var(--dark-color-transparent);
-  background-color: var(--dark-color-transparent);
-  display: grid;
-  grid-template-columns: 2% 23% 50% 25%;
-  grid-template-rows: 100%;
-  grid-template-areas: "navbarlogo navbareh navbartitle navbaruser";
-  padding: 0.25% 1%;
-  border-bottom: 1px solid var(--middle-grey-color);
 }
 
 .projectInvitationGrid {
@@ -165,7 +111,6 @@ a, a:link, a:visited, a:focus, a:hover, a:active{
   grid-area: project;
   justify-self: start;
   align-self: center;
-  font-family: "Aileron", sans-serif;
   font-size: 1.8rem;
 }
 
@@ -215,8 +160,8 @@ a, a:link, a:visited, a:focus, a:hover, a:active{
   justify-items: stretch;
   justify-content: center;
   background-image: linear-gradient(
-    rgba(23, 162, 184, 0.1),
-    rgba(183, 162, 244, 0.05)
+          rgba(23, 162, 184, 0.1),
+          rgba(183, 162, 244, 0.05)
   );
   margin-top: var(--navbar-height);
   padding: 1% 1% 1% 1%;
@@ -286,16 +231,16 @@ img {
   grid-template-columns: 2rem 1fr;
   grid-template-rows: 60% 40%;
   grid-template-areas:
-    "EntityThumbnailInset EntityThumbnailTags"
-    "EntityThumbnailInset EntityThumbnailOwner";
+          "EntityThumbnailInset EntityThumbnailTags"
+          "EntityThumbnailInset EntityThumbnailOwner";
   width: 95%;
   border-radius: 4px;
   margin-top: 2%;
   margin-bottom: 1%;
   margin-left: 5%;
   background-image: linear-gradient(
-    rgba(23, 162, 184, 0.06),
-    rgba(23, 162, 184, 0)
+          rgba(23, 162, 184, 0.06),
+          rgba(23, 162, 184, 0)
   );
   cursor: pointer;
   padding: 3px 4px;
@@ -309,8 +254,8 @@ img {
 .EntityThumbnail:hover {
   border: solid 1px rgba(23, 162, 184, 0.55);
   background-image: linear-gradient(
-    rgba(23, 162, 184, 0.15),
-    rgba(23, 162, 184, 0)
+          rgba(23, 162, 184, 0.15),
+          rgba(23, 162, 184, 0)
   );
   box-shadow: 0 2px 1px 0 rgba(0, 0, 0, 0.2), 0 2px 1px 0 rgba(0, 0, 0, 0.19);
 }
@@ -319,8 +264,8 @@ img {
   transform: scale(0.98);
   transition-duration: 0.2s;
   background-image: linear-gradient(
-    rgba(23, 162, 184, 0.35),
-    rgba(23, 162, 184, 0)
+          rgba(23, 162, 184, 0.35),
+          rgba(23, 162, 184, 0)
   );
 }
 
@@ -393,7 +338,7 @@ img {
 }
 
 input#search-bar:hover {
-  box-shadow: inset 0px 0px 1px 1px var(--logo-color-2);
+  box-shadow: inset 0 0 1px 1px var(--primary-color);
 }
 
 .search-icon {
@@ -408,11 +353,6 @@ input#search-bar:hover {
   width: 100%;
   overflow: hidden;
   /* display: block; */
-}
-
-.searchTrend {
-  width: 50%;
-  overflow: hidden;
 }
 
 .topEntitySelectorBar {
@@ -430,7 +370,6 @@ input#search-bar:hover {
   padding: 0.5rem 0%;
   margin: 2.5% 0%;
   float: left;
-  font-family: "Aileron", sans-serif;
   font-size: 1rem;
   border-radius: 6px;
   border: solid 1px rgba(23, 162, 184, 0);
@@ -457,8 +396,8 @@ input#search-bar:hover {
 .leftSideBarGroupSelected {
   border: solid 1px rgba(23, 162, 184, 0.55);
   background-image: linear-gradient(
-    rgba(50, 118, 248, 0.2),
-    rgba(41, 166, 244, 0.1)
+          rgba(50, 118, 248, 0.2),
+          rgba(41, 166, 244, 0.1)
   );
   cursor: pointer;
 }
@@ -466,8 +405,8 @@ input#search-bar:hover {
 .leftSideBarGroup:hover {
   border: solid 1px rgba(23, 162, 184, 0.55);
   background-image: linear-gradient(
-    rgba(23, 162, 184, 0.15),
-    rgba(23, 162, 184, 0)
+          rgba(23, 162, 184, 0.15),
+          rgba(23, 162, 184, 0)
   );
 }
 
@@ -491,6 +430,8 @@ input#search-bar:hover {
   grid-area: render;
   align-self: stretch;
   justify-self: stretch;
+  width: 100%;
+  height: 100%;
 }
 
 .EntryEditorMetadata {
@@ -522,8 +463,8 @@ input#search-bar:hover {
   margin: 0.33rem 0 0.33rem 0.33rem;
   padding: 0.3rem;
   background-image: linear-gradient(
-    rgba(50, 118, 248, 0.1),
-    rgba(41, 166, 244, 0.1)
+          rgba(50, 118, 248, 0.1),
+          rgba(41, 166, 244, 0.1)
   );
   overflow: auto;
 }
@@ -533,9 +474,10 @@ input#search-bar:hover {
   margin: 0.33rem 0 0.33rem 0.33rem;
   padding: 0.33rem;
   overflow: auto;
+  width: 100%;
   background-image: linear-gradient(
-    rgba(50, 118, 248, 0.1),
-    rgba(41, 166, 244, 0.1)
+          rgba(50, 118, 248, 0.1),
+          rgba(41, 166, 244, 0.1)
   );
 }
 
@@ -545,8 +487,8 @@ input#search-bar:hover {
   padding: 0.33rem;
   overflow: auto;
   background-image: linear-gradient(
-    rgba(50, 118, 248, 0.1),
-    rgba(41, 166, 244, 0.1)
+          rgba(50, 118, 248, 0.1),
+          rgba(41, 166, 244, 0.1)
   );
 }
 
@@ -595,8 +537,8 @@ input#search-bar:hover {
   border-radius: 5px;
   border: solid 1px rgba(23, 162, 184, 0.55);
   background-image: linear-gradient(
-    rgba(50, 118, 248, 0.5),
-    rgba(41, 166, 244, 0.1)
+          rgba(50, 118, 248, 0.5),
+          rgba(41, 166, 244, 0.1)
   );
   font-size: var(--font-size-one);
   color: var(--secondary-alt-color);
@@ -606,8 +548,8 @@ input#search-bar:hover {
   opacity: 0.8;
   border: solid 1px rgba(23, 162, 184, 1);
   background-image: linear-gradient(
-    rgba(50, 118, 248, 0.9),
-    rgba(41, 166, 244, 0.1)
+          rgba(50, 118, 248, 0.9),
+          rgba(41, 166, 244, 0.1)
   );
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 2px 10px 0 rgba(0, 0, 0, 0.19);
 }
@@ -655,8 +597,8 @@ input#search-bar:hover {
 .materialPropertyTexture:hover {
   opacity: 0.6;
   background-image: linear-gradient(
-    rgba(50, 118, 248, 0.9),
-    rgba(41, 166, 244, 0.1)
+          rgba(50, 118, 248, 0.9),
+          rgba(41, 166, 244, 0.1)
   );
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 2px 10px 0 rgba(0, 0, 0, 0.19);
 }
@@ -679,15 +621,15 @@ input#search-bar:hover {
   grid-template-columns: 90% 10%;
   grid-template-rows: 55px calc(100% - 55px);
   grid-template-areas:
-    "matName replaceMat"
-    "materialTextureContainer materialTextureContainer";
+          "matName replaceMat"
+          "materialTextureContainer materialTextureContainer";
   align-items: center;
   justify-items: start;
   border-radius: 10px;
   border: solid 1px var(--dark-color);
   background-image: linear-gradient(
-    rgba(23, 162, 184, 0.05),
-    rgba(23, 162, 184, 0)
+          rgba(23, 162, 184, 0.05),
+          rgba(23, 162, 184, 0)
   );
   overflow: hidden;
   overflow-y: scroll;
@@ -710,8 +652,8 @@ input#search-bar:hover {
   grid-template-columns: repeat(4, 1fr);
   grid-template-rows: repeat(2, 1fr);
   grid-template-areas:
-    "materialTextureEntity materialTextureEntity materialTextureEntity materialTextureEntity"
-    "materialTextureEntity materialTextureEntity materialTextureEntity materialTextureEntity";
+          "materialTextureEntity materialTextureEntity materialTextureEntity materialTextureEntity"
+          "materialTextureEntity materialTextureEntity materialTextureEntity materialTextureEntity";
   grid-gap: 10px;
   margin: 10px;
 }
@@ -722,15 +664,15 @@ input#search-bar:hover {
   grid-template-columns: 100%;
   grid-template-rows: 1.5rem 23px calc(100% - 1.5rem - 23px - 10px);
   grid-template-areas:
-    "materialPropertyLabel"
-    "materialPropertySlider"
-    "materialPropertyTexture";
+          "materialPropertyLabel"
+          "materialPropertySlider"
+          "materialPropertyTexture";
   grid-gap: 5px;
   align-items: center;
   justify-items: center;
   background-image: linear-gradient(
-    rgba(23, 162, 244, 0.25),
-    rgba(23, 162, 184, 0.1)
+          rgba(23, 162, 244, 0.25),
+          rgba(23, 162, 184, 0.1)
   );
   border: solid 1px rgba(23, 162, 184, 0.55);
   border-radius: 5px;
@@ -746,28 +688,61 @@ input#search-bar:hover {
   grid-template-columns: repeat(6, 15.5%);
   grid-template-rows: 22px repeat(4, 16px);
   grid-template-areas:
-    "materialPropertyLabel materialPropertyLabel materialPropertyLabel materialPropertyLabel materialPropertyLabel baseColorPicker"
-    "materialPropertyLabel materialPropertyLabel materialPropertyLabel metallicSlider metallicSlider metallicSlider"
-    "materialPropertyLabel materialPropertyLabel materialPropertyLabel roughnessSlider roughnessSlider roughnessSlider"
-    "materialPropertyLabel materialPropertyLabel materialPropertyLabel aoSlider aoSlider aoSlider"
-    "materialPropertyLabel materialPropertyLabel materialPropertyLabel opacitySlider opacitySlider opacitySlider";
+          "materialPropertyLabel materialPropertyLabel materialPropertyLabel materialPropertyLabel materialPropertyLabel baseColorPicker"
+          "materialPropertyLabel materialPropertyLabel materialPropertyLabel metallicSlider metallicSlider metallicSlider"
+          "materialPropertyLabel materialPropertyLabel materialPropertyLabel roughnessSlider roughnessSlider roughnessSlider"
+          "materialPropertyLabel materialPropertyLabel materialPropertyLabel aoSlider aoSlider aoSlider"
+          "materialPropertyLabel materialPropertyLabel materialPropertyLabel opacitySlider opacitySlider opacitySlider";
   grid-gap: 4px 3px;
   align-items: center;
   justify-items: start;
   border: solid 1px rgba(23, 162, 184, 0.55);
   background-image: linear-gradient(
-    rgba(23, 162, 184, 0.15),
-    rgba(23, 162, 184, 0)
+          rgba(23, 162, 184, 0.15),
+          rgba(23, 162, 184, 0)
   );
 }
 
 .entity-info-c {
+  display: grid;
   border: 1px solid #d1d1d140;
   border-radius: 4px;
   cursor: text;
-  margin: 0.5rem 0px;
   padding: 5px 5px;
-  overflow: auto;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: clip;
+  white-space: nowrap;
+  grid-template-columns: 10% 40% calc(50% - 5px);
+  grid-template-rows: repeat(4, 1.2em);
+  grid-template-areas:
+          "ei-icon ei-title ei-value"
+          "ei-icon ei-title ei-value"
+          "ei-icon ei-title ei-value"
+          "ei-icon ei-title ei-value";
+  grid-gap: 0px 0px;
+  align-items: center;
+
+}
+
+.text-clip {
+  overflow: hidden;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+
+.ei-icon-a {
+  grid-area: ei-icon;
+}
+
+.ei-title-a {
+  grid-area: ei-title;
+}
+
+.ei-value-a {
+  grid-area: ei-value;
+  overflow: hidden;
+  text-overflow: clip;
 }
 
 .deleteentity-a {
@@ -776,32 +751,16 @@ input#search-bar:hover {
   align-self: center;
 }
 
-.metaInfiTitle {
-  position: absolute;
-}
-
-.metaInfoValue {
-  position: absolute;
-  padding-left: 65px;
-  margin-top: -0.03rem;
-}
-
-.metaInfoValueNoOff {
-  position: absolute;
-  padding-left: 65px;
-  margin-top: 2px;
-}
-
 .GeomEditorRenderGrid {
   display: grid;
   /* margin: 10px; */
   grid-template-columns: 522px 253px 235px;
   grid-template-rows: 45px 373px 117px 45px;
   grid-template-areas:
-    "renderParams nodeViewer drag"
-    "render nodeViewer entity-tags"
-    "render nodeViewer entity-info"
-    "render nodeViewer deleteentity";
+          "renderParams nodeViewer drag"
+          "render nodeViewer entity-tags"
+          "render nodeViewer entity-info"
+          "render nodeViewer deleteentity";
   grid-gap: 0px 5px;
   align-items: center;
   justify-items: start;
@@ -812,10 +771,10 @@ input#search-bar:hover {
   grid-template-columns: 40% 60%;
   grid-template-rows: 31px 1.5fr 0.5fr 31px;
   grid-template-areas:
-    "source_tabs render_controls"
-    "source render"
-    "source app_controls"
-    "source_controls app_controls";
+          "source_tabs render_controls"
+          "source render"
+          "source app_controls"
+          "source_controls app_controls";
   grid-gap: 3px 5px;
   align-items: center;
   justify-items: center;
@@ -923,8 +882,8 @@ li.app_controls-a {
   grid-template-columns: 510px 510px;
   grid-template-rows: 30px 554px;
   grid-template-areas:
-    "ui_tabs render"
-    "ui_source render";
+          "ui_tabs render"
+          "ui_source render";
   grid-gap: 0;
 }
 
@@ -1051,89 +1010,16 @@ li.app_controls-a {
   color: var(--danger-color);
 }
 
-/* Padding */
-.p {
-  padding: 0.5rem;
-}
-.p-1 {
-  padding: 1rem;
-}
-.p-2 {
-  padding: 2rem;
-}
-.p-3 {
-  padding: 3rem;
-}
-.py {
-  padding: 0.5rem 0;
-}
-.py-1 {
-  padding: 1rem 0;
-}
-.py-2 {
-  padding: 2rem 0;
-}
-.py-3 {
-  padding: 3rem 0;
-}
-
-.px {
-  padding: 0 0.5rem;
-}
-.px-1 {
-  padding: 0 1rem;
-}
-.px-2 {
-  padding: 0 2rem;
-}
-.px-3 {
-  padding: 0 3rem;
-}
-
-/* Margin */
-.m {
-  margin: 0.5rem;
-}
-.m-1 {
-  margin: 1rem;
-}
-.m-2 {
-  margin: 2rem;
-}
-.m-3 {
-  margin: 3rem;
-}
-.my {
-  margin: 0.5rem 0;
-}
-.my-1 {
-  margin: 1rem 0;
-}
-.my-2 {
-  margin: 2rem 0;
-}
-.my-3 {
-  margin: 3rem 0;
-}
-.mx {
-  margin: 0 0.5rem;
-}
-.mx-1 {
-  margin: 0 1rem;
-}
-.mx-2 {
-  margin: 0 2rem;
-}
-.mx-3 {
-  margin: 0 3rem;
-}
-
 .rightFloater {
   float: right;
 }
 
 .inliner {
   display: inline;
+}
+
+.inliner-block {
+  display: inline-block;
 }
 
 .blocker {
@@ -1257,17 +1143,9 @@ li.app_controls-a {
   color: #333;
 }
 
-.alert {
-  padding: 0.8rem;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  opacity: 0.9;
-  background: var(--light-color);
-  color: #333;
-  z-index: 100000;
-}
+/*.alert {*/
+/*  top: var(--navbar-height);*/
+/*}*/
 
 .fullline {
   float: left;
@@ -1284,7 +1162,6 @@ li.app_controls-a {
 }
 
 .navdiv-title {
-  font-family: "Aileron", sans-serif;
   width: 35%;
   display: table-cell;
   vertical-align: middle;
@@ -1303,70 +1180,6 @@ li.app_controls-a {
   display: table-cell;
   vertical-align: middle;
   text-align: right;
-}
-
-/* .btn-primary,
-.bg-primary,
-.badge-primary,
-.alert-primary {
-  background: var(--primary-color);
-  color: #fff;
-} */
-
-.btn-light,
-.bg-light,
-.badge-light,
-.alert-light {
-  background: var(--light-color);
-  color: #333;
-}
-
-.btn-dark,
-.bg-dark,
-.badge-dark,
-.alert-dark {
-  background: var(--dark-color);
-  color: #fff;
-}
-
-.btn-danger,
-.bg-danger,
-.badge-danger,
-.alert-danger {
-  background: var(--danger-color);
-  color: #fff;
-}
-
-.btn-success,
-.bg-success,
-.badge-success,
-.alert-success {
-  background: var(--success-color);
-  color: #fff;
-}
-
-.btn-white,
-.bg-white,
-.badge-white,
-.alert-white {
-  background: #fff;
-  color: #333;
-  border: #ccc solid 1px;
-}
-
-.alert-warning {
-  background: var(--warning);
-  color: saddlebrown;
-  border: saddlebrown solid 1px;
-}
-
-.btn:hover {
-  opacity: 0.8;
-}
-
-.bg-light,
-.badge-light {
-  border: #ccc solid 1px;
 }
 
 .round-img {
@@ -1419,31 +1232,6 @@ button {
   font: inherit;
 }
 
-.form .social-input {
-  display: flex;
-}
-
-.form .social-input i {
-  padding: 0.5rem;
-  width: 4rem;
-}
-
-.form .social-input i.fa-twitter {
-  color: #38a1f3;
-}
-.form .social-input i.fa-facebook {
-  color: #3b5998;
-}
-.form .social-input i.fa-instagram {
-  color: #3f729b;
-}
-.form .social-input i.fa-youtube {
-  color: #c4302b;
-}
-.form .social-input i.fa-linkedin {
-  color: #0077b5;
-}
-
 input[type="color"] {
   -webkit-appearance: none;
   width: 100%;
@@ -1465,35 +1253,6 @@ input[type="color"]:hover {
 /* input[type="color"]:active {
   transform: scale(0.95);
 } */
-
-/* Landing Page */
-.landing {
-  position: relative;
-  background-color: var(--background-color);
-  height: 100vh;
-}
-
-.landing-inner {
-  color: #fff;
-  height: 100%;
-  width: 80%;
-  margin: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-
-.trend-layout {
-  position: absolute;
-  top: 0;
-  left: 0;
-  margin-top: var(--navbar-height);
-  width: 100%;
-  height: calc(100% - var(--navbar-height));
-  z-index: 0;
-}
 
 .projectManagementContainer {
   width: 50%;

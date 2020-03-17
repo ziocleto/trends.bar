@@ -2,6 +2,7 @@ import React, {useEffect, useRef} from "react";
 import {useGlobal} from 'reactn';
 import {sanitizePathRoot} from "../futuremodules/utils/utils";
 import {Redirect} from "react-router-dom";
+import {LandingInner, LandingSearchBar, LandingSection} from "./Landing.styled";
 
 const Landing = () => {
   const [trendId, setTrend] = useGlobal("trendId");
@@ -26,14 +27,13 @@ const Landing = () => {
   }
 
   return (
-    <section className="landing">
-      <div className="landing-inner large">
+    <LandingSection>
+      <LandingInner>
         <div>
           <span className="colorLogo1">Search </span>
           <span className="colorLogo2">trend</span>
         </div>
-        <div className="my-2"/>
-        <div className="searchbar-a searchTrend small">
+        <LandingSearchBar>
           <input
             ref={searchBox}
             type="text"
@@ -41,9 +41,9 @@ const Landing = () => {
             id="search-bar"
             onKeyUp={e=>keyUpCallback(e)}
           />
-        </div>
-      </div>
-    </section>
+        </LandingSearchBar>
+      </LandingInner>
+    </LandingSection>
   );
 };
 

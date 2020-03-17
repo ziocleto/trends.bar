@@ -7,6 +7,9 @@ import "./App.css";
 import TrendPage from "./components/TrendPage";
 import {sanitizePathRoot} from "./futuremodules/utils/utils";
 import {initEH} from "./init";
+import Register from "./futuremodules/auth/components/Register";
+import Login from "./futuremodules/auth/components/Login";
+import {EHAlert} from "./futuremodules/alerts/alerts";
 
 setGlobal({
   trendId: null,
@@ -27,8 +30,11 @@ const App = () => {
         <Route exact path="/">
           <Landing/>
         </Route>
+        <Route exact path="/register" component={Register}/>
+        <Route exact path="/login" component={Login}/>
         <Route path="/:trendId" component={TrendPage}/>
       </Switch>
+      <EHAlert/>
     </Fragment>
   );
 };
