@@ -53,13 +53,13 @@ const TrendPage = props => {
     graphData.trend = data.trendGraphMutated.node;
   }
 
-  if (isEmptyGraph(graphData)) {
-    return <Fragment/>
-  }
+  // if (isEmptyGraph(graphData)) {
+  //   return <Fragment/>
+  // }
 
-  console.log( "Trend mutation: ", data );
-  console.log( "Trend mutation loading: ", loading );
-  console.log( "ChoosenDate: ", state.chosenDate && state.chosenDate.format("YYYYMMDD") );
+  // console.log( "Trend mutation: ", data );
+  // console.log( "Trend mutation loading: ", loading );
+  // console.log( "ChoosenDate: ", state.chosenDate && state.chosenDate.format("YYYYMMDD") );
 
   const chartOptions = elaborateDataGraphs(graphData);
 
