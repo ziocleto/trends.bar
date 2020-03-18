@@ -8,6 +8,8 @@ import {createHttpLink} from 'apollo-link-http'
 import {InMemoryCache} from 'apollo-cache-inmemory'
 import {BrowserRouter} from "react-router-dom";
 import { WebSocketLink } from 'apollo-link-ws';
+import { setContext } from 'apollo-link-context'
+import Cookies from 'js-cookie'
 import {split} from "apollo-link";
 import {getMainDefinition} from "apollo-utilities";
 
@@ -35,10 +37,23 @@ const link = split(
   httpLink,
 );
 
+const authLink = setContext((_, { headers }) => {
+  const token = Cookies.get('eh_jwt');
+
+  console.log("Token is:", token);
+
+  return {
+    headers: {
+      ...headers,
+      authorization: `Bearer ${token}`
+    }
+  }
+});
+
 const client = new ApolloClient({
-  link: link,
+  link: authLink.concat(link),
   cache: new InMemoryCache()
-})
+});
 
 ReactDOM.render(
   <ApolloProvider client={client}>

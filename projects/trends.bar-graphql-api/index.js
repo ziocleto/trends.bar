@@ -1,13 +1,22 @@
-import {GraphQLObjectType} from "graphql";
 import {MongoDataSource} from 'apollo-datasource-mongodb'
-import BigInt from "apollo-type-bigint";
 import {trendGraphsModel, trendsModel} from "./models/models";
 import {PubSub} from "graphql-subscriptions";
 import moment from "moment";
+import {crawlTrendId, Cruncher} from "./assistants/cruncher-assistant";
+import * as authController from "./modules/auth/controllers/authController";
+import {getUserFromTokenRaw} from "./modules/auth/controllers/authController";
+
 const graphAssistant = require("./assistants/graph-assistant");
 const datasetAssistant = require("./assistants/dataset-assistant");
+const cookieParser = require("cookie-parser");
+const globalConfig = require('./modules/auth/config_api');
+const jsonWebToken = require('jsonwebtoken')
+const sessionModel = require("./modules/auth/models/session");
 
-import {crawlTrendId, Cruncher} from "./assistants/cruncher-assistant";
+const usersRoute = require("./modules/auth/routes/usersRoute");
+const tokenRoute = require("./modules/auth/routes/tokenRoute");
+const logger = require('./logger');
+
 const http = require('http');
 
 const pubsub = new PubSub();
@@ -63,7 +72,7 @@ const typeDefs = gql`
         graph: GraphLayout!
         values: [ [BigInt!]! ]!
     }
-    
+
     type Trend {
         _id: ID!
         trendId: String!
@@ -81,12 +90,12 @@ const typeDefs = gql`
         flags: String
         resolver: String
     }
-    
+
     input CrawlingDateRange {
         from: String!
         to: String!
     }
-    
+
     input CrawlingPostTransform {
         transform: String
         source: String
@@ -95,7 +104,7 @@ const typeDefs = gql`
         dest: String
         algo: String
     }
-    
+
     input CrawlingActions {
         regex: CrawlingRegexp
         startRegex: CrawlingRegexp
@@ -103,18 +112,18 @@ const typeDefs = gql`
         validRange: CrawlingDateRange
         postTransform: CrawlingPostTransform
     }
-    
+
     input CrawlingDatasets {
         title: String
         actions: [CrawlingActions]
     }
-    
+
     input CrawlingFunctions {
         type: String
         key: String
         datasets: [CrawlingDatasets]
     }
-    
+
     input CrawlingScript {
         trendId: String
         source: String
@@ -122,7 +131,7 @@ const typeDefs = gql`
         graphType: [String]
         timestamp: String
         timestampFormat: String
-        functions: [CrawlingFunctions]        
+        functions: [CrawlingFunctions]
     }
 
     type Mutation {
@@ -163,7 +172,7 @@ const resolvers = {
 
     async upsertTrendGraph(parent, args, {dataSources}) {
       const ret = await dataSources.trendGraphs.upsertTrendGraph(args.script);
-      console.log("Sending to pubsub: ", ret );
+      console.log("Sending to pubsub: ", ret);
       await pubsub.publish(TREND_GRAPH_MUTATED, {
         trendGraphMutated: {
           mutation: 'UPDATED',
@@ -195,22 +204,22 @@ class TrendsDataSource extends MongoDataSource {
   }
 
   async getTrend(trendId) {
-    const pop = trendsModel.findOne({trendId: trendId}).populate( {
+    const pop = trendsModel.findOne({trendId: trendId}).populate({
       path: 'trendGraphs',
-      populate: { path: 'dataset graph'}
+      populate: {path: 'dataset graph'}
     });
     const res = await pop.exec();
     return res.toObject();
   }
 
-  async createTrend( trendId ) {
-    return await db.upsert(this.model,{trendId} );
+  async createTrend(trendId) {
+    return await db.upsert(this.model, {trendId});
   }
 
-  async upsertTrendGraph( script ) {
+  async upsertTrendGraph(script) {
     const trendId = script.trendId;
     const timestamp = moment(script.timestamp, script.timestampFormat);
-    const text = await crawlTrendId(timestamp,script.timestamp);
+    const text = await crawlTrendId(timestamp, script.timestamp);
 
     const datasetElem = await datasetAssistant.acquire(script.source, script.sourceName);
     const cruncher = new Cruncher(trendId, text, datasetElem, graphAssistant.xyDateInt(), timestamp);
@@ -225,6 +234,30 @@ class TrendsDataSource extends MongoDataSource {
 const PORT = 4500;
 const app = express();
 
+const getValidSessionById = async sessionId => {
+  const currentDate = new Date();
+  const currentEpoch = Math.floor(currentDate / 1000);
+  const query = {
+    $and: [
+      // {_id: ObjectId(sessionId)},
+      {ids: sessionId},
+      // {issuedAt: {$lte: currentEpoch }},
+      // {expiresAt: {$gte: currentEpoch}},
+      {issuedAtDate: {$lte: currentDate}},
+      {expiresAtDate: {$gte: currentDate}}
+    ]
+  };
+  // console.log(query);
+  // console.log(query["$and"]);
+  // console.log(query["$and"]);
+  let dbSession = await sessionModel.findOne(query);
+  if (dbSession !== null) {
+    dbSession = dbSession.toObject();
+  }
+  // console.log("CURRENT SESSION:",dbSession);
+  return dbSession;
+};
+
 const server = new ApolloServer(
   {
     typeDefs,
@@ -233,29 +266,46 @@ const server = new ApolloServer(
       trends: new TrendsDataSource(trendsModel),
       trendGraphs: new TrendsDataSource(trendGraphsModel),
     }),
-    context: async ({ req, connection }) => {
+    context: async ({req, connection}) => {
       if (connection) {
         // check connection for metadata
         return connection.context;
       } else {
-        // check from req
-        const token = req.headers.authorization || "";
-        return {token};
+        try {
+          const token = req.signedCookies ? req.signedCookies["eh_jwt"] : null;
+          return {
+            user: await getUserFromTokenRaw(token)
+          };
+        } catch (e) {
+          logger.error("Reading of signed cookies failed because: ", e);
+          return {
+            user: null
+          };
+        }
       }
     }
   }
 );
 
-server.applyMiddleware({app});
-const httpServer = http.createServer(app);
-server.installSubscriptionHandlers(httpServer);
+authController.InitializeAuthentication();
 
 app.use(bodyParser.raw({limit: "500mb", type: 'application/octet-stream'}));
 app.use(bodyParser.text({limit: "500mb"}));
 app.use(bodyParser.json({limit: "100mb"}));
 app.use(bodyParser.urlencoded({limit: "100mb", extended: true}));
+app.use(cookieParser(globalConfig.mJWTSecret));
 
 app.use("/crawler", crawlerRoute);
+
+server.applyMiddleware({app});
+const httpServer = http.createServer(app);
+server.installSubscriptionHandlers(httpServer);
+
+app.use("/", tokenRoute);
+
+app.use(authController.authenticate);
+
+app.use("/user", usersRoute);
 
 httpServer.listen(PORT, () => {
   console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`)

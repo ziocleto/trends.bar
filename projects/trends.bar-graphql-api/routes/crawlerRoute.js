@@ -18,6 +18,29 @@ const datasetAssistant = require("../assistants/dataset-assistant");
 const parserAssistant = require("../assistants/parser-assistant");
 const regExAssistant = require("../assistants/regex-assistant");
 const db = require("../db");
+const sgMail = require('@sendgrid/mail');
+
+sgMail.setApiKey('');
+
+router.get( "/sendemail", async (req,res) => {
+  // using Twilio SendGrid's v3 Node.js Library
+// https://github.com/sendgrid/sendgrid-nodejs
+
+  try {
+    const msg = {
+      to: 'test@example.com',
+      from: 'test@example.com',
+      subject: 'Sending with Twilio SendGrid is Fun',
+      text: 'and easy to do anywhere, even with Node.js',
+      html: '<strong>and easy to do anywhere, even with Node.js</strong>',
+    };
+    await sgMail.send(msg);
+    res.sendStatus(200);
+  } catch (e) {
+    console.log(e)
+    res.sendStatus(400);
+  }
+});
 
 router.get("/hm/:timestamp", async (req, res, next) => {
   try {

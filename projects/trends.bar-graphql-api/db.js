@@ -8,7 +8,7 @@ const util = require('util');
 const utils = require('./utils/utils');
 const logger = require('./logger');
 // const socketController = require('./controllers/socketController');
-const globalConfig = require("./config_api.js");
+const globalConfig = require("./modules/auth/config_api.js");
 //Set up default mongoose connection
 
 exports.initDB = async () => {
@@ -28,12 +28,6 @@ exports.initDB = async () => {
       exports.bucketSourceAssets = new mongodb.GridFSBucket(mongoose.connection.client.db('event_horizon'), {bucketName: "fs_assets_to_elaborate"});
       exports.bucketEntities = new mongodb.GridFSBucket(mongoose.connection.client.db('event_horizon'), {bucketName: "fs_entity_assets"});
       logger.info("MongoDB connected with GridFS");
-
-      // const entities = mongoose.model('entities');
-      // entities.watch().on('change', data => {
-      //   socketController.sendMessageToAllClients( JSON.stringify({ msg: "EntityAdded", data: data }));
-      // });
-      // logger.info("Watching on entities collection");
 
       return mongoose.connection;
     } catch (err) {
