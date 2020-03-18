@@ -234,30 +234,6 @@ class TrendsDataSource extends MongoDataSource {
 const PORT = 4500;
 const app = express();
 
-const getValidSessionById = async sessionId => {
-  const currentDate = new Date();
-  const currentEpoch = Math.floor(currentDate / 1000);
-  const query = {
-    $and: [
-      // {_id: ObjectId(sessionId)},
-      {ids: sessionId},
-      // {issuedAt: {$lte: currentEpoch }},
-      // {expiresAt: {$gte: currentEpoch}},
-      {issuedAtDate: {$lte: currentDate}},
-      {expiresAtDate: {$gte: currentDate}}
-    ]
-  };
-  // console.log(query);
-  // console.log(query["$and"]);
-  // console.log(query["$and"]);
-  let dbSession = await sessionModel.findOne(query);
-  if (dbSession !== null) {
-    dbSession = dbSession.toObject();
-  }
-  // console.log("CURRENT SESSION:",dbSession);
-  return dbSession;
-};
-
 const server = new ApolloServer(
   {
     typeDefs,

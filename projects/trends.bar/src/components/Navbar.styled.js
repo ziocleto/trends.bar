@@ -46,3 +46,7 @@ export const NavbarTitle = styled.div `{
   font-size: 1.3rem;
   color: var(--secondary-alt-color);
 }`;
+
+export const Mx1 = styled.span` {
+  min-width: 10px;
+}`;

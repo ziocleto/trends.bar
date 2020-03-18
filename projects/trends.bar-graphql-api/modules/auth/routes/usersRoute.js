@@ -33,7 +33,6 @@ const getUser = async req => {
 }
 
 router.get("/", async (req, res, next) => {
-  // console.log("USER GET /");
   res.send(await getUser(req));
 });
 

@@ -61,12 +61,9 @@ exports.getValidSessionById = async sessionId => {
   // console.log(query);
   // console.log(query["$and"]);
   // console.log(query["$and"]);
-  dbSession = await sessionModel.findOne(query);
-  if (dbSession !== null) {
-    dbSession = dbSession.toObject();
-  }
+  const dbSession = await sessionModel.findOne(query);
   // console.log("CURRENT SESSION:",dbSession);
-  return dbSession;
+  return dbSession ? dbSession.toObject() : null;
 };
 
 exports.invalidateSessionById = async sessionId => {

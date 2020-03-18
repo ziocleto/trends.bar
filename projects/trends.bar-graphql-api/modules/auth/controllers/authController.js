@@ -25,7 +25,7 @@ exports.verifyToken = async jwtToken => {
 
 export const getUserFromTokenRaw = async token => {
   return await getUserFromToken(await exports.verifyToken(token));
-}
+};
 
 export const getUserFromToken = async (jwtPayload) => {
   const sessionId = jwtPayload.sub;
@@ -44,8 +44,11 @@ export const getUserFromToken = async (jwtPayload) => {
     user.expires = jwtPayload.exp;
     user.hasToken = true;
     user.hasSession = true;
+    return user;
   }
-}
+
+  return null;
+};
 
 exports.InitializeAuthentication = () => {
 
@@ -87,6 +90,7 @@ exports.InitializeAuthentication = () => {
   passport.use(
     new JwtStrategy(jwtOptions, async (jwtPayload, done) => {
       const user = await getUserFromToken(jwtPayload);
+      console.log("user from token ", user);
       user === null ? done(null, false, {message: "Invalid token/user"}) : done(null, user);
     })
   );
@@ -136,3 +140,4 @@ exports.authenticate = passport.authenticate(
     session: false
   }
 );
+

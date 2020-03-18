@@ -2,7 +2,6 @@ const express = require("express");
 const userController = require("../controllers/userController");
 const authController = require("../controllers/authController");
 const sessionController = require("../controllers/sessionController");
-const socketController = require("../controllers/socketController");
 const logger = require("../logger");
 const globalConfig = require("../config_api");
 
@@ -30,9 +29,7 @@ router.put(
     } else {
       if (req.user.hasToken === true) {
         const sessionId = req.user.sessionId;
-
         await sessionController.invalidateSessionById(sessionId);
-        socketController.closeClientsWithSessionId(sessionId);
         res
           .clearCookie("eh_jwt", {
             httpOnly: true,
@@ -72,10 +69,6 @@ router.post(
             req.user.project,
             ipAddress,
             userAgent
-          );
-          await socketController.replaceClientsSession(
-            sessionId,
-            tokenInfo.session
           );
           tokenInfo.user = {
             name: req.user.name,
@@ -123,10 +116,6 @@ router.post(
             req.params.project,
             ipAddress,
             userAgent
-          );
-          await socketController.replaceClientsSession(
-            sessionId,
-            tokenInfo.session
           );
           tokenInfo.user = {
             name: req.user.name,
