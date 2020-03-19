@@ -1,11 +1,9 @@
 const passport = require("passport");
 const JwtStrategy = require("passport-jwt").Strategy;
 const ExtractJwt = require("passport-jwt").ExtractJwt;
-const RequestStrategy = require("passport-request").Strategy;
 const globalConfig = require("../config_api.js");
 const jsonWebToken = require("jsonwebtoken");
 const userController = require("./userController");
-const routeAuthorizationModel = require("../models/route_authorization");
 const sessionController = require("../controllers/sessionController");
 
 const JWT_EXPIRES_AFTER_HOURS = 6;

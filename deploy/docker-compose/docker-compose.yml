@@ -17,7 +17,7 @@ services:
     image: "ateventhorizon/restful-api"
     container_name: "restful-api"
     environment:
-      - EH_MONGO_PATH=${EH_MONGO_PATH} 
+      - EH_MONGO_PATH=${EH_MONGO_PATH}
       - EH_MONGO_DEFAULT_DB=${EH_MONGO_DEFAULT_DB}
       - EH_MONGO_REPLICA_SET_NAME=${EH_MONGO_REPLICA_SET_NAME}
       - EH_MASTER_TOKEN=${EH_MASTER_TOKEN}
@@ -33,7 +33,7 @@ services:
     image: "eventhorizonprojects/${EH_CLOUD_HOST}-graphql-api"
     container_name: "graphql-api"
     environment:
-      - EH_MONGO_PATH=${EH_MONGO_PATH} 
+      - EH_MONGO_PATH=${EH_MONGO_PATH}
       - EH_MONGO_DEFAULT_DB=${EH_MONGO_DEFAULT_DB}
       - EH_MONGO_REPLICA_SET_NAME=${EH_MONGO_REPLICA_SET_NAME}
       - EH_MASTER_TOKEN=${EH_MASTER_TOKEN}
@@ -49,7 +49,7 @@ services:
     ports:
       - "27017:27017"
     environment:
-      - EH_MONGO_PATH=${EH_MONGO_PATH} 
+      - EH_MONGO_PATH=${EH_MONGO_PATH}
       - EH_MONGO_DEFAULT_DB=${EH_MONGO_DEFAULT_DB}
       - EH_MONGO_REPLICA_SET_NAME=${EH_MONGO_REPLICA_SET_NAME}
     depends_on:
@@ -94,4 +94,4 @@ services:
       - mongo1
       - mongo2
       - mongo3
-    entrypoint: ["sh", "-c", "rsinitiate.sh"]    
+    entrypoint: ["sh", "-c", "rsinitiate.sh"]
