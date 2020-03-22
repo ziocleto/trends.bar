@@ -88,7 +88,6 @@ exports.InitializeAuthentication = () => {
   passport.use(
     new JwtStrategy(jwtOptions, async (jwtPayload, done) => {
       const user = await getUserFromToken(jwtPayload);
-      console.log("user from token ", user);
       user === null ? done(null, false, {message: "Invalid token/user"}) : done(null, user);
     })
   );

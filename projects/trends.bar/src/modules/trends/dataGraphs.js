@@ -5,17 +5,18 @@ export const getTrendGraphs = (trendId) => {
   const GQL_QUERY_TREND_GRAPHS = gql`{
       trend (trendId: "${trendId}") {
           trendId
-          aliases
           trendGraphs {
               dataset {
                   source
                   sourceName
               }
-              graph {
-                  label
-                  subLabel
+              title
+              label
+              subLabel
+              values {
+                  x
+                  y
               }
-              values
           }
       }
   }`;
@@ -24,22 +25,22 @@ export const getTrendGraphs = (trendId) => {
 }
 
 export const hasGraphData = data => {
-  return data !== undefined && data.trend.trendGraphs.length !== 0;
+  return data !== undefined && data.length !== 0;
 }
 
 export const isEmptyGraph = data => {
   return !hasGraphData(data);
 }
 
-const sortByXGraph = (a, b) => {
-  if (a.x < b.x) {
-    return -1;
-  }
-  if (a.x > b.x) {
-    return 1;
-  }
-  return 0;
-}
+// const sortByXGraph = (a, b) => {
+//   if (a.x < b.x) {
+//     return -1;
+//   }
+//   if (a.x > b.x) {
+//     return 1;
+//   }
+//   return 0;
+// }
 
 export const elaborateDataGraphs = data => {
 
@@ -58,17 +59,19 @@ export const elaborateDataGraphs = data => {
   if (isEmptyGraph(data)) return optionsBase;
 
   let allPoints = [];
-  for (const trendGraph of data.trend.trendGraphs) {
+  for (const trendGraph of data) {
     let dpoints = [];
-    if ((trendGraph.graph.label === "Cases" && trendGraph.graph.subLabel === "Worldwide") ||
-      (trendGraph.graph.label === "Deaths" && trendGraph.graph.subLabel === "Worldwide")) {
+    if ((trendGraph.graph.title === "Cases" && trendGraph.graph.subLabel === "Worldwide") ||
+      (trendGraph.graph.title === "Deaths" && trendGraph.graph.subLabel === "Worldwide")) {
       for (const p of trendGraph.values) {
-        dpoints.push({x: new Date(p[0]), y: p[1]});
+        dpoints.push({x: new Date(p.x), y: p.y});
       }
-      dpoints.sort(sortByXGraph);
+      // dpoints.sort(sortByXGraph);
       allPoints.push(dpoints);
     }
   }
+
+  console.log(data);
 
   const chartsOptions = {
     ...optionsBase,
@@ -76,14 +79,16 @@ export const elaborateDataGraphs = data => {
       text: "Worldwide situation",
     },
     theme: "dark1",
-    data: [{
-      type: "splineArea",
-      dataPoints: allPoints[0]
-    },
+    data: [
+      {
+        type: "splineArea",
+        dataPoints: allPoints[0]
+      },
       {
         type: "splineArea",
         dataPoints: allPoints[1]
-      }]
+      }
+    ]
   };
 
   return chartsOptions;

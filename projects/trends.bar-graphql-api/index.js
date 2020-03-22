@@ -12,6 +12,7 @@ const cookieParser = require("cookie-parser");
 const globalConfig = require('./modules/auth/config_api');
 const jsonWebToken = require('jsonwebtoken')
 const sessionModel = require("./modules/auth/models/session");
+const usersModel = require("./modules/auth/models/user");
 
 const usersRoute = require("./modules/auth/routes/usersRoute");
 const tokenRoute = require("./modules/auth/routes/tokenRoute");
@@ -29,25 +30,8 @@ const crawlerRoute = require("./routes/crawlerRoute");
 
 const db = require("./db");
 
-// enum MutationType {
-//   CREATED
-//   UPDATED
-//   DELETED
-// }
-
 const TREND_MUTATED = 'trendMutated';
-const TREND_GRAPH_MUTATED = 'trenGraphMutated';
-
-// const Long = new GraphQLObjectType({
-//   name: 'Long',
-//   fields: {
-//     numberField: {
-//       type: BigInt,
-//       // this would throw an error with the GraphQLInt
-//       resolve: () => Number.MAX_SAFE_INTEGER
-//     }
-//   }
-// })
+const TREND_GRAPH_MUTATED = 'trendGraphMutated';
 
 const typeDefs = gql`
     scalar BigInt
@@ -59,30 +43,36 @@ const typeDefs = gql`
         sourceName: String
     }
 
-    type GraphLayout {
-        label: String
-        subLabel: String
-        type: String!
+    type DateInt {
+        x: BigInt
+        y: BigInt
     }
 
     type TrendGraph {
         _id: ID!
         trendId: String!
         dataset: Dataset!
-        graph: GraphLayout!
-        values: [ [BigInt!]! ]!
+        title: String
+        label: String
+        subLabel: String
+        type: String!
+        values: [ DateInt ]!
+    }
+
+    type User {
+        _id: ID!
+        name: String!
+        email: String!
+        trends: [Trend]
+        trend(trendId: String!): Trend
     }
 
     type Trend {
         _id: ID!
         trendId: String!
+        user: User
         aliases: [ String! ]
         trendGraphs: [TrendGraph]
-    }
-
-    type Query {
-        trendGraph(id: ID!): TrendGraph
-        trend(trendId: String!): Trend
     }
 
     input CrawlingRegexp {
@@ -134,8 +124,17 @@ const typeDefs = gql`
         functions: [CrawlingFunctions]
     }
 
+    type Query {
+        trends: [Trend]
+        users: [User]
+        user(name: String!): User
+        trendGraph(id: ID!): TrendGraph
+        trend(trendId: String!): [Trend]
+    }
+
     type Mutation {
-        createTrend(trendId: String!): Trend
+        createTrend(trendId: String!, username: String!): Trend
+        deleteTrendGraphs(trendId: String!, username: String!): String
         upsertTrendGraph(script: CrawlingScript!): TrendGraph
     }
 
@@ -153,14 +152,25 @@ const typeDefs = gql`
 
 const resolvers = {
   Query: {
-    trendGraph: (_, {id}, {dataSources}) => dataSources.trendGraphs.getTrendGraph(id),
-    trend: (_, {trendId}, {dataSources}) => dataSources.trends.getTrend(trendId)
+    trends: (_, _2, {dataSources}) => dataSources.trends.get(),
+    trend: (_, args, {dataSources}) => dataSources.trends.find(args),
+    users: (_, _2, {dataSources}) => dataSources.users.get(),
+    user: (_, {name}, {dataSources}) => dataSources.users.findOne({name:name})
+  },
+
+  User: {
+    trends: (user, args, {dataSources}) => dataSources.trends.find({userId: user._id}),
+    trend: (user, {trendId}, {dataSources}) => dataSources.trends.findOne({userId: user._id, trendId: trendId} )
+  },
+
+  Trend: {
+    // trendGraphs: (trend, _, {dataSources}) => dataSources.trends.getTrendGraph(trend.trendGraphs),
+    user: (trend, _, {dataSources}) => dataSources.users.findOneById(trend.userId)
   },
 
   Mutation: {
-
     async createTrend(parent, args, {dataSources}) {
-      const newTrend = await dataSources.trends.createTrend(args.trendId);
+      const newTrend = await dataSources.trends.createTrend(args.trendId, args.username);
       await pubsub.publish(TREND_MUTATED, {
         trendMutated: {
           mutation: 'CREATED',
@@ -170,7 +180,18 @@ const resolvers = {
       return newTrend;
     },
 
-    async upsertTrendGraph(parent, args, {dataSources}) {
+    async deleteTrendGraphs(parent, args, {dataSources}) {
+      const res = await dataSources.trendGraphs.deleteTrendGraphs(args.trendId, args.username);
+      await pubsub.publish(TREND_MUTATED, {
+        trendMutated: {
+          mutation: 'DELETED',
+          node: args.trendId
+        }
+      });
+      return res;
+    },
+
+    async upsertTrendGraph(parent, args, {dataSources}, context) {
       const ret = await dataSources.trendGraphs.upsertTrendGraph(args.script);
       console.log("Sending to pubsub: ", ret);
       await pubsub.publish(TREND_GRAPH_MUTATED, {
@@ -196,24 +217,53 @@ const resolvers = {
 
 db.initDB();
 
+class MongoDataSourceExtended extends MongoDataSource {
+  async get() {
+    return await this.model.find({}).collation({locale: "en", strength: 2});
+  }
+
+  async find(query) {
+    return await this.model.find(query).collation({locale: "en", strength: 2});
+  }
+
+  async findOne(query) {
+    return await this.model.findOne(query).collation({locale: "en", strength: 2});
+  }
+}
+
 class TrendsDataSource extends MongoDataSource {
+  async get() {
+    return await this.model.find({});
+  }
+
+  async findById(id) {
+    console.log(id);
+    const res = await this.model.findById(id);
+    return res.toObject();
+  }
+
   async getTrendGraph(id) {
     const pop = trendGraphsModel.findById(id).populate('dataset').populate('graph');
     const res = await pop.exec();
     return res.toObject();
   }
 
-  async getTrend(trendId) {
-    const pop = trendsModel.findOne({trendId: trendId}).populate({
+  async getUserTrends(username) {
+    const res = await trendsModel.find({username});
+    return res;
+  }
+
+  async getTrend(trendId, username) {
+    const pop = trendsModel.findOne({trendId, username}).populate({
       path: 'trendGraphs',
-      populate: {path: 'dataset graph'}
+      populate: {path: 'dataset'}
     });
     const res = await pop.exec();
     return res.toObject();
   }
 
-  async createTrend(trendId) {
-    return await db.upsert(this.model, {trendId});
+  async createTrend(trendId, username) {
+    return await db.upsert(this.model, {trendId, username});
   }
 
   async upsertTrendGraph(script) {
@@ -229,6 +279,16 @@ class TrendsDataSource extends MongoDataSource {
     return await this.getTrend(trendId);
   }
 
+  async deleteTrendGraphs(trendId, username) {
+    const trend = await trendsModel.findOne({trendId, username});
+    if (!trend) return null;
+
+    await trendGraphsModel.deleteMany({_id: {'$in': trend.trendGraphs}});
+    await trendsModel.updateOne({_id: trend._id}, {$set: {trendGraphs: []}});
+
+    return trend._id;
+  }
+
 }
 
 const PORT = 4500;
@@ -239,13 +299,13 @@ const server = new ApolloServer(
     typeDefs,
     resolvers,
     dataSources: () => ({
-      trends: new TrendsDataSource(trendsModel),
+      trends: new MongoDataSourceExtended(trendsModel),
+      users: new MongoDataSourceExtended(usersModel),
       trendGraphs: new TrendsDataSource(trendGraphsModel),
     }),
     context: async ({req, connection}) => {
       if (connection) {
-        // check connection for metadata
-        return connection.context;
+        return connection.context; // Subscription connection
       } else {
         try {
           const token = req.signedCookies ? req.signedCookies["eh_jwt"] : null;
@@ -253,7 +313,7 @@ const server = new ApolloServer(
             user: await getUserFromTokenRaw(token)
           };
         } catch (e) {
-          logger.error("Reading of signed cookies failed because: ", e);
+          // logger.error("Reading of signed cookies failed because: ", e);
           return {
             user: null
           };

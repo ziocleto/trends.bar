@@ -15,7 +15,7 @@ const Landing = () => {
     }
   }, []);
 
-  if ( trendId !== null ) {
+  if ( trendId ) {
     return <Redirect push={true} to={`/${trendId}`}/>
   }
 
@@ -24,7 +24,7 @@ const Landing = () => {
       const trendId = sanitizePathRoot(e.target.value);
       setTrend(trendId).then();
     }
-  }
+  };
 
   return (
     <LandingSection>

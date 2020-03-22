@@ -18,12 +18,17 @@ export const crawlingScriptModel = mongoose.model("crawling_scripts", new mongoo
 }, {strict: false}));
 
 export const trendGraphsModel = mongoose.model("trend_graphs", new mongoose.Schema({
-  values: [[Number]],
+  title: {type: String},
+  label: {type: String},
+  subLabel: {type: String},
+  type: {type: String},
+  values: [],
   dataset: {type: mongoose.Schema.Types.ObjectId, ref: 'datasets'},
-  graph: {type: mongoose.Schema.Types.ObjectId, ref: 'graph_layouts'}
 }, {strict: false}));
 
 export const trendsModel = mongoose.model("trends", new mongoose.Schema({
   trendId: {type: String, unique: true},
+  userId: {type: mongoose.Schema.Types.ObjectId, ref: 'users'},
+  aliases: [{type: String}],
   trendGraphs: [{type: mongoose.Schema.Types.ObjectId, ref: 'trend_graphs'}]
 }, {strict: false}));

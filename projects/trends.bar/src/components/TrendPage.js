@@ -1,269 +1,57 @@
-import React, {Fragment, useEffect, useReducer} from "react";
+import React from "react";
 import CanvasJSReact from '../assets/canvasjs.react';
-import {FlexContainer, TrendGrid, TrendLayout} from "./TrendPageStyle";
-import {Button} from "react-bootstrap";
-import {useQueryData} from "../futuremodules/graphqlclient/query";
-import {elaborateDataGraphs, getTrendGraphs, isEmptyGraph,} from "../modules/trends/dataGraphs";
+import {FlexContainer} from "./TrendPageStyle";
+import {elaborateDataGraphs, getTrendGraphs,} from "../modules/trends/dataGraphs";
 import {sanitizePathRoot} from "../futuremodules/utils/utils";
-import {useMutation, useSubscription} from "@apollo/react-hooks";
-import {CREATE_TREND, UPSERT_TREND_GRAPH} from "../modules/trends/mutations";
-import {DateRangeInput} from '@datepicker-react/styled'
+import {useQuery, useSubscription} from "@apollo/react-hooks";
 import {trendGraphSubcription} from "../modules/trends/subscriptions";
-import moment from "moment";
+import {Link, useLocation} from "react-router-dom";
+import {Table} from "react-bootstrap";
+import {TrendGrid, TrendLayout} from "./common.styled";
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
-const TrendPage = props => {
+const emptyTrend = (trendId) => {
+  return (
+    <TrendLayout>
+      <TrendGrid>
+        <FlexContainer>
+          Tread {trendId} is empty, have a look at the hot trends, like, you guessed it...
+          <Link to={"/coronavirus"}>{" "}CoronaVirus</Link>
+        </FlexContainer>
+      </TrendGrid>
+    </TrendLayout>
+  )
+};
 
-  const initialState = {
-    startDate: null,
-    endDate: null,
-    focusedInput: null,
-    chosenDate: null
+const TrendPage = () => {
+
+  const location = useLocation();
+  const trendIdFull = sanitizePathRoot(location.pathname);
+  const [, trendId] = trendIdFull.split("/");
+
+  const graphDataS = useSubscription(trendGraphSubcription());
+  const graphDataQ = useQuery(getTrendGraphs(trendId));
+
+  if ( !graphDataQ.data ) {
+    return emptyTrend(trendId);
   }
 
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const trendId = sanitizePathRoot(props.match.url);
-  const [createTrend] = useMutation(CREATE_TREND);
-  const [upserTrendGraph] = useMutation(UPSERT_TREND_GRAPH);
-  const { data, loading } = useSubscription(trendGraphSubcription());
+  console.log("Trendid ", trendId)
+  console.log(graphDataQ);
 
-  function reducer(state, action) {
-    switch (action.type) {
-      case 'focusChange':
-        let cd = null
-        if ( state.startDate && state.endDate && action.payload === null ) {
-          cd = moment(state.endDate);
-        }
-        return {...state, focusedInput: action.payload, chosenDate: cd}
-      case 'dateChange':
-        return action.payload
-      default:
-        throw new Error()
-    }
-  }
-
-  useEffect(() => {
-    createTrend({variables: {trendId: trendId}}).then();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  let graphData = useQueryData(getTrendGraphs(trendId));
-  if ( data !== undefined && loading === false ) {
-    graphData.trend = data.trendGraphMutated.node;
-  }
-
-  if (isEmptyGraph(graphData)) {
-    return <Fragment/>
-  }
+  const graphData = graphDataS.data ? graphDataS.data.trendGraphMutated.node.trendGraphs : graphDataQ.data.trend.trendGraphs;
 
   const chartOptions = elaborateDataGraphs(graphData);
 
-  const updateTrend = () => {
-    upserTrendGraph({
-      variables: {
-        script: {
-          "trendId": trendId,
-          "source": "World Health Organization",
-          "sourceName": "situation-report",
-          "graphType": ["Date", "Int"],
-          "timestamp": state.chosenDate.format("YYYYMMDD"),
-          "timestampFormat": "YYYYMMDD",
-          "functions": [
-            {
-              "type": "2d",
-              "key": "Cases",
-              "datasets": [
-                {
-                  "title": "Worldwide",
-                  "actions": [
-                    {
-                      "regex": {
-                        "body": "Globally[\\n\\r\\s]*(\\d+\\s*\\d*)\\sconfirmed",
-                        "flags": "mi"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "title": "China",
-                  "actions": [
-                    {
-                      "regex": {
-                        "body": "total\\s*\\n*\\d+\\s*\\n*\\d+ \\d+ \\d+ (\\d+) \\d+",
-                        "flags": "mi"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "title": "Rest of the World",
-                  "actions": [
-                    {
-                      "validRange": {
-                        "from": "00000101",
-                        "to": "20200301"
-                      },
-                      "regex": {
-                        "body": "grand total\\W*(\\d+\\s*\\d*)\\W*\\d+\\s*\\d*\\W*\\d+\\s*\\d*\\W*\\d+\\s*\\d*",
-                        "flags": "mi"
-                      }
-                    },
-                    {
-                      "validRange": {
-                        "from": "20200302",
-                        "to": "99990301"
-                      },
-                      "regex": {
-                        "body": "grand total\\n*\\S*\\n* (\\d+\\s*\\d*) \\d+ \\d+ \\d+",
-                        "flags": "mi"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "title": "$country",
-                  "actions": [
-                    {
-                      "startRegex": {
-                        "body": "table 2\\.",
-                        "flags": "mi"
-                      },
-                      "endRegex": {
-                        "body": "grand total",
-                        "flags": "mi"
-                      },
-                      "regex": {
-                        "body": "[\\s\\/\\)\\(\\D&-]+(\\d+) \\d+ \\d+ \\d+ \\D+ \\d+",
-                        "flags": "gmi",
-                        "resolver": "postTransform"
-                      },
-                      "postTransform": {
-                        "transform": "replace",
-                        "source": "regexp",
-                        "sourceIndex": 0,
-                        "valueIndex": 1,
-                        "dest": "$country",
-                        "algo": "matchCountryName"
-                      }
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "2d",
-              "key": "Deaths",
-              "datasets": [
-                {
-                  "title": "Worldwide",
-                  "actions": [
-                    {
-                      "startRegex": {
-                        "body": "SITUATION IN NUMBERS",
-                        "flags": "mi"
-                      },
-                      "endRegex": {
-                        "body": "WHO RISK ASSESSMENT",
-                        "flags": "mi"
-                      },
-                      "regex": {
-                        "body": "(\\d+\\s*\\d*)\\sdeath|death",
-                        "flags": "mi",
-                      }
-                    },
-                    {
-                      "validRange": {
-                        "from": "00000101",
-                        "to": "20200308"
-                      },
-                      "startRegex": {
-                        "body": "SITUATION IN NUMBERS",
-                        "flags": "mi"
-                      },
-                      "endRegex": {
-                        "body": "WHO RISK ASSESSMENT",
-                        "flags": "mi"
-                      },
-                      "regex": {
-                        "body": "(\\d+\\s*\\d*)\\sdeath|death",
-                        "flags": "gmi",
-                        "resolver": "accumulator"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "title": "China",
-                  "actions": [
-                    {
-                      "regex": {
-                        "body": "total\\s*\\n*\\d+\\s*\\n*\\d+ \\d+ \\d+ \\d+ (\\d+)",
-                        "flags": "mi"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "title": "Rest of the World",
-                  "actions": [
-                    {
-                      "validRange": {
-                        "from": "00000101",
-                        "to": "20200301"
-                      },
-                      "regex": {
-                        "body": "grand total\\W*\\d+\\s*\\d*\\d+\\s*\\d*\\W*\\d+\\s*\\d*\\W*(\\d+\\s*\\d*)\\W*\\d+\\s*\\d*",
-                        "flags": "mi"
-                      }
-                    },
-                    {
-                      "validRange": {
-                        "from": "20200302",
-                        "to": "99990301"
-                      },
-                      "regex": {
-                        "body": "grand total\\n*\\S*\\n* \\d+\\s*\\d* \\d+ (\\d+) \\d+",
-                        "flags": "mi"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "title": "$country",
-                  "actions": [
-                    {
-                      "startRegex": {
-                        "body": "table 2\\.",
-                        "flags": "mi"
-                      },
-                      "endRegex": {
-                        "body": "grand total",
-                        "flags": "mi"
-                      },
-                      "regex": {
-                        "body": "[\\s\\/\\)\\(\\D&-]+\\d+ \\d+ (\\d+) \\d+ \\D+ \\d+",
-                        "flags": "gmi",
-                        "resolver": "postTransform"
-                      },
-                      "postTransform": {
-                        "transform": "replace",
-                        "source": "regexp",
-                        "sourceIndex": 0,
-                        "valueIndex": 1,
-                        "dest": "$country",
-                        "algo": "matchCountryName"
-                      }
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      }
-    }).then();
-  }
+  let countries = [];
+  // for ( const elem of graphData.trend.trendGraphs ) {
+  //   countries.push( {
+  //     country: elem.graph.subLabel,
+  //     cases: elem.values.
+  //   });
+  // }
+  // console.log(graphData);
 
   return (
     <TrendLayout>
@@ -272,14 +60,33 @@ const TrendPage = props => {
           <CanvasJSChart options={chartOptions}/>
         </FlexContainer>
         <FlexContainer>
-          <DateRangeInput
-            onDatesChange={data => dispatch({type: 'dateChange', payload: data})}
-            onFocusChange={focusedInput => dispatch({type: 'focusChange', payload: focusedInput})}
-            startDate={state.startDate} // Date or null
-            endDate={state.endDate} // Date or null
-            focusedInput={state.focusedInput} // START_DATE, END_DATE or null
-          />
-          <Button disabled={!state.chosenDate} onClick={() => updateTrend()}>Update</Button>
+          <Table striped bordered hover variant="dark" size="sm">
+            <thead>
+            <tr>
+              <th>Country</th>
+              <th>Cases</th>
+              <th>Deaths</th>
+            </tr>
+            </thead>
+            <tbody>
+              {countries.map( (e) => {
+                return (
+                <tr key={e}>
+                 <td>{e}</td>
+                </tr>
+                )
+              } )}
+            <tr>
+              <td>Jacob</td>
+              <td>Thornton</td>
+              <td>@fat</td>
+            </tr>
+            <tr>
+              <td colSpan="2">Larry the Bird</td>
+              <td>@twitter</td>
+            </tr>
+            </tbody>
+          </Table>
         </FlexContainer>
       </TrendGrid>
     </TrendLayout>

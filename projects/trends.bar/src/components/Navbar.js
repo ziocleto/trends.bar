@@ -2,9 +2,14 @@ import React, {Fragment} from "react";
 import {useGlobal} from "reactn";
 import {Link, useLocation} from "react-router-dom";
 import {ProgressBar} from "../futuremodules/progressbar/ProgressBar";
-import {Mx1, Navbareh, NavbarGrid, NavbarLogo, NavbarTitle, UserNameText} from "./Navbar.styled";
+import {Navbareh, NavbarGrid, NavbarLogo, NavbarTitle, UserNameText} from "./Navbar.styled";
 import {getUserName, logoffFromProject, useGetAuth} from "../futuremodules/auth/authAccessors";
-import {isReservedWord, isReservedWordSanitized, sanitizeAvoidReservedWords} from "../futuremodules/utils/utils";
+import {
+  getFileNameOnlyNoExt,
+  isReservedWord,
+  isReservedWordSanitized,
+  sanitizeAvoidReservedWords
+} from "../futuremodules/utils/utils";
 
 const Navbar = (props) => {
 
@@ -13,7 +18,7 @@ const Navbar = (props) => {
   const auth = useGetAuth();
   const userName = getUserName(auth);
   const isLocationReserved = isReservedWordSanitized(location.pathname);
-  const propTrendId = !isLocationReserved && sanitizeAvoidReservedWords(props.trendId);
+  const propTrendId = !isLocationReserved && getFileNameOnlyNoExt(sanitizeAvoidReservedWords(props.trendId));
 
   let linkContent = <Fragment/>;
 

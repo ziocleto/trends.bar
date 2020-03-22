@@ -1,138 +1,282 @@
-import React from "react";
-import Entries from "./entities/Entries";
-import ImageEditor from "./entities/ImageEditor";
-import AppEditor from "./entities/AppEditor";
-import GUIEditor from "./entities/GUIEditor";
-import GeomEditor from "./entities/GeomEditor";
-import FontEditor from "./entities/FontEditor";
-import MaterialEditor from "./entities/MaterialEditor";
-import EntityMetaSection from "./entities/EntityMetaSection";
-import RenderParamsToolbar from "./entities/RenderParamsToolbar";
-import {
-  GroupFont,
-  GroupGeom,
-  groupHasMetadataSection,
-  GroupImage,
-  GroupMaterial,
-  GroupScript,
-  GroupUI
-} from "../../utils/entityUtils";
-import {createPlaceHolder, getFullEntity} from "../../actions/entities";
-import {Redirect} from "react-router-dom";
-import {useGlobal} from "reactn";
-// import WasmCanvas, {ReactWasm} from "react-wasm-canvas";
-import WasmCanvas, {ReactWasm} from "../../futuremodules/reactwasmcanvas/localreacwasmcanvas";
+import React, {useGlobal, useReducer} from "reactn";
+import {FlexContainer} from "./TrendPageStyle";
+import {DateRangeInput} from "@datepicker-react/styled";
+import {Button} from "react-bootstrap";
+import moment from "moment";
+import {useMutation} from "@apollo/react-hooks";
+import {DELETE_TREND_GRAPH, UPSERT_TREND_GRAPH} from "../modules/trends/mutations";
+import {TrendGrid, TrendLayout} from "./common.styled";
+import {Auth} from "../futuremodules/auth/authAccessors";
+import {useLocation} from "react-router-dom";
+import {getFileNameOnlyNoExt} from "../futuremodules/utils/utils";
 
-const containerClassFromGroup = (currEntity, group) => {
-  switch (group) {
-    case GroupGeom:
-      return {
-        mainContainerClass: "AppEditorRenderGrid",
-        mainContainerDiv: <GeomEditor/>
-      };
-    case GroupMaterial:
-      return {
-        mainContainerClass: "AppEditorRenderGrid",
-        mainContainerDiv: <MaterialEditor/>
-      };
-    case GroupImage:
-      return {
-        mainContainerClass: "AppEditorRenderGrid",
-        mainContainerDiv: <ImageEditor/>
-      };
-    case GroupScript:
-      return {
-        mainContainerClass: "AppEditorRenderGrid",
-        mainContainerDiv: <AppEditor/>
-      };
-    case GroupFont:
-      return {
-        mainContainerClass: "AppEditorRenderGrid",
-        mainContainerDiv: <FontEditor/>
-      };
-    case GroupUI:
-      return {
-        mainContainerClass: "AppEditorRenderGrid",
-        mainContainerDiv: <GUIEditor/>
-      };
-    default:
-      return {
-        mainContainerClass: "AppEditorRenderGrid",
-        mainContainerDiv: <AppEditor/>
-      };
-  }
-};
+export const DashboardProject = () => {
 
-const DashboardProject = () => {
-  let canvasContainer = React.useRef(null);
-  const [auth,] = useGlobal('auth');
-  const [entities,entitiesStore] = useGlobal('entities');
-  const wasmDispatcher = useGlobal(ReactWasm);
-
-  const currentEntity = entities ? entities.currentEntity : null;
-  const group = entities ? entities.groupSelected : null;
-  const wwwPrefixToAvoidSSLMadness = process.env.REACT_APP_EH_CLOUD_HOST === 'localhost' ? "" : "www.";
-  let wasmArgumentList = [`hostname=${wwwPrefixToAvoidSSLMadness}${process.env.REACT_APP_EH_CLOUD_HOST}`];
-
-  if (auth === null) {
-    return <Redirect to="/"/>
+  const initialState = {
+    startDate: null,
+    endDate: null,
+    focusedInput: null,
+    chosenDate: null
   }
 
-  if (auth && auth.project === null) {
-    return <Redirect to="/dashboarduser"/>
+  const location = useLocation();
+  const trendId = getFileNameOnlyNoExt(location.pathname);
+  const [auth] = useGlobal(Auth);
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const [upserTrendGraph] = useMutation(UPSERT_TREND_GRAPH);
+  const [deleteTrendGraph] = useMutation(DELETE_TREND_GRAPH);
+
+  console.log(trendId);
+// const [createTrend] = useMutation(CREATE_TREND);
+// createTrend({variables: {trendId: trendId}}).then();
+
+  const deleteTrend = () => {
+    deleteTrendGraph({
+      variables: {
+        trendId: trendId,
+        username: auth.username
+      }
+    });
   }
 
-  if (group === GroupScript) {
-    if (entities.length >= 1 && !currentEntity) {
-      entitiesStore(getFullEntity(entities[0]));
-    } else if (!currentEntity) {
-      entitiesStore(createPlaceHolder(group));
+  const updateTrend = () => {
+    upserTrendGraph({
+      variables: {
+        script: {
+          "trendId": trendId,
+          "source": "World Health Organization",
+          "sourceName": "situation-report",
+          "graphType": ["Date", "Int"],
+          "timestamp": state.chosenDate.format("YYYYMMDD"),
+          "timestampFormat": "YYYYMMDD",
+          "functions": [
+            {
+              "type": "2d",
+              "key": "Cases",
+              "datasets": [
+                {
+                  "title": "Worldwide",
+                  "actions": [
+                    {
+                      "regex": {
+                        "body": "Globally[\\n\\r\\s]*(\\d+\\s*\\d*)\\sconfirmed",
+                        "flags": "mi"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "title": "China",
+                  "actions": [
+                    {
+                      "regex": {
+                        "body": "total\\s*\\n*\\d+\\s*\\n*\\d+ \\d+ \\d+ (\\d+) \\d+",
+                        "flags": "mi"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "title": "Rest of the World",
+                  "actions": [
+                    {
+                      "validRange": {
+                        "from": "00000101",
+                        "to": "20200301"
+                      },
+                      "regex": {
+                        "body": "grand total\\W*(\\d+\\s*\\d*)\\W*\\d+\\s*\\d*\\W*\\d+\\s*\\d*\\W*\\d+\\s*\\d*",
+                        "flags": "mi"
+                      }
+                    },
+                    {
+                      "validRange": {
+                        "from": "20200302",
+                        "to": "99990301"
+                      },
+                      "regex": {
+                        "body": "grand total\\n*\\S*\\n* (\\d+\\s*\\d*) \\d+ \\d+ \\d+",
+                        "flags": "mi"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "title": "$country",
+                  "actions": [
+                    {
+                      "startRegex": {
+                        "body": "table 2\\.",
+                        "flags": "mi"
+                      },
+                      "endRegex": {
+                        "body": "grand total",
+                        "flags": "mi"
+                      },
+                      "regex": {
+                        "body": "[\\s\\/\\)\\(\\D&-]+(\\d+) \\d+ \\d+ \\d+ \\D+ \\d+",
+                        "flags": "gmi",
+                        "resolver": "postTransform"
+                      },
+                      "postTransform": {
+                        "transform": "replace",
+                        "source": "regexp",
+                        "sourceIndex": 0,
+                        "valueIndex": 1,
+                        "dest": "$country",
+                        "algo": "matchCountryName"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "2d",
+              "key": "Deaths",
+              "datasets": [
+                {
+                  "title": "Worldwide",
+                  "actions": [
+                    {
+                      "startRegex": {
+                        "body": "SITUATION IN NUMBERS",
+                        "flags": "mi"
+                      },
+                      "endRegex": {
+                        "body": "WHO RISK ASSESSMENT",
+                        "flags": "mi"
+                      },
+                      "regex": {
+                        "body": "(\\d+\\s*\\d*)\\sdeath|death",
+                        "flags": "mi",
+                      }
+                    },
+                    {
+                      "validRange": {
+                        "from": "00000101",
+                        "to": "20200308"
+                      },
+                      "startRegex": {
+                        "body": "SITUATION IN NUMBERS",
+                        "flags": "mi"
+                      },
+                      "endRegex": {
+                        "body": "WHO RISK ASSESSMENT",
+                        "flags": "mi"
+                      },
+                      "regex": {
+                        "body": "(\\d+\\s*\\d*)\\sdeath|death",
+                        "flags": "gmi",
+                        "resolver": "accumulator"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "title": "China",
+                  "actions": [
+                    {
+                      "regex": {
+                        "body": "total\\s*\\n*\\d+\\s*\\n*\\d+ \\d+ \\d+ \\d+ (\\d+)",
+                        "flags": "mi"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "title": "Rest of the World",
+                  "actions": [
+                    {
+                      "validRange": {
+                        "from": "00000101",
+                        "to": "20200301"
+                      },
+                      "regex": {
+                        "body": "grand total\\W*\\d+\\s*\\d*\\d+\\s*\\d*\\W*\\d+\\s*\\d*\\W*(\\d+\\s*\\d*)\\W*\\d+\\s*\\d*",
+                        "flags": "mi"
+                      }
+                    },
+                    {
+                      "validRange": {
+                        "from": "20200302",
+                        "to": "99990301"
+                      },
+                      "regex": {
+                        "body": "grand total\\n*\\S*\\n* \\d+\\s*\\d* \\d+ (\\d+) \\d+",
+                        "flags": "mi"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "title": "$country",
+                  "actions": [
+                    {
+                      "startRegex": {
+                        "body": "table 2\\.",
+                        "flags": "mi"
+                      },
+                      "endRegex": {
+                        "body": "grand total",
+                        "flags": "mi"
+                      },
+                      "regex": {
+                        "body": "[\\s\\/\\)\\(\\D&-]+\\d+ \\d+ (\\d+) \\d+ \\D+ \\d+",
+                        "flags": "gmi",
+                        "resolver": "postTransform"
+                      },
+                      "postTransform": {
+                        "transform": "replace",
+                        "source": "regexp",
+                        "sourceIndex": 0,
+                        "valueIndex": 1,
+                        "dest": "$country",
+                        "algo": "matchCountryName"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }).then();
+  };
+
+  function reducer(state, action) {
+    switch (action.type) {
+      case 'focusChange':
+        let cd = null
+        if ( state.startDate && state.endDate && action.payload === null ) {
+          cd = moment(state.endDate);
+        }
+        return {...state, focusedInput: action.payload, chosenDate: cd}
+      case 'dateChange':
+        return action.payload
+      default:
+        throw new Error()
     }
   }
 
-  const {mainContainerClass, mainContainerDiv} = containerClassFromGroup(
-    currentEntity,
-    group
-  );
-
-  const bShowMetaSection = groupHasMetadataSection(currentEntity, group);
-
-  const entityName = (
-    <div className="source_tabs-a">
-      <div className="source_tabs-internal">
-        {currentEntity && currentEntity.entity.name}
-      </div>
-    </div>
-  );
-
-  const mainEditorDiv = (
-    <div className={mainContainerClass}>
-      {entityName}
-      <RenderParamsToolbar/>
-      <div className="EntryEditorRender" ref={canvasContainer}>
-        <WasmCanvas
-          wasmName="editor"
-          dispatcher={wasmDispatcher}
-          canvasContainer={canvasContainer.current}
-          initialRect={{top: 0, left: 0, width: 0, height: 0}}
-          initialVisibility={false}
-          argumentList={wasmArgumentList}
-          padding="1px"
-          borderRadius="5px"
-          mandatoryWebGLVersionSupporNumber="webgl2"
-        />
-      </div>
-      {currentEntity && mainContainerDiv}
-      {bShowMetaSection && <EntityMetaSection/>}
-    </div>
-  );
-
   return (
-    <div className="dashboardContainer">
-      <Entries cname="thumbs-a thumbsEntityArea"/>
-      <div className="editor-a">{mainEditorDiv}</div>
-    </div>
+    <TrendLayout>
+      <TrendGrid>
+      <FlexContainer>
+        <DateRangeInput
+          onDatesChange={data => dispatch({type: 'dateChange', payload: data})}
+          onFocusChange={focusedInput => dispatch({type: 'focusChange', payload: focusedInput})}
+          startDate={state.startDate} // Date or null
+          endDate={state.endDate} // Date or null
+          focusedInput={state.focusedInput} // START_DATE, END_DATE or null
+        />
+        <Button disabled={!state.chosenDate} onClick={() => updateTrend()}>Update</Button>
+      </FlexContainer>
+        <FlexContainer>
+          <Button variant="danger" onClick={() => deleteTrend()}>Reset Data</Button>
+        </FlexContainer>
+      </TrendGrid>
+    </TrendLayout>
   );
 };
-
-export default DashboardProject;

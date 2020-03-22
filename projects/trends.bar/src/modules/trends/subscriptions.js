@@ -7,13 +7,14 @@ export const trendSubcription = () => {
               mutation
               node {
                   trendId
+                  username
               }
           }
       }
   `;
 
   return TREND_MUTATED;
-}
+};
 
 export const trendGraphSubcription = () => {
   const TREND_MUTATED = gql`
@@ -40,4 +41,4 @@ export const trendGraphSubcription = () => {
   `;
 
   return TREND_MUTATED;
-}
+};
