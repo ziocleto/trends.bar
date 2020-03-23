@@ -3,6 +3,9 @@
   --font-size-normal: 0.8rem;
   --font-size-one: 1rem;
   --font-size-medium: 1.25rem;
+  --font-size-big: 1.5rem;
+  --font-size-lead: 2rem;
+  --font-size-large: 3rem;
   --font-size-small: 0.7rem;
   --font-size-extrasmall: 0.55rem;
   --font-family-default: Aileron;
@@ -15,6 +18,7 @@
   --light-color: #f4f4f4;
   --danger-color: #dc3545;
   --happy-color: #dcd505;
+  --happy-color-trasparent: #dcd50510;
   --success-color: #28a745;
   --logo-color-1: #fccb7b;
   --logo-color-2: #8ae9e9;

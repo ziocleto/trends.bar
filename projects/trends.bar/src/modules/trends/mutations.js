@@ -3,8 +3,8 @@ import gql from "graphql-tag";
 export const CREATE_TREND = gql`
     mutation CreateTrend($trendId: String!, $username: String!) {
         createTrend(trendId: $trendId, username: $username) {
-            _id,
             trendId
+            username
         }
     }`;
 

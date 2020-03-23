@@ -6,6 +6,8 @@ import {crawlTrendId, Cruncher} from "./assistants/cruncher-assistant";
 import * as authController from "./modules/auth/controllers/authController";
 import {getUserFromTokenRaw} from "./modules/auth/controllers/authController";
 
+const mongoose = require("mongoose");
+
 const graphAssistant = require("./assistants/graph-assistant");
 const datasetAssistant = require("./assistants/dataset-assistant");
 const cookieParser = require("cookie-parser");
@@ -143,6 +145,7 @@ const typeDefs = gql`
         user(name: String!): User
         trendGraph(id: ID!): TrendGraph
         trend(trendId: String!): [Trend]
+        trend_similar(trendId: String!): [Trend]
         script(trendId: String!, username:String!): ScriptOutput
     }
 
@@ -169,6 +172,7 @@ const resolvers = {
   Query: {
     trends: (_, _2, {dataSources}) => dataSources.trends.get(),
     trend: (_, args, {dataSources}) => dataSources.trends.find(args),
+    trend_similar: (_, args, {dataSources}) => dataSources.trends.findSimilar(args),
     users: (_, _2, {dataSources}) => dataSources.users.get(),
     user: (_, {name}, {dataSources}) => dataSources.users.findOne({name: name}),
     script: (_, {trendId, username}, {dataSources}) => dataSources.scripts.findOneStringify({trendId, username})
@@ -190,7 +194,7 @@ const resolvers = {
 
   Mutation: {
     async createTrend(parent, args, {dataSources}) {
-      const newTrend = await dataSources.trends.createTrend(args.trendId, args.username);
+      const newTrend = await dataSources.trends.upsertAndGet( { trendId: args.trendId, username: args.username });
       await pubsub.publish(TREND_MUTATED, {
         trendMutated: {
           mutation: 'CREATED',
@@ -243,12 +247,17 @@ const resolvers = {
 db.initDB();
 
 class MongoDataSourceExtended extends MongoDataSource {
+
   async get() {
     return await this.model.find({}).collation({locale: "en", strength: 2});
   }
 
   async find(query) {
     return await this.model.find(query).collation({locale: "en", strength: 2});
+  }
+
+  async findSimilar(query) {
+    return await this.model.find( { trendId: { "$regex": query.trendId, "$options": "i" } } );
   }
 
   async findOne(query) {
@@ -274,13 +283,16 @@ class MongoDataSourceExtended extends MongoDataSource {
     return await db.upsert(this.model, data, query);
   }
 
+  async upsertAndGet(query, data) {
+    await db.upsert(this.model, query, data);
+    const ret = await this.model.findOne(query);
+    console.log(ret);
+    return ret;
+  }
+
 }
 
 class TrendGraphDataSource extends MongoDataSourceExtended {
-
-  async createTrend(trendId, username) {
-    return await db.upsert(this.model, {trendId, username});
-  }
 
   async upsertTrendGraph(script) {
     try {

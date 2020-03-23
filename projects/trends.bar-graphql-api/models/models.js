@@ -1,5 +1,11 @@
 const mongoose = require("mongoose");
 
+const schemaWithIndex = (schemaDef, index) => {
+  let schema = new mongoose.Schema(schemaDef);
+  schema.index(index);
+  return schema;
+}
+
 export const datasetModel = mongoose.model("datasets", new mongoose.Schema({
   source: {type: String},
   sourceDocuments: [String],
@@ -27,8 +33,8 @@ export const trendGraphsModel = mongoose.model("trend_graphs", new mongoose.Sche
   dataset: {type: mongoose.Schema.Types.ObjectId, ref: 'datasets'},
 }, {strict: false}));
 
-export const trendsModel = mongoose.model("trends", new mongoose.Schema({
-  trendId: {type: String, unique: true},
-  username: {type: String, unique: true, red: 'users.name'},
+export const trendsModel = mongoose.model("trends",schemaWithIndex({
+  trendId: {type: String},
+  username: {type: String, ref: 'users.name'},
   aliases: [{type: String}],
-}, {strict: false}));
+}, { trendId: 'text' }));

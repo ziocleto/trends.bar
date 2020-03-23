@@ -1,6 +1,6 @@
 import React, {Fragment, useEffect} from "react";
 import {Route, Switch, useLocation} from 'react-router-dom';
-import Landing from "./components/Landing";
+import Landing from "./components/Landing/Landing";
 import Navbar from "./components/Navbar";
 import {useGlobal} from 'reactn';
 import TrendPage from "./components/TrendPage";

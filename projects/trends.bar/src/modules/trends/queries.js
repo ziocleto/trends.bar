@@ -12,6 +12,29 @@ export const getUserTrends = () => {
       }`;
 }
 
+export const getTrends = (trendId) => {
+  return gql`
+      {
+          trend (trendId: "${trendId}") {
+              user {
+                  name
+              }
+          }
+      }`;
+}
+
+export const getSimilarTrends = (trendId) => {
+    return gql`
+        {
+            trend_similar (trendId: "${trendId}") {
+                trendId
+                user {
+                    name
+                }
+            }
+        }`;
+}
+
 export const getScript = () => {
   return gql`
       query getScript($trendId:String!, $username:String!) {
