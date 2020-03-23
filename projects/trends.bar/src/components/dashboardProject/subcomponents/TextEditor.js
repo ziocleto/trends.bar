@@ -27,8 +27,9 @@ const KeyResponseError = 'error';
 
 export const ScriptCodeEditor = ({trendId, username}) => {
   const [fileJson, setFileJson] = useState({});
+  const [key, setKey] = useState(KeyResponseElaborated);
   const [fileC, setFileC] = useState(null);
-  const [key, setKey] = useState(KeyResponseParsed);
+
   const {data, loading} = useQuery(getScript(), {variables: {trendId, username}});
   const [saveScript] = useMutation(SAVE_SCRIPT);
   const [upserTrendGraph, response] = useMutation(UPSERT_TREND_GRAPH);
@@ -44,6 +45,16 @@ export const ScriptCodeEditor = ({trendId, username}) => {
     return fileJsonInjected;
   }
 
+  let hasScriptErrors = false;
+  if ( (response.data && response.loading === false) ) {
+    if ( response.error || response.data.upsertTrendGraph.error ) {
+      hasScriptErrors = true;
+      if ( key !== KeyResponseError ) setKey(KeyResponseError);
+    } else {
+      if ( key === KeyResponseError ) setKey(KeyResponseElaborated);
+    }
+  }
+
   const getResponseTab = () => {
     if ( !response.data ) {
       return "";
@@ -55,7 +66,8 @@ export const ScriptCodeEditor = ({trendId, username}) => {
       return response.data.upsertTrendGraph.elaborationTraces;
     }
     if ( key === KeyResponseError ) {
-      return response.data.upsertTrendGraph.error;
+      if ( response.data.upsertTrendGraph.error ) return response.data.upsertTrendGraph.error;
+      return response.error;
     }
   };
 
@@ -121,11 +133,11 @@ export const ScriptCodeEditor = ({trendId, username}) => {
       </ScriptEditorControls>
       <ScriptOutputTabs>
         <Tabs variant="pills" id="scriptOutputTag" activeKey={key} onSelect={k => setKey(k)}>
-          <Tab eventKey={KeyResponseParsed} title="Parsed">
+          <Tab eventKey={KeyResponseParsed} title="Parsed" disabled={hasScriptErrors}>
           </Tab>
-          <Tab eventKey={KeyResponseElaborated} title="Result">
+          <Tab eventKey={KeyResponseElaborated} title="Result" disabled={hasScriptErrors}>
           </Tab>
-          <Tab eventKey={KeyResponseError} title="Errors">
+          <Tab eventKey={KeyResponseError} title="Errors" disabled={!hasScriptErrors}>
           </Tab>
         </Tabs>
       </ScriptOutputTabs>
