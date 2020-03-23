@@ -1,41 +1,54 @@
+'use strict';
 const passport = require("passport");
-const JwtStrategy = require("passport-jwt").Strategy;
-const ExtractJwt = require("passport-jwt").ExtractJwt;
+const CustomStrategy = require("passport-custom").Strategy;
 const globalConfig = require("../config_api.js");
 const jsonWebToken = require("jsonwebtoken");
 const userController = require("./userController");
+const routeAuthorizationModel = require("../models/route_authorization");
 const sessionController = require("../controllers/sessionController");
+const cryptoController = require("../controllers/cryptoController");
+const logger = require('../logger');
 
-const JWT_EXPIRES_AFTER_HOURS = 6;
 
-const jwtOptionsBase = {
-  issuer: "ateventhorizon.com",
-  algorithm: "HS384"
+const jwtOptions = {
+    issuer: "ateventhorizon.com",
+    algorithm: "HS384"
 };
 
-exports.verifyToken = async jwtToken => {
-  return await jsonWebToken.verify(
-    jwtToken,
-    globalConfig.JWTSecret,
-    jwtOptionsBase
-  );
-};
-
-export const getUserFromTokenRaw = async token => {
-  return await getUserFromToken(await exports.verifyToken(token));
-};
-
-export const getUserFromToken = async (jwtPayload) => {
-  const sessionId = jwtPayload.sub;
-  const session = await sessionController.getValidSessionById(sessionId);
-  // console.log("Session:",session);
-  if (session !== null) {
-    let user = await userController.getUserByIdProject(
-      session.userId,
-      session.project
+const getUserFromRequest = async req => {
+    //Get jwt token from signed cookies and anti forgery token from headers
+    let jwtToken = null;
+    if (req && req.signedCookies && req.signedCookies[globalConfig.TokenCookie]) {
+        jwtToken = req.signedCookies[globalConfig.TokenCookie];
+    }
+    let aftToken = null;
+    if (req && req.headers && req.headers[globalConfig.AntiForgeryTokenCookie]) {
+        aftToken = req.headers[globalConfig.AntiForgeryTokenCookie];
+    }
+    if (jwtToken === null || aftToken === null) {
+        throw "Invalid tokens";
+    }
+    // Extract token payload
+    const jwtPayload = jsonWebToken.verify(
+        jwtToken,
+        globalConfig.JWTSecret,
+        jwtOptions
     );
-    if (user === null) return null;
-
+    //logger.info("JWT PAYLOAD", jwtPayload);
+    const sessionId = jwtPayload.sub;
+    const session = await sessionController.getValidSessionById(sessionId);
+    if (session === null) {
+        throw `Invalid session ${sessionId}`;
+    }
+    //Check antiforgery token
+    if (aftToken !== session.antiForgeryToken) {
+        throw `Invalid antiforgery token for ${sessionId}`;
+    } 
+    //Get session user
+    const user = await userController.getUserById(session.userId);
+    if (user === null) {
+        throw "Invalid user";
+    } 
     user.roles = user.roles.map(v => v.toLowerCase());
     user.project = session.project;
     user.sessionId = sessionId;
@@ -43,98 +56,146 @@ export const getUserFromToken = async (jwtPayload) => {
     user.hasToken = true;
     user.hasSession = true;
     return user;
-  }
+}
 
-  return null;
-};
+const initializeAuthentication = () => {
 
-exports.InitializeAuthentication = () => {
+    passport.use("cookie-antiforgery",
+        new CustomStrategy(async (req, done) => {
 
-  const cookieExtractor = function (req) {
-    // console.log("COOKIE EXTRACTOR");
-    let token = null;
-    if (req && req.signedCookies && req.signedCookies["eh_jwt"]) {
-      token = req.signedCookies["eh_jwt"];
-    }
-    return token;
-  };
-
-  const authHeaderExtractor = function (req) {
-    // console.log("AUTH HEADER EXTRACTOR");
-    let token = null;
-    if (
-      req &&
-      req.headers &&
-      req.headers["authorization"] &&
-      req.headers["authorization"].startsWith("Bearer ")
-    ) {
-      token = req.headers["authorization"].substr(7);
-    }
-    return token;
-  };
-
-  //
-  //Configure jwt strategy
-  //
-  const jwtOptions = {
-    ...jwtOptionsBase,
-    jwtFromRequest: ExtractJwt.fromExtractors([
-      cookieExtractor,
-      authHeaderExtractor
-    ]),
-    secretOrKey: globalConfig.JWTSecret,
-  };
-
-  passport.use(
-    new JwtStrategy(jwtOptions, async (jwtPayload, done) => {
-      const user = await getUserFromToken(jwtPayload);
-      user === null ? done(null, false, {message: "Invalid token/user"}) : done(null, user);
-    })
-  );
+            try {
+                //logger.info("Anti forgery token strategy");
+                const user = await getUserFromRequest(req);
+                done(null, user);
+            } catch (ex) {
+                logger.error(`Error in token: ${ex}`);
+                done(null, false, { message: ex });
+            }
+        })
+    );
 
 };
 
 const createJwtToken = async (sessionId, issuedAt, expiresAt) => {
-  const payload = {
-    iat: issuedAt,
-    exp: expiresAt,
-    sub: sessionId
-  };
-  //console.log(globalConfig.JWTSecret);
-  const jwt = await jsonWebToken.sign(
-    payload,
-    globalConfig.JWTSecret,
-    jwtOptionsBase
-  );
+    const payload = {
+        iat: issuedAt,
+        exp: expiresAt,
+        sub: sessionId
+    };
+    //logger.info(globalConfig.JWTSecret);
+    const jwt = await jsonWebToken.sign(
+        payload,
+        globalConfig.JWTSecret,
+        jwtOptions
+    );
 
-  return jwt;
+    return jwt;
 };
 
-exports.getToken = async (userId, project, ipAddress, userAgent) => {
-  const issuedAt = Math.floor(Date.now() / 1000);
-  const expiresAt = issuedAt + 60 * 60 * JWT_EXPIRES_AFTER_HOURS;
-
-  const session = await sessionController.createSession(
-    userId,
-    project,
-    ipAddress,
-    userAgent,
-    issuedAt,
-    expiresAt
-  );
-  const jwt = await createJwtToken(session.ids, issuedAt, expiresAt);
-
-  return {
-    session: session.ids,
-    token: jwt,
-    expires: expiresAt
-  };
+const getToken = async (userId, ipAddress, userAgent) => {
+    const issuedAt = Math.floor(Date.now() / 1000);
+    const expiresAt = issuedAt + globalConfig.JwtExpiresSeconds;
+    const session = await sessionController.createSession(
+        userId,
+        cryptoController.generateId("AntiForgeryToken"),
+        ipAddress,
+        userAgent,
+        issuedAt,
+        expiresAt
+    );
+    return {
+        session: session.ids,
+        antiForgeryToken: session.antiForgeryToken,
+        token: await createJwtToken(session.ids, issuedAt, expiresAt),
+        expires: expiresAt
+    };
 };
 
-exports.authenticate = passport.authenticate(
-  ["jwt"],
-  {
-    session: false
-  }
-);
+const verifyToken = async jwtToken => {
+    return await jsonWebToken.verify(
+        jwtToken,
+        globalConfig.JWTSecret,
+        jwtOptions
+    );
+};
 
+const authenticate = passport.authenticate(["cookie-antiforgery"], { session: false });
+
+const authorize = async (req, res, next) => {
+    const url = req.originalUrl;
+    const urlParts = url.split("/");
+    let authorized = false;
+
+    // logger.info("Passport Authorize");
+
+    if (urlParts.length > 0 && urlParts[0].length === 0) {
+        urlParts.shift();
+    }
+    const urlPartials = [];
+    for (let i = urlParts.length; i > 0; i--) {
+        let urlPartial = "";
+        for (let j = 0; j < i; j++) {
+            urlPartial = urlPartial + "/" + urlParts[j].toLowerCase();
+        }
+        urlPartials.push(urlPartial);
+    }
+
+    const query = {
+        $and: [{ verb: req.method.toLowerCase() }, { route: { $in: urlPartials } }]
+    };
+    try {
+        const routeAuthorizations = await routeAuthorizationModel
+            .find(query)
+            .sort([["route", "descending"]]);
+        let routeAuthorization = [];
+        for (let i = 0; i < urlPartials.length; i++) {
+            for (let j = 0; j < routeAuthorizations.length; j++) {
+                let currentAuthorization = routeAuthorizations[j].toObject();
+                if (urlPartials[i] === currentAuthorization.route) {
+                    routeAuthorization.push(currentAuthorization);
+                }
+            }
+            if (routeAuthorization.length > 0) {
+                break;
+            }
+        }
+        for (let i = 0; i < routeAuthorization.length; i++) {
+            let currentAuthorization = routeAuthorization[i];
+            currentAuthorization.project = currentAuthorization.project.toLowerCase();
+            currentAuthorization.role = currentAuthorization.role.toLowerCase();
+            if (
+                (currentAuthorization.project === "*" ||
+                    currentAuthorization.project === req.user.project) &&
+                (currentAuthorization.role === "*" ||
+                    req.user.roles.indexOf(currentAuthorization.role) >= 0) &&
+                (currentAuthorization.user === "*" ||
+                    currentAuthorization.user === req.user._id.toString())
+            ) {
+                logger.info("Valid authorization: ", currentAuthorization);
+                authorized = true;
+                break;
+            }
+        }
+    } catch (ex) {
+        logger.info("ERROR IN AUTHORIZATION: " + ex);
+        authorized = false;
+    }
+
+    // logger.info("PARTIAL: "+urlPartials);
+    // logger.info("METHOD: ",req.method);
+
+    if (!authorized) {
+        res.sendStatus(401);
+    } else {
+        next();
+    }
+};
+
+module.exports = {
+    initializeAuthentication,
+    getUserFromRequest,
+    getToken,
+    verifyToken,
+    authenticate,
+    authorize
+}
