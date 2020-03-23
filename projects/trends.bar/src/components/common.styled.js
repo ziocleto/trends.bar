@@ -13,4 +13,5 @@ export const TrendLayout = styled.div` {
 export const TrendGrid = styled.div` {
   box-sizing: border-box;
   margin: 10px;
+  height: 100vh;
 }`;

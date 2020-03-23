@@ -1,24 +1,39 @@
 import React, {Fragment, useState} from "react";
 import {Controlled as CodeMirror} from "react-codemirror2";
 import Button from "react-bootstrap/Button";
-import {DivAutoMargin, ScriptEditorControls, ScriptTitle} from "./TextEditor-styled";
+import {
+  DivAutoMargin, ScriptControlsHeader,
+  ScriptEditor,
+  ScriptEditorControls,
+  ScriptEditorGrid,
+  ScriptOutput,
+  ScriptOutputTabs,
+  ScriptTitle
+} from "./TextEditor-styled";
 import {useMutation, useQuery} from "@apollo/react-hooks";
 import {SAVE_SCRIPT, UPSERT_TREND_GRAPH} from "../../../modules/trends/mutations";
 import {getScript} from "../../../modules/trends/queries";
+import "./TextEditor.css"
+import {Tab, Tabs} from "react-bootstrap";
 
 require("codemirror/lib/codemirror.css");
 require("codemirror/theme/material.css");
 require("codemirror/theme/neat.css");
 require("codemirror/mode/javascript/javascript.js");
 
-export const ScriptEditor = ({trendId, username}) => {
+const KeyResponseParsed = 'parsed';
+const KeyResponseElaborated = 'elaborated';
+const KeyResponseError = 'error';
+
+export const ScriptCodeEditor = ({trendId, username}) => {
   const [fileJson, setFileJson] = useState({});
   const [fileC, setFileC] = useState(null);
-  const {data, loading} = useQuery(getScript(), { variables: {trendId, username}});
+  const [key, setKey] = useState(KeyResponseParsed);
+  const {data, loading} = useQuery(getScript(), {variables: {trendId, username}});
   const [saveScript] = useMutation(SAVE_SCRIPT);
   const [upserTrendGraph, response] = useMutation(UPSERT_TREND_GRAPH);
 
-  if ( loading === true ) {
+  if (loading === true) {
     return <Fragment/>
   }
 
@@ -29,41 +44,58 @@ export const ScriptEditor = ({trendId, username}) => {
     return fileJsonInjected;
   }
 
-  if ( response ) {
-    console.log(response.data);
-  }
+  const getResponseTab = () => {
+    if ( !response.data ) {
+      return "";
+    }
+    if ( key === KeyResponseParsed ) {
+      return response.data.upsertTrendGraph.crawledText;
+    }
+    if ( key === KeyResponseElaborated ) {
+      return response.data.upsertTrendGraph.elaborationTraces;
+    }
+    if ( key === KeyResponseError ) {
+      return response.data.upsertTrendGraph.error;
+    }
+  };
 
   return (
-    <Fragment>
+    <ScriptEditorGrid>
       <ScriptTitle>
-        {trendId}
+        <Tabs variant="pills" defaultActiveKey="home" id="input-script-tab">
+          <Tab eventKey="home" title="Input Script">
+          </Tab>
+        </Tabs>
       </ScriptTitle>
-      <CodeMirror
-        value={fileC}
-        options={{
-          mode: "javascript",
-          theme: "material",
-          // lineNumbers: true
-        }}
-        editorDidMount={() => setFileC(data.script.text)}
-        onBeforeChange={(editor, data, value) => {
-          setFileC(value);
-        }}
-        onChange={(editor, data, value) => {
-          setFileJson(JSON.parse(editor.getValue()));
-        }}
-      />
+      <ScriptEditor>
+        <CodeMirror
+          value={fileC}
+          options={{
+            mode: "javascript",
+            theme: "material",
+            // lineNumbers: true
+          }}
+          editorDidMount={() => setFileC(data.script.text)}
+          onBeforeChange={(editor, data, value) => {
+            setFileC(value);
+          }}
+          onChange={(editor, data, value) => {
+            setFileJson(JSON.parse(editor.getValue()));
+          }}
+        />
+      </ScriptEditor>
+      <ScriptControlsHeader/>
       <ScriptEditorControls>
         <DivAutoMargin>
           <Button
             variant="secondary"
             value={1}
             onClick={e => {
-                upserTrendGraph({
-                  variables: {
-                    script: injectScript()
-                  }
-                });
+              upserTrendGraph({
+                variables: {
+                  script: injectScript()
+                }
+              });
             }}
           >
             <i className="fas fa-play"/>
@@ -74,27 +106,39 @@ export const ScriptEditor = ({trendId, username}) => {
             variant="secondary"
             value={1}
             onClick={() => {
-                saveScript({
-                  variables: {
-                    script: injectScript()
-                  }
-                }).then().catch((e) => {
-                  console.log("Uacci uari uari", e);
-                });
+              saveScript({
+                variables: {
+                  script: injectScript()
+                }
+              }).then().catch((e) => {
+                console.log("Uacci uari uari", e);
+              });
             }}
           >
             <i className="fas fa-save"/>
           </Button>
         </DivAutoMargin>
       </ScriptEditorControls>
-      <CodeMirror
-        value={response.data ? response.data.upsertTrendGraph.text : ""}
-        options={{
-          mode: "javascript",
-          theme: "material",
-        }}
-      />
-    </Fragment>
+      <ScriptOutputTabs>
+        <Tabs variant="pills" id="scriptOutputTag" activeKey={key} onSelect={k => setKey(k)}>
+          <Tab eventKey={KeyResponseParsed} title="Parsed">
+          </Tab>
+          <Tab eventKey={KeyResponseElaborated} title="Result">
+          </Tab>
+          <Tab eventKey={KeyResponseError} title="Errors">
+          </Tab>
+        </Tabs>
+      </ScriptOutputTabs>
+      <ScriptOutput>
+        <CodeMirror
+          value={getResponseTab()}
+          options={{
+            mode: "javascript",
+            theme: "material",
+          }}
+        />
+      </ScriptOutput>
+    </ScriptEditorGrid>
   );
 };
 

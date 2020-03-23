@@ -24,7 +24,7 @@ export const parseIntWithSpaces = (value) => {
 }
 
 export const sanitizeNewLines = (value) => {
-  return value.replace(/\n/g, '');
+  return value.replace(/\n/g, ' ');
 }
 
 export class Parser {

@@ -535,6 +535,7 @@ export class Cruncher {
   constructor(trendId, username, text, datasetElem, graphType, defaultXValue) {
     this.trendId = trendId;
     this.username = username;
+    this.traces = "";
     this.parser = new Parser(text);
     this.datasetElem = datasetElem;
     this.graphType = graphType;
@@ -566,10 +567,6 @@ export class Cruncher {
   }
 
   async dataEntry(graph, value) {
-    console.log("Graph: ", graph);
-    console.log("value: ", value.toString());
-    console.log("trendId: ", this.trendId);
-
     const graphElem = await this.upsertUniqueXValue(trendGraphsModel, value, {
       dataset: mongoose.Types.ObjectId(this.datasetElem._id),
       trendId: this.trendId,
@@ -605,7 +602,7 @@ export class Cruncher {
   async finaliseCrunch(key, title, wc) {
     const graphElem = await graphAssistant.declare(this.graphType, key, title);
     const value = graphAssistant.prepareSingleValue(graphElem.type, this.defaultXValue, wc);
-    console.log(key, title + ", " + wc);
+    this.traces += (key + "- " + title + ", " + wc + "\n");
     return await this.dataEntry(graphElem, value);
   }
 
@@ -667,7 +664,7 @@ export class Cruncher {
       const title = dataset.title;
       for (const action of dataset.actions) {
         if (this.checkTimeStampValid(action.validRange, xValue)) {
-          this.crunchAction(f.key, title, action);
+          await this.crunchAction(f.key, title, action);
           break;
         }
       }
@@ -678,5 +675,6 @@ export class Cruncher {
     for (const f of query.functions) {
       await this.crunchFunctions(f, this.defaultXValue);
     }
+    return this.traces;
   }
 }

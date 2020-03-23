@@ -80,7 +80,13 @@ const typeDefs = gql`
     type ScriptOutput {
         text: String
     }
-    
+
+    type CrawlingOutput {
+        crawledText: String
+        elaborationTraces: String
+        error: String
+    }
+
     input CrawlingRegexp {
         body: String!
         flags: String
@@ -143,7 +149,7 @@ const typeDefs = gql`
     type Mutation {
         createTrend(trendId: String!, username: String!): Trend
         deleteTrendGraphs(trendId: String!, username: String!): String
-        upsertTrendGraph(script: CrawlingScript!): ScriptOutput
+        upsertTrendGraph(script: CrawlingScript!): CrawlingOutput
         saveScript(script: CrawlingScript!): String
     }
 
@@ -277,18 +283,20 @@ class TrendGraphDataSource extends MongoDataSourceExtended {
   }
 
   async upsertTrendGraph(script) {
-    const trendId = script.trendId;
-    const username = script.username;
-    const timestamp = moment(script.timestamp, script.timestampFormat);
-    const text = await crawlTrendId(timestamp, script.timestamp);
+    try {
+      const trendId = script.trendId;
+      const username = script.username;
+      const timestamp = moment(script.timestamp, script.timestampFormat);
+      const text = await crawlTrendId(timestamp, script.timestamp);
 
-    const datasetElem = await datasetAssistant.acquire(script.source, script.sourceName);
-    const cruncher = new Cruncher(trendId, username, text, datasetElem, graphAssistant.xyDateInt(), timestamp);
+      const datasetElem = await datasetAssistant.acquire(script.source, script.sourceName);
+      const cruncher = new Cruncher(trendId, username, text, datasetElem, graphAssistant.xyDateInt(), timestamp);
 
-    await cruncher.crunch(script);
-
-    // return await this.model.find({trendId, username});
-    return {text};
+      const traces = await cruncher.crunch(script);
+      return { crawledText: text, elaborationTraces: traces };
+    } catch (e) {
+      return { error: e }
+    }
   }
 
   async deleteTrendGraphs(trendId, username) {
