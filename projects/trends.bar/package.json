@@ -10,6 +10,7 @@
     "apollo-client": "latest",
     "apollo-link": "latest",
     "apollo-link-context": "^1.0.19",
+    "apollo-link-error": "^1.1.12",
     "apollo-link-http": "latest",
     "apollo-link-ws": "^1.0.19",
     "apollo-utilities": "latest",

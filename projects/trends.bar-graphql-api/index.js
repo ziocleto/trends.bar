@@ -1,5 +1,5 @@
 import {MongoDataSource} from 'apollo-datasource-mongodb'
-import {trendGraphsModel, trendsModel} from "./models/models";
+import {crawlingScriptModel, trendGraphsModel, trendsModel} from "./models/models";
 import {PubSub} from "graphql-subscriptions";
 import moment from "moment";
 import {crawlTrendId, Cruncher} from "./assistants/cruncher-assistant";
@@ -51,6 +51,7 @@ const typeDefs = gql`
     type TrendGraph {
         _id: ID!
         trendId: String!
+        username: String!
         dataset: Dataset!
         title: String
         label: String
@@ -70,11 +71,16 @@ const typeDefs = gql`
     type Trend {
         _id: ID!
         trendId: String!
+        username: String
         user: User
         aliases: [ String! ]
         trendGraphs: [TrendGraph]
     }
 
+    type ScriptOutput {
+        text: String
+    }
+    
     input CrawlingRegexp {
         body: String!
         flags: String
@@ -115,7 +121,8 @@ const typeDefs = gql`
     }
 
     input CrawlingScript {
-        trendId: String
+        trendId: String!
+        username: String!
         source: String
         sourceName: String
         graphType: [String]
@@ -130,12 +137,14 @@ const typeDefs = gql`
         user(name: String!): User
         trendGraph(id: ID!): TrendGraph
         trend(trendId: String!): [Trend]
+        script(trendId: String!, username:String!): ScriptOutput
     }
 
     type Mutation {
         createTrend(trendId: String!, username: String!): Trend
         deleteTrendGraphs(trendId: String!, username: String!): String
-        upsertTrendGraph(script: CrawlingScript!): TrendGraph
+        upsertTrendGraph(script: CrawlingScript!): ScriptOutput
+        saveScript(script: CrawlingScript!): String
     }
 
     type Subscription {
@@ -155,17 +164,22 @@ const resolvers = {
     trends: (_, _2, {dataSources}) => dataSources.trends.get(),
     trend: (_, args, {dataSources}) => dataSources.trends.find(args),
     users: (_, _2, {dataSources}) => dataSources.users.get(),
-    user: (_, {name}, {dataSources}) => dataSources.users.findOne({name:name})
+    user: (_, {name}, {dataSources}) => dataSources.users.findOne({name: name}),
+    script: (_, {trendId, username}, {dataSources}) => dataSources.scripts.findOneStringify({trendId, username})
   },
 
   User: {
-    trends: (user, args, {dataSources}) => dataSources.trends.find({userId: user._id}),
-    trend: (user, {trendId}, {dataSources}) => dataSources.trends.findOne({userId: user._id, trendId: trendId} )
+    trends: (user, args, {dataSources}) => dataSources.trends.find({username: user.name}),
+    trend: (user, {trendId}, {dataSources}) => dataSources.trends.findOne({username: user.name, trendId: trendId})
   },
 
   Trend: {
     // trendGraphs: (trend, _, {dataSources}) => dataSources.trends.getTrendGraph(trend.trendGraphs),
-    user: (trend, _, {dataSources}) => dataSources.users.findOneById(trend.userId)
+    user: (trend, _, {dataSources}) => dataSources.users.findOne({name: trend.username}),
+    trendGraphs: (trend, _, {dataSources}) => dataSources.trendGraphs.find({
+      trendId: trend.trendId,
+      username: trend.username
+    })
   },
 
   Mutation: {
@@ -193,7 +207,6 @@ const resolvers = {
 
     async upsertTrendGraph(parent, args, {dataSources}, context) {
       const ret = await dataSources.trendGraphs.upsertTrendGraph(args.script);
-      console.log("Sending to pubsub: ", ret);
       await pubsub.publish(TREND_GRAPH_MUTATED, {
         trendGraphMutated: {
           mutation: 'UPDATED',
@@ -202,6 +215,12 @@ const resolvers = {
       });
       return ret;
     },
+
+    async saveScript(parent, args, {dataSources}) {
+      await dataSources.scripts.upsert({ username: args.script.username, trendId: args.script.trendId}, args.script);
+      return JSON.stringify(args.script);
+    },
+
   },
 
   Subscription: {
@@ -229,38 +248,29 @@ class MongoDataSourceExtended extends MongoDataSource {
   async findOne(query) {
     return await this.model.findOne(query).collation({locale: "en", strength: 2});
   }
+
+  cleanScriptString (ret) {
+    let ret2 = ret.toObject();
+    ret2["_id"] = null;
+    delete ret2["_id"];
+    delete ret2["__v"];
+    delete ret2["username"];
+    delete ret2["trendId"];
+    return JSON.stringify(ret2, null, 2);
+  }
+
+  async findOneStringify(query) {
+    const ret = await this.model.findOne(query).collation({locale: "en", strength: 2});
+    return { text : !ret ? "" : this.cleanScriptString(ret) };
+  }
+
+  async upsert(query, data) {
+    return await db.upsert(this.model, data, query);
+  }
+
 }
 
-class TrendsDataSource extends MongoDataSource {
-  async get() {
-    return await this.model.find({});
-  }
-
-  async findById(id) {
-    console.log(id);
-    const res = await this.model.findById(id);
-    return res.toObject();
-  }
-
-  async getTrendGraph(id) {
-    const pop = trendGraphsModel.findById(id).populate('dataset').populate('graph');
-    const res = await pop.exec();
-    return res.toObject();
-  }
-
-  async getUserTrends(username) {
-    const res = await trendsModel.find({username});
-    return res;
-  }
-
-  async getTrend(trendId, username) {
-    const pop = trendsModel.findOne({trendId, username}).populate({
-      path: 'trendGraphs',
-      populate: {path: 'dataset'}
-    });
-    const res = await pop.exec();
-    return res.toObject();
-  }
+class TrendGraphDataSource extends MongoDataSourceExtended {
 
   async createTrend(trendId, username) {
     return await db.upsert(this.model, {trendId, username});
@@ -268,15 +278,17 @@ class TrendsDataSource extends MongoDataSource {
 
   async upsertTrendGraph(script) {
     const trendId = script.trendId;
+    const username = script.username;
     const timestamp = moment(script.timestamp, script.timestampFormat);
     const text = await crawlTrendId(timestamp, script.timestamp);
 
     const datasetElem = await datasetAssistant.acquire(script.source, script.sourceName);
-    const cruncher = new Cruncher(trendId, text, datasetElem, graphAssistant.xyDateInt(), timestamp);
+    const cruncher = new Cruncher(trendId, username, text, datasetElem, graphAssistant.xyDateInt(), timestamp);
 
     await cruncher.crunch(script);
 
-    return await this.getTrend(trendId);
+    // return await this.model.find({trendId, username});
+    return {text};
   }
 
   async deleteTrendGraphs(trendId, username) {
@@ -301,7 +313,8 @@ const server = new ApolloServer(
     dataSources: () => ({
       trends: new MongoDataSourceExtended(trendsModel),
       users: new MongoDataSourceExtended(usersModel),
-      trendGraphs: new TrendsDataSource(trendGraphsModel),
+      scripts: new MongoDataSourceExtended(crawlingScriptModel),
+      trendGraphs: new TrendGraphDataSource(trendGraphsModel),
     }),
     context: async ({req, connection}) => {
       if (connection) {

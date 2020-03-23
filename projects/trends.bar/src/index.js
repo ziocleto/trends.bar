@@ -3,7 +3,9 @@ import ReactDOM from "react-dom";
 import App from "./App";
 
 import {ApolloProvider} from 'react-apollo'
+import { ApolloLink } from 'apollo-link';
 import {ApolloClient} from 'apollo-client'
+import { onError } from 'apollo-link-error'
 import {createHttpLink} from 'apollo-link-http'
 import {InMemoryCache} from 'apollo-cache-inmemory'
 import {BrowserRouter} from "react-router-dom";
@@ -14,6 +16,17 @@ import addReactNDevTools from 'reactn-devtools';
 
 addReactNDevTools();
 
+const errorLink = onError(({ graphQLErrors, networkError }) => {
+  if (graphQLErrors)
+    graphQLErrors.map(({ message, locations, path }) =>
+      console.log(
+        `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`,
+      ),
+    );
+
+  if (networkError) console.log(`[Network error]: ${networkError}`);
+});
+
 const wsLink = new WebSocketLink({
   uri: `wss://${process.env.REACT_APP_EH_CLOUD_HOST}/gapi/graphql`,
   options: {
@@ -22,7 +35,7 @@ const wsLink = new WebSocketLink({
 });
 
 const httpLink = createHttpLink({
-  uri: `https://${process.env.REACT_APP_EH_CLOUD_HOST}/gapi/graphql/`
+  uri: `https://${process.env.REACT_APP_EH_CLOUD_HOST}/gapi/graphql/`,
 })
 
 const link = split(
@@ -39,8 +52,8 @@ const link = split(
 );
 
 const client = new ApolloClient({
-  link: link,
-  cache: new InMemoryCache()
+  link: ApolloLink.from([errorLink, link]),
+  cache: new InMemoryCache(),
 });
 
 ReactDOM.render(

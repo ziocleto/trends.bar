@@ -1,9 +1,7 @@
 // Lists of countries with ISO 3166 codes, presented in various formats.
 // Last Updated: Nov 15, 2019
+// Updated by Dado at eventhorizon March 2020
 
-// If you're using PHP, I suggest checking out:
-// https://github.com/thephpleague/iso3166
-//
 // JS developers can check out:
 // https://www.npmjs.com/package/iso3166-2-db
 

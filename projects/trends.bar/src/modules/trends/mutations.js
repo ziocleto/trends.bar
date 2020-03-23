@@ -11,8 +11,7 @@ export const CREATE_TREND = gql`
 export const UPSERT_TREND_GRAPH = gql`
     mutation UpsertTrendGraph($script: CrawlingScript!) {
         upsertTrendGraph(script: $script) {
-            _id,
-            trendId
+            text
         }
     }`;
 
@@ -20,5 +19,10 @@ export const UPSERT_TREND_GRAPH = gql`
 export const DELETE_TREND_GRAPH = gql`
     mutation DeleteTrendGraph($trendId: String!, $username: String!) {
         deleteTrendGraph(trendId: $trendId, username: $username)
+    }`;
+
+export const SAVE_SCRIPT = gql`
+    mutation saveScript($script: CrawlingScript!) {
+        saveScript(script: $script)
     }`;
 

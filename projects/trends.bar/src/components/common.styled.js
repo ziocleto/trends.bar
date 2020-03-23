@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const TrendLayout = styled.div ` {
+export const TrendLayout = styled.div` {
   position: absolute;
   top: 0;
   left: 0;
@@ -11,6 +11,6 @@ export const TrendLayout = styled.div ` {
 }`;
 
 export const TrendGrid = styled.div` {
-    box-sizing: border-box;
-    margin: 10px;
-  }`;
+  box-sizing: border-box;
+  margin: 10px;
+}`;

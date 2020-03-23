@@ -13,11 +13,12 @@ export const graphLayoutModel = mongoose.model("graph_layouts", new mongoose.Sch
 }, {strict: false}));
 
 export const crawlingScriptModel = mongoose.model("crawling_scripts", new mongoose.Schema({
-  name: {type: String},
   script: {type: String},
 }, {strict: false}));
 
 export const trendGraphsModel = mongoose.model("trend_graphs", new mongoose.Schema({
+  trendId: {type: String},
+  username: {type: String},
   title: {type: String},
   label: {type: String},
   subLabel: {type: String},
@@ -28,7 +29,6 @@ export const trendGraphsModel = mongoose.model("trend_graphs", new mongoose.Sche
 
 export const trendsModel = mongoose.model("trends", new mongoose.Schema({
   trendId: {type: String, unique: true},
-  userId: {type: mongoose.Schema.Types.ObjectId, ref: 'users'},
+  username: {type: String, unique: true, red: 'users.name'},
   aliases: [{type: String}],
-  trendGraphs: [{type: mongoose.Schema.Types.ObjectId, ref: 'trend_graphs'}]
 }, {strict: false}));
