@@ -19,6 +19,7 @@
     "cookie-parser": "^1.4.5",
     "crawler-request": "^1.2.2",
     "delay": "^4.3.0",
+    "eh_config": "^1.0.0",
     "eh_logger": "^1.0.0",
     "esm": "^3.2.25",
     "express": "^4.17.1",

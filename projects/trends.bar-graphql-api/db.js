@@ -6,7 +6,7 @@ const streamifier = require('streamifier');
 const stream = require('stream');
 const util = require('util');
 const logger = require('eh_logger');
-const globalConfig = require("./modules/auth/config_api.js");
+const globalConfig = require("eh_config");
 
 exports.initDB = async () => {
   const dbMaxConnectionTimeSeconds = 300;

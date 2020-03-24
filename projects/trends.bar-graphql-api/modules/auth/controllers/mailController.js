@@ -1,5 +1,5 @@
 const sgMail = require("@sendgrid/mail")
-const globalConfig = require("../config_api.js");
+const globalConfig = require("eh_config");
 
 
 sgMail.setApiKey(globalConfig.SendGrid);

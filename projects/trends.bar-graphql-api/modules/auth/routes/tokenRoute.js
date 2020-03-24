@@ -3,7 +3,7 @@ const userController = require("../controllers/userController");
 const authController = require("../controllers/authController");
 const sessionController = require("../controllers/sessionController");
 const logger = require("eh_logger");
-const globalConfig = require("../config_api");
+const globalConfig = require("eh_config");
 
 const router = express.Router();
 
