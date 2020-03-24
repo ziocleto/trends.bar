@@ -68,6 +68,8 @@ export const countryListSimpleMap = {
   "Czech Republic":"Czech Republic",
   "Côte d'Ivoire":"Côte d'Ivoire",
   "Cote d’Ivoire":"Cote d’Ivoire",
+  "Cote d Ivoire":"Cote d’Ivoire",
+  "Côte d’Ivoire":"Cote d’Ivoire",
   "Denmark":"Denmark",
   "Djibouti":"Djibouti",
   "Dominica":"Dominica",

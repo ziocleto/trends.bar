@@ -8,15 +8,34 @@ export const CREATE_TREND = gql`
         }
     }`;
 
-export const UPSERT_TREND_GRAPH = gql`
-    mutation UpsertTrendGraph($script: CrawlingScript!) {
-        upsertTrendGraph(script: $script) {
+export const CRAWL_TREND_GRAPH = gql`
+    mutation CrawlTrendGraph($script: CrawlingScript!) {
+        crawlTrendGraph(script: $script) {
             crawledText
-            elaborationTraces
+            traces
+            graphQueries {
+                value {
+                    x
+                    y
+                }
+                query {
+                    dataset
+                    trendId
+                    username
+                    title
+                    label
+                    subLabel
+                    type
+                }
+            }
             error
         }
     }`;
 
+export const UPSERT_TREND_GRAPH = gql`
+    mutation UpsertTrendGraph($graphQueries: GraphQueries!) {
+        upsertTrendGraph(graphQueries: $graphQueries)
+    }`;
 
 export const DELETE_TREND_GRAPH = gql`
     mutation DeleteTrendGraph($trendId: String!, $username: String!) {

@@ -63,14 +63,14 @@ export const elaborateDataGraphs = data => {
     if ((trendGraph.title === "Cases" && trendGraph.label === "Worldwide") ||
       (trendGraph.title === "Deaths" && trendGraph.label === "Worldwide")) {
       for (const p of trendGraph.values) {
-        dpoints.push({x: new Date(p.x), y: p.y});
+        const date = new Date(0);
+        date.setUTCSeconds(p.x);
+        dpoints.push({x: date, y: p.y});
       }
       // dpoints.sort(sortByXGraph);
       allPoints.push(dpoints);
     }
   }
-
-  console.log(data);
 
   const chartsOptions = {
     ...optionsBase,

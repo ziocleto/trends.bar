@@ -36,7 +36,7 @@ const SearchResults = ({trendIdPartial}) => {
         const key = e.trendId + e.user.name;
         return (
           <SearchBarResultContainer
-            key={{key}}
+            key={key}
             onClick={ () => setfinalized({
               clicked: true,
               username: e.user.name,

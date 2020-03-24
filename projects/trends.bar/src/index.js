@@ -13,6 +13,7 @@ import {WebSocketLink} from 'apollo-link-ws';
 import {split} from "apollo-link";
 import {getMainDefinition} from "apollo-utilities";
 import addReactNDevTools from 'reactn-devtools';
+import omitDeep from 'omit-deep-lodash'
 
 addReactNDevTools();
 
@@ -51,9 +52,19 @@ const link = split(
   httpLink,
 );
 
+const cleanTypenameLink = new ApolloLink((operation, forward) => {
+  const keysToOmit = ['__typename'] // more keys like timestamps could be included here
+
+  const def = getMainDefinition(operation.query)
+  if (def && def.operation === 'mutation') {
+    operation.variables = omitDeep(operation.variables, keysToOmit)
+  }
+  return forward ? forward(operation) : null
+})
+
 const client = new ApolloClient({
-  link: ApolloLink.from([errorLink, link]),
-  cache: new InMemoryCache(),
+  link: ApolloLink.from([cleanTypenameLink, errorLink, link]),
+  cache: new InMemoryCache({ addTypename: false }),
 });
 
 ReactDOM.render(

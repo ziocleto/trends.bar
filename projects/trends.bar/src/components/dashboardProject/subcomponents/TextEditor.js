@@ -1,38 +1,50 @@
-import React, {Fragment, useState} from "react";
+import React, {Fragment, useState} from "reactn";
 import {Controlled as CodeMirror} from "react-codemirror2";
 import Button from "react-bootstrap/Button";
 import {
-  DivAutoMargin, ScriptControlsHeader,
+  DivAutoMargin,
+  ScriptControlsHeader,
   ScriptEditor,
   ScriptEditorControls,
   ScriptEditorGrid,
   ScriptOutput,
   ScriptOutputTabs,
+  ScriptResultTabs,
   ScriptTitle
 } from "./TextEditor-styled";
 import {useMutation, useQuery} from "@apollo/react-hooks";
-import {SAVE_SCRIPT, UPSERT_TREND_GRAPH} from "../../../modules/trends/mutations";
+import {CRAWL_TREND_GRAPH, SAVE_SCRIPT, UPSERT_TREND_GRAPH} from "../../../modules/trends/mutations";
 import {getScript} from "../../../modules/trends/queries";
 import "./TextEditor.css"
 import {Tab, Tabs} from "react-bootstrap";
+import 'codemirror/addon/lint/lint.css';
+import {alertDangerNoMovie, alertSuccess, useAlert} from "../../../futuremodules/alerts/alerts";
 
 require("codemirror/lib/codemirror.css");
 require("codemirror/theme/material.css");
 require("codemirror/theme/neat.css");
+require('codemirror/addon/lint/lint');
+require('codemirror/addon/lint/json-lint');
 require("codemirror/mode/javascript/javascript.js");
+const jsonlint = require("jsonlint-mod");
+
+window.jsonlint = jsonlint;
 
 const KeyResponseParsed = 'parsed';
 const KeyResponseElaborated = 'elaborated';
 const KeyResponseError = 'error';
 
 export const ScriptCodeEditor = ({trendId, username}) => {
-  const [fileJson, setFileJson] = useState({});
   const [key, setKey] = useState(KeyResponseElaborated);
   const [fileC, setFileC] = useState(null);
+  const [fileJson, setFileJson] = useState({});
+  const [isJsonValid, setIsJsonValud] = useState(false);
 
+  const alertStore = useAlert();
   const {data, loading} = useQuery(getScript(), {variables: {trendId, username}});
   const [saveScript] = useMutation(SAVE_SCRIPT);
-  const [upserTrendGraph, response] = useMutation(UPSERT_TREND_GRAPH);
+  const [crawlTrendGraph, response] = useMutation(CRAWL_TREND_GRAPH);
+  const [upsertTrendGraph] = useMutation(UPSERT_TREND_GRAPH);
 
   if (loading === true) {
     return <Fragment/>
@@ -46,27 +58,30 @@ export const ScriptCodeEditor = ({trendId, username}) => {
   }
 
   let hasScriptErrors = false;
-  if ( (response.data && response.loading === false) ) {
-    if ( response.error || response.data.upsertTrendGraph.error ) {
+  let hasCompletedSuccessful = false;
+  if ((response.data && response.loading === false)) {
+    if (response.error || response.data.crawlTrendGraph.error) {
       hasScriptErrors = true;
-      if ( key !== KeyResponseError ) setKey(KeyResponseError);
+      hasCompletedSuccessful = false;
+      if (key !== KeyResponseError) setKey(KeyResponseError);
     } else {
-      if ( key === KeyResponseError ) setKey(KeyResponseElaborated);
+      hasCompletedSuccessful = true;
+      if (key === KeyResponseError) setKey(KeyResponseElaborated);
     }
   }
 
   const getResponseTab = () => {
-    if ( !response.data ) {
+    if (!response.data) {
       return "";
     }
-    if ( key === KeyResponseParsed ) {
-      return response.data.upsertTrendGraph.crawledText;
+    if (key === KeyResponseParsed) {
+      return response.data.crawlTrendGraph.crawledText;
     }
-    if ( key === KeyResponseElaborated ) {
-      return response.data.upsertTrendGraph.elaborationTraces;
+    if (key === KeyResponseElaborated) {
+      return response.data.crawlTrendGraph.traces;
     }
-    if ( key === KeyResponseError ) {
-      if ( response.data.upsertTrendGraph.error ) return response.data.upsertTrendGraph.error;
+    if (key === KeyResponseError) {
+      if (response.data.crawlTrendGraph.error) return response.data.crawlTrendGraph.error;
       return response.error;
     }
   };
@@ -83,8 +98,13 @@ export const ScriptCodeEditor = ({trendId, username}) => {
         <CodeMirror
           value={fileC}
           options={{
-            mode: "javascript",
+            mode: "application/json",
             theme: "material",
+            lint: true,
+            gutters: ["CodeMirror-lint-markers"],
+            styleActiveLine: true,
+            lineNumbers: true,
+            line: true
             // lineNumbers: true
           }}
           editorDidMount={() => setFileC(data.script.text)}
@@ -92,7 +112,12 @@ export const ScriptCodeEditor = ({trendId, username}) => {
             setFileC(value);
           }}
           onChange={(editor, data, value) => {
-            setFileJson(JSON.parse(editor.getValue()));
+            try {
+              setFileJson(JSON.parse(editor.getValue()));
+              if ( !isJsonValid) setIsJsonValud(true);
+            } catch (e) {
+              if ( isJsonValid) setIsJsonValud(false);
+            }
           }}
         />
       </ScriptEditor>
@@ -102,11 +127,15 @@ export const ScriptCodeEditor = ({trendId, username}) => {
           <Button
             variant="secondary"
             value={1}
+            disabled={!isJsonValid}
             onClick={e => {
-              upserTrendGraph({
+              crawlTrendGraph({
                 variables: {
                   script: injectScript()
                 }
+              }).then().catch((e) => {
+                alertDangerNoMovie( alertStore,"Auch, I didn't see that coming :/");
+                console.log("Uacci uari uari", e);
               });
             }}
           >
@@ -117,6 +146,7 @@ export const ScriptCodeEditor = ({trendId, username}) => {
           <Button
             variant="secondary"
             value={1}
+            disabled={!isJsonValid}
             onClick={() => {
               saveScript({
                 variables: {
@@ -132,14 +162,36 @@ export const ScriptCodeEditor = ({trendId, username}) => {
         </DivAutoMargin>
       </ScriptEditorControls>
       <ScriptOutputTabs>
-        <Tabs variant="pills" id="scriptOutputTag" activeKey={key} onSelect={k => setKey(k)}>
-          <Tab eventKey={KeyResponseParsed} title="Parsed" disabled={hasScriptErrors}>
-          </Tab>
-          <Tab eventKey={KeyResponseElaborated} title="Result" disabled={hasScriptErrors}>
-          </Tab>
-          <Tab eventKey={KeyResponseError} title="Errors" disabled={!hasScriptErrors}>
-          </Tab>
-        </Tabs>
+        <ScriptResultTabs>
+          <Tabs variant="pills" id="scriptOutputTag" activeKey={key} onSelect={k => setKey(k)}>
+            <Tab eventKey={KeyResponseParsed} title="Parsed" disabled={hasScriptErrors}>
+            </Tab>
+            <Tab eventKey={KeyResponseElaborated} title="Result" disabled={hasScriptErrors}>
+            </Tab>
+            <Tab eventKey={KeyResponseError} title="Errors" disabled={!hasScriptErrors}>
+            </Tab>
+          </Tabs>
+        </ScriptResultTabs>
+        <ScriptResultTabs>
+          <Button variant={"success"}
+                  disabled={!hasCompletedSuccessful}
+                  size={"sm"}
+                  onClick={ () => {
+                    upsertTrendGraph({
+                      variables: {
+                        graphQueries: {
+                          graphQueries: response.data.crawlTrendGraph.graphQueries
+                        }
+                      }
+                    }).then( () =>
+                      alertSuccess( alertStore,"All set and done!")
+                    ).catch((e) => {
+                      console.log("Uacci uari uari", e);
+                    });
+                  } }>
+            Publish
+          </Button>
+        </ScriptResultTabs>
       </ScriptOutputTabs>
       <ScriptOutput>
         <CodeMirror

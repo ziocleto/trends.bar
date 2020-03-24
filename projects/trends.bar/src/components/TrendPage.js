@@ -30,32 +30,41 @@ const TrendPage = () => {
   const [username, trendId] = trendIdFull.split("/");
 
   // const graphDataS = useSubscription(trendGraphSubcription());
-  const {data, loading, error} = useQuery(getTrendGraphs(), { variables: { name: username, trendId: trendId}});
+  const {data, loading, error} = useQuery(getTrendGraphs(), {variables: {name: username, trendId: trendId}});
 
-  if ( (!data && loading === false) || error ) {
+  if ((!data && loading === false) || error) {
     return <EmptyTrend trendId={trendId}/>;
   }
 
-  if ( loading ) {
+  if (loading) {
     return <Fragment/>;
   }
-  console.log("Trendid ", trendId);
-  console.log("Username ", username);
-  console.log(data);
+  // console.log("Trendid ", trendId);
+  // console.log("Username ", username);
+  // console.log(data);
 
   // const graphData = graphDataS.data ? graphDataS.data.trendGraphMutated.node.trendGraphs : graphDataQ.data.trend.trendGraphs;
   const graphData = data.user.trend.trendGraphs;
 
+  console.log(graphData);
   const chartOptions = elaborateDataGraphs(graphData);
 
-  let countries = [];
-  // for ( const elem of graphData.trend.trendGraphs ) {
-  //   countries.push( {
-  //     country: elem.graph.subLabel,
-  //     cases: elem.values.
-  //   });
-  // }
-  // console.log(graphData);
+  let countries = {};
+  for (const elem of graphData) {
+    if ( elem.title === "Cases" ) {
+      countries[elem.label] = {
+        ...countries[elem.label],
+        Cases: elem.values[elem.values.length - 1].y
+      };
+    }
+    if ( elem.title === "Deaths" ) {
+      countries[elem.label] = {
+        ...countries[elem.label],
+        Deaths: elem.values[elem.values.length - 1].y
+      };
+    }
+  }
+  console.log(graphData);
 
   return (
     <TrendLayout>
@@ -73,22 +82,15 @@ const TrendPage = () => {
             </tr>
             </thead>
             <tbody>
-              {countries.map( (e) => {
-                return (
+            {Object.keys(countries).map((e) => {
+              return (
                 <tr key={e}>
-                 <td>{e}</td>
+                  <td>{e}</td>
+                  <td>{countries[e].Cases}</td>
+                  <td>{countries[e].Deaths}</td>
                 </tr>
-                )
-              } )}
-            <tr>
-              <td>Jacob</td>
-              <td>Thornton</td>
-              <td>@fat</td>
-            </tr>
-            <tr>
-              <td colSpan="2">Larry the Bird</td>
-              <td>@twitter</td>
-            </tr>
+              )
+            })}
             </tbody>
           </Table>
         </FlexContainer>

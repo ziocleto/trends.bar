@@ -35,10 +35,14 @@ export const ScriptEditorControls = styled.div` {
 
 export const ScriptOutputTabs = styled.div` {
   grid-area: outputTabs;
-  display: block;
-  justify-self: start;
+  display: flex;
+  justify-content: space-between;
   align-self: center;
 }`;
+
+export const ScriptResultTabs = styled.div ` {
+  
+}`
 
 export const ScriptOutput = styled.div` {
   grid-area: scriptOutput;

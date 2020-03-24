@@ -49,6 +49,11 @@ const typeDefs = gql`
         x: BigInt
         y: BigInt
     }
+    
+    input DateIntInput {
+        x: BigInt
+        y: BigInt
+    }
 
     type TrendGraph {
         _id: ID!
@@ -83,9 +88,44 @@ const typeDefs = gql`
         text: String
     }
 
+    type GraphQuery {
+        dataset: ID!
+        trendId: String!
+        username: String!
+        title: String
+        label: String
+        subLabel: String
+        type: String
+    }
+    
+    type GraphValueQuery {
+        value: DateInt!
+        query: GraphQuery!
+    }
+
+    input GraphQueryInput {
+        dataset: ID!
+        trendId: String!
+        username: String!
+        title: String
+        label: String
+        subLabel: String
+        type: String
+    }
+
+    input GraphValueQueryInput {
+        value: DateIntInput!
+        query: GraphQueryInput!
+    }
+
+    input GraphQueries {
+        graphQueries: [GraphValueQueryInput]
+    }
+    
     type CrawlingOutput {
         crawledText: String
-        elaborationTraces: String
+        traces: String
+        graphQueries: [GraphValueQuery]
         error: String
     }
 
@@ -152,7 +192,8 @@ const typeDefs = gql`
     type Mutation {
         createTrend(trendId: String!, username: String!): Trend
         deleteTrendGraphs(trendId: String!, username: String!): String
-        upsertTrendGraph(script: CrawlingScript!): CrawlingOutput
+        upsertTrendGraph(graphQueries: GraphQueries!): String
+        crawlTrendGraph(script: CrawlingScript!): CrawlingOutput
         saveScript(script: CrawlingScript!): String
     }
 
@@ -215,15 +256,12 @@ const resolvers = {
       return res;
     },
 
+    async crawlTrendGraph(parent, args, {dataSources}, context) {
+      return await dataSources.trendGraphs.crawlTrendGraph(args.script);
+    },
+
     async upsertTrendGraph(parent, args, {dataSources}, context) {
-      const ret = await dataSources.trendGraphs.upsertTrendGraph(args.script);
-      await pubsub.publish(TREND_GRAPH_MUTATED, {
-        trendGraphMutated: {
-          mutation: 'UPDATED',
-          node: ret
-        }
-      });
-      return ret;
+      return await dataSources.trendGraphs.upsertGraphs(args);
     },
 
     async saveScript(parent, args, {dataSources}) {
@@ -286,7 +324,6 @@ class MongoDataSourceExtended extends MongoDataSource {
   async upsertAndGet(query, data) {
     await db.upsert(this.model, query, data);
     const ret = await this.model.findOne(query);
-    console.log(ret);
     return ret;
   }
 
@@ -294,7 +331,7 @@ class MongoDataSourceExtended extends MongoDataSource {
 
 class TrendGraphDataSource extends MongoDataSourceExtended {
 
-  async upsertTrendGraph(script) {
+  async crawlTrendGraph(script) {
     try {
       const trendId = script.trendId;
       const username = script.username;
@@ -304,8 +341,8 @@ class TrendGraphDataSource extends MongoDataSourceExtended {
       const datasetElem = await datasetAssistant.acquire(script.source, script.sourceName);
       const cruncher = new Cruncher(trendId, username, text, datasetElem, graphAssistant.xyDateInt(), timestamp);
 
-      const traces = await cruncher.crunch(script);
-      return { crawledText: text, elaborationTraces: traces };
+      const {traces, graphQueries} = await cruncher.crunch(script);
+      return { crawledText: text, traces: traces, graphQueries: graphQueries };
     } catch (e) {
       return { error: e }
     }
@@ -319,6 +356,36 @@ class TrendGraphDataSource extends MongoDataSourceExtended {
     await trendsModel.updateOne({_id: trend._id}, {$set: {trendGraphs: []}});
 
     return trend._id;
+  }
+
+  async upsertUniqueXValue(value, query) {
+    const data = {
+      ...query,
+      $push: {
+        values: {
+          $each: [value],
+          $sort: {x: 1}
+        }
+      }
+    };
+    const ret = await db.upsert(this.model, data, query);
+
+    let setValues = [];
+    for (let index = 0; index < ret.values.length - 1; index++) {
+      if (ret.values[index].x !== ret.values[index + 1].x) {
+        setValues.push(ret.values[index]);
+      }
+    }
+    setValues.push(ret.values[ret.values.length - 1]);
+
+    return await this.model.updateOne(query, {$set: {values: setValues}});
+  }
+
+  async upsertGraphs(query) {
+    for ( const graph of query.graphQueries.graphQueries ) {
+      await this.upsertUniqueXValue(graph.value, graph.query);
+    }
+    return "OK";
   }
 
 }
