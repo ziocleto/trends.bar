@@ -18,7 +18,7 @@ const usersModel = require("./modules/auth/models/user");
 
 const usersRoute = require("./modules/auth/routes/usersRoute");
 const tokenRoute = require("./modules/auth/routes/tokenRoute");
-const logger = require('./logger');
+const logger = require('eh_logger');
 
 const http = require('http');
 

@@ -2,7 +2,7 @@ const express = require("express");
 const userController = require("../controllers/userController");
 const authController = require("../controllers/authController");
 const sessionController = require("../controllers/sessionController");
-const logger = require("../logger");
+const logger = require("eh_logger");
 const globalConfig = require("../config_api");
 
 const router = express.Router();
