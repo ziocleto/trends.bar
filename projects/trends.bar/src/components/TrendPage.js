@@ -1,23 +1,22 @@
-import React from "react";
+import React, {Fragment} from "react";
 import CanvasJSReact from '../assets/canvasjs.react';
 import {FlexContainer} from "./TrendPageStyle";
 import {elaborateDataGraphs, getTrendGraphs,} from "../modules/trends/dataGraphs";
 import {sanitizePathRoot} from "../futuremodules/utils/utils";
-import {useQuery, useSubscription} from "@apollo/react-hooks";
-import {trendGraphSubcription} from "../modules/trends/subscriptions";
+import {useQuery} from "@apollo/react-hooks";
 import {Link, useLocation} from "react-router-dom";
 import {Table} from "react-bootstrap";
 import {TrendGrid, TrendLayout} from "./common.styled";
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
-const emptyTrend = (trendId) => {
+const EmptyTrend = (trendId) => {
   return (
     <TrendLayout>
       <TrendGrid>
         <FlexContainer>
-          Tread {trendId} is empty, have a look at the hot trends, like, you guessed it...
-          <Link to={"/coronavirus"}>{" "}CoronaVirus</Link>
+          Tread {trendId} is empty, I'm sorry you ended up here, my associates will make sure this won't happen again!
+          <Link to={"/"}>{" "}Back to sanity, Marty!</Link>
         </FlexContainer>
       </TrendGrid>
     </TrendLayout>
@@ -28,30 +27,44 @@ const TrendPage = () => {
 
   const location = useLocation();
   const trendIdFull = sanitizePathRoot(location.pathname);
-  const [, trendId] = trendIdFull.split("/");
+  const [username, trendId] = trendIdFull.split("/");
 
-  const graphDataS = useSubscription(trendGraphSubcription());
-  const graphDataQ = useQuery(getTrendGraphs(trendId));
+  // const graphDataS = useSubscription(trendGraphSubcription());
+  const {data, loading, error} = useQuery(getTrendGraphs(), {variables: {name: username, trendId: trendId}});
 
-  if ( !graphDataQ.data ) {
-    return emptyTrend(trendId);
+  if ((!data && loading === false) || error) {
+    return <EmptyTrend trendId={trendId}/>;
   }
 
-  console.log("Trendid ", trendId)
-  console.log(graphDataQ);
+  if (loading) {
+    return <Fragment/>;
+  }
+  // console.log("Trendid ", trendId);
+  // console.log("Username ", username);
+  // console.log(data);
 
-  const graphData = graphDataS.data ? graphDataS.data.trendGraphMutated.node.trendGraphs : graphDataQ.data.trend.trendGraphs;
+  // const graphData = graphDataS.data ? graphDataS.data.trendGraphMutated.node.trendGraphs : graphDataQ.data.trend.trendGraphs;
+  const graphData = data.user.trend.trendGraphs;
 
+  console.log(graphData);
   const chartOptions = elaborateDataGraphs(graphData);
 
-  let countries = [];
-  // for ( const elem of graphData.trend.trendGraphs ) {
-  //   countries.push( {
-  //     country: elem.graph.subLabel,
-  //     cases: elem.values.
-  //   });
-  // }
-  // console.log(graphData);
+  let countries = {};
+  for (const elem of graphData) {
+    if ( elem.title === "Cases" ) {
+      countries[elem.label] = {
+        ...countries[elem.label],
+        Cases: elem.values[elem.values.length - 1].y
+      };
+    }
+    if ( elem.title === "Deaths" ) {
+      countries[elem.label] = {
+        ...countries[elem.label],
+        Deaths: elem.values[elem.values.length - 1].y
+      };
+    }
+  }
+  console.log(graphData);
 
   return (
     <TrendLayout>
@@ -69,22 +82,15 @@ const TrendPage = () => {
             </tr>
             </thead>
             <tbody>
-              {countries.map( (e) => {
-                return (
+            {Object.keys(countries).map((e) => {
+              return (
                 <tr key={e}>
-                 <td>{e}</td>
+                  <td>{e}</td>
+                  <td>{countries[e].Cases}</td>
+                  <td>{countries[e].Deaths}</td>
                 </tr>
-                )
-              } )}
-            <tr>
-              <td>Jacob</td>
-              <td>Thornton</td>
-              <td>@fat</td>
-            </tr>
-            <tr>
-              <td colSpan="2">Larry the Bird</td>
-              <td>@twitter</td>
-            </tr>
+              )
+            })}
             </tbody>
           </Table>
         </FlexContainer>

@@ -36,11 +36,11 @@ exports.initDB = async () => {
   }
 
   return null;
-}
+};
 
 const isObjectEmpty = obj => {
   return Object.entries(obj).length === 0 && obj.constructor === Object;
-}
+};
 
 let Writable = stream.Writable;
 let memStore = {};
@@ -78,7 +78,7 @@ const downloadByName = async (bucketFSModel, filename, callback) => {
     });
     bucketFSModel.openDownloadStreamByName(filename).pipe(wstream);
   });
-}
+};
 
 const downloadById = async (bucketFSModel, id) => {
   let data;
@@ -91,7 +91,7 @@ const downloadById = async (bucketFSModel, id) => {
     bucketFSModel.openDownloadStream(id).pipe(wstream);
   });
   return data;
-}
+};
 
 exports.fsFind = async (bucketFSModel, id) => {
   try {
@@ -102,7 +102,7 @@ exports.fsFind = async (bucketFSModel, id) => {
     logger.error("fsFind of: " + id + " failed because " + e);
     return null;
   }
-}
+};
 
 exports.fsExists = async (bucketFSModel, filename, metadata) => {
   try {
@@ -114,7 +114,7 @@ exports.fsExists = async (bucketFSModel, filename, metadata) => {
     logger.error("fsExists of: " + filename + " failed because " + e);
     return null;
   }
-}
+};
 
 exports.fsEqual = async (bucketFSModel, filename, data, metadata) => {
   try {
@@ -134,7 +134,7 @@ exports.fsEqual = async (bucketFSModel, filename, data, metadata) => {
     logger.error("fsEqual of: " + filename + " failed because " + e);
     return null;
   }
-}
+};
 
 exports.fsDelete = async (bucketFSModel, id) => {
   try {
@@ -143,7 +143,7 @@ exports.fsDelete = async (bucketFSModel, id) => {
   } catch (e) {
     logger.error("fsDelete of: " + id + " failed because " + e);
   }
-}
+};
 
 exports.fsInsert = async (bucketFSModel, filename, data, metadata) => {
   try {
@@ -157,7 +157,7 @@ exports.fsInsert = async (bucketFSModel, filename, data, metadata) => {
   } catch (e) {
     logger.error("fsInsert of: " + filename + " failed because " + e);
   }
-}
+};
 
 exports.fsUpsert = async (bucketFSModel, filename, data, metadata, metadataComp, entityCheckFSID = null) => {
 
@@ -192,7 +192,7 @@ exports.fsUpsert = async (bucketFSModel, filename, data, metadata, metadataComp,
     logger.error("fsUpsert of: " + filename + " failed because " + e);
     return false;
   }
-}
+};
 
 exports.fsDownloadWithId = async (bucketFSModel, id) => {
   try {
@@ -201,28 +201,28 @@ exports.fsDownloadWithId = async (bucketFSModel, id) => {
   } catch (e) {
     logger.error("fsDownloadWithId of: " + id + " failed because " + e);
   }
-}
+};
 
 exports.objectId = (objString) => {
   return mongodb.ObjectId(objString);
-}
+};
 
 exports.upsert = async ( model, data, query = {}, options = {}) => {
   const queryFinal = isObjectEmpty(query) ? data : query;
   return model.findOneAndUpdate(queryFinal, data, {new: true,upsert: true, ...options});
-}
+};
 
-exports.delete = async ( model, timestamp ) => {
-  const graphs = await model.find({});
-  console.log(graphs)
-  for ( let graph of graphs ) {
-    const filtered = graph.values.filter( (v) => { return v[0] <= timestamp;});
-    graph.values = filtered;
-    console.log("graph new:", graph);
-    await exports.upsert(model, graph, { _id: graph._id} );
-  }
-}
+// exports.delete = async ( model, timestamp ) => {
+//   const graphs = await model.find({});
+//   for ( let graph of graphs ) {
+//     graph.values = graph.values.filter((v) => {
+//       return v[0] <= timestamp;
+//     });
+//     console.log("graph new:", graph);
+//     await exports.upsert(model, graph, { _id: graph._id} );
+//   }
+// };
 
 exports.findOne = async ( model, query ) => {
   return model.findOne(query);
-}
+};

@@ -1,0 +1,11 @@
+/* Disabled tab */
+.scriptTags ul > li.disabled > a {
+    background-color: var(--gray-dark);
+    color: darkgray;
+}
+
+.CodeMirror {
+    min-height: calc(95vh - var(--navbar-height));
+    border: solid 1px var(--gray); /*change color of the swatch border here*/
+    border-radius: 4px;
+}

@@ -23,7 +23,7 @@ const ProjectManagement = ({name}) => {
   let inviteNameRef = React.useRef(null);
   const [currentManagedProject, setCurrentManagedProject] = useState(null);
 
-  if ( !currentManagedProject ) return <Fragment/>
+  if (!currentManagedProject) return <Fragment/>
 
   const invite = async () => {
     const invited = inviteNameRef.current.value;
@@ -88,8 +88,8 @@ export const UserAssets = ({auth}) => {
 
   let userProjects = (
     <span className="normal text-primary">
-          It feels quite lonely in here!
-      </span>
+      It feels quite lonely in here!
+    </span>
   );
 
   if (data && loading === false) {

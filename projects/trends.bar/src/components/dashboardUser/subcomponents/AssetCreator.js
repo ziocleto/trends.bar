@@ -23,7 +23,9 @@ export const AssetCreator = ({auth}) => {
         trendId: newTrendFormInput,
         username: name
       }
-    }).then();
+    }).then().catch((e) => {
+      alertWarning(alertStore, "Big problem with this trend");
+    });;
   };
 
   return (

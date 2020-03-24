@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node -r esm ./index.js",
     "startw": "setenv.cmd && node -r esm ./index.js",
-    "devstart": "NODE_ENV=\"dev\" nodemon -r esm --max-old-space-size=16000 ./index.js",
+    "devstart": "NODE_ENV=\"dev\" nodemon -r esm --max-old-space-size=16000 --unhandled-rejections=strict ./index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

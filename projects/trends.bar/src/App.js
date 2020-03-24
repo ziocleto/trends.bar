@@ -1,6 +1,6 @@
 import React, {Fragment, useEffect} from "react";
 import {Route, Switch, useLocation} from 'react-router-dom';
-import Landing from "./components/Landing";
+import Landing from "./components/Landing/Landing";
 import Navbar from "./components/Navbar";
 import {useGlobal} from 'reactn';
 import TrendPage from "./components/TrendPage";
@@ -14,7 +14,7 @@ import "./App.css";
 import {apiSilent, useApi} from "./futuremodules/api/apiEntryPoint";
 import {loadUser} from "./futuremodules/auth/authApiCalls";
 import {Auth} from "./futuremodules/auth/authAccessors";
-import {DashboardProject} from "./components/DashboardProject";
+import {DashboardProject} from "./components/dashboardProject/DashboardProject";
 
 
 initEH();
@@ -41,7 +41,7 @@ const App = () => {
         <Route exact path="/register" component={Register}/>
         <Route exact path="/login" component={Login}/>
         <Route exact path="/dashboarduser" render={ () => <DashboardUser auth={authApi}/> } />
-        <Route path="/dashboardproject/:trendId" component={DashboardProject}/>
+        <Route path="/dashboardproject" render={ () => <DashboardProject auth={authApi}/> }/>
         <Route path="/:usernameSplit/:trendIdSplit" component={TrendPage}/>
       </Switch>
       <EHAlert/>
