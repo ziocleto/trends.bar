@@ -9,14 +9,14 @@ import * as authController from "./modules/auth/controllers/authController";
 const graphAssistant = require("./assistants/graph-assistant");
 const datasetAssistant = require("./assistants/dataset-assistant");
 const cookieParser = require("cookie-parser");
-const globalConfig = require('./modules/auth/config_api');
+const globalConfig = require("eh_config");
 // const jsonWebToken = require('jsonwebtoken')
 // const sessionModel = require("./modules/auth/models/session");
 // const usersModel = require("./modules/auth/models/user");
 
 const usersRoute = require("./modules/auth/routes/usersRoute");
 const tokenRoute = require("./modules/auth/routes/tokenRoute");
-const logger = require('./logger');
+const logger = require("eh_logger");
 
 const http = require('http');
 

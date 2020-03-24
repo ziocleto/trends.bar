@@ -3,8 +3,7 @@ const express = require("express");
 const userController = require("../controllers/userController");
 const authController = require("../controllers/authController");
 const sessionController = require("../controllers/sessionController");
-const logger = require("../logger");
-const dataSanitizers = require("../helpers/dataSanitizers");
+const dataSanitizers = require("eh_helpers/dataSanitizers");
 
 const router = express.Router();
 

@@ -9,5 +9,5 @@ const generateId = (prefix) => {
 }
 
 module.exports = {
-    generateId
+  generateId
 }

@@ -1,11 +1,10 @@
 'use strict';
 
 const express = require("express");
+const logger = require("eh_logger");
+const dataSanitizers = require("eh_helpers/dataSanitizers");
 const userController = require("../controllers/userController");
-const mailController = require("../controllers/mailController");
-const logger = require('../logger');
 const authController = require("../controllers/authController");
-const dataSanitizers = require("../helpers/dataSanitizers");
 
 const router = express.Router();
 
@@ -19,7 +18,7 @@ const getUser = async req => {
 
 //
 // Get current user
-// 
+//
 router.get("/", authController.authenticate, async (req, res, next) => {
     res.send(await getUser(req));
 });

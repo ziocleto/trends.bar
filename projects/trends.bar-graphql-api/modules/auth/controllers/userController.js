@@ -1,8 +1,6 @@
 'use strict';
 const crypto = require("crypto");
 const userModel = require("../models/user");
-const logger = require('../logger');
-
 
 const getUserById = async id => {
   let dbUser = null;
@@ -80,7 +78,7 @@ const createUser = async (name, email, password) => {
 
   dbUser = await userModel.create(user);
   dbUser = dbUser.toObject();
-  
+
   return dbUser;
 };
 

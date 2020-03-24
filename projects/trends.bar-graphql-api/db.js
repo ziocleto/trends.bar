@@ -5,10 +5,8 @@ const md5 = require("md5");
 const streamifier = require('streamifier');
 const stream = require('stream');
 const util = require('util');
-const utils = require('./utils/utils');
-const logger = require('./logger');
-// const socketController = require('./controllers/socketController');
-const globalConfig = require("./modules/auth/config_api.js");
+const logger = require("eh_logger");
+const globalConfig = require("eh_config");
 //Set up default mongoose connection
 
 exports.initDB = async () => {
@@ -40,11 +38,8 @@ exports.initDB = async () => {
   return null;
 }
 
-class FindResults {
-  constructor() {
-    this.bFileExist = false;
-    this.bFileIsSame = false;
-  }
+const isObjectEmpty = obj => {
+  return Object.entries(obj).length === 0 && obj.constructor === Object;
 }
 
 let Writable = stream.Writable;
@@ -213,7 +208,7 @@ exports.objectId = (objString) => {
 }
 
 exports.upsert = async ( model, data, query = {}, options = {}) => {
-  const queryFinal = utils.isObjectEmpty(query) ? data : query;
+  const queryFinal = isObjectEmpty(query) ? data : query;
   return model.findOneAndUpdate(queryFinal, data, {new: true,upsert: true, ...options});
 }
 

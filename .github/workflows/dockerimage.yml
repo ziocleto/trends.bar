@@ -45,6 +45,9 @@ jobs:
         export EH_MASTER_TOKEN="${{ secrets.EH_MASTER_TOKEN }}" && 
         export EH_SEND_GRID_TOKEN="${{ secrets.EH_SEND_GRID_TOKEN }}" && 
         export EH_CLOUD_HOST=${{ secrets.EH_CLOUD_HOST }} && 
+        export EH_TOKEN_COOKIE=${{ secrets.EH_TOKEN_COOKIE }} && 
+        export EH_ANTIFORGERYTOKEN_COOKIE=${{ secrets.EH_ANTIFORGERYTOKEN_COOKIE }} && 
+        export EH_JWT_EXPIRES_SECONDS=${{ secrets.EH_JWT_EXPIRES_SECONDS }} && 
         docker-compose down &&        
         docker-compose pull && 
         docker-compose up -d'
