@@ -5,7 +5,6 @@ import {WelcomeToTheJungle} from "./subcomponents/WelcomeToTheJungle"
 import {UserAssets} from "./subcomponents/UserAssets";
 import {Logoff} from "./subcomponents/Logoff";
 import {AssetCreator} from "./subcomponents/AssetCreator";
-import {AssetInvitations} from "./subcomponents/AssetInvitations";
 import {Redirect} from "react-router-dom";
 
 const DashboardUser = ({auth}) => {
@@ -19,7 +18,7 @@ const DashboardUser = ({auth}) => {
       <WelcomeToTheJungle auth={auth}/>
       <UserAssets auth={auth}/>
       <AssetCreator auth={auth}/>
-      <AssetInvitations auth={auth}/>
+      {/*<AssetInvitations auth={auth}/>*/}
       <Logoff auth={auth}/>
     </DashboardUserFragment>
   );

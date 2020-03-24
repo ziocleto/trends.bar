@@ -3,18 +3,17 @@ import ReactDOM from "react-dom";
 import App from "./App";
 
 import {ApolloProvider} from 'react-apollo'
-import { ApolloLink } from 'apollo-link';
+import {ApolloLink, split} from 'apollo-link';
 import {ApolloClient} from 'apollo-client'
-import { onError } from 'apollo-link-error'
+import {onError} from 'apollo-link-error'
 import {createHttpLink} from 'apollo-link-http'
-import {ApolloLink,concat} from 'apollo-link';
 import {InMemoryCache} from 'apollo-cache-inmemory'
 import {BrowserRouter} from "react-router-dom";
 import {WebSocketLink} from 'apollo-link-ws';
-import {split} from "apollo-link";
 import {getMainDefinition} from "apollo-utilities";
 import addReactNDevTools from 'reactn-devtools';
 import {createAntiForgeryTokenHeaders} from './futuremodules/auth/authApiCalls';
+const omitDeep = require("omit-deep-lodash");
 
 addReactNDevTools();
 
