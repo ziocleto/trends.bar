@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node -r esm ./index.js",
+    "startw": "setenv.cmd && node -r esm ./index.js",
     "devstart": "NODE_ENV=\"dev\" nodemon -r esm --max-old-space-size=16000 --unhandled-rejections=strict ./index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -20,6 +21,7 @@
     "crawler-request": "^1.2.2",
     "delay": "^4.3.0",
     "eh_config": "^1.0.0",
+    "eh_helpers": "^1.0.0",
     "eh_logger": "^1.0.0",
     "esm": "^3.2.25",
     "express": "^4.17.1",
@@ -31,6 +33,7 @@
     "mongoose": "^5.9.2",
     "object-hash": "^2.0.3",
     "passport": "^0.4.1",
+    "passport-custom": "^1.1.1",
     "passport-jwt": "^4.0.0",
     "pdf-parse": "^1.1.1",
     "query-string": "^6.11.1",

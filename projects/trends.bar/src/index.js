@@ -7,13 +7,14 @@ import { ApolloLink } from 'apollo-link';
 import {ApolloClient} from 'apollo-client'
 import { onError } from 'apollo-link-error'
 import {createHttpLink} from 'apollo-link-http'
+import {ApolloLink,concat} from 'apollo-link';
 import {InMemoryCache} from 'apollo-cache-inmemory'
 import {BrowserRouter} from "react-router-dom";
 import {WebSocketLink} from 'apollo-link-ws';
 import {split} from "apollo-link";
 import {getMainDefinition} from "apollo-utilities";
 import addReactNDevTools from 'reactn-devtools';
-import omitDeep from 'omit-deep-lodash'
+import {createAntiForgeryTokenHeaders} from './futuremodules/auth/authApiCalls';
 
 addReactNDevTools();
 
@@ -39,6 +40,14 @@ const httpLink = createHttpLink({
   uri: `https://${process.env.REACT_APP_EH_CLOUD_HOST}/gapi/graphql/`,
 })
 
+const authLink = new ApolloLink((operation, forward) => {
+    const headers = createAntiForgeryTokenHeaders();
+    console.log("AUTH:",headers);
+    operation.setContext(headers);
+    // Call the next link in the middleware chain.
+    return forward(operation);
+  });
+
 const link = split(
   // split based on operation type
   ({ query }) => {
@@ -63,7 +72,7 @@ const cleanTypenameLink = new ApolloLink((operation, forward) => {
 })
 
 const client = new ApolloClient({
-  link: ApolloLink.from([cleanTypenameLink, errorLink, link]),
+  link: ApolloLink.from([cleanTypenameLink, authLink, errorLink, link]),
   cache: new InMemoryCache({ addTypename: false }),
 });
 

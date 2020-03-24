@@ -4,7 +4,7 @@ import {PubSub} from "graphql-subscriptions";
 import moment from "moment";
 import {crawlTrendId, Cruncher} from "./assistants/cruncher-assistant";
 import * as authController from "./modules/auth/controllers/authController";
-import {getUserFromTokenRaw} from "./modules/auth/controllers/authController";
+// import {getUserFromTokenRaw} from "./modules/auth/controllers/authController";
 
 const mongoose = require("mongoose");
 
@@ -12,13 +12,13 @@ const graphAssistant = require("./assistants/graph-assistant");
 const datasetAssistant = require("./assistants/dataset-assistant");
 const cookieParser = require("cookie-parser");
 const globalConfig = require("eh_config");
-const jsonWebToken = require('jsonwebtoken')
-const sessionModel = require("./modules/auth/models/session");
-const usersModel = require("./modules/auth/models/user");
+// const jsonWebToken = require('jsonwebtoken')
+// const sessionModel = require("./modules/auth/models/session");
+// const usersModel = require("./modules/auth/models/user");
 
 const usersRoute = require("./modules/auth/routes/usersRoute");
 const tokenRoute = require("./modules/auth/routes/tokenRoute");
-const logger = require('eh_logger');
+const logger = require("eh_logger");
 
 const http = require('http');
 
@@ -408,22 +408,20 @@ const server = new ApolloServer(
         return connection.context; // Subscription connection
       } else {
         try {
-          const token = req.signedCookies ? req.signedCookies["eh_jwt"] : null;
-          return {
-            user: await getUserFromTokenRaw(token)
-          };
-        } catch (e) {
-          // logger.error("Reading of signed cookies failed because: ", e);
-          return {
-            user: null
-          };
+            const user = await authController.getUserFromRequest(req);
+            return { user: user };
+        } catch (ex) {
+            logger.error("Reading of signed cookies failed because: ", ex);
+            return {
+                user: null
+            };
         }
       }
     }
   }
 );
 
-authController.InitializeAuthentication();
+authController.initializeAuthentication();
 
 app.use(bodyParser.raw({limit: "500mb", type: 'application/octet-stream'}));
 app.use(bodyParser.text({limit: "500mb"}));
@@ -438,10 +436,10 @@ const httpServer = http.createServer(app);
 server.installSubscriptionHandlers(httpServer);
 
 app.use("/", tokenRoute);
+app.use("/user", usersRoute);
 
 app.use(authController.authenticate);
 
-app.use("/user", usersRoute);
 
 httpServer.listen(PORT, () => {
   console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`)

@@ -5,8 +5,9 @@ const md5 = require("md5");
 const streamifier = require('streamifier');
 const stream = require('stream');
 const util = require('util');
-const logger = require('eh_logger');
+const logger = require("eh_logger");
 const globalConfig = require("eh_config");
+//Set up default mongoose connection
 
 exports.initDB = async () => {
   const dbMaxConnectionTimeSeconds = 300;
