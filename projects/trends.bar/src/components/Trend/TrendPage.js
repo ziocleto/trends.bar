@@ -1,12 +1,12 @@
-import React, {Fragment} from "react";
-import CanvasJSReact from '../assets/canvasjs.react';
-import {FlexContainer} from "./TrendPageStyle";
-import {elaborateDataGraphs, getTrendGraphs,} from "../modules/trends/dataGraphs";
-import {sanitizePathRoot} from "../futuremodules/utils/utils";
+import React, {Fragment, useState} from "react";
+import CanvasJSReact from '../../assets/canvasjs.react';
+import {FlexContainer, TH, TR} from "./TrendPageStyle";
+import {elaborateDataGraphs, getTrendGraphs, groupData,} from "../../modules/trends/dataGraphs";
+import {sanitizePathRoot} from "../../futuremodules/utils/utils";
 import {useQuery} from "@apollo/react-hooks";
 import {Link, useLocation} from "react-router-dom";
 import {Table} from "react-bootstrap";
-import {TrendGrid, TrendLayout} from "./common.styled";
+import {TrendGrid, TrendLayout} from "../common.styled";
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
@@ -25,9 +25,16 @@ const EmptyTrend = (trendId) => {
 
 const TrendPage = () => {
 
+  const trendVariables = ["Country", "Cases", "Deaths", "Recovered"];
+  const groupBy = trendVariables[0];
+  const groupFields = [trendVariables[1], trendVariables[2], trendVariables[3]];
+
   const location = useLocation();
   const trendIdFull = sanitizePathRoot(location.pathname);
   const [username, trendId] = trendIdFull.split("/");
+  const [sortIndex, setSortIndex] = useState(groupFields[0]);
+  const [sortOrder, setSortOrder] = useState(1);
+  const [trendGroup, setTrendGroup] = useState("Italy");
 
   // const graphDataS = useSubscription(trendGraphSubcription());
   const {data, loading, error} = useQuery(getTrendGraphs(), {variables: {name: username, trendId: trendId}});
@@ -39,31 +46,10 @@ const TrendPage = () => {
   if (loading) {
     return <Fragment/>;
   }
-  // console.log("Trendid ", trendId);
-  // console.log("Username ", username);
-  // console.log(data);
 
-  // const graphData = graphDataS.data ? graphDataS.data.trendGraphMutated.node.trendGraphs : graphDataQ.data.trend.trendGraphs;
   const graphData = data.user.trend.trendGraphs;
-
-  const chartOptions = elaborateDataGraphs(graphData);
-
-  let countries = {};
-  for (const elem of graphData) {
-    if ( elem.title === "Cases" ) {
-      countries[elem.label] = {
-        ...countries[elem.label],
-        Cases: elem.values[elem.values.length - 1].y
-      };
-    }
-    if ( elem.title === "Deaths" ) {
-      countries[elem.label] = {
-        ...countries[elem.label],
-        Deaths: elem.values[elem.values.length - 1].y
-      };
-    }
-  }
-  // console.log(graphData);
+  const chartOptions = elaborateDataGraphs(graphData, trendGroup);
+  const finalData = groupData(graphData, ["label", groupBy], groupFields, sortIndex, sortOrder);
 
   return (
     <TrendLayout>
@@ -75,19 +61,27 @@ const TrendPage = () => {
           <Table striped bordered hover variant="dark" size="sm">
             <thead>
             <tr>
-              <th>Country</th>
-              <th>Cases</th>
-              <th>Deaths</th>
+              {
+                trendVariables.map(elem =>
+                  (<TH
+                    onClick={() => {
+                      setSortIndex(elem);
+                      setSortOrder(sortOrder === 1 ? -1 : 1);
+                    }}>
+                    {elem}
+                  </TH>)
+                )
+              }
             </tr>
             </thead>
             <tbody>
-            {Object.keys(countries).map((e) => {
+            {finalData.map((e) => {
               return (
-                <tr key={e}>
-                  <td>{e}</td>
-                  <td>{countries[e].Cases}</td>
-                  <td>{countries[e].Deaths}</td>
-                </tr>
+                <TR key={e[trendVariables[0]]} onClick={() => {
+                  setTrendGroup(e[trendVariables[0]]);
+                }}>
+                  { trendVariables.map( elem => (<td>{e[elem]}</td>)) }
+                </TR>
               )
             })}
             </tbody>

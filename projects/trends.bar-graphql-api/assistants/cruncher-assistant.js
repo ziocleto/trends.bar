@@ -63,7 +63,7 @@ export class Cruncher {
     this.graphQueries.push({
         value: {
           x: moment(value.x).unix(),
-          y: value.y
+          y: Number(value.y)
         },
         query: {
           trendId: this.trendId,
@@ -157,7 +157,7 @@ export class Cruncher {
     } else if ( action.csv ) {
       const resjson = await csv().fromString(nparse.text);
       for ( const elem of resjson ) {
-        this.finaliseCrunch( key, elem[action.csv.title], elem[action.csv.x], elem[action.csv.y] );
+        this.finaliseCrunch( key, elem[action.csv.label], elem[action.csv.x], elem[action.csv.y] );
       }
     }
 

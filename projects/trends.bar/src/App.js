@@ -3,7 +3,7 @@ import {Route, Switch, useLocation} from 'react-router-dom';
 import Landing from "./components/Landing/Landing";
 import Navbar from "./components/Navbar";
 import {useGlobal} from 'reactn';
-import TrendPage from "./components/TrendPage";
+import TrendPage from "./components/Trend/TrendPage";
 import {sanitizePathRoot} from "./futuremodules/utils/utils";
 import {initEH} from "./init";
 import Register from "./futuremodules/auth/components/Register";

@@ -129,7 +129,7 @@ const typeDefs = gql`
     }
 
     input CrawlingCSV {
-        title: String
+        label: String
         x: String
         y: String
     }
@@ -178,6 +178,7 @@ const typeDefs = gql`
         graphType: [String]
         timestamp: String
         timestampFormat: String
+        version: String!
         functions: [CrawlingFunctions]
     }
 

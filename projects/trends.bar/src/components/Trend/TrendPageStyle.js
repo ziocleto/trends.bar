@@ -40,3 +40,11 @@ export const FlexContainer = styled.div` {
     box-sizing: border-box;
     padding: 20px;
   }`;
+
+export const TH = styled.th` {
+    cursor: pointer;
+}`;
+
+export const TR = styled.tr` {
+    cursor: pointer;
+}`;
