@@ -14,6 +14,7 @@ const usersModel = require("./modules/auth/models/user");
 const usersRoute = require("./modules/auth/routes/usersRoute");
 const tokenRoute = require("./modules/auth/routes/tokenRoute");
 const logger = require('eh_logger');
+const fetch = require('node-fetch');
 
 const http = require('http');
 
@@ -53,7 +54,6 @@ const typeDefs = gql`
         _id: ID!
         trendId: String!
         username: String!
-        dataset: Dataset!
         title: String
         label: String
         subLabel: String
@@ -83,7 +83,6 @@ const typeDefs = gql`
     }
 
     type GraphQuery {
-        dataset: ID!
         trendId: String!
         username: String!
         title: String
@@ -98,7 +97,6 @@ const typeDefs = gql`
     }
 
     input GraphQueryInput {
-        dataset: ID!
         trendId: String!
         username: String!
         title: String
@@ -121,12 +119,19 @@ const typeDefs = gql`
         traces: String
         graphQueries: [GraphValueQuery]
         error: String
+        dataset: Dataset
     }
 
     input CrawlingRegexp {
         body: String!
         flags: String
         resolver: String
+    }
+
+    input CrawlingCSV {
+        title: String
+        x: String
+        y: String
     }
 
     input CrawlingDateRange {
@@ -145,6 +150,7 @@ const typeDefs = gql`
 
     input CrawlingActions {
         regex: CrawlingRegexp
+        csv: CrawlingCSV
         startRegex: CrawlingRegexp
         endRegex: CrawlingRegexp
         validRange: CrawlingDateRange
@@ -167,6 +173,8 @@ const typeDefs = gql`
         username: String!
         source: String
         sourceName: String
+        sourceDocument: String
+        urlParser: String
         graphType: [String]
         timestamp: String
         timestampFormat: String
@@ -294,7 +302,6 @@ class MongoDataSourceExtended extends MongoDataSource {
 
   async findOne(query) {
     const ret = await this.model.findOne(query).collation({locale: "en", strength: 2});
-    console.log(ret);
     return ret;
   }
 
@@ -331,14 +338,17 @@ class TrendGraphDataSource extends MongoDataSourceExtended {
     try {
       const trendId = script.trendId;
       const username = script.username;
-      const timestamp = moment(script.timestamp, script.timestampFormat);
-      const text = await crawlTrendId(timestamp, script.timestamp);
+      const timestamp = script.timestamp !== "embedded" ? moment(script.timestamp, script.timestampFormat) : script.timestamp;
 
-      const datasetElem = await datasetAssistant.acquire(script.source, script.sourceName);
-      const cruncher = new Cruncher(trendId, username, text, datasetElem, graphAssistant.xyDateInt(), timestamp);
+      const response = await fetch(script.sourceDocument);
+      const text = await response.text();
+      //const text = await crawlTrendId(timestamp, script.timestamp);
+
+      const datasetElem = await datasetAssistant.acquire(script.source, script.sourceName, script.sourceDocument);
+      const cruncher = new Cruncher(trendId, username, text, graphAssistant.xyDateInt(), timestamp);
 
       const {traces, graphQueries} = await cruncher.crunch(script);
-      return { crawledText: text, traces: traces, graphQueries: graphQueries };
+      return { crawledText: text, traces: traces, graphQueries: graphQueries, dataset: datasetElem };
     } catch (e) {
       return { error: e }
     }

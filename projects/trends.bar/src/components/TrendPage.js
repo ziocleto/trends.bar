@@ -46,7 +46,6 @@ const TrendPage = () => {
   // const graphData = graphDataS.data ? graphDataS.data.trendGraphMutated.node.trendGraphs : graphDataQ.data.trend.trendGraphs;
   const graphData = data.user.trend.trendGraphs;
 
-  console.log(graphData);
   const chartOptions = elaborateDataGraphs(graphData);
 
   let countries = {};
@@ -64,7 +63,7 @@ const TrendPage = () => {
       };
     }
   }
-  console.log(graphData);
+  // console.log(graphData);
 
   return (
     <TrendLayout>

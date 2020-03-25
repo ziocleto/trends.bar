@@ -41,7 +41,7 @@ const httpLink = createHttpLink({
 
 const authLink = new ApolloLink((operation, forward) => {
     const headers = createAntiForgeryTokenHeaders();
-    console.log("AUTH:",headers);
+    // console.log("AUTH:",headers);
     operation.setContext(headers);
     // Call the next link in the middleware chain.
     return forward(operation);

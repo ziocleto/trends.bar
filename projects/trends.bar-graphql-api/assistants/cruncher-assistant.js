@@ -15,6 +15,7 @@ import * as countryAssistant from "./country-assistant";
 const graphAssistant = require("./graph-assistant");
 const crawler = require('crawler-request');
 const db = require("../db");
+const csv=require('csvtojson')
 
 const findTrendByStringId = async (trendId) => {
   const trend = await db.findOne(trendsModel, {trendId: trendId});
@@ -48,25 +49,23 @@ const makeRegExpFromJSON = json => {
 }
 
 export class Cruncher {
-  constructor(trendId, username, text, datasetElem, graphType, defaultXValue) {
+  constructor(trendId, username, text, graphType, defaultXValue) {
     this.trendId = trendId;
     this.username = username;
     this.traces = "";
     this.graphQueries = [];
     this.parser = new Parser(text);
-    this.datasetElem = datasetElem;
     this.graphType = graphType;
     this.defaultXValue = defaultXValue;
   }
 
-  async dataEntry(graph, value) {
+  dataEntry(graph, value) {
     this.graphQueries.push({
         value: {
           x: moment(value.x).unix(),
           y: value.y
         },
         query: {
-          dataset: this.datasetElem._id, // mongoose.Types.ObjectId(this.datasetElem._id),
           trendId: this.trendId,
           username: this.username,
           title: graph.title,
@@ -97,11 +96,11 @@ export class Cruncher {
     return match;
   }
 
-  async finaliseCrunch(key, title, wc) {
-    const graphElem = await graphAssistant.declare(this.graphType, key, title);
-    const value = graphAssistant.prepareSingleValue(graphElem.type, this.defaultXValue, wc);
+  finaliseCrunch(key, title, xValue, wc) {
+    const graphElem = graphAssistant.declare(this.graphType, key, title);
+    const value = graphAssistant.prepareSingleValue(graphElem.type, xValue, wc);
     this.traces += (key + "- " + title + ", " + wc + "\n");
-    await this.dataEntry(graphElem, value);
+    this.dataEntry(graphElem, value);
   }
 
   getParserStartIndex(regex) {
@@ -136,23 +135,30 @@ export class Cruncher {
     const nparse = new Parser(this.parser.text.substring(this.getParserStartIndex(action.startRegex),
       this.getParserEndIndex(action.endRegex)));
 
-    let results = [];
-    const resolver = regExResolver(action.regex);
-    const regex = makeRegExpFromJSON(action.regex);
-    if (resolver === regExResolverSingle) {
-      const parsedData = nparse.find(regex);
-      if (!parsedData || parsedData.length === 0) throw "Error parsing";
-      results.push({y: parseIntWithSpaces(parsedData[1]), title});
-    } else if (resolver === regExResolverAccumulator) {
-      results.push({y: nparse.findAllAccumulate(regex), title});
-    } else if (resolver === regExResolverPostTransform) {
-      for (const r of nparse.findAll(regex)) {
-        results.push(await this.applyPost(r, action.postTransform, title));
+    if ( action.regex ) {
+      let results = [];
+      const resolver = regExResolver(action.regex);
+      const regex = makeRegExpFromJSON(action.regex);
+      if (resolver === regExResolverSingle) {
+        const parsedData = nparse.find(regex);
+        if (!parsedData || parsedData.length === 0) throw "Error parsing";
+        results.push({y: parseIntWithSpaces(parsedData[1]), title});
+      } else if (resolver === regExResolverAccumulator) {
+        results.push({y: nparse.findAllAccumulate(regex), title});
+      } else if (resolver === regExResolverPostTransform) {
+        for (const r of nparse.findAll(regex)) {
+          results.push(await this.applyPost(r, action.postTransform, title));
+        }
       }
-    }
 
-    for (const result of results) {
-      await this.finaliseCrunch(key, result.title, result.y);
+      for (const result of results) {
+        this.finaliseCrunch(key, result.title, this.defaultXValue, result.y);
+      }
+    } else if ( action.csv ) {
+      const resjson = await csv().fromString(nparse.text);
+      for ( const elem of resjson ) {
+        this.finaliseCrunch( key, elem[action.csv.title], elem[action.csv.x], elem[action.csv.y] );
+      }
     }
 
   }

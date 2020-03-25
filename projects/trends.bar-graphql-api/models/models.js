@@ -8,7 +8,7 @@ const schemaWithIndex = (schemaDef, index) => {
 
 export const datasetModel = mongoose.model("datasets", new mongoose.Schema({
   source: {type: String},
-  sourceDocuments: [String],
+  sourceDocument: {type: String},
   sourceName: {type: String},
 }, {strict: false}));
 

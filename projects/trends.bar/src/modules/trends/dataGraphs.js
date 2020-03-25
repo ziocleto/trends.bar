@@ -48,7 +48,7 @@ export const elaborateDataGraphs = data => {
       valueFormatString: "DD MMM"
     },
     axisY: {
-      title: "Number"
+      title: "People"
     },
     backgroundColor: "#343a40",
     animationEnabled: true,
@@ -60,12 +60,12 @@ export const elaborateDataGraphs = data => {
   let allPoints = [];
   for (const trendGraph of data) {
     let dpoints = [];
-    if ((trendGraph.title === "Cases" && trendGraph.label === "Worldwide") ||
-      (trendGraph.title === "Deaths" && trendGraph.label === "Worldwide")) {
+    if ((trendGraph.title === "Cases" && trendGraph.label === "Italy") ||
+      (trendGraph.title === "Deaths" && trendGraph.label === "Italy")) {
       for (const p of trendGraph.values) {
         const date = new Date(0);
         date.setUTCSeconds(p.x);
-        dpoints.push({x: date, y: p.y});
+        dpoints.push({x: date, y: parseInt(p.y)});
       }
       // dpoints.sort(sortByXGraph);
       allPoints.push(dpoints);
@@ -80,11 +80,11 @@ export const elaborateDataGraphs = data => {
     theme: "dark1",
     data: [
       {
-        type: "splineArea",
+        type: "area",
         dataPoints: allPoints[0]
       },
       {
-        type: "splineArea",
+        type: "area",
         dataPoints: allPoints[1]
       }
     ]

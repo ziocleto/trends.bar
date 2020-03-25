@@ -19,7 +19,6 @@ export const CRAWL_TREND_GRAPH = gql`
                     y
                 }
                 query {
-                    dataset
                     trendId
                     username
                     title
@@ -29,6 +28,11 @@ export const CRAWL_TREND_GRAPH = gql`
                 }
             }
             error
+            dataset {
+                source
+                sourceDocument
+                sourceName
+            }
         }
     }`;
 
