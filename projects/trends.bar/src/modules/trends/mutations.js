@@ -14,17 +14,16 @@ export const CRAWL_TREND_GRAPH = gql`
             crawledText
             traces
             graphQueries {
-                value {
+                trendId
+                username
+                title
+                label
+                subLabel
+                type
+                dataSequence
+                values {
                     x
                     y
-                }
-                query {
-                    trendId
-                    username
-                    title
-                    label
-                    subLabel
-                    type
                 }
             }
             error
@@ -37,7 +36,7 @@ export const CRAWL_TREND_GRAPH = gql`
     }`;
 
 export const UPSERT_TREND_GRAPH = gql`
-    mutation UpsertTrendGraph($graphQueries: GraphQueries!) {
+    mutation UpsertTrendGraph($graphQueries: [GraphQueryInput]) {
         upsertTrendGraph(graphQueries: $graphQueries)
     }`;
 

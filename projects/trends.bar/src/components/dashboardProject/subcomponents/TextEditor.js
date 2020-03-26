@@ -74,6 +74,8 @@ export const ScriptCodeEditor = ({trendId, username}) => {
     if (!response.data) {
       return "";
     }
+    console.log(response.data.crawlTrendGraph);
+
     if (key === KeyResponseParsed) {
       return response.data.crawlTrendGraph.crawledText;
     }
@@ -179,9 +181,7 @@ export const ScriptCodeEditor = ({trendId, username}) => {
                   onClick={ () => {
                     upsertTrendGraph({
                       variables: {
-                        graphQueries: {
                           graphQueries: response.data.crawlTrendGraph.graphQueries
-                        }
                       }
                     }).then( () =>
                       alertSuccess( alertStore,"All set and done!")

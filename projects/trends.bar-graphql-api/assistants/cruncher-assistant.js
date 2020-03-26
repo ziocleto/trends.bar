@@ -15,7 +15,8 @@ import * as countryAssistant from "./country-assistant";
 const graphAssistant = require("./graph-assistant");
 const crawler = require('crawler-request');
 const db = require("../db");
-const csv=require('csvtojson')
+const csv = require('csvtojson')
+const hash = require('object-hash');
 
 const findTrendByStringId = async (trendId) => {
   const trend = await db.findOne(trendsModel, {trendId: trendId});
@@ -54,28 +55,42 @@ export class Cruncher {
     this.username = username;
     this.traces = "";
     this.graphQueries = [];
+    this.graphQueriesMap = {};
     this.parser = new Parser(text);
     this.graphType = graphType;
     this.defaultXValue = defaultXValue;
   }
 
   dataEntry(graph, value) {
-    this.graphQueries.push({
-        value: {
-          x: moment(value.x).unix(),
-          y: Number(value.y)
-        },
-        query: {
-          trendId: this.trendId,
-          username: this.username,
-          title: graph.title,
-          label: graph.label,
-          subLabel: graph.subLabel,
-          type: this.graphType
-        }
-      }
-    );
-    //await this.upsertUniqueXValue(trendGraphsModel, value, query );
+    const query = {
+      trendId: this.trendId,
+      username: this.username,
+      title: graph.title,
+      label: graph.label,
+      subLabel: graph.subLabel,
+      type: this.graphType,
+      dataSequence: graph.dataSequence
+    };
+    const ivalue = {
+      x: moment(value.x).unix(),
+      y: Number(value.y)
+    };
+    const qhash = hash(query);
+
+    if (this.graphQueriesMap[qhash]) {
+      this.graphQueriesMap[qhash].values.push(ivalue)
+    } else {
+      this.graphQueriesMap[qhash] = {
+        ...query,
+        values: [ivalue]
+      };
+    }
+
+    // this.graphQueries.push({
+    //     value : ivalue,
+    //     query
+    //   }
+    // );
   }
 
   checkTimeStampValid(validRange, currTime) {
@@ -96,8 +111,8 @@ export class Cruncher {
     return match;
   }
 
-  finaliseCrunch(key, title, xValue, wc) {
-    const graphElem = graphAssistant.declare(this.graphType, key, title);
+  finaliseCrunch(key, title, xValue, wc, dataSequence = null) {
+    const graphElem = graphAssistant.declare(this.graphType, key, title, "", dataSequence);
     const value = graphAssistant.prepareSingleValue(graphElem.type, xValue, wc);
     this.traces += (key + "- " + title + ", " + wc + "\n");
     this.dataEntry(graphElem, value);
@@ -135,7 +150,7 @@ export class Cruncher {
     const nparse = new Parser(this.parser.text.substring(this.getParserStartIndex(action.startRegex),
       this.getParserEndIndex(action.endRegex)));
 
-    if ( action.regex ) {
+    if (action.regex) {
       let results = [];
       const resolver = regExResolver(action.regex);
       const regex = makeRegExpFromJSON(action.regex);
@@ -154,10 +169,10 @@ export class Cruncher {
       for (const result of results) {
         this.finaliseCrunch(key, result.title, this.defaultXValue, result.y);
       }
-    } else if ( action.csv ) {
+    } else if (action.csv) {
       const resjson = await csv().fromString(nparse.text);
-      for ( const elem of resjson ) {
-        this.finaliseCrunch( key, elem[action.csv.label], elem[action.csv.x], elem[action.csv.y] );
+      for (const elem of resjson) {
+        this.finaliseCrunch(key, elem[action.csv.label], elem[action.csv.x], elem[action.csv.y], action.dataSequence);
       }
     }
 
@@ -179,6 +194,24 @@ export class Cruncher {
     for (const f of query.functions) {
       await this.crunchFunctions(f, this.defaultXValue);
     }
+
+    // Remap to array
+    for ( const elem in this.graphQueriesMap ) {
+      this.graphQueries.push(this.graphQueriesMap[elem]);
+    }
+
+    // Sanitize if needed
+    // Sanitize cumulative
+    this.graphQueries.forEach( elem => {
+      if (elem.values.length > 1 && elem.dataSequence === "Cumulative") {
+        for (let i = 1; i < elem.values.length; i++) {
+          if (elem.values[i].y === 0 && elem.values[i - 1].y > 0) {
+            elem.values[i].y = elem.values[i - 1].y;
+          }
+        }
+      }
+    });
+
     return {
       traces: this.traces,
       graphQueries: this.graphQueries
