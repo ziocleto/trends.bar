@@ -3,20 +3,17 @@ import {TrendGrid, TrendLayout} from "../common.styled";
 import {getUserName, isUserAuthenticated} from "../../futuremodules/auth/authAccessors";
 import {getFileNameOnlyNoExt, sanitizeURLParams} from "../../futuremodules/utils/utils";
 import {Redirect, useLocation} from "react-router-dom";
-import {ScriptCodeEditor} from "./subcomponents/TextEditor";
+import {ScriptCodeEditor} from "./subcomponents/GatherEditor";
+import {Tab, Tabs} from "react-bootstrap";
+import {ProjectTabs} from "./DashboardProject.styled";
+import {useState} from "react";
+import {OverviewEditor} from "./subcomponents/OverviewEditor";
+import {LayoutEditor} from "./subcomponents/LayoutEditor";
 
 export const DashboardProject = ({auth}) => {
 
-  // const initialState = {
-  //   startDate: null,
-  //   endDate: null,
-  //   focusedInput: null,
-  //   chosenDate: null
-  // };
-
   const trendId = sanitizeURLParams(getFileNameOnlyNoExt(useLocation().pathname));
-  // const [state, dispatch] = useReducer(reducer, initialState);
-  // const [deleteTrendGraph] = useMutation(DELETE_TREND_GRAPH);
+  const [activeTab, setActiveTab] = useState("Gather");
 
   if (!isUserAuthenticated(auth) || trendId === null) {
     return (<Redirect to={"/"}/>)
@@ -24,46 +21,22 @@ export const DashboardProject = ({auth}) => {
 
   const username = getUserName(auth);
 
-  // const deleteTrend = () => {
-  //   deleteTrendGraph({
-  //     variables: {
-  //       trendId: trendId,
-  //       username: auth.username
-  //     }
-  //   });
-  // }
-  //
-  // function reducer(state, action) {
-  //   switch (action.type) {
-  //     case 'focusChange':
-  //       let cd = null;
-  //       if (state.startDate && state.endDate && action.payload === null) {
-  //         cd = moment(state.endDate);
-  //       }
-  //       return {...state, focusedInput: action.payload, chosenDate: cd};
-  //     case 'dateChange':
-  //       return action.payload;
-  //     default:
-  //       throw new Error()
-  //   }
-  // }
-
   return (
     <TrendLayout>
       <TrendGrid>
-          <ScriptCodeEditor trendId={trendId} username={username}/>
-        {/*<FlexContainer>*/}
-        {/*  <DateRangeInput*/}
-        {/*    onDatesChange={data => dispatch({type: 'dateChange', payload: data})}*/}
-        {/*    onFocusChange={focusedInput => dispatch({type: 'focusChange', payload: focusedInput})}*/}
-        {/*    startDate={state.startDate} // Date or null*/}
-        {/*    endDate={state.endDate} // Date or null*/}
-        {/*    focusedInput={state.focusedInput} // START_DATE, END_DATE or null*/}
-        {/*  />*/}
-        {/*</FlexContainer>*/}
-        {/*<FlexContainer>*/}
-        {/*  <Button variant="danger" onClick={() => deleteTrend()}>Reset Data</Button>*/}
-        {/*</FlexContainer>*/}
+        <ProjectTabs>
+          <Tabs activeKey={activeTab} onSelect={k => {setActiveTab(k)}}>
+            <Tab eventKey="Overview" title="Overview">
+              <OverviewEditor trendId={trendId} username={username}/>
+            </Tab>
+            <Tab eventKey="Layout" title="Layout">
+              <LayoutEditor trendId={trendId} username={username}/>
+            </Tab>
+            <Tab eventKey="Gather" title="Gather">
+              <ScriptCodeEditor trendId={trendId} username={username}/>
+            </Tab>
+          </Tabs>
+        </ProjectTabs>
       </TrendGrid>
     </TrendLayout>
   );

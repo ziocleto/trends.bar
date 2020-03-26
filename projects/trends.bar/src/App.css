@@ -29,6 +29,7 @@
   --scheme-color-1: #D1793F;
   --scheme-color-2: #fccb7b;
   --scheme-color-3: #8ae9e9;
+  --mainMargin: 2%;
   height: 100vh;
 }
 

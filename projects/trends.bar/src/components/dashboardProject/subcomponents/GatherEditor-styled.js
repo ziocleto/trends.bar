@@ -7,7 +7,7 @@ export const ScriptEditorGrid = styled.div` {
   grid-gap: 5px 1.5%;
   grid-template-areas: "scriptTitle  scriptControlsHeader outputTabs"
                        "script       scriptControls scriptOutput";
-  padding: 1%;
+  padding-top: 3%;
   height: 100%;
 }`;
 

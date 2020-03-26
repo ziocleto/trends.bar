@@ -11,11 +11,11 @@ import {
   ScriptOutputTabs,
   ScriptResultTabs,
   ScriptTitle
-} from "./TextEditor-styled";
+} from "./GatherEditor-styled";
 import {useMutation, useQuery} from "@apollo/react-hooks";
 import {CRAWL_TREND_GRAPH, SAVE_SCRIPT, UPSERT_TREND_GRAPH} from "../../../modules/trends/mutations";
 import {getScript} from "../../../modules/trends/queries";
-import "./TextEditor.css"
+import "./GatherEditor.css"
 import {Tab, Tabs} from "react-bootstrap";
 import 'codemirror/addon/lint/lint.css';
 import {alertDangerNoMovie, alertSuccess, useAlert} from "../../../futuremodules/alerts/alerts";
