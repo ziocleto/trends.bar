@@ -48,3 +48,13 @@ export const TH = styled.th` {
 export const TR = styled.tr` {
     cursor: pointer;
 }`;
+
+export const TrendSpan = styled.span `{
+  color: var(--primary);
+  font-weight: bold;
+}`;
+
+export const LinkBack = styled.span `{
+  color: var(--info);
+  font-weight: bold;
+}`;

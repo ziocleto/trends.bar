@@ -11,7 +11,8 @@
                 "label": "Country",
                 "x": "Date",
                 "y": "Confirmed"
-              }
+              },
+              "dataSequence": "Cumulative"
             }
           ]
         }
@@ -28,7 +29,8 @@
                 "label": "Country",
                 "x": "Date",
                 "y": "Deaths"
-              }
+              },
+              "dataSequence": "Cumulative"
             }
           ]
         }
@@ -45,7 +47,8 @@
                 "label": "Country",
                 "x": "Date",
                 "y": "Recovered"
-              }
+              },
+              "dataSequence": "Cumulative"
             }
           ]
         }
