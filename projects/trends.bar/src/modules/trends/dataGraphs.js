@@ -31,7 +31,23 @@ export const isEmptyGraph = data => {
   return !hasGraphData(data);
 }
 
-export const elaborateDataGraphs = (data, label) => {
+const checkTitleAndLabelBelongToGraph = (trendGraph, titles, label) => {
+  for ( const title of titles ) {
+    if (trendGraph.title === title && trendGraph.label === label) return true;
+  }
+  return false;
+}
+
+const itemclick = e => {
+  if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+    e.dataSeries.visible = false;
+  } else {
+    e.dataSeries.visible = true;
+  }
+  e.chart.render();
+};
+
+export const elaborateDataGraphs = (data, label, titles) => {
 
   const optionsBase = {
     axisX: {
@@ -40,6 +56,14 @@ export const elaborateDataGraphs = (data, label) => {
     axisY: {
       title: "People"
     },
+    title: {
+      text: label,
+    },
+    legend: {
+      cursor: "pointer",
+      itemclick: itemclick
+    },
+    theme: "dark1",
     backgroundColor: "#343a40",
     animationEnabled: true,
     interactivityEnabled: true,
@@ -50,40 +74,32 @@ export const elaborateDataGraphs = (data, label) => {
   let allPoints = [];
   for (const trendGraph of data) {
     let dpoints = [];
-    if ((trendGraph.title === "Cases" && trendGraph.label === label) ||
-      (trendGraph.title === "Deaths" && trendGraph.label === label) ||
-      (trendGraph.title === "Recovered" && trendGraph.label === label))
-    {
+    if ( checkTitleAndLabelBelongToGraph(trendGraph, titles, label ) ) {
       for (const p of trendGraph.values) {
         const date = new Date(0);
         date.setUTCSeconds(p.x);
         dpoints.push({x: date, y: p.y});
       }
-      // dpoints.sort(sortByXGraph);
-      allPoints.push(dpoints);
+      allPoints.push( {
+        label: trendGraph.title,
+        data: dpoints
+      });
     }
+  }
+
+  const gdata =[];
+  for ( const points of allPoints ) {
+    gdata.push( {
+      showInLegend: true,
+      legendText: points.label,
+      type: "area",
+      dataPoints: points.data
+    });
   }
 
   const chartsOptions = {
     ...optionsBase,
-    title: {
-      text: label,
-    },
-    theme: "dark1",
-    data: [
-      {
-        type: "area",
-        dataPoints: allPoints[0]
-      },
-      {
-        type: "area",
-        dataPoints: allPoints[1]
-      },
-      {
-        type: "area",
-        dataPoints: allPoints[2]
-      }
-    ]
+    data: gdata
   };
 
   return chartsOptions;

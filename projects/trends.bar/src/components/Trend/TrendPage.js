@@ -1,6 +1,6 @@
 import React, {Fragment, useState} from "react";
 import CanvasJSReact from '../../assets/canvasjs.react';
-import {FlexContainer, TH, TR} from "./TrendPageStyle";
+import {FlexContainer, LinkBack, TH, TR, TrendSpan} from "./TrendPageStyle";
 import {elaborateDataGraphs, getTrendGraphs, groupData,} from "../../modules/trends/dataGraphs";
 import {sanitizePathRoot} from "../../futuremodules/utils/utils";
 import {useQuery} from "@apollo/react-hooks";
@@ -10,13 +10,20 @@ import {TrendGrid, TrendLayout} from "../common.styled";
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
-const EmptyTrend = (trendId) => {
+const EmptyTrend = ({trendId}) => {
   return (
     <TrendLayout>
       <TrendGrid>
         <FlexContainer>
-          Tread {trendId} is empty, I'm sorry you ended up here, my associates will make sure this won't happen again!
-          <Link to={"/"}>{" "}Back to sanity, Marty!</Link>
+          <p>
+          Trend <TrendSpan>{trendId}</TrendSpan> is empty!
+          </p>
+          <p>
+          I'm sorry you ended up here, my associates will make sure this won't happen again!
+          </p>
+        </FlexContainer>
+        <FlexContainer>
+          <Link to={"/"}><LinkBack>Back to sanity, Marty!</LinkBack></Link>
         </FlexContainer>
       </TrendGrid>
     </TrendLayout>
@@ -39,16 +46,16 @@ const TrendPage = () => {
   // const graphDataS = useSubscription(trendGraphSubcription());
   const {data, loading, error} = useQuery(getTrendGraphs(), {variables: {name: username, trendId: trendId}});
 
-  if ((!data && loading === false) || error) {
-    return <EmptyTrend trendId={trendId}/>;
-  }
-
   if (loading) {
     return <Fragment/>;
   }
 
+  if ((!data && loading === false) || (loading === false && !data.user) || (loading === false && !data.user.trend) || error) {
+    return <EmptyTrend trendId={trendId}/>;
+  }
+
   const graphData = data.user.trend.trendGraphs;
-  const chartOptions = elaborateDataGraphs(graphData, trendGroup);
+  const chartOptions = elaborateDataGraphs(graphData, trendGroup, groupFields);
   const finalData = groupData(graphData, ["label", groupBy], groupFields, sortIndex, sortOrder);
 
   return (
@@ -63,7 +70,7 @@ const TrendPage = () => {
             <tr>
               {
                 trendVariables.map(elem =>
-                  (<TH
+                  (<TH key={elem}
                     onClick={() => {
                       setSortIndex(elem);
                       setSortOrder(sortOrder === 1 ? -1 : 1);
@@ -80,7 +87,7 @@ const TrendPage = () => {
                 <TR key={e[trendVariables[0]]} onClick={() => {
                   setTrendGroup(e[trendVariables[0]]);
                 }}>
-                  { trendVariables.map( elem => (<td>{e[elem]}</td>)) }
+                  {trendVariables.map(elem => (<td>{e[elem]}</td>))}
                 </TR>
               )
             })}
@@ -90,6 +97,6 @@ const TrendPage = () => {
       </TrendGrid>
     </TrendLayout>
   );
-}
+};
 
 export default TrendPage;
