@@ -208,8 +208,13 @@ exports.objectId = (objString) => {
 };
 
 exports.upsert = async ( model, data, query = {}, options = {}) => {
-  const queryFinal = isObjectEmpty(query) ? data : query;
-  return model.findOneAndUpdate(queryFinal, data, {new: true,upsert: true, ...options});
+  try {
+    const queryFinal = isObjectEmpty(query) ? data : query;
+    return await model.findOneAndUpdate(queryFinal, data, {new: true,upsert: true, ...options});
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
 };
 
 // exports.delete = async ( model, timestamp ) => {

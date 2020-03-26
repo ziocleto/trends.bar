@@ -89,13 +89,10 @@ const typeDefs = gql`
         label: String
         subLabel: String
         type: String
+        dataSequence: String
+        values: [DateInt]
     }
-
-    type GraphValueQuery {
-        value: DateInt!
-        query: GraphQuery!
-    }
-
+    
     input GraphQueryInput {
         trendId: String!
         username: String!
@@ -103,21 +100,14 @@ const typeDefs = gql`
         label: String
         subLabel: String
         type: String
+        dataSequence: String
+        values: [DateIntInput]
     }
-
-    input GraphValueQueryInput {
-        value: DateIntInput!
-        query: GraphQueryInput!
-    }
-
-    input GraphQueries {
-        graphQueries: [GraphValueQueryInput]
-    }
-
+    
     type CrawlingOutput {
         crawledText: String
         traces: String
-        graphQueries: [GraphValueQuery]
+        graphQueries: [GraphQuery]
         error: String
         dataset: Dataset
     }
@@ -151,6 +141,7 @@ const typeDefs = gql`
     input CrawlingActions {
         regex: CrawlingRegexp
         csv: CrawlingCSV
+        dataSequence: String
         startRegex: CrawlingRegexp
         endRegex: CrawlingRegexp
         validRange: CrawlingDateRange
@@ -195,7 +186,7 @@ const typeDefs = gql`
     type Mutation {
         createTrend(trendId: String!, username: String!): Trend
         deleteTrendGraphs(trendId: String!, username: String!): String
-        upsertTrendGraph(graphQueries: GraphQueries!): String
+        upsertTrendGraph(graphQueries: [GraphQueryInput]): String
         crawlTrendGraph(script: CrawlingScript!): CrawlingOutput
         saveScript(script: CrawlingScript!): String
     }
@@ -365,17 +356,21 @@ class TrendGraphDataSource extends MongoDataSourceExtended {
     return trend._id;
   }
 
-  async upsertUniqueXValue(value, query) {
+  async upsertUniqueXValue(query) {
+    let queryOnly = query;
+    const values = query.values;
+    delete queryOnly.values;
+
     const data = {
       ...query,
       $push: {
         values: {
-          $each: [value],
+          $each: values,
           $sort: {x: 1}
         }
       }
     };
-    const ret = await db.upsert(this.model, data, query);
+    const ret = await db.upsert(this.model, data, queryOnly);
 
     let setValues = [];
     for (let index = 0; index < ret.values.length - 1; index++) {
@@ -385,12 +380,12 @@ class TrendGraphDataSource extends MongoDataSourceExtended {
     }
     setValues.push(ret.values[ret.values.length - 1]);
 
-    return await this.model.updateOne(query, {$set: {values: setValues}});
+    await this.model.updateOne(query, {$set: {values: setValues}});
   }
 
   async upsertGraphs(query) {
-    for ( const graph of query.graphQueries.graphQueries ) {
-      await this.upsertUniqueXValue(graph.value, graph.query);
+    for ( const graph of query.graphQueries ) {
+      await this.upsertUniqueXValue(graph);
     }
     return "OK";
   }
