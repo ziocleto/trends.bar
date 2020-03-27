@@ -18,7 +18,6 @@
     "base64-arraybuffer": "^0.2.0",
     "bootstrap": "^4.4.1",
     "codemirror": "^5.52.0",
-    "eh_config": "^1.0.0",
     "graphql": "^14.6.0",
     "graphql-tag": "latest",
     "jqwidgets-scripts": "^9.0.0",
