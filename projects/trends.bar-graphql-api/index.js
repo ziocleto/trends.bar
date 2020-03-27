@@ -190,6 +190,8 @@ const typeDefs = gql`
         deleteTrendGraphs(trendId: String!, username: String!): String
         upsertTrendGraph(graphQueries: [GraphQueryInput]): String
         crawlTrendGraph(scriptName: String!, script: CrawlingScript!): CrawlingOutput
+        scriptRemove(scriptName: String!, trendId: String!, username:String!): [ScriptOutput]
+        scriptRename(scriptName: String!, trendId: String!, username:String!, newName: String!): ScriptOutput
     }
 
     type Subscription {
@@ -216,7 +218,7 @@ const resolvers = {
       trendId,
       username
     }),
-    scripts: (_, {trendId, username}, {dataSources}) => dataSources.scripts.findManyStringify({trendId, username})
+    scripts: (_, {trendId, username}, {dataSources}) => dataSources.scripts.findManyStringify({trendId, username}),
   },
 
   User: {
@@ -269,6 +271,9 @@ const resolvers = {
       return await dataSources.trendGraphs.upsertGraphs(args);
     },
 
+    scriptRemove: (_, {trendId, username}, {dataSources}) => dataSources.scripts.removeAndRelist({trendId, username}),
+    scriptRename: (_, {scriptName, trendId, username, newName}, {dataSources}) => dataSources.scripts.updateOneStringify({scriptName, trendId, username}, { scriptName: newName})
+
     // async saveScript(parent, args, {dataSources}) {
     //   await dataSources.scripts.upsert({ username: args.script.username, trendId: args.script.trendId}, args.script);
     //   return JSON.stringify(args.script);
@@ -299,6 +304,19 @@ class MongoDataSourceExtended extends MongoDataSource {
     return await this.model.find(query).collation({locale: "en", strength: 2});
   }
 
+  async remove(query) {
+    await this.model.remove(query).collation({locale: "en", strength: 2});
+    return "OK";
+    // The result of remove is a find of the remaining documents, this might change
+    return this.model.find({});
+  }
+
+  async removeAndRelist(query) {
+    await this.model.remove(query).collation({locale: "en", strength: 2});
+    // The result of remove is a find of the remaining documents
+    return this.model.find({});
+  }
+
   async findSimilar(query) {
     return await this.model.find({trendId: {"$regex": query.trendId, "$options": "i"}});
   }
@@ -308,8 +326,7 @@ class MongoDataSourceExtended extends MongoDataSource {
     return ret;
   }
 
-  cleanScriptString(ret) {
-    let ret2 = ret.toObject();
+  cleanScriptStringNoObj(ret2) {
     ret2["_id"] = null;
     delete ret2["_id"];
     delete ret2["__v"];
@@ -317,6 +334,10 @@ class MongoDataSourceExtended extends MongoDataSource {
     delete ret2["trendId"];
     delete ret2["scriptName"];
     return JSON.stringify(ret2, null, 2);
+  }
+
+  cleanScriptString(ret) {
+    return this.cleanScriptStringNoObj(ret.toObject());
   }
 
   async findOneStringify(query) {
@@ -338,6 +359,23 @@ class MongoDataSourceExtended extends MongoDataSource {
       });
     }
     return res;
+  }
+
+  async updateOne(query, data) {
+    const doc = await this.model.findOneAndUpdate(query, data);
+    const ret = doc.toObject();
+    return ret;
+  }
+
+  async updateOneStringify(query, data) {
+    // WARNING: findOneAndUpdate returns the doc _before_ the update, so basically it returns the findOne part :/ Lame
+    const doc = await this.model.findOneAndUpdate(query, data);
+    const updated = await this.model.findById( doc._id );
+    const ret = updated.toObject();
+    return {
+      filename: !ret ? "" : ret.scriptName,
+      text: !ret ? "" : this.cleanScriptStringNoObj(ret)
+    };
   }
 
   async upsert(query, data) {

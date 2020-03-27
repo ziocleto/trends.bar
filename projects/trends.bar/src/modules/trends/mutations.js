@@ -50,3 +50,18 @@ export const SAVE_SCRIPT = gql`
         saveScript(script: $script)
     }`;
 
+export const REMOVE_SCRIPT = gql`
+    mutation ScriptRemove($scriptName: String!, $trendId: String!, $username:String!) {
+        scriptRemove(scriptName: $scriptName, trendId: $trendId, username: $username ) {
+            filename
+            text
+        }
+    }`;
+
+export const RENAME_SCRIPT = gql`
+    mutation ScriptRename($scriptName: String!, $trendId: String!, $username:String!, $newName:String!) {
+        scriptRename(scriptName: $scriptName, trendId: $trendId, username: $username, newName: $newName ) {
+            filename
+            text
+        }
+    }`;

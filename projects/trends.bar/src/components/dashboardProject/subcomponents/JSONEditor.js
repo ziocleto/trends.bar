@@ -17,6 +17,7 @@ export const useJSONEditorGetFile = () => {
 export const useJSONEditorSetFiles = (newFiles) => {
   const [files, setFiles] = useGlobal('JSONFiles');
   useGlobal('JSONFileC');
+  console.log( "useJSONEditorSetFiles", files )
   if ( newFiles !== files ) {
     setFiles(newFiles).then();
     // setFileC(newFiles[0].text);
