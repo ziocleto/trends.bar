@@ -13,7 +13,6 @@ import {WebSocketLink} from 'apollo-link-ws';
 import {getMainDefinition} from "apollo-utilities";
 import addReactNDevTools from 'reactn-devtools';
 import {createAntiForgeryTokenHeaders} from './futuremodules/auth/authApiCalls';
-import * as globalConfig from "eh_config";
 const omitDeep = require("omit-deep-lodash");
 
 addReactNDevTools();
@@ -30,14 +29,14 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 });
 
 const wsLink = new WebSocketLink({
-  uri: `wss://${globalConfig.CloudHost}/gapi/graphql`,
+  uri: `wss://${process.env.REACT_APP_EH_CLOUD_HOST}/gapi/graphql`,
   options: {
     reconnect: true
   }
 });
 
 const httpLink = createHttpLink({
-  uri: `https://${globalConfig.CloudHost}/gapi/graphql/`,
+  uri: `https://${process.env.REACT_APP_EH_CLOUD_HOST}/gapi/graphql/`,
 })
 
 const authLink = new ApolloLink((operation, forward) => {
