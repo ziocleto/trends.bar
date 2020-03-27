@@ -177,7 +177,8 @@ const typeDefs = gql`
         trends: [Trend]
         users: [User]
         user(name: String!): User
-        trendGraph(id: ID!): TrendGraph
+        trendGraph(username:String!,trendId:String!,label:String!,title:String!): TrendGraph
+        trendGraphs(username:String,trendId:String,label:String,title:String): [TrendGraph]
         trend(trendId: String!): [Trend]
         trend_similar(trendId: String!): [Trend]
         script(trendId: String!, username:String!): ScriptOutput
@@ -207,6 +208,8 @@ const resolvers = {
   Query: {
     trends: (_, _2, {dataSources}) => dataSources.trends.get(),
     trend: (_, args, {dataSources}) => dataSources.trends.find(args),
+    trendGraph: (_, args, {dataSources}) => dataSources.trendGraphs.findOne(args),
+    trendGraphs: (_, args, {dataSources}) => dataSources.trendGraphs.find(args),
     trend_similar: (_, args, {dataSources}) => dataSources.trends.findSimilar(args),
     users: (_, _2, {dataSources}) => dataSources.users.get(),
     user: (_, {name}, {dataSources}) => dataSources.users.findOne({name: name}),
