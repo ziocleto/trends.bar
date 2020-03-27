@@ -2,11 +2,11 @@ import React from "reactn";
 import {TrendGrid, TrendLayout} from "../common.styled";
 import {getUserName, isUserAuthenticated} from "../../futuremodules/auth/authAccessors";
 import {getFileNameOnlyNoExt, sanitizeURLParams} from "../../futuremodules/utils/utils";
-import {Redirect, useLocation} from "react-router-dom";
+import {useLocation} from "react-router-dom";
 import {ScriptCodeEditor} from "./subcomponents/GatherEditor";
 import {Tab, Tabs} from "react-bootstrap";
 import {ProjectTabs} from "./DashboardProject.styled";
-import {useState} from "react";
+import {Fragment, useState} from "react";
 import {OverviewEditor} from "./subcomponents/OverviewEditor";
 import {LayoutEditor} from "./subcomponents/LayoutEditor";
 
@@ -16,7 +16,8 @@ export const DashboardProject = ({auth}) => {
   const [activeTab, setActiveTab] = useState("Gather");
 
   if (!isUserAuthenticated(auth) || trendId === null) {
-    return (<Redirect to={"/"}/>)
+    return (<Fragment/>)
+    // return (<Redirect to={"/"}/>)
   }
 
   const username = getUserName(auth);

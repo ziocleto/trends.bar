@@ -13,8 +13,22 @@ export const ScriptEditorGrid = styled.div` {
 
 export const ScriptTitle = styled.div` {
   grid-area: scriptTitle;
-  display: block;
-  place-self: center;
+  display: flex;
+  justify-content: space-between;
+  align-self: center;
+}`;
+
+export const FileManagementAddAndSelect = styled.div` {
+  display: flex;
+  align-self: center;
+}`;
+
+export const ScriptFileName = styled.div` {
+  align-self: center;
+  border: 1px solid var(--light-color);
+  border-radius: 3px;
+  background-color: var(--primary);
+  padding: 0.33em;
 }`;
 
 export const ScriptEditor = styled.div` {
@@ -49,6 +63,6 @@ export const ScriptOutput = styled.div` {
 }`;
 
 export const DivAutoMargin = styled.div` {
-  margin: 20px auto;
+  margin: 5px auto;
 }`;
 

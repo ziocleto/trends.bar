@@ -13,12 +13,14 @@ import {
   ScriptTitle
 } from "./GatherEditor-styled";
 import {useMutation, useQuery} from "@apollo/react-hooks";
-import {CRAWL_TREND_GRAPH, SAVE_SCRIPT, UPSERT_TREND_GRAPH} from "../../../modules/trends/mutations";
-import {getScript} from "../../../modules/trends/queries";
+import {CRAWL_TREND_GRAPH, UPSERT_TREND_GRAPH} from "../../../modules/trends/mutations";
+import {getScripts} from "../../../modules/trends/queries";
 import "./GatherEditor.css"
 import {Tab, Tabs} from "react-bootstrap";
 import 'codemirror/addon/lint/lint.css';
 import {alertDangerNoMovie, alertSuccess, useAlert} from "../../../futuremodules/alerts/alerts";
+import {FileManagementHeader} from "./FileManagementHeader";
+import {JSONEditor, useJSONEditorGetFile, useJSONEditorSetFiles} from "./JSONEditor";
 
 require("codemirror/lib/codemirror.css");
 require("codemirror/theme/material.css");
@@ -36,22 +38,21 @@ const KeyResponseError = 'error';
 
 export const ScriptCodeEditor = ({trendId, username}) => {
   const [key, setKey] = useState(KeyResponseElaborated);
-  const [fileC, setFileC] = useState(null);
-  const [fileJson, setFileJson] = useState({});
-  const [isJsonValid, setIsJsonValud] = useState(false);
 
   const alertStore = useAlert();
-  const {data, loading} = useQuery(getScript(), {variables: {trendId, username}});
-  const [saveScript] = useMutation(SAVE_SCRIPT);
+  const scriptQuery = useQuery(getScripts(), {variables: {trendId, username}});
   const [crawlTrendGraph, response] = useMutation(CRAWL_TREND_GRAPH);
   const [upsertTrendGraph] = useMutation(UPSERT_TREND_GRAPH);
 
-  if (loading === true) {
+  useJSONEditorSetFiles(scriptQuery.loading === true ? null : scriptQuery.data.scripts);
+  const jsonFile = useJSONEditorGetFile();
+
+  if (scriptQuery.loading === true) {
     return <Fragment/>
   }
 
   const injectScript = () => {
-    let fileJsonInjected = fileJson;
+    let fileJsonInjected = jsonFile.text;
     fileJsonInjected.trendId = trendId;
     fileJsonInjected.username = username;
     return fileJsonInjected;
@@ -91,37 +92,10 @@ export const ScriptCodeEditor = ({trendId, username}) => {
   return (
     <ScriptEditorGrid>
       <ScriptTitle>
-        <Tabs variant="pills" defaultActiveKey="home" id="input-script-tab">
-          <Tab eventKey="home" title="Input Script">
-          </Tab>
-        </Tabs>
+        <FileManagementHeader options={{defaultFilename: "script1"}}/>
       </ScriptTitle>
       <ScriptEditor>
-        <CodeMirror
-          value={fileC}
-          options={{
-            mode: "application/json",
-            theme: "material",
-            lint: true,
-            gutters: ["CodeMirror-lint-markers"],
-            styleActiveLine: true,
-            lineNumbers: true,
-            line: true
-            // lineNumbers: true
-          }}
-          editorDidMount={() => setFileC(data.script.text)}
-          onBeforeChange={(editor, data, value) => {
-            setFileC(value);
-          }}
-          onChange={(editor, data, value) => {
-            try {
-              setFileJson(JSON.parse(editor.getValue()));
-              if ( !isJsonValid) setIsJsonValud(true);
-            } catch (e) {
-              if ( isJsonValid) setIsJsonValud(false);
-            }
-          }}
-        />
+        <JSONEditor/>
       </ScriptEditor>
       <ScriptControlsHeader/>
       <ScriptEditorControls>
@@ -129,37 +103,20 @@ export const ScriptCodeEditor = ({trendId, username}) => {
           <Button
             variant="secondary"
             value={1}
-            disabled={!isJsonValid}
+            disabled={!jsonFile.isValid}
             onClick={e => {
               crawlTrendGraph({
                 variables: {
+                  scriptName: jsonFile.filename,
                   script: injectScript()
                 }
               }).then().catch((e) => {
-                alertDangerNoMovie( alertStore,"Auch, I didn't see that coming :/");
+                alertDangerNoMovie(alertStore, "Auch, I didn't see that coming :/");
                 console.log("Uacci uari uari", e);
               });
             }}
           >
             <i className="fas fa-play"/>
-          </Button>
-        </DivAutoMargin>
-        <DivAutoMargin>
-          <Button
-            variant="secondary"
-            value={1}
-            disabled={!isJsonValid}
-            onClick={() => {
-              saveScript({
-                variables: {
-                  script: injectScript()
-                }
-              }).then().catch((e) => {
-                console.log("Uacci uari uari", e);
-              });
-            }}
-          >
-            <i className="fas fa-save"/>
           </Button>
         </DivAutoMargin>
       </ScriptEditorControls>
@@ -178,17 +135,17 @@ export const ScriptCodeEditor = ({trendId, username}) => {
           <Button variant={"success"}
                   disabled={!hasCompletedSuccessful}
                   size={"sm"}
-                  onClick={ () => {
+                  onClick={() => {
                     upsertTrendGraph({
                       variables: {
-                          graphQueries: response.data.crawlTrendGraph.graphQueries
+                        graphQueries: response.data.crawlTrendGraph.graphQueries
                       }
-                    }).then( () =>
-                      alertSuccess( alertStore,"All set and done!")
+                    }).then(() =>
+                      alertSuccess(alertStore, "All set and done!")
                     ).catch((e) => {
                       console.log("Uacci uari uari", e);
                     });
-                  } }>
+                  }}>
             Publish
           </Button>
         </ScriptResultTabs>

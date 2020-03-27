@@ -9,8 +9,8 @@ export const CREATE_TREND = gql`
     }`;
 
 export const CRAWL_TREND_GRAPH = gql`
-    mutation CrawlTrendGraph($script: CrawlingScript!) {
-        crawlTrendGraph(script: $script) {
+    mutation CrawlTrendGraph($scriptName: String!, $script: CrawlingScript!) {
+        crawlTrendGraph(scriptName: $scriptName, script: $script) {
             crawledText
             traces
             graphQueries {
