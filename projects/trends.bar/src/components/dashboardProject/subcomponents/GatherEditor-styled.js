@@ -1,12 +1,13 @@
 import styled from "styled-components";
 
 export const ScriptEditorGrid = styled.div` {
+  --gridGrapX: 10px;
   display: grid;
-  grid-template-columns: 47% 5% 45%;
-  grid-template-rows: 2rem calc(100% - 2rem);
-  grid-gap: 5px 1.5%;
-  grid-template-areas: "scriptTitle  scriptControlsHeader outputTabs"
-                       "script       scriptControls scriptOutput";
+  grid-template-columns: 50% calc(50% - var(--gridGrapX));
+  grid-template-rows: 3em calc(100% - 3em);
+  grid-gap: 2px var(--gridGrapX);
+  grid-template-areas: "scriptTitle  outputTabs"
+                       "script       scriptOutput";
   padding-top: 3%;
   height: 100%;
 }`;
@@ -16,11 +17,20 @@ export const ScriptTitle = styled.div` {
   display: flex;
   justify-content: space-between;
   align-self: center;
+  background: #263238;
+  height: 100%;
+  padding: 6px;
+  border-radius: 3px;
+  border: 1px solid var(--gray);
 }`;
 
-export const FileManagementAddAndSelect = styled.div` {
+export const FileManagementElement = styled.div` {
   display: flex;
   align-self: center;
+}`;
+
+export const FileManagementDxMargin = styled.div` {
+  margin-right: 0.15em;
 }`;
 
 export const ScriptFileName = styled.div` {
@@ -35,18 +45,6 @@ export const ScriptEditor = styled.div` {
   grid-area: script;
 }`;
 
-export const ScriptControlsHeader = styled.div` {
-  grid-area: scriptControlsHeader;
-  display: block;
-}`;
-
-export const ScriptEditorControls = styled.div` {
-  grid-area: scriptControls;
-  display: block;
-  place-self: center;
-  align-self: start;
-}`;
-
 export const ScriptOutputTabs = styled.div` {
   grid-area: outputTabs;
   display: flex;
@@ -56,13 +54,9 @@ export const ScriptOutputTabs = styled.div` {
 
 export const ScriptResultTabs = styled.div ` {
   
-}`
+}`;
 
 export const ScriptOutput = styled.div` {
   grid-area: scriptOutput;
-}`;
-
-export const DivAutoMargin = styled.div` {
-  margin: 5px auto;
 }`;
 

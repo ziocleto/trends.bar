@@ -97,29 +97,6 @@ export const ScriptCodeEditor = ({trendId, username}) => {
       <ScriptEditor>
         <JSONEditor/>
       </ScriptEditor>
-      <ScriptControlsHeader/>
-      <ScriptEditorControls>
-        <DivAutoMargin>
-          <Button
-            variant="secondary"
-            value={1}
-            disabled={!jsonFile.isValid}
-            onClick={e => {
-              crawlTrendGraph({
-                variables: {
-                  scriptName: jsonFile.filename,
-                  script: injectScript()
-                }
-              }).then().catch((e) => {
-                alertDangerNoMovie(alertStore, "Auch, I didn't see that coming :/");
-                console.log("Uacci uari uari", e);
-              });
-            }}
-          >
-            <i className="fas fa-play"/>
-          </Button>
-        </DivAutoMargin>
-      </ScriptEditorControls>
       <ScriptOutputTabs>
         <ScriptResultTabs>
           <Tabs variant="pills" id="scriptOutputTag" activeKey={key} onSelect={k => setKey(k)}>
