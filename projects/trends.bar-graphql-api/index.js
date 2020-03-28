@@ -271,7 +271,7 @@ const resolvers = {
       return await dataSources.trendGraphs.upsertGraphs(args);
     },
 
-    scriptRemove: (_, {trendId, username}, {dataSources}) => dataSources.scripts.removeAndRelist({trendId, username}),
+    scriptRemove: (_, {scriptName, trendId, username}, {dataSources}) => dataSources.scripts.removeAndRelist({scriptName, trendId, username}),
     scriptRename: (_, {scriptName, trendId, username, newName}, {dataSources}) => dataSources.scripts.updateOneStringify({scriptName, trendId, username}, { scriptName: newName})
 
     // async saveScript(parent, args, {dataSources}) {
@@ -314,7 +314,16 @@ class MongoDataSourceExtended extends MongoDataSource {
   async removeAndRelist(query) {
     await this.model.remove(query).collation({locale: "en", strength: 2});
     // The result of remove is a find of the remaining documents
-    return this.model.find({});
+    const ret = await this.model.find({});
+    let res = [];
+    for (const script of ret) {
+      let sn = script.toObject().scriptName;
+      res.push( {
+        filename: sn,
+        text: this.cleanScriptString(script)
+      });
+    }
+    return res;
   }
 
   async findSimilar(query) {

@@ -1,3 +1,4 @@
+import "./App.css";
 import React, {Fragment, useEffect} from "react";
 import {Route, Switch, useLocation} from 'react-router-dom';
 import Landing from "./components/Landing/Landing";
@@ -10,7 +11,6 @@ import Register from "./futuremodules/auth/components/Register";
 import Login from "./futuremodules/auth/components/Login";
 import DashboardUser from "./components/dashboardUser/DashboardUser";
 import {EHAlert} from "./futuremodules/alerts/alerts";
-import "./App.css";
 import {apiSilent, useApi} from "./futuremodules/api/apiEntryPoint";
 import {loadUser} from "./futuremodules/auth/authApiCalls";
 import {Auth} from "./futuremodules/auth/authAccessors";
@@ -35,9 +35,7 @@ const App = () => {
     <Fragment>
       <Navbar trendId={trendId}/>
       <Switch>
-        <Route exact path="/">
-          <Landing/>
-        </Route>
+        <Route exact path="/"  component={Landing}/>
         <Route exact path="/register" component={Register}/>
         <Route exact path="/login" component={Login}/>
         <Route exact path="/dashboarduser" render={ () => <DashboardUser auth={authApi}/> } />

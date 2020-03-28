@@ -60,3 +60,14 @@ export const ScriptOutput = styled.div` {
   grid-area: scriptOutput;
 }`;
 
+export const InfoColor = styled.span `{
+  color: var(--info)
+}`;
+
+export const DangerColor = styled.span `{
+  color: var(--danger)
+}`;
+
+export const PrimaryColor = styled.span `{
+  color: var(--primary)
+}`;
