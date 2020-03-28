@@ -8,8 +8,8 @@ export const ScriptEditorGrid = styled.div` {
   grid-gap: 2px var(--gridGrapX);
   grid-template-areas: "scriptTitle  outputTabs"
                        "script       scriptOutput";
-  padding-top: 3%;
-  height: 100%;
+  //height: calc(100vh - var(--navbar-height) - 150px);
+  margin-top: 5px;
 }`;
 
 export const ScriptTitle = styled.div` {

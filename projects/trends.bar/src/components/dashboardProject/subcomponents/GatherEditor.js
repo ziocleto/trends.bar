@@ -1,11 +1,8 @@
-import React, {Fragment, useState} from "reactn";
+import React, {Fragment, useGlobal, useState} from "reactn";
 import {Controlled as CodeMirror} from "react-codemirror2";
 import Button from "react-bootstrap/Button";
 import {
-  DivAutoMargin,
-  ScriptControlsHeader,
   ScriptEditor,
-  ScriptEditorControls,
   ScriptEditorGrid,
   ScriptOutput,
   ScriptOutputTabs,
@@ -18,9 +15,10 @@ import {getScripts} from "../../../modules/trends/queries";
 import "./GatherEditor.css"
 import {Tab, Tabs} from "react-bootstrap";
 import 'codemirror/addon/lint/lint.css';
-import {alertDangerNoMovie, alertSuccess, useAlert} from "../../../futuremodules/alerts/alerts";
+import {alertSuccess, useAlert} from "../../../futuremodules/alerts/alerts";
 import {FileManagementHeader} from "./FileManagementHeader";
-import {JSONEditor, useJSONEditorGetFile, useJSONEditorSetFiles} from "./JSONEditor";
+import {JSONEditor} from "./JSONEditor";
+import {useEffect} from "react";
 
 require("codemirror/lib/codemirror.css");
 require("codemirror/theme/material.css");
@@ -43,19 +41,14 @@ export const ScriptCodeEditor = ({trendId, username}) => {
   const scriptQuery = useQuery(getScripts(), {variables: {trendId, username}});
   const [crawlTrendGraph, response] = useMutation(CRAWL_TREND_GRAPH);
   const [upsertTrendGraph] = useMutation(UPSERT_TREND_GRAPH);
+  const [, setFiles] = useGlobal('JSONFiles');
 
-  useJSONEditorSetFiles(scriptQuery.loading === true ? null : scriptQuery.data.scripts);
-  const jsonFile = useJSONEditorGetFile();
+  useEffect(() => {
+    if ( scriptQuery.loading === false ) setFiles(scriptQuery.data.scripts).then();
+  }, [scriptQuery.loading]);
 
   if (scriptQuery.loading === true) {
     return <Fragment/>
-  }
-
-  const injectScript = () => {
-    let fileJsonInjected = jsonFile.text;
-    fileJsonInjected.trendId = trendId;
-    fileJsonInjected.username = username;
-    return fileJsonInjected;
   }
 
   let hasScriptErrors = false;

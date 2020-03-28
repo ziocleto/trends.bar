@@ -1,22 +1,27 @@
 import {
-  DangerColor, DangerColorDiv,
+  DangerColorDiv,
   FileManagementDxMargin,
-  FileManagementElement, FileManagementSxPadding,
-  InfoColor,
-  PrimaryColor
+  FileManagementElement,
+  FileManagementSxPadding,
+  InfoColor
 } from "./GatherEditor-styled";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
 import Button from "react-bootstrap/Button";
 import React, {useGlobal} from "reactn";
-import {Fragment, useState} from "react";
-import {alertDangerNoMovie, ConfirmAlertWithWriteCheck, useAlert} from "../../../futuremodules/alerts/alerts";
-import {useMutation} from "@apollo/react-hooks";
-import {CRAWL_TREND_GRAPH, REMOVE_SCRIPT, RENAME_SCRIPT} from "../../../modules/trends/mutations";
+import {Fragment, useEffect} from "react";
+import {
+  alertDangerNoMovie,
+  ConfirmAlertWithWriteCheck,
+  useAlert,
+  useConfirmAlertWithWriteCheck
+} from "../../../futuremodules/alerts/alerts";
+import {useLazyQuery, useMutation} from "@apollo/react-hooks";
+import {CRAWL_TREND_GRAPH, REMOVE_SCRIPT} from "../../../modules/trends/mutations";
 import {ShowRenameAndDeleteLabel} from "./ShowRenameAndDeleteLabel";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
-import {InputMode} from "./ShowRenameAndDeleteLabel.styled";
+import {getScript} from "../../../modules/trends/queries";
 
 export const FileManagementHeader = ({options, callbacks}) => {
 
@@ -27,7 +32,8 @@ export const FileManagementHeader = ({options, callbacks}) => {
   const alertStore = useAlert();
   const [crawlTrendGraph, response] = useMutation(CRAWL_TREND_GRAPH);
   const [removeScript] = useMutation(REMOVE_SCRIPT);
-  const [, setConfirmAlert] = useGlobal(ConfirmAlertWithWriteCheck);
+  const [lazyScriptCheck, lazyScriptCheckResult] = useLazyQuery(getScript());
+  const setConfirmAlert = useConfirmAlertWithWriteCheck();
 
   const trendId = "coronavirus";
   const username = "Dado";
@@ -54,32 +60,70 @@ export const FileManagementHeader = ({options, callbacks}) => {
     });
   };
 
-  const onDeleteEntity = () => {
-    setConfirmAlert({
-      title: "Deletion of " + currFileIndex,
-      text: currFileIndex,
-      noText: "No, I've changed my mind",
-      yesText: "Yes, do it",
-      yesType: "danger",
-      yesCallback: async () => {
-        removeScript({
-          variables: {
-            scriptName: currFileIndex,
-            trendId,
-            username,
-          }
-        }).then((res) => {
-          console.log(res);
-          setFiles(res.data.scriptRemove);
-          if (res.data.scriptRemove.length > 0) {
-            setCurrFileIndex(res.data.scriptRemove[0].filename);
-          } else {
-            setFileC("");
-          }
-        });
-      },
+  const removeLocalCurrFileIndex = () => {
+    let newFiles = files.filter(elem => (elem.filename !== currFileIndex));
+    setFiles(newFiles).then(() => {
+      if (files.length > 0) {
+        setCurrFileIndex(files[0].filename);
+        setFileC(files[0].text);
+      } else {
+        setFileC("");
+      }
     });
   };
+
+  const onDeleteEntity = () => {
+    // Run a pre-check if the file is on the server
+    // If it's not on the server then just delete it locally
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    lazyScriptCheck( {
+      variables: {
+        scriptName: currFileIndex,
+        trendId,
+        username
+      }
+    });
+  };
+
+  useEffect(() => {
+    if ( lazyScriptCheckResult.data && lazyScriptCheckResult.data.script !== null && lazyScriptCheckResult.loading === false ) {
+      setConfirmAlert({
+        title: "Deletion of " + currFileIndex,
+        text: currFileIndex,
+        noText: "No, I've changed my mind",
+        yesText: "Yes, do it",
+        yesType: "danger",
+        yesCallback: async () => {
+          removeScript({
+            variables: {
+              scriptName: currFileIndex,
+              trendId,
+              username,
+            }
+          }).then((res) => {
+            if (res.data.scriptRemove === null) {
+              removeLocalCurrFileIndex()
+            } else {
+              setFiles(res.data.scriptRemove).then(() => {
+                if (res.data.scriptRemove.length > 0) {
+                  setCurrFileIndex(res.data.scriptRemove[0].filename);
+                  setFileC(res.data.scriptRemove[0].text);
+                } else {
+                  setFileC("");
+                }
+              });
+            }
+          }).catch((e) => {
+            alertDangerNoMovie(alertStore, "SOmething went very wrong on deletion, calling the ghostbusters");
+          });
+        },
+      });
+    }
+    if ( lazyScriptCheckResult.data && lazyScriptCheckResult.data.script === null && lazyScriptCheckResult.loading === false ) {
+      removeLocalCurrFileIndex();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lazyScriptCheckResult]);
 
   return (
     <Fragment>
@@ -109,25 +153,25 @@ export const FileManagementHeader = ({options, callbacks}) => {
           </Dropdown.Item>
           {
             files && files.map(elem => {
-            return (
-              <Dropdown.Item
-                key={elem.filename}
-                onClick={() => {
-                  setCurrFileIndex(elem.filename).then();
-                  setFileC(elem.text).then();
-                }}>
-                <i className="far fa-file-code"/>{" "}{elem.filename}
-              </Dropdown.Item>)
-          })}
+              return (
+                <Dropdown.Item
+                  key={elem.filename}
+                  onClick={() => {
+                    setCurrFileIndex(elem.filename).then();
+                    setFileC(elem.text).then();
+                  }}>
+                  <i className="far fa-file-code"/>{" "}{elem.filename}
+                </Dropdown.Item>)
+            })}
         </DropdownButton>
       </FileManagementElement>
       <FileManagementElement>
-        <ShowRenameAndDeleteLabel label={currFileIndex}></ShowRenameAndDeleteLabel>
+        <ShowRenameAndDeleteLabel label={currFileIndex}/>
         <FileManagementSxPadding/>
         <OverlayTrigger
           overlay={(props) => {
             return (
-              <Tooltip id="button-tooltip" {...props}>
+              <Tooltip {...props}>
                 Delete script
               </Tooltip>
             );

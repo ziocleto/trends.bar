@@ -11,7 +11,6 @@ export const ShowRenameAndDeleteLabel = () => {
 
   const searchBox = useRef(null);
   const [files, setFiles] = useGlobal('JSONFiles');
-  const [fileC, setFileC] = useGlobal('JSONFileC');
   const [currFileIndex, setCurrFileIndex] = useGlobal('JSONFileCurrentIndex');
   const [isRenamingFilename, setIsRenamingFilename] = useState(false);
   const [renameScript] = useMutation(RENAME_SCRIPT);

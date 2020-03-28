@@ -312,8 +312,13 @@ class MongoDataSourceExtended extends MongoDataSource {
   }
 
   async removeAndRelist(query) {
+    const numDocs = await this.model.countDocuments();
     await this.model.remove(query).collation({locale: "en", strength: 2});
     // The result of remove is a find of the remaining documents
+    const numDocsAfterDeletion = await this.model.countDocuments();
+    if ( numDocs === numDocsAfterDeletion) {
+      return null;
+    }
     const ret = await this.model.find({});
     let res = [];
     for (const script of ret) {
@@ -351,10 +356,11 @@ class MongoDataSourceExtended extends MongoDataSource {
 
   async findOneStringify(query) {
     const ret = await this.model.findOne(query).collation({locale: "en", strength: 2});
-    return {
-      filename: !ret ? "" : ret.scriptName,
-      text: !ret ? "" : this.cleanScriptString(ret)
-    };
+    console.log("Ret from findandstring", ret);
+    return ret ? {
+      filename: ret.scriptName,
+      text: this.cleanScriptString(ret)
+    } : null;
   }
 
   async findManyStringify(query) {

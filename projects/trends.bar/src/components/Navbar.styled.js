@@ -1,5 +1,9 @@
 import styled from 'styled-components'
 
+export const NavbarComponent = styled.div ` {
+  margin: 0 var(--mainMargin);
+}`;
+
 export const UserNameText = styled.div` {
   grid-area: navbaruser;
   align-self: center;
@@ -9,14 +13,8 @@ export const UserNameText = styled.div` {
 }`;
 
 export const NavbarGrid = styled.div` {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
   z-index: 50000;
   height: var(--navbar-height);
-  background: var(--dark-color-transparent);
-  background-color: var(--dark-color-transparent);
   display: grid;
   grid-template-columns: 2% 23% 50% 25%;
   grid-template-rows: 100%;

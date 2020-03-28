@@ -15,6 +15,7 @@ import {apiSilent, useApi} from "./futuremodules/api/apiEntryPoint";
 import {loadUser} from "./futuremodules/auth/authApiCalls";
 import {Auth} from "./futuremodules/auth/authAccessors";
 import {DashboardProject} from "./components/dashboardProject/DashboardProject";
+import {Body} from "./components/common.styled";
 
 
 initEH();
@@ -32,7 +33,7 @@ const App = () => {
   }, []);
 
   return (
-    <Fragment>
+    <Body>
       <Navbar trendId={trendId}/>
       <Switch>
         <Route exact path="/"  component={Landing}/>
@@ -43,7 +44,7 @@ const App = () => {
         <Route path="/:usernameSplit/:trendIdSplit" component={TrendPage}/>
       </Switch>
       <EHAlert/>
-    </Fragment>
+    </Body>
   );
 };
 
