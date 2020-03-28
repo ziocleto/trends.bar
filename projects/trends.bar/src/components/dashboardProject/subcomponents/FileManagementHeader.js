@@ -9,10 +9,11 @@ import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
 import Button from "react-bootstrap/Button";
 import React, {useGlobal} from "reactn";
-import {Fragment} from "react";
+import {Fragment, useState} from "react";
 import {alertDangerNoMovie, ConfirmAlertWithWriteCheck, useAlert} from "../../../futuremodules/alerts/alerts";
 import {useMutation} from "@apollo/react-hooks";
 import {CRAWL_TREND_GRAPH, REMOVE_SCRIPT, RENAME_SCRIPT} from "../../../modules/trends/mutations";
+import {ShowRenameAndDeleteLabel} from "./ShowRenameAndDeleteLabel";
 
 export const FileManagementHeader = ({options, callbacks}) => {
 
@@ -23,7 +24,6 @@ export const FileManagementHeader = ({options, callbacks}) => {
   const alertStore = useAlert();
   const [crawlTrendGraph, response] = useMutation(CRAWL_TREND_GRAPH);
   const [removeScript] = useMutation(REMOVE_SCRIPT);
-  const [renameScript] = useMutation(RENAME_SCRIPT);
   const [, setConfirmAlert] = useGlobal(ConfirmAlertWithWriteCheck);
 
   const onDeleteEntity = () => {
@@ -109,41 +109,33 @@ export const FileManagementHeader = ({options, callbacks}) => {
             key="delete"
             onClick={() => {
               onDeleteEntity();
-//               const newFiles = files.filter(value => value.filename !== currFileIndex);
-//               console.log(newFiles);
-//               setFiles(newFiles).then(
-//                 (res) => {
-// //                  console.log(res);
-//                   setCurrFileIndex(files[0].filename).then();
-//                   setFileC(files[0].text).then();
-//                 }
-//               );
             }}>
             <DangerColor><i className="fas fa-minus-circle"/></DangerColor>{" "}Delete
           </Dropdown.Item>
           <Dropdown.Item
             key="rename"
-            onClick={() => {
-              renameScript({
-                variables: {
-                  scriptName: currFileIndex,
-                  trendId,
-                  username,
-                  newName: "eccoci"
-                }
-              }).then((res) => {
-                console.log(res);
-                let newFiles = files;
-                newFiles.map(elem => {
-                  if (elem.filename === currFileIndex) {
-                    elem.filename = res.data.scriptRename.filename;
-                  }
-                  return elem;
-                });
-                setFiles(newFiles);
-                setCurrFileIndex(res.data.scriptRename.filename);
-              });
-            }}>
+            // onClick={() => {
+            //   renameScript({
+            //     variables: {
+            //       scriptName: currFileIndex,
+            //       trendId,
+            //       username,
+            //       newName: "eccoci"
+            //     }
+            //   }).then((res) => {
+            //     console.log(res);
+            //     let newFiles = files;
+            //     newFiles.map(elem => {
+            //       if (elem.filename === currFileIndex) {
+            //         elem.filename = res.data.scriptRename.filename;
+            //       }
+            //       return elem;
+            //     });
+            //     setFiles(newFiles);
+            //     setCurrFileIndex(res.data.scriptRename.filename);
+            //   });
+            // }}
+          >
             <PrimaryColor><i className="fas fa-dot-circle"/></PrimaryColor>{" "}Rename
           </Dropdown.Item>
         </DropdownButton>
@@ -164,7 +156,7 @@ export const FileManagementHeader = ({options, callbacks}) => {
         </DropdownButton>
       </FileManagementElement>
       <FileManagementElement>
-        {currFileIndex}
+        <ShowRenameAndDeleteLabel label={currFileIndex}></ShowRenameAndDeleteLabel>
       </FileManagementElement>
       <FileManagementElement>
         <FileManagementDxMargin>
