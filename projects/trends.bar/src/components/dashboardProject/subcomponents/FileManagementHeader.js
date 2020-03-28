@@ -1,7 +1,7 @@
 import {
-  DangerColor,
+  DangerColor, DangerColorDiv,
   FileManagementDxMargin,
-  FileManagementElement,
+  FileManagementElement, FileManagementSxPadding,
   InfoColor,
   PrimaryColor
 } from "./GatherEditor-styled";
@@ -14,6 +14,9 @@ import {alertDangerNoMovie, ConfirmAlertWithWriteCheck, useAlert} from "../../..
 import {useMutation} from "@apollo/react-hooks";
 import {CRAWL_TREND_GRAPH, REMOVE_SCRIPT, RENAME_SCRIPT} from "../../../modules/trends/mutations";
 import {ShowRenameAndDeleteLabel} from "./ShowRenameAndDeleteLabel";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
+import {InputMode} from "./ShowRenameAndDeleteLabel.styled";
 
 export const FileManagementHeader = ({options, callbacks}) => {
 
@@ -25,6 +28,31 @@ export const FileManagementHeader = ({options, callbacks}) => {
   const [crawlTrendGraph, response] = useMutation(CRAWL_TREND_GRAPH);
   const [removeScript] = useMutation(REMOVE_SCRIPT);
   const [, setConfirmAlert] = useGlobal(ConfirmAlertWithWriteCheck);
+
+  const trendId = "coronavirus";
+  const username = "Dado";
+
+  if (files && files.length > 0 && !currFileIndex) {
+    setCurrFileIndex(files[0].filename).then();
+  }// : (options ? options.defaultFilename : null));
+
+  const onRunCallback = () => {
+    let fileJsonInjected = JSON.parse(fileC);
+    fileJsonInjected.trendId = trendId;
+    fileJsonInjected.username = username;
+    crawlTrendGraph({
+      variables: {
+        scriptName: currFileIndex,
+        script: fileJsonInjected
+      }
+    }).then((res) => {
+        console.log(res);
+      }
+    ).catch((e) => {
+      alertDangerNoMovie(alertStore, "Auch, I didn't see that coming :/");
+      console.log("Uacci uari uari", e);
+    });
+  };
 
   const onDeleteEntity = () => {
     setConfirmAlert({
@@ -53,36 +81,10 @@ export const FileManagementHeader = ({options, callbacks}) => {
     });
   };
 
-  const trendId = "coronavirus";
-  const username = "Dado";
-
-  if (files && files.length > 0 && !currFileIndex) {
-    setCurrFileIndex(files[0].filename).then();
-  }// : (options ? options.defaultFilename : null));
-
-  const onRunCallback = () => {
-    let fileJsonInjected = JSON.parse(fileC);
-    fileJsonInjected.trendId = trendId;
-    fileJsonInjected.username = username;
-    crawlTrendGraph({
-      variables: {
-        scriptName: currFileIndex,
-        script: fileJsonInjected
-      }
-    }).then((res) => {
-        console.log(res);
-      }
-    ).catch((e) => {
-      alertDangerNoMovie(alertStore, "Auch, I didn't see that coming :/");
-      console.log("Uacci uari uari", e);
-    });
-  };
-
   return (
     <Fragment>
       <FileManagementElement>
-        <DropdownButton title={<i className="fas fa-tasks"/>} variant={'primary'} size='sm' drop={'down'}
-                        id={`dropdown-button-drop-down`}>
+        <DropdownButton title={<i className="fas fa-list"/>} variant={'primary'} size='sm' drop={'down'}>
           <Dropdown.Item
             key="add"
             variant={"primary"}
@@ -105,44 +107,8 @@ export const FileManagementHeader = ({options, callbacks}) => {
             }}>
             <InfoColor><i className="fas fa-plus-circle"/></InfoColor>{" "}Add new
           </Dropdown.Item>
-          <Dropdown.Item
-            key="delete"
-            onClick={() => {
-              onDeleteEntity();
-            }}>
-            <DangerColor><i className="fas fa-minus-circle"/></DangerColor>{" "}Delete
-          </Dropdown.Item>
-          <Dropdown.Item
-            key="rename"
-            // onClick={() => {
-            //   renameScript({
-            //     variables: {
-            //       scriptName: currFileIndex,
-            //       trendId,
-            //       username,
-            //       newName: "eccoci"
-            //     }
-            //   }).then((res) => {
-            //     console.log(res);
-            //     let newFiles = files;
-            //     newFiles.map(elem => {
-            //       if (elem.filename === currFileIndex) {
-            //         elem.filename = res.data.scriptRename.filename;
-            //       }
-            //       return elem;
-            //     });
-            //     setFiles(newFiles);
-            //     setCurrFileIndex(res.data.scriptRename.filename);
-            //   });
-            // }}
-          >
-            <PrimaryColor><i className="fas fa-dot-circle"/></PrimaryColor>{" "}Rename
-          </Dropdown.Item>
-        </DropdownButton>
-        <FileManagementDxMargin/>
-        <DropdownButton title={<i className="fas fa-ellipsis-h"/>} variant={'primary'} size='sm' drop={'right'}
-                        id={`dropdown-button-drop-right`}>
-          {files && files.map(elem => {
+          {
+            files && files.map(elem => {
             return (
               <Dropdown.Item
                 key={elem.filename}
@@ -157,6 +123,22 @@ export const FileManagementHeader = ({options, callbacks}) => {
       </FileManagementElement>
       <FileManagementElement>
         <ShowRenameAndDeleteLabel label={currFileIndex}></ShowRenameAndDeleteLabel>
+        <FileManagementSxPadding/>
+        <OverlayTrigger
+          overlay={(props) => {
+            return (
+              <Tooltip id="button-tooltip" {...props}>
+                Delete script
+              </Tooltip>
+            );
+          }}
+        >
+          <DangerColorDiv
+            onClick={() => onDeleteEntity()}
+          >
+            <i className="fas fa-minus-circle"/>
+          </DangerColorDiv>
+        </OverlayTrigger>
       </FileManagementElement>
       <FileManagementElement>
         <FileManagementDxMargin>

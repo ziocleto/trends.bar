@@ -4,17 +4,20 @@ import {InputMode, LabelMode, ShowRenameAndDeleteLabelContainer} from "./ShowRen
 import {useMutation} from "@apollo/react-hooks";
 import {RENAME_SCRIPT} from "../../../modules/trends/mutations";
 import {useGlobal} from "reactn";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 
 export const ShowRenameAndDeleteLabel = () => {
 
   const searchBox = useRef(null);
   const [files, setFiles] = useGlobal('JSONFiles');
+  const [fileC, setFileC] = useGlobal('JSONFileC');
   const [currFileIndex, setCurrFileIndex] = useGlobal('JSONFileCurrentIndex');
   const [isRenamingFilename, setIsRenamingFilename] = useState(false);
   const [renameScript] = useMutation(RENAME_SCRIPT);
 
   useEffect(() => {
-    if ( isRenamingFilename && searchBox.current) {
+    if (isRenamingFilename && searchBox.current) {
       searchBox.current.focus();
     }
   }, [isRenamingFilename]);
@@ -34,7 +37,7 @@ export const ShowRenameAndDeleteLabel = () => {
           autoComplete={"off"}
           onKeyDown={(event) => {
             if (event.key === "Enter") {
-              if ( event.target.value !== currFileIndex ) {
+              if (event.target.value !== currFileIndex) {
                 renameScript({
                   variables: {
                     scriptName: currFileIndex,
@@ -61,21 +64,32 @@ export const ShowRenameAndDeleteLabel = () => {
               setIsRenamingFilename(false);
             }
           }}
-          onBlur={ () => {
+          onBlur={() => {
             setIsRenamingFilename(false);
           }}
         />
       </InputMode>
     ) :
     (
-      <LabelMode>
-        {currFileIndex}
-      </LabelMode>
+      <OverlayTrigger
+        placement="top"
+        overlay={(props) => {
+          return (
+            <Tooltip id="button-tooltip" {...props}>
+              Filename - Click to rename it
+            </Tooltip>
+          );
+        }}
+      >
+        <LabelMode>
+          {currFileIndex}
+        </LabelMode>
+      </OverlayTrigger>
     )
 
   return (
-    <ShowRenameAndDeleteLabelContainer onClick={ () => {
-      if ( !isRenamingFilename) setIsRenamingFilename(!isRenamingFilename)
+    <ShowRenameAndDeleteLabelContainer onClick={() => {
+      if (!isRenamingFilename) setIsRenamingFilename(!isRenamingFilename)
     }}>
       {ret}
     </ShowRenameAndDeleteLabelContainer>

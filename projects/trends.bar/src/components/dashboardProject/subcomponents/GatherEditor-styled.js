@@ -33,6 +33,15 @@ export const FileManagementDxMargin = styled.div` {
   margin-right: 0.15em;
 }`;
 
+export const FileManagementSxMargin = styled.div` {
+  margin-left: 0.15em;
+  padding-left: 0.15em;
+}`;
+
+export const FileManagementSxPadding = styled.div` {
+  padding-left: 8px;
+}`;
+
 export const ScriptFileName = styled.div` {
   align-self: center;
   border: 1px solid var(--light-color);
@@ -65,7 +74,17 @@ export const InfoColor = styled.span `{
 }`;
 
 export const DangerColor = styled.span `{
-  color: var(--danger)
+  color: var(--danger);
+}`;
+
+export const DangerColorDiv = styled.div `{
+  color: var(--secondary);
+  align-self: center;
+  cursor: pointer;
+  
+  :hover {
+    color: var(--danger-color);
+  }
 }`;
 
 export const PrimaryColor = styled.span `{
