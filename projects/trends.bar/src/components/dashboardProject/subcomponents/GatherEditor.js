@@ -58,12 +58,12 @@ export const ScriptCodeEditor = ({username}) => {
     const newFile = {
       filename: defaultFileName,
       text: defaultText
-    }
+    };
     const newFiles = [];
     newFiles.push(newFile);
     setFiles(newFiles).then(() => {
       setCurrFileIndex(defaultFileName).then();
-    })
+    });
   };
 
   const onRunCallback = () => {
@@ -101,6 +101,7 @@ export const ScriptCodeEditor = ({username}) => {
         createDefaultScriptFile("{}");
       }
     }
+    // eslint-disable-next-line
   }, [scriptQueryResult, trendId, setFiles, setCurrFileIndex]);
 
   if (scriptQueryResult.loading === true) {
