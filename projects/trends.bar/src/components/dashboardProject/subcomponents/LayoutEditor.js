@@ -1,19 +1,30 @@
-import React from "react";
+import "./react-grid-styles.css"
+import "./react-resizable-styles.css"
 
+import React from "react";
 import GridLayout from 'react-grid-layout';
 import {DivLayout} from "./LayoutEditor.styled";
 
 export const LayoutEditor = () => {
-  const layout = [
-    {i: 'a', x: 0, y: 0, w: 1, h: 2, static: true},
-    {i: 'b', x: 1, y: 0, w: 3, h: 2, minW: 2, maxW: 4},
-    {i: 'c', x: 4, y: 0, w: 1, h: 2}
-  ];
+  const granularity = 3;
+  const cols = 3;
+  const width = 936;
+
+  let layout = [];
+  let i = 0;
+  for ( let y = 0; y < 3; y++ ) {
+    for ( let x = 0; x < 3; x++ ) {
+      layout.push( {
+        i: i.toString(), x: x*granularity, y: y*granularity, w: granularity, h: granularity
+      });
+      i++;
+    }
+  }
   return (
-    <GridLayout className="layout" layout={layout} cols={12} rowHeight={30} width={1200}>
-      <DivLayout key="a">a</DivLayout>
-      <DivLayout key="b">b</DivLayout>
-      <DivLayout key="c">c</DivLayout>
+    <GridLayout className="layout" layout={layout} cols={cols*granularity} rowHeight={width/(cols*granularity)} width={width}>
+      { layout.map( elem => {
+        return (<DivLayout key={elem.i}></DivLayout>);
+      })}
     </GridLayout>
   )
 };
