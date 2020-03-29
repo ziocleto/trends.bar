@@ -40,6 +40,15 @@ export const JSONEditor = () => {
     }
   }
 
+  const update = (value) => {
+    try {
+      setFileJson(JSON.parse(value)).then();
+      if (!isJsonValid) setIsJsonValid(true).then();
+    } catch (e) {
+      if (isJsonValid) setIsJsonValid(false).then();
+    }
+  }
+
   const data = getCurrFile();
 
   if ( !data ) {
@@ -58,17 +67,15 @@ export const JSONEditor = () => {
         lineNumbers: false,
         line: true
       }}
-      editorDidMount={() => setCurrFile(data.text)}
+      editorDidMount={() => {
+        setCurrFile(data.text);
+        update(data.text);
+      }}
       onBeforeChange={(editor, data, value) => {
         setCurrFile(value);
       }}
       onChange={(editor, data, value) => {
-        try {
-          setFileJson(JSON.parse(editor.getValue())).then();
-          if (!isJsonValid) setIsJsonValid(true).then();
-        } catch (e) {
-          if (isJsonValid) setIsJsonValid(false).then();
-        }
+        update(editor.getValue());
       }}
     />
   )
