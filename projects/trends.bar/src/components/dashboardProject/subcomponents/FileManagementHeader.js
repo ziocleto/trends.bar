@@ -19,13 +19,11 @@ import Tooltip from "react-bootstrap/Tooltip";
 import {getScript} from "../../../modules/trends/queries";
 import {EditingUserTrend, generateUniqueNameWithArrayCheck} from "../../../modules/trends/globals";
 import {checkQueryHasLoadedWith} from "../../../futuremodules/graphqlclient/query";
-const uniqueNamesGenerator = require('project-name-generator');
 
 export const FileManagementHeader = ({username, onRunCallback}) => {
 
   const [trendId] = useGlobal(EditingUserTrend);
   const [files, setFiles] = useGlobal('JSONFiles');
-  const [, setFileC] = useGlobal('JSONFileC');
   const [currFileIndex, setCurrFileIndex] = useGlobal('JSONFileCurrentIndex');
   const [isJsonValid] = useGlobal('JSONValidator');
   const alertStore = useAlert();
@@ -38,9 +36,6 @@ export const FileManagementHeader = ({username, onRunCallback}) => {
     setFiles(newFiles).then(() => {
       if (files.length > 0) {
         setCurrFileIndex(files[0].filename);
-        setFileC(files[0].text);
-      } else {
-        setFileC("");
       }
     });
   };
@@ -81,9 +76,6 @@ export const FileManagementHeader = ({username, onRunCallback}) => {
               setFiles(res.data.scriptRemove).then(() => {
                 if (res.data.scriptRemove.length > 0) {
                   setCurrFileIndex(res.data.scriptRemove[0].filename);
-                  setFileC(res.data.scriptRemove[0].text);
-                } else {
-                  setFileC("");
                 }
               });
             }
@@ -117,7 +109,6 @@ export const FileManagementHeader = ({username, onRunCallback}) => {
               });
               setFiles(newFiles).then();
               setCurrFileIndex(filename).then();
-              setFileC(fileContent).then();
             }}>
             <InfoColor><i className="fas fa-plus-circle"/></InfoColor>{" "}Add new
           </Dropdown.Item>
@@ -128,7 +119,6 @@ export const FileManagementHeader = ({username, onRunCallback}) => {
                   key={elem.filename}
                   onClick={() => {
                     setCurrFileIndex(elem.filename).then();
-                    setFileC(elem.text).then();
                   }}>
                   <i className="far fa-file-code"/>{" "}{elem.filename}
                 </Dropdown.Item>)

@@ -6,7 +6,6 @@ export const JSONEditor = () => {
 
   const [files, setFiles] = useGlobal('JSONFiles');
   const [currFileIndex] = useGlobal('JSONFileCurrentIndex');
-  const [fileC, setFileC] = useGlobal('JSONFileC');
   const [, setFileJson] = useGlobal('JSONFileJson');
   const [isJsonValid, setIsJsonValid] = useGlobal('JSONValidator');
 
@@ -17,7 +16,16 @@ export const JSONEditor = () => {
       }
     }
     return null;
-  }
+  };
+
+  const getCurrFileText = () => {
+    if (files) {
+      for ( const file of files ) {
+        if ( file.filename === currFileIndex ) return file.text;
+      }
+    }
+    return "";
+  };
 
   const setCurrFile = (value) => {
     if (files) {
@@ -40,7 +48,7 @@ export const JSONEditor = () => {
 
   return (
     <CodeMirror
-      value={fileC}
+      value={getCurrFileText()}
       options={{
         mode: "application/json",
         theme: "material",
@@ -50,9 +58,8 @@ export const JSONEditor = () => {
         lineNumbers: false,
         line: true
       }}
-      editorDidMount={() => setFileC(data.text)}
+      editorDidMount={() => setCurrFile(data.text)}
       onBeforeChange={(editor, data, value) => {
-        setFileC(value).then();
         setCurrFile(value);
       }}
       onChange={(editor, data, value) => {
