@@ -44,6 +44,11 @@
   src: url(img/Aileron-Light.otf);
 }
 
+@font-face {
+  font-family: Aileron-Thin;
+  src: url(img/Aileron-Thin.ttf);
+}
+
 body {
   margin: 0 auto;
   height: 100vh;

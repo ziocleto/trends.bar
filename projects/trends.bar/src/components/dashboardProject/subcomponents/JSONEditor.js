@@ -4,7 +4,7 @@ import {Fragment} from "react";
 
 export const JSONEditor = () => {
 
-  const [files] = useGlobal('JSONFiles');
+  const [files, setFiles] = useGlobal('JSONFiles');
   const [currFileIndex] = useGlobal('JSONFileCurrentIndex');
   const [fileC, setFileC] = useGlobal('JSONFileC');
   const [, setFileJson] = useGlobal('JSONFileJson');
@@ -17,6 +17,19 @@ export const JSONEditor = () => {
       }
     }
     return null;
+  }
+
+  const setCurrFile = (value) => {
+    if (files) {
+      let newFiles = files;
+      newFiles.map( (elem) => {
+        if ( elem.filename === currFileIndex ) {
+          elem.text = value;
+        }
+        return elem;
+      });
+      setFiles(newFiles);
+    }
   }
 
   const data = getCurrFile();
@@ -37,9 +50,10 @@ export const JSONEditor = () => {
         lineNumbers: false,
         line: true
       }}
-      editorDidMount={() => setFileC(data ? data.text : "{}")}
+      editorDidMount={() => setFileC(data.text)}
       onBeforeChange={(editor, data, value) => {
         setFileC(value).then();
+        setCurrFile(value);
       }}
       onChange={(editor, data, value) => {
         try {
