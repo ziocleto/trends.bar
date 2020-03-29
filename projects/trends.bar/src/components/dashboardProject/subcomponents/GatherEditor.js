@@ -49,7 +49,7 @@ export const ScriptCodeEditor = ({username}) => {
 
   const [crawlTrendGraph, response] = useMutation(CRAWL_TREND_GRAPH);
   const [upsertTrendGraph] = useMutation(UPSERT_TREND_GRAPH);
-  const [files,setFiles] = useGlobal('JSONFiles');
+  const [files, setFiles] = useGlobal('JSONFiles');
   const [fileJson] = useGlobal('JSONFileJson');
   const [currFileIndex, setCurrFileIndex] = useGlobal('JSONFileCurrentIndex');
 
@@ -145,45 +145,51 @@ export const ScriptCodeEditor = ({username}) => {
       <ScriptEditor>
         <JSONEditor/>
       </ScriptEditor>
-      <ScriptOutputTabs>
-        <ScriptResultTabs>
-          <Tabs variant="pills" id="scriptOutputTag" activeKey={key} onSelect={k => setKey(k)}>
-            <Tab eventKey={KeyResponseParsed} title="Parsed" disabled={hasScriptErrors}>
-            </Tab>
-            <Tab eventKey={KeyResponseElaborated} title="Result" disabled={hasScriptErrors}>
-            </Tab>
-            <Tab eventKey={KeyResponseError} title="Errors" disabled={!hasScriptErrors}>
-            </Tab>
-          </Tabs>
-        </ScriptResultTabs>
-        <ScriptResultTabs>
-          <Button variant={"success"}
-                  disabled={!hasCompletedSuccessful}
-                  size={"sm"}
-                  onClick={() => {
-                    upsertTrendGraph({
-                      variables: {
-                        graphQueries: response.data.crawlTrendGraph.graphQueries
-                      }
-                    }).then(() =>
-                      alertSuccess(alertStore, "All set and done!")
-                    ).catch((e) => {
-                      console.log("Uacci uari uari", e);
-                    });
-                  }}>
-            Publish
-          </Button>
-        </ScriptResultTabs>
-      </ScriptOutputTabs>
-      <ScriptOutput>
-        <CodeMirror
-          value={getResponseTab()}
-          options={{
-            mode: "javascript",
-            theme: "material",
-          }}
-        />
-      </ScriptOutput>
+
+      {response.data && (
+        <Fragment>
+          <ScriptOutputTabs>
+            <ScriptResultTabs>
+              <Tabs variant="pills" id="scriptOutputTag" activeKey={key} onSelect={k => setKey(k)}>
+                <Tab eventKey={KeyResponseParsed} title="Parsed" disabled={hasScriptErrors}>
+                </Tab>
+                <Tab eventKey={KeyResponseElaborated} title="Result" disabled={hasScriptErrors}>
+                </Tab>
+                <Tab eventKey={KeyResponseError} title="Errors" disabled={!hasScriptErrors}>
+                </Tab>
+              </Tabs>
+            </ScriptResultTabs>
+            <ScriptResultTabs>
+              <Button variant={"success"}
+                      disabled={!hasCompletedSuccessful}
+                      size={"sm"}
+                      onClick={() => {
+                        upsertTrendGraph({
+                          variables: {
+                            graphQueries: response.data.crawlTrendGraph.graphQueries
+                          }
+                        }).then(() =>
+                          alertSuccess(alertStore, "All set and done!")
+                        ).catch((e) => {
+                          console.log("Uacci uari uari", e);
+                        });
+                      }}>
+                Publish
+              </Button>
+            </ScriptResultTabs>
+          </ScriptOutputTabs>
+          <ScriptOutput>
+            <CodeMirror
+              value={getResponseTab()}
+              options={{
+                mode: "javascript",
+                theme: "material",
+              }}
+            />
+          </ScriptOutput>
+        </Fragment>
+      )}
+
     </ScriptEditorGrid>
   );
 };
