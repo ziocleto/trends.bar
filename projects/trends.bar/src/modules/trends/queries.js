@@ -10,7 +10,7 @@ export const getUserTrends = () => {
               }
           }
       }`;
-}
+};
 
 export const getTrends = (trendId) => {
   return gql`
@@ -21,7 +21,7 @@ export const getTrends = (trendId) => {
               }
           }
       }`;
-}
+};
 
 export const getSimilarTrends = (trendId) => {
     return gql`
@@ -33,13 +33,24 @@ export const getSimilarTrends = (trendId) => {
                 }
             }
         }`;
-}
+};
 
 export const getScript = () => {
   return gql`
-      query getScript($trendId:String!, $username:String!) {
-          script(trendId:$trendId, username:$username) {
+      query getScript($scriptName:String!, $trendId:String!, $username:String!) {
+          script(scriptName:$scriptName, trendId:$trendId, username:$username) {
+              filename
               text
           }
       }`;
-}
+};
+
+export const getScripts = () => {
+  return gql`
+      query getScripts($trendId:String!, $username:String!) {
+          scripts(trendId:$trendId, username:$username) {
+              filename
+              text
+          }
+      }`;
+};

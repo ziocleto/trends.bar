@@ -13,6 +13,8 @@ export const LandingInner = styled.div` {
   align-items: center;
   text-align: center;
   font-size: 3rem;
+  font-family: Aileron-Thin,serif;
+  font-weight: lighter;
   margin: calc(var(--navbar-height) + 3rem) auto;
 }`;
 

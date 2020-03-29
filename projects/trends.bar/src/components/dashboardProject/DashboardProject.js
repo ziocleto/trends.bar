@@ -1,43 +1,38 @@
 import React from "reactn";
-import {TrendGrid, TrendLayout} from "../common.styled";
+import {TrendGrid} from "../common.styled";
 import {getUserName, isUserAuthenticated} from "../../futuremodules/auth/authAccessors";
 import {getFileNameOnlyNoExt, sanitizeURLParams} from "../../futuremodules/utils/utils";
-import {Redirect, useLocation} from "react-router-dom";
+import {useLocation} from "react-router-dom";
 import {ScriptCodeEditor} from "./subcomponents/GatherEditor";
 import {Tab, Tabs} from "react-bootstrap";
 import {ProjectTabs} from "./DashboardProject.styled";
-import {useState} from "react";
-import {OverviewEditor} from "./subcomponents/OverviewEditor";
+import {Fragment, useState} from "react";
 import {LayoutEditor} from "./subcomponents/LayoutEditor";
 
 export const DashboardProject = ({auth}) => {
 
   const trendId = sanitizeURLParams(getFileNameOnlyNoExt(useLocation().pathname));
-  const [activeTab, setActiveTab] = useState("Gather");
+  const [activeTab, setActiveTab] = useState("DataSources");
 
   if (!isUserAuthenticated(auth) || trendId === null) {
-    return (<Redirect to={"/"}/>)
+    return (<Fragment/>)
+    // return (<Redirect to={"/"}/>)
   }
 
   const username = getUserName(auth);
 
   return (
-    <TrendLayout>
-      <TrendGrid>
-        <ProjectTabs>
-          <Tabs activeKey={activeTab} onSelect={k => {setActiveTab(k)}}>
-            <Tab eventKey="Overview" title="Overview">
-              <OverviewEditor trendId={trendId} username={username}/>
-            </Tab>
-            <Tab eventKey="Layout" title="Layout">
-              <LayoutEditor trendId={trendId} username={username}/>
-            </Tab>
-            <Tab eventKey="Gather" title="Gather">
-              <ScriptCodeEditor trendId={trendId} username={username}/>
-            </Tab>
-          </Tabs>
-        </ProjectTabs>
-      </TrendGrid>
-    </TrendLayout>
+    <TrendGrid>
+      <ProjectTabs>
+        <Tabs activeKey={activeTab} onSelect={k => {setActiveTab(k)}}>
+          <Tab eventKey="Layout" title="Layout">
+            <LayoutEditor username={username}/>
+          </Tab>
+          <Tab eventKey="DataSources" title="DataSources">
+            <ScriptCodeEditor username={username}/>
+          </Tab>
+        </Tabs>
+      </ProjectTabs>
+    </TrendGrid>
   );
 };

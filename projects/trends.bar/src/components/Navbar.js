@@ -2,7 +2,7 @@ import React, {Fragment} from "react";
 import {useGlobal} from "reactn";
 import {Link, useLocation} from "react-router-dom";
 import {ProgressBar} from "../futuremodules/progressbar/ProgressBar";
-import {Navbareh, NavbarGrid, NavbarLogo, NavbarTitle, UserNameText} from "./Navbar.styled";
+import {NavbarComponent, Navbareh, NavbarGrid, NavbarLogo, NavbarTitle, UserNameText} from "./Navbar.styled";
 import {getUserName, logoffFromProject, useGetAuth} from "../futuremodules/auth/authAccessors";
 import {
   getFileNameOnlyNoExt,
@@ -41,7 +41,7 @@ const Navbar = (props) => {
   }
 
   return (
-    <Fragment>
+    <NavbarComponent>
       <ProgressBar/>
       <NavbarGrid>
         <NavbarLogo onClick={() => {
@@ -63,7 +63,7 @@ const Navbar = (props) => {
         <NavbarTitle>{propTrendId}</NavbarTitle>
         <UserNameText>{linkContent}</UserNameText>
       </NavbarGrid>
-    </Fragment>
+    </NavbarComponent>
   );
 };
 

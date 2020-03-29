@@ -6,27 +6,25 @@ import {sanitizePathRoot} from "../../futuremodules/utils/utils";
 import {useQuery} from "@apollo/react-hooks";
 import {Link, useLocation} from "react-router-dom";
 import {Table} from "react-bootstrap";
-import {TrendGrid, TrendLayout} from "../common.styled";
+import {TrendGrid} from "../common.styled";
 
 const CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 const EmptyTrend = ({trendId}) => {
   return (
-    <TrendLayout>
-      <TrendGrid>
-        <FlexContainer>
-          <p>
+    <TrendGrid>
+      <FlexContainer>
+        <p>
           Trend <TrendSpan>{trendId}</TrendSpan> is empty!
-          </p>
-          <p>
+        </p>
+        <p>
           I'm sorry you ended up here, my associates will make sure this won't happen again!
-          </p>
-        </FlexContainer>
-        <FlexContainer>
-          <Link to={"/"}><LinkBack>Back to sanity, Marty!</LinkBack></Link>
-        </FlexContainer>
-      </TrendGrid>
-    </TrendLayout>
+        </p>
+      </FlexContainer>
+      <FlexContainer>
+        <Link to={"/"}><LinkBack>Back to sanity, Marty!</LinkBack></Link>
+      </FlexContainer>
+    </TrendGrid>
   )
 };
 
@@ -59,43 +57,41 @@ const TrendPage = () => {
   const finalData = groupData(graphData, ["label", groupBy], groupFields, sortIndex, sortOrder);
 
   return (
-    <TrendLayout>
-      <TrendGrid>
-        <FlexContainer>
-          <CanvasJSChart options={chartOptions}/>
-        </FlexContainer>
-        <FlexContainer>
-          <Table striped bordered hover variant="dark" size="sm">
-            <thead>
-            <tr>
-              {
-                trendVariables.map(elem =>
-                  (<TH key={elem}
-                    onClick={() => {
-                      setSortIndex(elem);
-                      setSortOrder(sortOrder === 1 ? -1 : 1);
-                    }}>
-                    {elem}
-                  </TH>)
-                )
-              }
-            </tr>
-            </thead>
-            <tbody>
-            {finalData.map((e) => {
-              return (
-                <TR key={e[trendVariables[0]]} onClick={() => {
-                  setTrendGroup(e[trendVariables[0]]);
-                }}>
-                  {trendVariables.map(elem => (<td>{e[elem]}</td>))}
-                </TR>
+    <TrendGrid>
+      <FlexContainer>
+        <CanvasJSChart options={chartOptions}/>
+      </FlexContainer>
+      <FlexContainer>
+        <Table striped bordered hover variant="dark" size="sm">
+          <thead>
+          <tr>
+            {
+              trendVariables.map(elem =>
+                (<TH key={elem}
+                     onClick={() => {
+                       setSortIndex(elem);
+                       setSortOrder(sortOrder === 1 ? -1 : 1);
+                     }}>
+                  {elem}
+                </TH>)
               )
-            })}
-            </tbody>
-          </Table>
-        </FlexContainer>
-      </TrendGrid>
-    </TrendLayout>
+            }
+          </tr>
+          </thead>
+          <tbody>
+          {finalData.map((e) => {
+            return (
+              <TR key={e[trendVariables[0]]} onClick={() => {
+                setTrendGroup(e[trendVariables[0]]);
+              }}>
+                {trendVariables.map(elem => (<td>{e[elem]}</td>))}
+              </TR>
+            )
+          })}
+          </tbody>
+        </Table>
+      </FlexContainer>
+    </TrendGrid>
   );
 };
 

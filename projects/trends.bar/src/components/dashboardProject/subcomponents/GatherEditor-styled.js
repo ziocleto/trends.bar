@@ -1,36 +1,57 @@
 import styled from "styled-components";
 
 export const ScriptEditorGrid = styled.div` {
+  --gridGrapX: 10px;
   display: grid;
-  grid-template-columns: 47% 5% 45%;
-  grid-template-rows: 2rem calc(100% - 2rem);
-  grid-gap: 5px 1.5%;
-  grid-template-areas: "scriptTitle  scriptControlsHeader outputTabs"
-                       "script       scriptControls scriptOutput";
-  padding-top: 3%;
-  height: 100%;
+  grid-template-columns: 50% calc(50% - var(--gridGrapX));
+  grid-template-rows: 3em calc(100% - 3em);
+  grid-gap: 2px var(--gridGrapX);
+  grid-template-areas: "scriptTitle  outputTabs"
+                       "script       scriptOutput";
+  //height: calc(100vh - var(--navbar-height) - 150px);
+  margin-top: 5px;
 }`;
 
 export const ScriptTitle = styled.div` {
   grid-area: scriptTitle;
-  display: block;
-  place-self: center;
+  display: flex;
+  justify-content: space-between;
+  align-self: center;
+  background: #263238;
+  height: 100%;
+  padding: 6px;
+  border-radius: 3px;
+  border: 1px solid var(--gray);
+}`;
+
+export const FileManagementElement = styled.div` {
+  display: flex;
+  align-self: center;
+}`;
+
+export const FileManagementDxMargin = styled.div` {
+  margin-right: 0.15em;
+}`;
+
+export const FileManagementSxMargin = styled.div` {
+  margin-left: 0.15em;
+  padding-left: 0.15em;
+}`;
+
+export const FileManagementSxPadding = styled.div` {
+  padding-left: 8px;
+}`;
+
+export const ScriptFileName = styled.div` {
+  align-self: center;
+  border: 1px solid var(--light-color);
+  border-radius: 3px;
+  background-color: var(--primary);
+  padding: 0.33em;
 }`;
 
 export const ScriptEditor = styled.div` {
   grid-area: script;
-}`;
-
-export const ScriptControlsHeader = styled.div` {
-  grid-area: scriptControlsHeader;
-  display: block;
-}`;
-
-export const ScriptEditorControls = styled.div` {
-  grid-area: scriptControls;
-  display: block;
-  place-self: center;
-  align-self: start;
 }`;
 
 export const ScriptOutputTabs = styled.div` {
@@ -42,13 +63,30 @@ export const ScriptOutputTabs = styled.div` {
 
 export const ScriptResultTabs = styled.div ` {
   
-}`
+}`;
 
 export const ScriptOutput = styled.div` {
   grid-area: scriptOutput;
 }`;
 
-export const DivAutoMargin = styled.div` {
-  margin: 20px auto;
+export const InfoColor = styled.span `{
+  color: var(--info)
 }`;
 
+export const DangerColor = styled.span `{
+  color: var(--danger);
+}`;
+
+export const DangerColorDiv = styled.div `{
+  color: var(--secondary);
+  align-self: center;
+  cursor: pointer;
+  
+  :hover {
+    color: var(--danger-color);
+  }
+}`;
+
+export const PrimaryColor = styled.span `{
+  color: var(--primary)
+}`;

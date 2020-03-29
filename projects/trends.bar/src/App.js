@@ -1,4 +1,5 @@
-import React, {Fragment, useEffect} from "react";
+import "./App.css";
+import React, {useEffect} from "react";
 import {Route, Switch, useLocation} from 'react-router-dom';
 import Landing from "./components/Landing/Landing";
 import Navbar from "./components/Navbar";
@@ -10,11 +11,11 @@ import Register from "./futuremodules/auth/components/Register";
 import Login from "./futuremodules/auth/components/Login";
 import DashboardUser from "./components/dashboardUser/DashboardUser";
 import {EHAlert} from "./futuremodules/alerts/alerts";
-import "./App.css";
 import {apiSilent, useApi} from "./futuremodules/api/apiEntryPoint";
 import {loadUser} from "./futuremodules/auth/authApiCalls";
 import {Auth} from "./futuremodules/auth/authAccessors";
 import {DashboardProject} from "./components/dashboardProject/DashboardProject";
+import {Body} from "./components/common.styled";
 
 
 initEH();
@@ -32,12 +33,10 @@ const App = () => {
   }, []);
 
   return (
-    <Fragment>
+    <Body>
       <Navbar trendId={trendId}/>
       <Switch>
-        <Route exact path="/">
-          <Landing/>
-        </Route>
+        <Route exact path="/"  component={Landing}/>
         <Route exact path="/register" component={Register}/>
         <Route exact path="/login" component={Login}/>
         <Route exact path="/dashboarduser" render={ () => <DashboardUser auth={authApi}/> } />
@@ -45,7 +44,7 @@ const App = () => {
         <Route path="/:usernameSplit/:trendIdSplit" component={TrendPage}/>
       </Switch>
       <EHAlert/>
-    </Fragment>
+    </Body>
   );
 };
 

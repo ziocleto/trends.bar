@@ -114,7 +114,7 @@ export class Cruncher {
   finaliseCrunch(key, title, xValue, wc, dataSequence = null) {
     const graphElem = graphAssistant.declare(this.graphType, key, title, "", dataSequence);
     const value = graphAssistant.prepareSingleValue(graphElem.type, xValue, wc);
-    this.traces += (key + "- " + title + ", " + wc + "\n");
+    this.traces += (key + ", " + title + ", " + xValue + ", " + wc + "\n");
     this.dataEntry(graphElem, value);
   }
 

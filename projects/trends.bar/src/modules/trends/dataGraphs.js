@@ -64,7 +64,7 @@ export const elaborateDataGraphs = (data, label, titles) => {
       itemclick: itemclick
     },
     theme: "dark1",
-    backgroundColor: "#343a40",
+    backgroundColor: "#00000000",
     animationEnabled: true,
     interactivityEnabled: true,
   };
