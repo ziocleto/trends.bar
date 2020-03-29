@@ -26,10 +26,10 @@ export const DashboardProject = ({auth}) => {
       <ProjectTabs>
         <Tabs activeKey={activeTab} onSelect={k => {setActiveTab(k)}}>
           <Tab eventKey="Layout" title="Layout">
-            <LayoutEditor trendId={trendId} username={username}/>
+            <LayoutEditor username={username}/>
           </Tab>
           <Tab eventKey="DataSources" title="DataSources">
-            <ScriptCodeEditor trendId={trendId} username={username}/>
+            <ScriptCodeEditor username={username}/>
           </Tab>
         </Tabs>
       </ProjectTabs>

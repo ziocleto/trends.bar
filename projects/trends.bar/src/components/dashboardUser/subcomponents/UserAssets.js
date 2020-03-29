@@ -1,12 +1,13 @@
+import React, {Fragment, useState, useGlobal} from "reactn";
 import {DashboardUserInnerMargins} from "../DashboardUser.styled";
 import {useQuery} from "@apollo/react-hooks";
 import {getUserTrends} from "../../../modules/trends/queries";
 import {LinkContainer} from "react-router-bootstrap";
 import {Button, Dropdown, FormControl, InputGroup, SplitButton} from "react-bootstrap";
-import React, {Fragment, useState} from "reactn";
 import {alertIfSuccessful, api, useApi} from "../../../futuremodules/api/apiEntryPoint";
 import {sendInvitationToProject} from "../../../futuremodules/auth/projectApiCalls";
 import {getUserName} from "../../../futuremodules/auth/authAccessors";
+import {EditingUserTrend} from "../../../modules/trends/globals";
 
 const YourAssetsTitle = () => {
   return (
@@ -77,6 +78,7 @@ const ProjectManagement = ({name}) => {
 export const UserAssets = ({auth}) => {
 
   const name = getUserName(auth);
+  const [, setEditingUserTrend] = useGlobal(EditingUserTrend);
   const {data, loading} = useQuery(getUserTrends(), {variables: {name}});
 
   const onManageProject = name => {
@@ -101,7 +103,7 @@ export const UserAssets = ({auth}) => {
             const projectLink = "/dashboardproject/" + trendId;
             return (
               <div key={`fragment-${trendId}`} className="inliner-block my-1">
-                <LinkContainer to={projectLink}>
+                <LinkContainer to={projectLink} onClick={ () => setEditingUserTrend(trendId)}>
                   <SplitButton
                     title={trendId}
                     variant="primary"

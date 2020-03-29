@@ -10,55 +10,28 @@ import Dropdown from "react-bootstrap/Dropdown";
 import Button from "react-bootstrap/Button";
 import React, {useGlobal} from "reactn";
 import {Fragment, useEffect} from "react";
-import {
-  alertDangerNoMovie,
-  ConfirmAlertWithWriteCheck,
-  useAlert,
-  useConfirmAlertWithWriteCheck
-} from "../../../futuremodules/alerts/alerts";
+import {alertDangerNoMovie, useAlert, useConfirmAlertWithWriteCheck} from "../../../futuremodules/alerts/alerts";
 import {useLazyQuery, useMutation} from "@apollo/react-hooks";
-import {CRAWL_TREND_GRAPH, REMOVE_SCRIPT} from "../../../modules/trends/mutations";
-import {ShowRenameAndDeleteLabel} from "./ShowRenameAndDeleteLabel";
+import {REMOVE_SCRIPT} from "../../../modules/trends/mutations";
+import {LabelWithRename} from "./LabelWithRename";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import {getScript} from "../../../modules/trends/queries";
+import {EditingUserTrend, generateUniqueNameWithArrayCheck} from "../../../modules/trends/globals";
+import {checkQueryHasLoadedWith} from "../../../futuremodules/graphqlclient/query";
+const uniqueNamesGenerator = require('project-name-generator');
 
-export const FileManagementHeader = ({options, callbacks}) => {
+export const FileManagementHeader = ({username, onRunCallback}) => {
 
+  const [trendId] = useGlobal(EditingUserTrend);
   const [files, setFiles] = useGlobal('JSONFiles');
-  const [fileC, setFileC] = useGlobal('JSONFileC');
+  const [, setFileC] = useGlobal('JSONFileC');
   const [currFileIndex, setCurrFileIndex] = useGlobal('JSONFileCurrentIndex');
   const [isJsonValid] = useGlobal('JSONValidator');
   const alertStore = useAlert();
-  const [crawlTrendGraph, response] = useMutation(CRAWL_TREND_GRAPH);
   const [removeScript] = useMutation(REMOVE_SCRIPT);
   const [lazyScriptCheck, lazyScriptCheckResult] = useLazyQuery(getScript());
   const setConfirmAlert = useConfirmAlertWithWriteCheck();
-
-  const trendId = "coronavirus";
-  const username = "Dado";
-
-  if (files && files.length > 0 && !currFileIndex) {
-    setCurrFileIndex(files[0].filename).then();
-  }// : (options ? options.defaultFilename : null));
-
-  const onRunCallback = () => {
-    let fileJsonInjected = JSON.parse(fileC);
-    fileJsonInjected.trendId = trendId;
-    fileJsonInjected.username = username;
-    crawlTrendGraph({
-      variables: {
-        scriptName: currFileIndex,
-        script: fileJsonInjected
-      }
-    }).then((res) => {
-        console.log(res);
-      }
-    ).catch((e) => {
-      alertDangerNoMovie(alertStore, "Auch, I didn't see that coming :/");
-      console.log("Uacci uari uari", e);
-    });
-  };
 
   const removeLocalCurrFileIndex = () => {
     let newFiles = files.filter(elem => (elem.filename !== currFileIndex));
@@ -75,8 +48,7 @@ export const FileManagementHeader = ({options, callbacks}) => {
   const onDeleteEntity = () => {
     // Run a pre-check if the file is on the server
     // If it's not on the server then just delete it locally
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    lazyScriptCheck( {
+    lazyScriptCheck({
       variables: {
         scriptName: currFileIndex,
         trendId,
@@ -85,8 +57,10 @@ export const FileManagementHeader = ({options, callbacks}) => {
     });
   };
 
+  // USe effect here is used a toggle to detect deletion hooks fired
   useEffect(() => {
-    if ( lazyScriptCheckResult.data && lazyScriptCheckResult.data.script !== null && lazyScriptCheckResult.loading === false ) {
+    if (checkQueryHasLoadedWith(lazyScriptCheckResult, "script")) {
+      console.log("Lets confirm");
       setConfirmAlert({
         title: "Deletion of " + currFileIndex,
         text: currFileIndex,
@@ -114,12 +88,12 @@ export const FileManagementHeader = ({options, callbacks}) => {
               });
             }
           }).catch((e) => {
-            alertDangerNoMovie(alertStore, "SOmething went very wrong on deletion, calling the ghostbusters");
+            alertDangerNoMovie(alertStore, "Something went very wrong on deletion, calling the GhostBusters");
           });
         },
       });
     }
-    if ( lazyScriptCheckResult.data && lazyScriptCheckResult.data.script === null && lazyScriptCheckResult.loading === false ) {
+    if (lazyScriptCheckResult.data && lazyScriptCheckResult.data.script === null && lazyScriptCheckResult.loading === false) {
       removeLocalCurrFileIndex();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -134,12 +108,8 @@ export const FileManagementHeader = ({options, callbacks}) => {
             variant={"primary"}
             onClick={() => {
               let newFiles = files;
-              let filename = "script" + (files.length + 1).toString();
-              // Check filename is not used yet
-              let fc = 0;
-              while (files.includes(filename)) {
-                filename = "script" + (files.length + ++fc).toString();
-              }
+              // Create mew filename and check that it doesnt exist yet
+              const filename = generateUniqueNameWithArrayCheck(files);
               const fileContent = "{}";
               newFiles.push({
                 filename: filename,
@@ -166,7 +136,7 @@ export const FileManagementHeader = ({options, callbacks}) => {
         </DropdownButton>
       </FileManagementElement>
       <FileManagementElement>
-        <ShowRenameAndDeleteLabel label={currFileIndex}/>
+        <LabelWithRename username={username}/>
         <FileManagementSxPadding/>
         <OverlayTrigger
           overlay={(props) => {

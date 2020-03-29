@@ -15,10 +15,16 @@ import {getScripts} from "../../../modules/trends/queries";
 import "./GatherEditor.css"
 import {Tab, Tabs} from "react-bootstrap";
 import 'codemirror/addon/lint/lint.css';
-import {alertSuccess, useAlert} from "../../../futuremodules/alerts/alerts";
+import {alertDangerNoMovie, alertSuccess, useAlert} from "../../../futuremodules/alerts/alerts";
 import {FileManagementHeader} from "./FileManagementHeader";
 import {JSONEditor} from "./JSONEditor";
 import {useEffect} from "react";
+import {EditingUserTrend, generateUniqueNameWithArrayCheck} from "../../../modules/trends/globals";
+import {
+  checkQueryArrayNotEmpty,
+  checkQueryHasLoadedWithData,
+  queryGetValue
+} from "../../../futuremodules/graphqlclient/query";
 
 require("codemirror/lib/codemirror.css");
 require("codemirror/theme/material.css");
@@ -34,20 +40,70 @@ const KeyResponseParsed = 'parsed';
 const KeyResponseElaborated = 'elaborated';
 const KeyResponseError = 'error';
 
-export const ScriptCodeEditor = ({trendId, username}) => {
-  const [key, setKey] = useState(KeyResponseElaborated);
+export const ScriptCodeEditor = ({username}) => {
 
+  const [key, setKey] = useState(KeyResponseElaborated);
   const alertStore = useAlert();
-  const scriptQuery = useQuery(getScripts(), {variables: {trendId, username}});
+  const [trendId] = useGlobal(EditingUserTrend);
+  const scriptQueryResult = useQuery(getScripts(), {variables: {trendId: trendId ? trendId : "", username}});
+
   const [crawlTrendGraph, response] = useMutation(CRAWL_TREND_GRAPH);
   const [upsertTrendGraph] = useMutation(UPSERT_TREND_GRAPH);
-  const [, setFiles] = useGlobal('JSONFiles');
+  const [files,setFiles] = useGlobal('JSONFiles');
+  const [fileJson] = useGlobal('JSONFileJson');
+  const [currFileIndex, setCurrFileIndex] = useGlobal('JSONFileCurrentIndex');
 
+  const createDefaultScriptFile = (defaultText) => {
+    const defaultFileName = generateUniqueNameWithArrayCheck(files);
+    const newFile = {
+      filename: defaultFileName,
+      text: defaultText
+    }
+    const newFiles = [];
+    newFiles.push(newFile);
+    setFiles(newFiles).then(() => {
+      setCurrFileIndex(defaultFileName).then();
+    })
+  };
+
+  const onRunCallback = () => {
+    let fileJsonInjected = fileJson;
+    fileJsonInjected.trendId = trendId;
+    fileJsonInjected.username = username;
+    crawlTrendGraph({
+      variables: {
+        scriptName: currFileIndex,
+        script: fileJsonInjected
+      }
+    }).then((res) => {
+        console.log(res);
+      }
+    ).catch((e) => {
+      alertDangerNoMovie(alertStore, "Auch, this script appears to be pants!");
+    });
+  };
+
+  // We use useEffect as a "toggle" mechanism to allow refresh only when key hooks have changed, this is needed
+  // in case of useQuery/useLazyQuery hooks because of their architecture of 2 steps loading of data it would be
+  // impossible to discern the status of a load finished (loading===false) as an isolated event.
   useEffect(() => {
-    if ( scriptQuery.loading === false ) setFiles(scriptQuery.data.scripts).then();
-  }, [scriptQuery.loading]);
+    // First check our results have loaded
+    if (checkQueryHasLoadedWithData(scriptQueryResult)) {
+      // If they have and they have returned something then proceed normally
+      if (checkQueryArrayNotEmpty(scriptQueryResult, "scripts")) {
+        setFiles(queryGetValue(scriptQueryResult, "scripts")).then((res) => {
+          if (res.JSONFiles && res.JSONFiles.length > 0) {
+            setCurrFileIndex(res.JSONFiles[0].filename).then();
+          }
+        });
+      } // Doesn't have any script, create a default one
+      else {
+        createDefaultScriptFile("{}");
+      }
+    }
+  }, [scriptQueryResult, trendId, setFiles, setCurrFileIndex]);
 
-  if (scriptQuery.loading === true) {
+  if (scriptQueryResult.loading === true) {
     return <Fragment/>
   }
 
@@ -68,7 +124,6 @@ export const ScriptCodeEditor = ({trendId, username}) => {
     if (!response.data) {
       return "";
     }
-    console.log(response.data.crawlTrendGraph);
 
     if (key === KeyResponseParsed) {
       return response.data.crawlTrendGraph.crawledText;
@@ -85,7 +140,7 @@ export const ScriptCodeEditor = ({trendId, username}) => {
   return (
     <ScriptEditorGrid>
       <ScriptTitle>
-        <FileManagementHeader options={{defaultFilename: "script1"}}/>
+        <FileManagementHeader username={username} onRunCallback={onRunCallback}/>
       </ScriptTitle>
       <ScriptEditor>
         <JSONEditor/>

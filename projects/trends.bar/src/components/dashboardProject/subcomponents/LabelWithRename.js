@@ -1,15 +1,17 @@
-import "./ShowRenameAndDeleteLabel.css"
+import "./LabelWithRename.css"
 import React, {useEffect, useRef, useState} from "react";
-import {InputMode, LabelMode, ShowRenameAndDeleteLabelContainer} from "./ShowRenameAndDeleteLabel.styled";
+import {InputMode, LabelMode, ShowRenameAndDeleteLabelContainer} from "./LabelWithRename.styled";
 import {useMutation} from "@apollo/react-hooks";
 import {RENAME_SCRIPT} from "../../../modules/trends/mutations";
 import {useGlobal} from "reactn";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
+import {EditingUserTrend} from "../../../modules/trends/globals";
 
-export const ShowRenameAndDeleteLabel = () => {
+export const LabelWithRename = ({username}) => {
 
   const searchBox = useRef(null);
+  const [trendId] = useGlobal(EditingUserTrend);
   const [files, setFiles] = useGlobal('JSONFiles');
   const [currFileIndex, setCurrFileIndex] = useGlobal('JSONFileCurrentIndex');
   const [isRenamingFilename, setIsRenamingFilename] = useState(false);
@@ -20,9 +22,6 @@ export const ShowRenameAndDeleteLabel = () => {
       searchBox.current.focus();
     }
   }, [isRenamingFilename]);
-
-  const trendId = "coronavirus";
-  const username = "Dado";
 
   const ret = isRenamingFilename ?
     (
@@ -36,25 +35,29 @@ export const ShowRenameAndDeleteLabel = () => {
           autoComplete={"off"}
           onKeyDown={(event) => {
             if (event.key === "Enter") {
-              if (event.target.value !== currFileIndex) {
+              const newFileName = event.target.value
+              if (newFileName !== currFileIndex) {
                 renameScript({
                   variables: {
                     scriptName: currFileIndex,
                     trendId,
                     username,
-                    newName: event.target.value
+                    newName: newFileName
                   }
                 }).then((res) => {
                   console.log(res);
+                  // if ( res.data.scriptRename ) {
+                  //
+                  // }
                   let newFiles = files;
                   newFiles.map(elem => {
                     if (elem.filename === currFileIndex) {
-                      elem.filename = res.data.scriptRename.filename;
+                      elem.filename = newFileName;
                     }
                     return elem;
                   });
                   setFiles(newFiles);
-                  setCurrFileIndex(res.data.scriptRename.filename);
+                  setCurrFileIndex(newFileName);
                 });
               }
               setIsRenamingFilename(false);

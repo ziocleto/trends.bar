@@ -356,9 +356,9 @@ class MongoDataSourceExtended extends MongoDataSource {
 
   async findOneStringify(query) {
     const ret = await this.model.findOne(query).collation({locale: "en", strength: 2});
-    console.log("Ret from findandstring", ret);
+    console.log(ret);
     return ret ? {
-      filename: ret.scriptName,
+      filename: ret.toObject().scriptName,
       text: this.cleanScriptString(ret)
     } : null;
   }
@@ -385,11 +385,14 @@ class MongoDataSourceExtended extends MongoDataSource {
   async updateOneStringify(query, data) {
     // WARNING: findOneAndUpdate returns the doc _before_ the update, so basically it returns the findOne part :/ Lame
     const doc = await this.model.findOneAndUpdate(query, data);
+    if ( !doc ) {
+      return null;
+    }
     const updated = await this.model.findById( doc._id );
     const ret = updated.toObject();
     return {
-      filename: !ret ? "" : ret.scriptName,
-      text: !ret ? "" : this.cleanScriptStringNoObj(ret)
+      filename: ret.scriptName,
+      text: this.cleanScriptStringNoObj(ret)
     };
   }
 

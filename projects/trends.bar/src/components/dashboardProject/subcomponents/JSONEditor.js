@@ -1,5 +1,6 @@
 import {Controlled as CodeMirror} from "react-codemirror2";
 import React, {useGlobal} from "reactn";
+import {Fragment} from "react";
 
 export const JSONEditor = () => {
 
@@ -10,13 +11,19 @@ export const JSONEditor = () => {
   const [isJsonValid, setIsJsonValid] = useGlobal('JSONValidator');
 
   const getCurrFile = () => {
-    for ( const file of files ) {
-      if ( file.filename === currFileIndex ) return file;
+    if (files) {
+      for ( const file of files ) {
+        if ( file.filename === currFileIndex ) return file;
+      }
     }
     return null;
   }
 
-  const data = files && files.length ? getCurrFile() : null;
+  const data = getCurrFile();
+
+  if ( !data ) {
+    return <Fragment/>
+  }
 
   return (
     <CodeMirror
