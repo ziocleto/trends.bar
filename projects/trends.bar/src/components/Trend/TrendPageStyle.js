@@ -58,3 +58,15 @@ export const LinkBack = styled.span `{
   color: var(--info);
   font-weight: bold;
 }`;
+
+export const TDGREEN = styled.td `{
+  background-color: var(--success-color);
+}`;
+
+export const TDRED = styled.td `{
+  background-color: var(--danger-color);
+}`;
+
+export const TDAMBER = styled.td `{
+  background-color: var(--warning);
+}`;

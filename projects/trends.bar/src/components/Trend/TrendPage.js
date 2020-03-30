@@ -1,7 +1,13 @@
 import React, {Fragment, useState} from "react";
 import CanvasJSReact from '../../assets/canvasjs.react';
-import {FlexContainer, LinkBack, TH, TR, TrendSpan} from "./TrendPageStyle";
-import {elaborateDataGraphs, getTrendGraphs, groupData,} from "../../modules/trends/dataGraphs";
+import {FlexContainer, LinkBack, TDAMBER, TDGREEN, TDRED, TH, TR, TrendSpan} from "./TrendPageStyle";
+import {
+  elaborateDataGraphs,
+  getFirstDerivative,
+  getTrendGraphs,
+  groupData,
+  groupDataWithDerivatives,
+} from "../../modules/trends/dataGraphs";
 import {sanitizePathRoot} from "../../futuremodules/utils/utils";
 import {useQuery} from "@apollo/react-hooks";
 import {Link, useLocation} from "react-router-dom";
@@ -30,9 +36,12 @@ const EmptyTrend = ({trendId}) => {
 
 const TrendPage = () => {
 
+  // const trendVariables = ["Country", "Cases", "Deaths", "Recovered", "Cases velocity", "Deaths velocity", "Recovered velocity"];
   const trendVariables = ["Country", "Cases", "Deaths", "Recovered"];
+  const trendVariablesDerivatives = ["Country", "Cases", "Cases(New)", "Cases(%)", "Deaths", "Deaths(New)", "Deaths(%)", "Recovered", "Recovered(New)", "Recovered(%)"];
+  const trendVariablesDerivativesHeader = ["Country", "Cases", "New", "Change", "Deaths", "New", "Change", "Recovered", "New", "Change"];
   const groupBy = trendVariables[0];
-  const groupFields = [trendVariables[1], trendVariables[2], trendVariables[3]];
+  const groupFields = trendVariables.slice(1, trendVariables.length);
 
   const location = useLocation();
   const trendIdFull = sanitizePathRoot(location.pathname);
@@ -52,9 +61,11 @@ const TrendPage = () => {
     return <EmptyTrend trendId={trendId}/>;
   }
 
-  const graphData = data.user.trend.trendGraphs;
+  let graphData = data.user.trend.trendGraphs;
   const chartOptions = elaborateDataGraphs(graphData, trendGroup, groupFields);
-  const finalData = groupData(graphData, ["label", groupBy], groupFields, sortIndex, sortOrder);
+  const finalData = groupDataWithDerivatives(graphData, ["label", groupBy], groupFields, sortIndex, sortOrder);
+
+  // console.log(chartOptions);
 
   return (
     <TrendGrid>
@@ -66,7 +77,7 @@ const TrendPage = () => {
           <thead>
           <tr>
             {
-              trendVariables.map(elem =>
+              trendVariablesDerivativesHeader.map(elem =>
                 (<TH key={elem}
                      onClick={() => {
                        setSortIndex(elem);
@@ -84,7 +95,16 @@ const TrendPage = () => {
               <TR key={e[trendVariables[0]]} onClick={() => {
                 setTrendGroup(e[trendVariables[0]]);
               }}>
-                {trendVariables.map(elem => (<td>{e[elem]}</td>))}
+                {trendVariablesDerivatives.map(elem => {
+                  if ( elem.includes("%") && e[elem] < 0 ) {
+                    return (<TDGREEN><b>{e[elem]}</b></TDGREEN>)
+                  } else if ( elem.includes("%") && e[elem] > 0 ) {
+                    return (<TDRED><b>{e[elem]}</b></TDRED>)
+                  } else if ( elem.includes("%") && e[elem] === 0 ) {
+                    return (<TDAMBER><b>{e[elem]}</b></TDAMBER>)
+                  }
+                  return (<td>{e[elem]}</td>);
+                })}
               </TR>
             )
           })}

@@ -38,6 +38,20 @@ module.exports = {
       return { x: input, y: value };
     }
     return value;
+  },
+
+  firstDerivativeOf: (values) => {
+    // First derivative
+    let newData = [];
+    for ( let i = 1; i < values.length; i++ ) {
+      const currPoint = values[i].y;
+      const prevPoint = values[i-1].y;
+      newData.push( {
+        x: values[i].x,
+        y: currPoint - prevPoint
+      });
+    }
+    return newData;
   }
 
 };
