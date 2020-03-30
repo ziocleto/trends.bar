@@ -4,7 +4,7 @@ import {PubSub} from "graphql-subscriptions";
 import moment from "moment";
 import {Cruncher} from "./assistants/cruncher-assistant";
 import * as authController from "./modules/auth/controllers/authController";
-import {firstDerivativeOf} from "./assistants/graph-assistant";
+import {firstDerivativeOf, firstDerivativePercOf} from "./assistants/graph-assistant";
 
 const graphAssistant = require("./assistants/graph-assistant");
 const datasetAssistant = require("./assistants/dataset-assistant");
@@ -46,6 +46,11 @@ const typeDefs = gql`
         y: BigInt
     }
 
+    type DateFloat {
+        x: BigInt
+        y: Float
+    }
+
     input DateIntInput {
         x: BigInt
         y: BigInt
@@ -62,6 +67,7 @@ const typeDefs = gql`
         values: [ DateInt ]!
         valuesDx: [ DateInt ]
         valuesDx2: [ DateInt ]
+        valuesDxPerc: [ DateFloat ]
     }
 
     type User {
@@ -473,6 +479,7 @@ class TrendGraphDataSource extends MongoDataSourceExtended {
     let newValues = [];
     let newValuesDx = [];
     let newValuesDx2 = [];
+    let newValuesDxPerc = [];
     for (let index = 0; index < ret.values.length - 1; index++) {
       if (ret.values[index].x !== ret.values[index + 1].x) {
         newValues.push(ret.values[index]);
@@ -483,13 +490,15 @@ class TrendGraphDataSource extends MongoDataSourceExtended {
     if (query.dataSequence === "Cumulative") {
       newValuesDx = firstDerivativeOf(newValues);
       newValuesDx2 = firstDerivativeOf(newValuesDx);
+      newValuesDxPerc = firstDerivativePercOf(newValuesDx);
     }
 
     await this.model.updateOne(query, {
       $set: {
         values: newValues,
         valuesDx: newValuesDx,
-        valuesDx2: newValuesDx2
+        valuesDxPerc: newValuesDxPerc,
+        valuesDx2: newValuesDx2,
       }
     });
   }

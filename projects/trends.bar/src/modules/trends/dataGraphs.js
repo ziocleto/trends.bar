@@ -21,6 +21,10 @@ export const getTrendGraphs = () => {
                       x
                       y
                   }
+                  valuesDxPerc{
+                      x
+                      y
+                  }
                   valuesDx2{
                       x
                       y
@@ -59,6 +63,7 @@ const itemclick = e => {
 export const elaborateDataGraphs = (data, label, titles) => {
 
   const optionsBase = {
+    zoomEnabled: true,
     axisX: {
       valueFormatString: "DD MMM"
     },
@@ -81,24 +86,31 @@ export const elaborateDataGraphs = (data, label, titles) => {
   for (const trendGraph of data) {
     if ( checkTitleAndLabelBelongToGraph(trendGraph, titles, label ) ) {
       allPoints.push( {
-        label: trendGraph.title,
+        label: "Total " + trendGraph.title,
         data: trendGraph.values,
         type: "area",
       });
       if ( arrayExistsNotEmpty(trendGraph.valuesDx) ) {
         allPoints.push( {
-          label: trendGraph.title + " Speed",
+          label: "Daily " + trendGraph.title,
           data: trendGraph.valuesDx,
           type: "column",
         });
       }
-      if ( arrayExistsNotEmpty(trendGraph.valuesDx2) ) {
-        allPoints.push( {
-          label: trendGraph.title + " Acceleration",
-          data: trendGraph.valuesDx2,
-          type: "spline",
-        });
-      }
+      // if ( arrayExistsNotEmpty(trendGraph.valuesDxPerc) ) {
+      //   allPoints.push( {
+      //     label: trendGraph.title + " SpeedPerc",
+      //     data: trendGraph.valuesDxPerc,
+      //     type: "column",
+      //   });
+      // }
+      // if ( arrayExistsNotEmpty(trendGraph.valuesDx2) ) {
+      //   allPoints.push( {
+      //     label: trendGraph.title + " Acceleration",
+      //     data: trendGraph.valuesDx2,
+      //     type: "spline",
+      //   });
+      // }
     }
   }
 
@@ -164,8 +176,9 @@ export const groupDataWithDerivatives = ( graphData, groupBy, fields, sortBy, so
         countries[elem[groupBy[0]]] = {
           ...countries[elem[groupBy[0]]],
           [field]: elem.values[elem.values.length - 1].y,
-          [field+"(New)"]: elem.valuesDx[elem.valuesDx.length - 1].y,
-          [field+"(%)"]: elem.valuesDx2[elem.valuesDx2.length - 1].y
+          [field+"(Dx)"]: elem.valuesDx[elem.valuesDx.length - 1].y,
+          [field+"(Dx%)"]: elem.valuesDxPerc[elem.valuesDxPerc.length - 1].y,
+          [field+"(Dx2)"]: elem.valuesDx2[elem.valuesDx2.length - 1].y
         };
       }
     }
@@ -192,3 +205,12 @@ export const groupDataWithDerivatives = ( graphData, groupBy, fields, sortBy, so
 
   return finalData;
 };
+
+export const positiveSignForDx2 = (elem) => {
+  if ( !elem.percSignPosTrend ) return 1;
+  return elem.percSignPosTrend;
+};
+
+export const float100ToPerc = (value) => {
+  return Number(value).toFixed(2)+"%";
+}
