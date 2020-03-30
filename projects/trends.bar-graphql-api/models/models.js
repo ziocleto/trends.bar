@@ -30,6 +30,9 @@ export const trendGraphsModel = mongoose.model("trend_graphs", new mongoose.Sche
   subLabel: {type: String},
   type: {type: String},
   values: [],
+  valuesDx: [],
+  valuesDx2: [],
+  valuesDxPerc: [],
   dataset: {type: mongoose.Schema.Types.ObjectId, ref: 'datasets'},
 }, {strict: false}));
 

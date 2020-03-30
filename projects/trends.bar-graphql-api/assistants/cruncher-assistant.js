@@ -72,7 +72,7 @@ export class Cruncher {
       dataSequence: graph.dataSequence
     };
     const ivalue = {
-      x: moment(value.x).unix(),
+      x: moment(value.x).valueOf(),
       y: Number(value.y)
     };
     const qhash = hash(query);
@@ -172,7 +172,9 @@ export class Cruncher {
     } else if (action.csv) {
       const resjson = await csv().fromString(nparse.text);
       for (const elem of resjson) {
-        this.finaliseCrunch(key, elem[action.csv.label], elem[action.csv.x], elem[action.csv.y], action.dataSequence);
+        // If label is present in the csv raw then used it, otherwise it as the string specified in the json field 'label'
+        const cvsLabelField = elem[action.csv.label] ? elem[action.csv.label] : action.csv.label;
+        this.finaliseCrunch(key, cvsLabelField, elem[action.csv.x], elem[action.csv.y], action.dataSequence);
       }
     }
 

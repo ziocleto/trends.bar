@@ -1,7 +1,13 @@
 import React, {Fragment, useState} from "react";
 import CanvasJSReact from '../../assets/canvasjs.react';
-import {FlexContainer, LinkBack, TH, TR, TrendSpan} from "./TrendPageStyle";
-import {elaborateDataGraphs, getTrendGraphs, groupData,} from "../../modules/trends/dataGraphs";
+import {FlexContainer, LinkBack, TDAMBER, TDGREEN, TDRED, TH, TR, TrendSpan} from "./TrendPageStyle";
+import {
+  elaborateDataGraphs,
+  float100ToPerc,
+  getTrendGraphs,
+  groupDataWithDerivatives,
+  positiveSignForDx2,
+} from "../../modules/trends/dataGraphs";
 import {sanitizePathRoot} from "../../futuremodules/utils/utils";
 import {useQuery} from "@apollo/react-hooks";
 import {Link, useLocation} from "react-router-dom";
@@ -30,18 +36,33 @@ const EmptyTrend = ({trendId}) => {
 
 const TrendPage = () => {
 
-  const trendVariables = ["Country", "Cases", "Deaths", "Recovered"];
-  const groupBy = trendVariables[0];
-  const groupFields = [trendVariables[1], trendVariables[2], trendVariables[3]];
+  const groupBy = "Country";
+  const trendVariables = ["Cases", "Deaths"];
+  const trendVariablesDerivatives = [
+    {key: groupBy, label: groupBy},
+    {key: "Cases", label: "Cases"},
+    {key: "Cases(Dx)", label: "Daily"},
+    {key: "Cases(Dx2)", label: "Change"},
+    {key: "Cases(Dx%)", label: "%", percSignPosTrend: -1},
+    {key: "Deaths", label: "Deaths"},
+    {key: "Deaths(Dx)", label: "Daily"},
+    {key: "Deaths(Dx2)", label: "Change"},
+    {key: "Deaths(Dx%)", label: "%", percSignPosTrend: -1},
+    // {key:"Recovered",label:"Recovered"},
+    // {key:"Recovered(Dx)",label:"New"},
+    // {key:"Recovered(Dx2)",label:"Change"},
+    // {key:"Recovered(Dx%)",label:"%"}
+  ];
+
+  const groupFields = trendVariables.slice(0, trendVariables.length);
 
   const location = useLocation();
   const trendIdFull = sanitizePathRoot(location.pathname);
   const [username, trendId] = trendIdFull.split("/");
   const [sortIndex, setSortIndex] = useState(groupFields[0]);
   const [sortOrder, setSortOrder] = useState(1);
-  const [trendGroup, setTrendGroup] = useState("Italy");
+  const [trendGroup, setTrendGroup] = useState("Worldwide");
 
-  // const graphDataS = useSubscription(trendGraphSubcription());
   const {data, loading, error} = useQuery(getTrendGraphs(), {variables: {name: username, trendId: trendId}});
 
   if (loading) {
@@ -52,9 +73,9 @@ const TrendPage = () => {
     return <EmptyTrend trendId={trendId}/>;
   }
 
-  const graphData = data.user.trend.trendGraphs;
+  let graphData = data.user.trend.trendGraphs;
   const chartOptions = elaborateDataGraphs(graphData, trendGroup, groupFields);
-  const finalData = groupData(graphData, ["label", groupBy], groupFields, sortIndex, sortOrder);
+  const finalData = groupDataWithDerivatives(graphData, ["label", groupBy], groupFields, sortIndex, sortOrder);
 
   return (
     <TrendGrid>
@@ -66,13 +87,13 @@ const TrendPage = () => {
           <thead>
           <tr>
             {
-              trendVariables.map(elem =>
-                (<TH key={elem}
+              trendVariablesDerivatives.map(elem =>
+                (<TH key={elem.key}
                      onClick={() => {
-                       setSortIndex(elem);
+                       setSortIndex(elem.key);
                        setSortOrder(sortOrder === 1 ? -1 : 1);
                      }}>
-                  {elem}
+                  {elem.label}
                 </TH>)
               )
             }
@@ -81,10 +102,24 @@ const TrendPage = () => {
           <tbody>
           {finalData.map((e) => {
             return (
-              <TR key={e[trendVariables[0]]} onClick={() => {
-                setTrendGroup(e[trendVariables[0]]);
+              <TR key={e[groupBy]} onClick={() => {
+                setTrendGroup(e[groupBy]);
               }}>
-                {trendVariables.map(elem => (<td>{e[elem]}</td>))}
+                {trendVariablesDerivatives.map(elem => {
+                  const tdkey = e[groupBy] + elem.key;
+                  if (elem.key.includes("%")) {
+                    const posSign = positiveSignForDx2(elem);
+                    const value = float100ToPerc(e[elem.key]);
+                    if (Math.sign(e[elem.key]) === posSign) {
+                      return (<TDGREEN key={tdkey}><b>{value}</b></TDGREEN>);
+                    }
+                    if (Math.sign(e[elem.key]) === -posSign) {
+                      return (<TDRED key={tdkey}><b>{value}</b></TDRED>);
+                    }
+                    return (<TDAMBER key={tdkey}><b>{value}</b></TDAMBER>)
+                  }
+                  return (<td key={tdkey}>{e[elem.key]}</td>);
+                })}
               </TR>
             )
           })}

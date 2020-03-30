@@ -4,6 +4,7 @@ import {PubSub} from "graphql-subscriptions";
 import moment from "moment";
 import {Cruncher} from "./assistants/cruncher-assistant";
 import * as authController from "./modules/auth/controllers/authController";
+import {firstDerivativeOf, firstDerivativePercOf} from "./assistants/graph-assistant";
 
 const graphAssistant = require("./assistants/graph-assistant");
 const datasetAssistant = require("./assistants/dataset-assistant");
@@ -45,6 +46,11 @@ const typeDefs = gql`
         y: BigInt
     }
 
+    type DateFloat {
+        x: BigInt
+        y: Float
+    }
+
     input DateIntInput {
         x: BigInt
         y: BigInt
@@ -59,6 +65,9 @@ const typeDefs = gql`
         subLabel: String
         type: String!
         values: [ DateInt ]!
+        valuesDx: [ DateInt ]
+        valuesDx2: [ DateInt ]
+        valuesDxPerc: [ DateFloat ]
     }
 
     type User {
@@ -274,8 +283,16 @@ const resolvers = {
       return await dataSources.trendGraphs.upsertGraphs(args);
     },
 
-    scriptRemove: (_, {scriptName, trendId, username}, {dataSources}) => dataSources.scripts.removeAndRelist({scriptName, trendId, username}),
-    scriptRename: (_, {scriptName, trendId, username, newName}, {dataSources}) => dataSources.scripts.updateOneStringify({scriptName, trendId, username}, { scriptName: newName})
+    scriptRemove: (_, {scriptName, trendId, username}, {dataSources}) => dataSources.scripts.removeAndRelist({
+      scriptName,
+      trendId,
+      username
+    }),
+    scriptRename: (_, {scriptName, trendId, username, newName}, {dataSources}) => dataSources.scripts.updateOneStringify({
+      scriptName,
+      trendId,
+      username
+    }, {scriptName: newName})
 
     // async saveScript(parent, args, {dataSources}) {
     //   await dataSources.scripts.upsert({ username: args.script.username, trendId: args.script.trendId}, args.script);
@@ -319,14 +336,14 @@ class MongoDataSourceExtended extends MongoDataSource {
     await this.model.remove(query).collation({locale: "en", strength: 2});
     // The result of remove is a find of the remaining documents
     const numDocsAfterDeletion = await this.model.countDocuments();
-    if ( numDocs === numDocsAfterDeletion) {
+    if (numDocs === numDocsAfterDeletion) {
       return null;
     }
     const ret = await this.model.find({});
     let res = [];
     for (const script of ret) {
       let sn = script.toObject().scriptName;
-      res.push( {
+      res.push({
         filename: sn,
         text: this.cleanScriptString(script)
       });
@@ -371,7 +388,7 @@ class MongoDataSourceExtended extends MongoDataSource {
     let res = [];
     for (const script of ret) {
       let sn = script.toObject().scriptName;
-      res.push( {
+      res.push({
         filename: sn,
         text: this.cleanScriptString(script)
       });
@@ -388,10 +405,10 @@ class MongoDataSourceExtended extends MongoDataSource {
   async updateOneStringify(query, data) {
     // WARNING: findOneAndUpdate returns the doc _before_ the update, so basically it returns the findOne part :/ Lame
     const doc = await this.model.findOneAndUpdate(query, data);
-    if ( !doc ) {
+    if (!doc) {
       return null;
     }
-    const updated = await this.model.findById( doc._id );
+    const updated = await this.model.findById(doc._id);
     const ret = updated.toObject();
     return {
       filename: ret.scriptName,
@@ -459,15 +476,31 @@ class TrendGraphDataSource extends MongoDataSourceExtended {
     };
     const ret = await db.upsert(this.model, data, queryOnly);
 
-    let setValues = [];
+    let newValues = [];
+    let newValuesDx = [];
+    let newValuesDx2 = [];
+    let newValuesDxPerc = [];
     for (let index = 0; index < ret.values.length - 1; index++) {
       if (ret.values[index].x !== ret.values[index + 1].x) {
-        setValues.push(ret.values[index]);
+        newValues.push(ret.values[index]);
       }
     }
-    setValues.push(ret.values[ret.values.length - 1]);
+    newValues.push(ret.values[ret.values.length - 1]);
 
-    await this.model.updateOne(query, {$set: {values: setValues}});
+    if (query.dataSequence === "Cumulative") {
+      newValuesDx = firstDerivativeOf(newValues);
+      newValuesDx2 = firstDerivativeOf(newValuesDx);
+      newValuesDxPerc = firstDerivativePercOf(newValuesDx);
+    }
+
+    await this.model.updateOne(query, {
+      $set: {
+        values: newValues,
+        valuesDx: newValuesDx,
+        valuesDxPerc: newValuesDxPerc,
+        valuesDx2: newValuesDx2,
+      }
+    });
   }
 
   async upsertGraphs(query) {

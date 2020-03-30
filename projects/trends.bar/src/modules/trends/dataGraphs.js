@@ -1,4 +1,5 @@
 import gql from "graphql-tag";
+import {arrayExistsNotEmpty} from "../../futuremodules/utils/utils";
 
 export const getTrendGraphs = () => {
 
@@ -13,6 +14,18 @@ export const getTrendGraphs = () => {
                   label
                   subLabel
                   values{
+                      x
+                      y
+                  }
+                  valuesDx{
+                      x
+                      y
+                  }
+                  valuesDxPerc{
+                      x
+                      y
+                  }
+                  valuesDx2{
                       x
                       y
                   }
@@ -50,11 +63,9 @@ const itemclick = e => {
 export const elaborateDataGraphs = (data, label, titles) => {
 
   const optionsBase = {
+    zoomEnabled: true,
     axisX: {
       valueFormatString: "DD MMM"
-    },
-    axisY: {
-      title: "People"
     },
     title: {
       text: label,
@@ -73,26 +84,43 @@ export const elaborateDataGraphs = (data, label, titles) => {
 
   let allPoints = [];
   for (const trendGraph of data) {
-    let dpoints = [];
     if ( checkTitleAndLabelBelongToGraph(trendGraph, titles, label ) ) {
-      for (const p of trendGraph.values) {
-        const date = new Date(0);
-        date.setUTCSeconds(p.x);
-        dpoints.push({x: date, y: p.y});
-      }
       allPoints.push( {
-        label: trendGraph.title,
-        data: dpoints
+        label: "Total " + trendGraph.title,
+        data: trendGraph.values,
+        type: "area",
       });
+      if ( arrayExistsNotEmpty(trendGraph.valuesDx) ) {
+        allPoints.push( {
+          label: "Daily " + trendGraph.title,
+          data: trendGraph.valuesDx,
+          type: "column",
+        });
+      }
+      // if ( arrayExistsNotEmpty(trendGraph.valuesDxPerc) ) {
+      //   allPoints.push( {
+      //     label: trendGraph.title + " SpeedPerc",
+      //     data: trendGraph.valuesDxPerc,
+      //     type: "column",
+      //   });
+      // }
+      // if ( arrayExistsNotEmpty(trendGraph.valuesDx2) ) {
+      //   allPoints.push( {
+      //     label: trendGraph.title + " Acceleration",
+      //     data: trendGraph.valuesDx2,
+      //     type: "spline",
+      //   });
+      // }
     }
   }
 
   const gdata =[];
   for ( const points of allPoints ) {
     gdata.push( {
+      xValueType: "dateTime",
       showInLegend: true,
+      type: points.type,
       legendText: points.label,
-      type: "area",
       dataPoints: points.data
     });
   }
@@ -139,3 +167,50 @@ export const groupData = ( graphData, groupBy, fields, sortBy, sortOrder = 1 ) =
 
   return finalData;
 };
+
+export const groupDataWithDerivatives = ( graphData, groupBy, fields, sortBy, sortOrder = 1 ) => {
+  let countries = {};
+  for (const elem of graphData) {
+    for ( const field of fields ) {
+      if ( elem.title === field ) {
+        countries[elem[groupBy[0]]] = {
+          ...countries[elem[groupBy[0]]],
+          [field]: elem.values[elem.values.length - 1].y,
+          [field+"(Dx)"]: elem.valuesDx[elem.valuesDx.length - 1].y,
+          [field+"(Dx%)"]: elem.valuesDxPerc[elem.valuesDxPerc.length - 1].y,
+          [field+"(Dx2)"]: elem.valuesDx2[elem.valuesDx2.length - 1].y
+        };
+      }
+    }
+  }
+
+  const finalDataUnsorted = [];
+  for (const elem of Object.keys(countries)) {
+    finalDataUnsorted.push( {
+      [groupBy[1]]: elem,
+      ...countries[elem]
+    } );
+  }
+
+  const finalData = finalDataUnsorted.sort( (a, b) => {
+      if (a[sortBy] < b[sortBy]) {
+        return sortOrder === 1 ? 1 : -1;
+      }
+      if (a[sortBy] > b[sortBy]) {
+        return sortOrder === 1 ? -1 : 1;
+      }
+      return 0;
+    }
+  );
+
+  return finalData;
+};
+
+export const positiveSignForDx2 = (elem) => {
+  if ( !elem.percSignPosTrend ) return 1;
+  return elem.percSignPosTrend;
+};
+
+export const float100ToPerc = (value) => {
+  return Number(value).toFixed(2)+"%";
+}
