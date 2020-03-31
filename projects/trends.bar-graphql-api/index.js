@@ -3,17 +3,17 @@ import {crawlingScriptModel, trendGraphsModel, trendLayoutModel, trendsModel} fr
 import {PubSub} from "graphql-subscriptions";
 import moment from "moment";
 import {Cruncher} from "./assistants/cruncher-assistant";
-import * as authController from "./modules/auth/controllers/authController";
+import * as authController from "eh_auth_and_auth/controllers/authController";
 import {firstDerivativeOf, firstDerivativePercOf} from "./assistants/graph-assistant";
 
 const graphAssistant = require("./assistants/graph-assistant");
 const datasetAssistant = require("./assistants/dataset-assistant");
 const cookieParser = require("cookie-parser");
 const globalConfig = require("eh_config");
-const usersModel = require("./modules/auth/models/user");
+const usersModel = require("eh_auth_and_auth/models/user");
 
-const usersRoute = require("./modules/auth/routes/usersRoute");
-const tokenRoute = require("./modules/auth/routes/tokenRoute");
+const usersRoute = require("eh_auth_and_auth/routes/usersRoute");
+const tokenRoute = require("eh_auth_and_auth/routes/tokenRoute");
 const logger = require('eh_logger');
 const fetch = require('node-fetch');
 

@@ -1,4 +1,11 @@
 const mongoose = require("mongoose");
+// NDDADO
+// WARNING, THIS LINE **WILL** CREATE PROBLEMS, YOU HAVE BEEN WARNED
+// globlal.db is used as a poor version of dependency inversion to allow external modules like *auth* to use a single
+// database connection (mongoose instance) without that we couldn't have modules that shares the same database instance.
+// I reckon we'll need encapsulation of some sort to achieve real dependency inversion, as this global state it's pants.
+global.db = mongoose;
+
 const mongodb = require("mongodb");
 const delay = require('delay');
 const md5 = require("md5");
