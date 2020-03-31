@@ -63,7 +63,7 @@ export const gqlSchema = gql`
         granularity: Int
         cols: Int
         width: Int
-        gridLayout: [TrendGridLayout!]
+        gridLayout: [TrendGridLayout]
     }
 
     type TrendGraph {

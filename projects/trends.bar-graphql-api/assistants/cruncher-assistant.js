@@ -14,14 +14,8 @@ import * as countryAssistant from "./country-assistant";
 
 const graphAssistant = require("./graph-assistant");
 const crawler = require('crawler-request');
-const db = require("../db");
 const csv = require('csvtojson')
 const hash = require('object-hash');
-
-const findTrendByStringId = async (trendId) => {
-  const trend = await db.findOne(trendsModel, {trendId: trendId});
-  return trend._id;
-}
 
 const findParseURLForTrendId = (timestamp, timestampURL) => {
   const beginningOfReportstimetamp = moment('20200120', 'YYYYMMDD');

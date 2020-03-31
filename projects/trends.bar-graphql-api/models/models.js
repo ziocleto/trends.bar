@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+// const mongoose = global.db;
 
 const schemaWithIndex = (schemaDef, index) => {
   let schema = new mongoose.Schema(schemaDef);
@@ -49,7 +50,7 @@ export const trendLayoutModel = mongoose.model("trend_layouts", new mongoose.Sch
   granularity: {type:Number},
   cols: {type:Number},
   width: {type:Number},
-  gridLayout: {
+  gridLayout: [{
     i: {type:String},
     x: {type:Number},
     y: {type:Number},
@@ -57,5 +58,5 @@ export const trendLayoutModel = mongoose.model("trend_layouts", new mongoose.Sch
     h: {type:Number},
     moved: {type:Boolean},
     static: {type:Boolean}
-  }
+  }]
 }, {strict: false}));

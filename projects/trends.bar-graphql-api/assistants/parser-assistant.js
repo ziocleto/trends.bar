@@ -1,7 +1,6 @@
 import {datasetModel, graphLayoutModel, trendGraphsModel} from "../models/models";
 
-const mongoose = require("mongoose");
-const db = require("../db");
+const dbi = require("../db");
 const graphAssistant = require("../assistants/graph-assistant");
 
 export const regExResolverSingle = "single";
@@ -68,13 +67,13 @@ export class Parser {
 
     const {dataset, graph, regEx, inputs} = parser;
 
-    const datasetElem = await db.upsert(datasetModel, dataset);
-    const graphElem = await db.upsert(graphLayoutModel, graph);
+    const datasetElem = await dbi.upsert(datasetModel, dataset);
+    const graphElem = await dbi.upsert(graphLayoutModel, graph);
 
     const resultResolved = regEx.parseFunction(module.exports.regexFind(regEx));
 
     const value = graphAssistant.prepareValue(graph.type, inputs, resultResolved);
 
-    return await dataEntry(trendId, mongoose.Types.ObjectId(datasetElem._id), mongoose.Types.ObjectId(graphElem._id), value);
+    return await dataEntry(trendId, dbi.objectId(datasetElem._id), dbi.objectId(graphElem._id), value);
   }
 }
