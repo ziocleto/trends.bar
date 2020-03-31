@@ -30,8 +30,8 @@ exports.initDB = async () => {
         useUnifiedTopology: true,
         useFindAndModify: false
       });
-      exports.bucketSourceAssets = new mongodb.GridFSBucket(mongoose.connection.client.db('event_horizon'), {bucketName: "fs_assets_to_elaborate"});
-      exports.bucketEntities = new mongodb.GridFSBucket(mongoose.connection.client.db('event_horizon'), {bucketName: "fs_entity_assets"});
+      exports.bucketSourceAssets = new mongodb.GridFSBucket(mongoose.connection.client.db(globalConfig.MongoDBdbName), {bucketName: "fs_assets_to_elaborate"});
+      exports.bucketEntities = new mongodb.GridFSBucket(mongoose.connection.client.db(globalConfig.MongoDBdbName), {bucketName: "fs_entity_assets"});
       logger.info("MongoDB connected with GridFS");
 
       return mongoose.connection;
@@ -214,27 +214,14 @@ exports.objectId = (objString) => {
   return mongodb.ObjectId(objString);
 };
 
-exports.upsert = async ( model, data, query = {}, options = {}) => {
+exports.upsert = async ( model, query = {}, data, options = {}) => {
   try {
     const queryFinal = isObjectEmpty(query) ? data : query;
-    return await model.findOneAndUpdate(queryFinal, data, {new: true,upsert: true, ...options});
+    await model.findOneAndUpdate(queryFinal, data, {new: true,upsert: true, ...options});
+    return await model.findOne(query);
   } catch (e) {
-    console.log(e);
+    logger.error(e);
     return null;
   }
 };
 
-// exports.delete = async ( model, timestamp ) => {
-//   const graphs = await model.find({});
-//   for ( let graph of graphs ) {
-//     graph.values = graph.values.filter((v) => {
-//       return v[0] <= timestamp;
-//     });
-//     console.log("graph new:", graph);
-//     await exports.upsert(model, graph, { _id: graph._id} );
-//   }
-// };
-
-exports.findOne = async ( model, query ) => {
-  return model.findOne(query);
-};
