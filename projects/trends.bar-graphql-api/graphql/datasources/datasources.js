@@ -1,11 +1,19 @@
-import {MongoDataSource} from "apollo-datasource-mongodb";
-import moment from "moment";
-import {Cruncher} from "../../assistants/cruncher-assistant";
-import {trendGraphsModel, trendsModel} from "../../models/models";
-const fetch = require('node-fetch');
 const dbi = require("../../db");
+import moment from "moment";
+const fetch = require('node-fetch');
+
+import {MongoDataSource} from "apollo-datasource-mongodb";
+
+const usersModel = require("eh_auth_and_auth/models/user");
+import {trendGraphsModel} from "../../models/trendGraph";
+import {trendsModel} from "../../models/trend";
+import {crawlingScriptModel} from "../../models/crawlingScript";
+import {trendLayoutModel} from "../../models/trendLayout";
+
 const graphAssistant = require("../../assistants/graph-assistant");
 const datasetAssistant = require("../../assistants/dataset-assistant");
+
+import {Cruncher} from "../../assistants/cruncher-assistant";
 
 export class MongoDataSourceExtended extends MongoDataSource {
 
@@ -196,3 +204,11 @@ export class TrendGraphDataSource extends MongoDataSourceExtended {
   }
 
 }
+
+export const gqlDataSources = () => ({
+    trends: new MongoDataSourceExtended(trendsModel),
+    users: new MongoDataSourceExtended(usersModel),
+    scripts: new MongoDataSourceExtended(crawlingScriptModel),
+    trendGraphs: new TrendGraphDataSource(trendGraphsModel),
+    trendLayouts: new MongoDataSourceExtended(trendLayoutModel)
+});

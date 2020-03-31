@@ -1,4 +1,4 @@
-import {datasetModel} from "../models/models";
+import {datasetModel} from "../models/dataset";
 const dbi = require("../db");
 
 module.exports = {

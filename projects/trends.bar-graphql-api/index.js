@@ -1,15 +1,14 @@
-import {Cruncher} from "./assistants/cruncher-assistant";
+import dbi from "./db";
 
 const logger = require('eh_logger');
 const globalConfig = require("eh_config");
 
 import * as authController from "eh_auth_and_auth/controllers/authController";
+
 import {gqlSchema} from "./graphql/schemas/graphql_master_schema"
 import {gqlResolvers} from "./graphql/resolvers/resolvers";
-import {MongoDataSourceExtended, TrendGraphDataSource} from "./graphql/datasources/datasources";
-import {crawlingScriptModel, trendGraphsModel, trendLayoutModel, trendsModel} from "./models/models";
+import {gqlDataSources} from "./graphql/datasources/datasources";
 
-const usersModel = require("eh_auth_and_auth/models/user");
 const usersRoute = require("eh_auth_and_auth/routes/usersRoute");
 const tokenRoute = require("eh_auth_and_auth/routes/tokenRoute");
 
@@ -20,7 +19,6 @@ const cookieParser = require("cookie-parser");
 
 const {ApolloServer} = require('apollo-server-express');
 
-const dbi = require("./db");
 dbi.initDB();
 
 const PORT = 4500;
@@ -30,13 +28,7 @@ const server = new ApolloServer(
   {
     typeDefs : gqlSchema,
     resolvers: gqlResolvers,
-    dataSources: () => ({
-      trends: new MongoDataSourceExtended(trendsModel),
-      users: new MongoDataSourceExtended(usersModel),
-      scripts: new MongoDataSourceExtended(crawlingScriptModel),
-      trendGraphs: new TrendGraphDataSource(trendGraphsModel),
-      trendLayouts: new MongoDataSourceExtended(trendLayoutModel)
-    }),
+    dataSources: gqlDataSources,
     context: async ({req, connection}) => {
       if (connection) {
         return connection.context; // Subscription connection

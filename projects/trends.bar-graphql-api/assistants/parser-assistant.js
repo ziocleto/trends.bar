@@ -1,4 +1,4 @@
-import {datasetModel, graphLayoutModel, trendGraphsModel} from "../models/models";
+import {datasetModel} from "../models/dataset";
 
 const dbi = require("../db");
 const graphAssistant = require("../assistants/graph-assistant");
