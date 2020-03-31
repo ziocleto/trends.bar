@@ -17,7 +17,6 @@ const init = () => {
 const use = () => {
   app.use("/", tokenRoute);
   app.use("/user", usersRoute);
-
   app.use(authController.authenticate);
 }
 

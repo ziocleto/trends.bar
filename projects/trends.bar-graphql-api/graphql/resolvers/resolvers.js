@@ -1,3 +1,5 @@
+import * as pubsub from "graphql-subscriptions";
+
 export const gqlResolvers = {
   Query: {
     trends: (_, _2, {dataSources}) => dataSources.trends.get(),
