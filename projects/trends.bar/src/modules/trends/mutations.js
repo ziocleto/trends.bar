@@ -65,3 +65,10 @@ export const RENAME_SCRIPT = gql`
             text
         }
     }`;
+
+export const upsertTrendLayout = gql`
+    mutation UpsertTrendLayout($trendLayout: TrendLayoutInput) {
+        upsertTrendLayout(trendLayout: $trendLayout) {
+            _id
+        }
+    }`;

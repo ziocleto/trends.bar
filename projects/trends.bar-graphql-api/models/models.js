@@ -41,3 +41,21 @@ export const trendsModel = mongoose.model("trends",schemaWithIndex({
   username: {type: String, ref: 'users.name'},
   aliases: [{type: String}],
 }, { trendId: 'text' }));
+
+export const trendLayoutModel = mongoose.model("trend_layouts", new mongoose.Schema({
+  trendId: {type: String},
+  username: {type: String},
+  name: {type: String},
+  granularity: {type:Number},
+  cols: {type:Number},
+  width: {type:Number},
+  gridLayout: {
+    i: {type:String},
+    x: {type:Number},
+    y: {type:Number},
+    w: {type:Number},
+    h: {type:Number},
+    moved: {type:Boolean},
+    static: {type:Boolean}
+  }
+}, {strict: false}));

@@ -1,5 +1,5 @@
 import {MongoDataSource} from 'apollo-datasource-mongodb'
-import {crawlingScriptModel, trendGraphsModel, trendsModel} from "./models/models";
+import {crawlingScriptModel, trendGraphsModel, trendLayoutModel, trendsModel} from "./models/models";
 import {PubSub} from "graphql-subscriptions";
 import moment from "moment";
 import {Cruncher} from "./assistants/cruncher-assistant";
@@ -54,6 +54,47 @@ const typeDefs = gql`
     input DateIntInput {
         x: BigInt
         y: BigInt
+    }
+
+    type TrendGridLayout {
+        i: String
+        x: Int
+        y: Int
+        w: Int
+        h: Int
+        moved: Boolean
+        static: Boolean
+    }
+
+    input TrendGridLayoutInput {
+        i: String
+        x: Int
+        y: Int
+        w: Int
+        h: Int
+        moved: Boolean
+        static: Boolean
+    }
+
+    input TrendLayoutInput {
+        name: String
+        trendId: String
+        username: String
+        granularity: Int
+        cols: Int
+        width: Int
+        gridLayout: [TrendGridLayoutInput!]
+    }
+
+    type TrendLayout {
+        _id: ID!
+        name: String
+        trendId: String
+        username: String
+        granularity: Int
+        cols: Int
+        width: Int
+        gridLayout: [TrendGridLayout!]
     }
 
     type TrendGraph {
@@ -193,12 +234,15 @@ const typeDefs = gql`
         trend_similar(trendId: String!): [Trend]
         script(scriptName: String!, trendId: String!, username:String!): ScriptOutput
         scripts(trendId: String!, username:String!): [ScriptOutput]
+        trendLayouts(trendId: String!, username:String!): [TrendLayout]
+        trendLayout(layoutName: String!, trendId: String!, username:String!): TrendLayout
     }
 
     type Mutation {
         createTrend(trendId: String!, username: String!): Trend
         deleteTrendGraphs(trendId: String!, username: String!): String
         upsertTrendGraph(graphQueries: [GraphQueryInput]): String
+        upsertTrendLayout(trendLayout: TrendLayoutInput): TrendLayout
         crawlTrendGraph(scriptName: String!, script: CrawlingScript!): CrawlingOutput
         scriptRemove(scriptName: String!, trendId: String!, username:String!): [ScriptOutput]
         scriptRename(scriptName: String!, trendId: String!, username:String!, newName: String!): ScriptOutput
@@ -231,6 +275,9 @@ const resolvers = {
       username
     }),
     scripts: (_, {trendId, username}, {dataSources}) => dataSources.scripts.findManyStringify({trendId, username}),
+
+    trendLayouts: (_, _2, {dataSources}) => dataSources.trendLayouts.find(args),
+    trendLayout: (_, args, {dataSources}) => dataSources.trendLayouts.findOne(args),
   },
 
   User: {
@@ -281,6 +328,10 @@ const resolvers = {
 
     async upsertTrendGraph(parent, args, {dataSources}, context) {
       return await dataSources.trendGraphs.upsertGraphs(args);
+    },
+
+    async upsertTrendLayout(parent, {trendLayout}, {dataSources}, context) {
+      return await dataSources.trendLayouts.upsertAndGet( {name: trendLayout.name, trendId: trendLayout.trendId, username: trendLayout.username}, trendLayout);
     },
 
     scriptRemove: (_, {scriptName, trendId, username}, {dataSources}) => dataSources.scripts.removeAndRelist({
@@ -421,7 +472,7 @@ class MongoDataSourceExtended extends MongoDataSource {
   }
 
   async upsertAndGet(query, data) {
-    await db.upsert(this.model, query, data);
+    await db.upsert(this.model, data, query);
     const ret = await this.model.findOne(query);
     return ret;
   }
@@ -524,6 +575,7 @@ const server = new ApolloServer(
       users: new MongoDataSourceExtended(usersModel),
       scripts: new MongoDataSourceExtended(crawlingScriptModel),
       trendGraphs: new TrendGraphDataSource(trendGraphsModel),
+      trendLayouts: new MongoDataSourceExtended(trendLayoutModel)
     }),
     context: async ({req, connection}) => {
       if (connection) {
