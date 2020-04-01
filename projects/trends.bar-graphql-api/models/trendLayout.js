@@ -15,5 +15,6 @@ export const trendLayoutModel = mongoose.model("trend_layouts", new mongoose.Sch
     h: {type:Number},
     moved: {type:Boolean},
     static: {type:Boolean}
-  }]
+  }],
+  gridContent: []
 }, {strict: false}));

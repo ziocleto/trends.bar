@@ -37,8 +37,19 @@ type TrendLayout {
     cols: Int
     width: Int
     gridLayout: [TrendGridLayout]
+    gridContent: [ContentWidget]
 }
 
+type ContentWidgetTitle {
+    type: String
+    title: String
+    subTitle: String
+}
+
+type ContentWidget {
+    type: String!
+    i: String!
+}
 
 type Query {
     trendLayouts(trendId: String!, username:String!): [TrendLayout]
