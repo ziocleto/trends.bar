@@ -9,7 +9,7 @@ const graphAssistant = require("../../assistants/graph-assistant");
 const datasetAssistant = require("../../assistants/dataset-assistant");
 const dbi = require("eh_db");
 
-export class TrendGraphDataSource extends MongoDataSourceExtended {
+export class trendGraphDataSource extends MongoDataSourceExtended {
 
   async crawlTrendGraph(script) {
     try {
