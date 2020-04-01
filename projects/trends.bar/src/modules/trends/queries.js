@@ -54,3 +54,23 @@ export const getScripts = () => {
           }
       }`;
 };
+
+export const getTrendLayouts = () => {
+    return gql`
+      query getTrendLayouts($trendId:String!, $name:String!) {
+          trendLayouts(trendId:$trendId, username:$name) {
+            cols
+            granularity
+            width
+            gridLayout {
+                i
+                x
+                y
+                w
+                h
+                moved
+                static
+            }
+          }
+      }`;
+};
