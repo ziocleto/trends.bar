@@ -1,5 +1,5 @@
 import {datasetModel} from "../models/dataset";
-const dbi = require("../db");
+const dbi = require("eh_db");
 
 module.exports = {
   acquire: async (source, sourceName, sourceDocument) => {

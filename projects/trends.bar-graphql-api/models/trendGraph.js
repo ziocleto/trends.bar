@@ -1,6 +1,6 @@
 const mongoose = global.db;
 
-export const trendGraphsModel = mongoose.model("trend_graphs", new mongoose.Schema({
+export const trendGraphModel = mongoose.model("trend_graphs", new mongoose.Schema({
   trendId: {type: String},
   username: {type: String},
   title: {type: String},

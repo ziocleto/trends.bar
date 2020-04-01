@@ -1,4 +1,4 @@
-import dbi from "./db";
+import dbi from "eh_db";
 
 import * as authController from "eh_auth_and_auth/controllers/authController";
 import {initApollo} from "./apolloServer";

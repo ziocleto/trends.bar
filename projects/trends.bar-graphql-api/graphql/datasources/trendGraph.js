@@ -1,13 +1,13 @@
 import moment from "moment";
 import {Cruncher} from "../../assistants/cruncher-assistant";
-import {trendsModel} from "../../models/trend";
-import {trendGraphsModel} from "../../models/trendGraph";
+import {trendModel} from "../../models/trend";
+import {trendGraphModel} from "../../models/trendGraph";
 import {MongoDataSourceExtended} from "./common";
 
 const fetch = require('node-fetch');
 const graphAssistant = require("../../assistants/graph-assistant");
 const datasetAssistant = require("../../assistants/dataset-assistant");
-const dbi = require("../../db");
+const dbi = require("eh_db");
 
 export class TrendGraphDataSource extends MongoDataSourceExtended {
 
@@ -32,11 +32,11 @@ export class TrendGraphDataSource extends MongoDataSourceExtended {
   }
 
   async deleteTrendGraphs(trendId, username) {
-    const trend = await trendsModel.findOne({trendId, username});
+    const trend = await trendModel.findOne({trendId, username});
     if (!trend) return null;
 
-    await trendGraphsModel.deleteMany({_id: {'$in': trend.trendGraphs}});
-    await trendsModel.updateOne({_id: trend._id}, {$set: {trendGraphs: []}});
+    await trendGraphModel.deleteMany({_id: {'$in': trend.trendGraphs}});
+    await trendModel.updateOne({_id: trend._id}, {$set: {trendGraphs: []}});
 
     return trend._id;
   }

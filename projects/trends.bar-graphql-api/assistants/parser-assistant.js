@@ -1,6 +1,6 @@
 import {datasetModel} from "../models/dataset";
 
-const dbi = require("../db");
+const dbi = require("eh_db");
 const graphAssistant = require("../assistants/graph-assistant");
 
 export const regExResolverSingle = "single";

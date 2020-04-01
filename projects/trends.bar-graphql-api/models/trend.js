@@ -6,7 +6,7 @@ const schemaWithIndex = (schemaDef, index) => {
   return schema;
 }
 
-export const trendsModel = mongoose.model("trends",schemaWithIndex({
+export const trendModel = mongoose.model("trends",schemaWithIndex({
   trendId: {type: String},
   username: {type: String, ref: 'users.name'},
   aliases: [{type: String}],

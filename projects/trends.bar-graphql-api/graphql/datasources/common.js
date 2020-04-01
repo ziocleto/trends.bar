@@ -1,5 +1,5 @@
 import {MongoDataSource} from "apollo-datasource-mongodb";
-const dbi = require("../../db");
+const dbi = require("eh_db");
 
 export class MongoDataSourceExtended extends MongoDataSource {
   async get() {
