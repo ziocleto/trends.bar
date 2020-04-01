@@ -1,0 +1,50 @@
+type TrendGridLayout {
+    i: String
+    x: Int
+    y: Int
+    w: Int
+    h: Int
+    moved: Boolean
+    static: Boolean
+}
+
+input TrendGridLayoutInput {
+    i: String
+    x: Int
+    y: Int
+    w: Int
+    h: Int
+    moved: Boolean
+    static: Boolean
+}
+
+input TrendLayoutInput {
+    name: String
+    trendId: String
+    username: String
+    granularity: Int
+    cols: Int
+    width: Int
+    gridLayout: [TrendGridLayoutInput!]
+}
+
+type TrendLayout {
+    _id: ID!
+    name: String
+    trendId: String
+    username: String
+    granularity: Int
+    cols: Int
+    width: Int
+    gridLayout: [TrendGridLayout]
+}
+
+
+type Query {
+    trendLayouts(trendId: String!, username:String!): [TrendLayout]
+    trendLayout(layoutName: String!, trendId: String!, username:String!): TrendLayout
+}
+
+type Mutation {
+    upsertTrendLayout(trendLayout: TrendLayoutInput): TrendLayout
+}

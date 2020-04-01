@@ -1,0 +1,84 @@
+type ScriptOutput {
+    filename: String!
+    text: String
+}
+
+type CrawlingOutput {
+    crawledText: String
+    traces: String
+    graphQueries: [GraphQuery]
+    error: String
+    dataset: Dataset
+}
+
+input CrawlingRegexp {
+    body: String!
+    flags: String
+    resolver: String
+}
+
+input CrawlingCSV {
+    label: String
+    x: String
+    y: String
+}
+
+input CrawlingDateRange {
+    from: String!
+    to: String!
+}
+
+input CrawlingPostTransform {
+    transform: String
+    source: String
+    sourceIndex: Int
+    valueIndex: Int
+    dest: String
+    algo: String
+}
+
+input CrawlingActions {
+    regex: CrawlingRegexp
+    csv: CrawlingCSV
+    dataSequence: String
+    startRegex: CrawlingRegexp
+    endRegex: CrawlingRegexp
+    validRange: CrawlingDateRange
+    postTransform: CrawlingPostTransform
+}
+
+input CrawlingDatasets {
+    title: String
+    actions: [CrawlingActions]
+}
+
+input CrawlingFunctions {
+    type: String
+    key: String
+    datasets: [CrawlingDatasets]
+}
+
+input CrawlingScript {
+    trendId: String!
+    username: String!
+    source: String
+    sourceName: String
+    sourceDocument: String
+    urlParser: String
+    graphType: [String]
+    timestamp: String
+    timestampFormat: String
+    version: String!
+    functions: [CrawlingFunctions]
+}
+
+type Query {
+    script(scriptName: String!, trendId: String!, username:String!): ScriptOutput
+    scripts(trendId: String!, username:String!): [ScriptOutput]
+}
+
+type Mutation {
+    crawlTrendGraph(scriptName: String!, script: CrawlingScript!): CrawlingOutput
+    scriptRemove(scriptName: String!, trendId: String!, username:String!): [ScriptOutput]
+    scriptRename(scriptName: String!, trendId: String!, username:String!, newName: String!): ScriptOutput
+}

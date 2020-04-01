@@ -1,4 +1,3 @@
-import {trendsModel} from "../models/models";
 import moment from "moment";
 import {
   parseIntWithSpaces,

@@ -1,0 +1,13 @@
+type User {
+    _id: ID!
+    name: String!
+    email: String!
+    trends: [Trend]
+    trend(trendId: String!): Trend
+}
+
+
+type Query {
+    users: [User]
+    user(name: String!): User
+}

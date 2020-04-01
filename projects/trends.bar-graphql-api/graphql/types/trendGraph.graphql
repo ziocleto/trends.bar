@@ -1,0 +1,67 @@
+scalar BigInt
+
+type DateInt {
+    x: BigInt
+    y: BigInt
+}
+
+type DateFloat {
+    x: BigInt
+    y: Float
+}
+
+input DateIntInput {
+    x: BigInt
+    y: BigInt
+}
+
+type TrendGraph {
+    _id: ID!
+    trendId: String!
+    username: String!
+    title: String
+    label: String
+    subLabel: String
+    type: String!
+    values: [ DateInt ]!
+    valuesDx: [ DateInt ]
+    valuesDx2: [ DateInt ]
+    valuesDxPerc: [ DateFloat ]
+}
+
+type GraphQuery {
+    trendId: String!
+    username: String!
+    title: String
+    label: String
+    subLabel: String
+    type: String
+    dataSequence: String
+    values: [DateInt]
+}
+
+input GraphQueryInput {
+    trendId: String!
+    username: String!
+    title: String
+    label: String
+    subLabel: String
+    type: String
+    dataSequence: String
+    values: [DateIntInput]
+}
+
+
+type Query {
+    trendGraph(username:String!,trendId:String!,label:String!,title:String!): TrendGraph
+    trendGraphs(username:String,trendId:String,label:String,title:String): [TrendGraph]
+}
+
+type Mutation {
+    deleteTrendGraphs(trendId: String!, username: String!): String
+    upsertTrendGraph(graphQueries: [GraphQueryInput]): String
+}
+
+type Subscription {
+    trendGraphMutated: trendMutationPayload
+}
