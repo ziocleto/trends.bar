@@ -1,10 +1,10 @@
 import "./react-grid-styles.css"
 import "./react-resizable-styles.css"
 
-import React, {Fragment, useState} from "react";
+import React, {Fragment, useEffect, useState} from "react";
 import GridLayout from 'react-grid-layout';
 import {DivLayout, ButtonBar, SpanRemoveLayoutCell, SpanEditLayoutCell} from "./LayoutEditor.styled";
-import Button from "react-bootstrap/Button";
+import {ButtonToolbar,ButtonGroup,Button} from "react-bootstrap";
 import {getDefaultTrendLayout} from "../../../modules/trends/layout";
 import {upsertTrendLayout} from "../../../modules/trends/mutations";
 import {useMutation, useQuery} from "@apollo/react-hooks";
@@ -20,11 +20,25 @@ export const LayoutEditor = ({username}) => {
   //const [savedLayout] = useQuery(getTrendLayouts(trendId, username));
   const [trendLayoutMutation] = useMutation(upsertTrendLayout);
 
-  const [layout, setLayout] = useState(getDefaultTrendLayout(trendId,username));
-  const [absoluteIndex,setAbsoluteIndex]=useState(Math.max(...(layout.gridLayout.map((v,i)=> Number(v.i))))+1);
+  const {data, loading, error} = useQuery(getTrendLayouts(), { variables: { name: username, trendId: trendId}});
 
-  console.log("trendID",trendId);
-  console.log("layout", JSON.stringify(layout));
+  //const [layout, setLayout] = useState(getDefaultTrendLayout(trendId,username));
+  //const [absoluteIndex,setAbsoluteIndex]=useState(Math.max(...(layout.gridLayout.map((v,i)=> Number(v.i))))+1);
+  const [layout,setLayout] = useState(getDefaultTrendLayout(trendId,username));
+  const [absoluteIndex,setAbsoluteIndex]=useState(0);
+
+  useEffect(() => {
+    if (!loading && data && data.length>0) {
+      setLayout(data.trendLayouts[0]);
+      setAbsoluteIndex(Math.max(...(layout.gridLayout.map((v,i)=> Number(v.i))))+1);
+    }
+  }, [loading,data]);
+
+  if (loading)
+    return <Fragment/>;
+
+  //console.log("trendID",trendId);
+  //console.log("layout", JSON.stringify(layout));
 
   const onLayoutChange = (gridLayout) => {
     setLayout( {
@@ -36,7 +50,6 @@ export const LayoutEditor = ({username}) => {
   const cloneGridLayout = () => {
     return [...layout.gridLayout];
   }
-
 
   const onAddCell = () => {
     const newLayout = cloneGridLayout();
@@ -60,31 +73,31 @@ export const LayoutEditor = ({username}) => {
 
   const onEditCell = (event, cellCode) => {
     event.preventDefault();
-    console.log("Edit cell "+cellCode);
+    //console.log("Edit cell "+cellCode);
   }
 
   const onSaveLayout = () => {
-    console.log(trendId);
-    console.log(username);
-    console.log(layout);
+    //console.log(trendId);
+    //console.log(username);
+    console.log("SAVING:",layout);
     trendLayoutMutation({
       variables: {
         trendLayout: layout
       }
-    }).then(() =>
-            console.log("Oh yeah")
-        // alertSuccess(alertStore, "All set and done!")
-    ).catch((e) => {
-      console.log("Uacci uari uari", e);
     });
   }
 
   return (
       <Fragment>
-        <ButtonBar>
-          <Button onClick={onAddCell}>Add Cell</Button>{' '}
-          <Button onClick={onSaveLayout}>Save Layout</Button>
-        </ButtonBar>
+        <br/>
+        <ButtonToolbar className="justify-content-between" aria-label="Toolbar with Button groups">
+          <ButtonGroup aria-label="First group">
+            <Button onClick={onAddCell}>Add Cell</Button>{' '}
+          </ButtonGroup>
+          <ButtonGroup>
+            <Button onClick={onSaveLayout}>Save Layout</Button>
+          </ButtonGroup>
+        </ButtonToolbar>
         <GridLayout className="layout"
                     layout={layout.gridLayout}
                     cols={layout.cols*layout.granularity}
@@ -94,17 +107,18 @@ export const LayoutEditor = ({username}) => {
           { layout.gridLayout.map( elem => {
             return (
                 <DivLayout key={elem.i}>
-                  <SpanRemoveLayoutCell
-                      title="Remove cell"
-                      onClick={(event) => onRemoveCell(event,elem.i)}>
-                    X
+                  <SpanRemoveLayoutCell title="Remove cell">
+                    <Button variant="warning" onClick={(event) => onRemoveCell(event,elem.i)}>
+                      X
+                    </Button>
                   </SpanRemoveLayoutCell>
-                  <SpanEditLayoutCell
-                    title="Edit cell content"
-                    onClick={(event) => onEditCell(event, elem.i)}
+                  <Button
+                      variant="secondary"
+                      title="Edit cell content"
+                      onClick={(event) => onEditCell(event, elem.i)}
                   >
                     Edit
-                  </SpanEditLayoutCell>
+                  </Button>
                 </DivLayout>
             );
           })}
