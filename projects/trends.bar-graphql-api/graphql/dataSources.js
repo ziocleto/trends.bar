@@ -1,4 +1,4 @@
-import {TrendGraphDataSource} from "./datasources/trendGraph";
+import {trendGraphDataSource} from "./datasources/trendGraph";
 import {MongoDataSourceExtended} from "./datasources/common";
 import {crawlingScriptDataSource} from "./datasources/crawlingScript";
 
@@ -13,6 +13,6 @@ export default () => ({
     trends: new MongoDataSourceExtended(trendModel),
     users: new MongoDataSourceExtended(usersModel),
     scripts: new crawlingScriptDataSource(crawlingScriptModel),
-    trendGraphs: new TrendGraphDataSource(trendGraphModel),
+    trendGraphs: new trendGraphDataSource(trendGraphModel),
     trendLayouts: new MongoDataSourceExtended(trendLayoutModel)
 });
