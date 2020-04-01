@@ -6,7 +6,8 @@ export default {
   },
 
   TrendLayout: {
-    gridLayout: (trendLayout, _, {dataSources}) => trendLayout.gridLayout
+    gridLayout: (trendLayout) => trendLayout.gridLayout,
+    gridContent: (trendLayout) => trendLayout.gridContent,
   },
 
   Mutation: {
