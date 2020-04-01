@@ -3,14 +3,16 @@ import "./react-resizable-styles.css"
 
 import React, {Fragment, useEffect, useState} from "react";
 import GridLayout from 'react-grid-layout';
-import {DivLayout, SpanRemoveLayoutCell} from "./LayoutEditor.styled";
+import {DivLayout, SpanEditLayoutCell, SpanRemoveLayoutCell} from "./LayoutEditor.styled";
 import {Button, ButtonGroup, ButtonToolbar} from "react-bootstrap";
-import {getDefaultTrendLayout} from "../../../modules/trends/layout";
+import {getDefaultCellContent, getDefaultTrendLayout} from "../../../modules/trends/layout";
 import {upsertTrendLayout} from "../../../modules/trends/mutations";
 import {useMutation, useQuery} from "@apollo/react-hooks";
 import {getTrendLayouts} from "../../../modules/trends/queries";
 import {useTrendIdGetter} from "../../../modules/trends/globals";
 import {getQueryLoadedWithValueArrayNotEmpty} from "../../../futuremodules/graphqlclient/query";
+import {CellContentEditor} from "./CellContentEditor";
+import {ContentWidget} from "./ContentWidget";
 
 export const LayoutEditor = ({username}) => {
 
@@ -20,7 +22,9 @@ export const LayoutEditor = ({username}) => {
   const trendLayoutQuery = useQuery(getTrendLayouts(), {variables: {name: username, trendId: trendId}});
 
   const [layout, setLayout] = useState(getDefaultTrendLayout(trendId, username));
-  const [absoluteIndex, setAbsoluteIndex] = useState(0);
+  const [absoluteIndex, setAbsoluteIndex] = useState(Math.max(...(layout.gridLayout.map((v,i)=> Number(v.i))))+1);
+  const [editingCellKey,setEditingCellKey] = useState(null);
+  const [editingCellContent, setEditingCellContent] = useState(null);
 
   useEffect(() => {
     trendLayoutQuery.refetch().then(() => {
@@ -33,48 +37,95 @@ export const LayoutEditor = ({username}) => {
     );
   }, [trendLayoutQuery]);
 
-  const onLayoutChange = (gridLayout) => {
-    setLayout({
+  useEffect( () => {
+    if (editingCellKey!=null) {
+      setEditingCellContent(layout.gridContent.filter(v => v.i===editingCellKey)[0]);
+    } else {
+      setEditingCellContent(null);
+    }
+  }, [editingCellKey]);
+
+  const onGridLayoutChange = (gridLayout) => {
+    setLayout( {
       ...layout,
       gridLayout: gridLayout
     });
   };
 
-  const cloneGridLayout = () => {
-    return [...layout.gridLayout];
-  }
-
   const onAddCell = () => {
-    const newLayout = cloneGridLayout();
-    newLayout.push({
-      i: absoluteIndex.toString(),
+    const newGridLayout = [...layout.gridLayout];
+    const newGridContent = [...layout.gridContent];
+    const newIndex = absoluteIndex;
+    console.log("NI"+ newIndex);
+    setAbsoluteIndex(newIndex+1);
+    newGridLayout.push({
+      i: newIndex.toString(),
       x: 0,
       y: Infinity,
       w: 1,
       h: 1
+    })
+    newGridContent.push(getDefaultCellContent(newIndex));
+    setLayout({
+      ...layout,
+      gridLayout: newGridLayout,
+      gridContent: newGridContent
     });
-    setAbsoluteIndex(absoluteIndex + 1);
-    onLayoutChange(newLayout);
-  };
+  }
 
-  const onRemoveCell = (event, cellCode) => {
-    event.preventDefault();
-    const newLayout = cloneGridLayout();
-    newLayout.splice(newLayout.findIndex(c => c.i === cellCode), 1);
-    onLayoutChange(newLayout);
-  };
+  const onRemoveCell = (cellCode) => {
+    const newGridLayout = [...layout.gridLayout];
+    const newGridContent = [...layout.gridContent];
+    newGridLayout.splice(newGridLayout.findIndex(c => c.i===cellCode),1);
+    newGridContent.splice(newGridContent.findIndex(c => c.i===cellCode),1);
+    setLayout({
+      ...layout,
+      gridLayout: newGridLayout,
+      gridContent: newGridContent
+    });
+  }
 
-  const onEditCell = (event, cellCode) => {
-    event.preventDefault();
+  const onEditCell = (cellCode) => {
     //console.log("Edit cell "+cellCode);
-  };
+    setEditingCellKey(cellCode);
+  }
 
   const onSaveLayout = () => {
+    //console.log(trendId);
+    //console.log(username);
+    console.log("SAVING:",layout);
     trendLayoutMutation({
       variables: {
         trendLayout: layout
       }
-    }).then(r => console.log("Saved mutation:", r));
+    });
+  }
+
+  const onSaveCellContent = (content) => {
+    console.log("SAVE", JSON.stringify((content)));
+    const newGridContent = [...layout.gridContent];
+    newGridContent[newGridContent.findIndex(c => c.i===editingCellKey)]={...content};
+    setLayout({
+      ...layout,
+      gridContent: newGridContent
+    });
+    setEditingCellKey(null);
+  }
+
+  const onCancelSaveCellContent = () => {
+    console.log("CANCEL");
+    setEditingCellKey(null);
+  }
+
+  if (editingCellContent) {
+    return (
+        <CellContentEditor
+            data={null}
+            content={editingCellContent}
+            onSave={onSaveCellContent}
+            onCancel={onCancelSaveCellContent}
+        />
+    )
   }
 
   return (
@@ -93,22 +144,28 @@ export const LayoutEditor = ({username}) => {
                   cols={layout.cols * layout.granularity}
                   rowHeight={layout.width / (layout.cols * layout.granularity)}
                   width={layout.width}
-                  onLayoutChange={onLayoutChange}>
+                  onLayoutChange={onGridLayoutChange}>
         {layout.gridLayout.map(elem => {
           return (
             <DivLayout key={elem.i}>
               <SpanRemoveLayoutCell title="Remove cell">
-                <Button variant="warning" onClick={(event) => onRemoveCell(event, elem.i)}>
+                <Button variant="warning" onClick={() => onRemoveCell(elem.i)}>
                   X
                 </Button>
               </SpanRemoveLayoutCell>
-              <Button
-                variant="secondary"
-                title="Edit cell content"
-                onClick={(event) => onEditCell(event, elem.i)}
-              >
-                Edit
-              </Button>
+              <SpanEditLayoutCell title="Edit cell">
+                <Button variant="warning" onClick={() => onEditCell(elem.i)}>
+                  E
+                </Button>
+              </SpanEditLayoutCell>
+              {/*<Button*/}
+              {/*  variant="secondary"*/}
+              {/*  title="Edit cell content"*/}
+              {/*  onClick={() => onEditCell(elem.i)}*/}
+              {/*>*/}
+              {/*  Edit*/}
+              {/*</Button>*/}
+              <ContentWidget data={null} config={layout.gridContent[layout.gridLayout.findIndex(v=> v.i===elem.i)]}/>
             </DivLayout>
           );
         })}

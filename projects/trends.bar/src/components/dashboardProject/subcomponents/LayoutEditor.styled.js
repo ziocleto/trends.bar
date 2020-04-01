@@ -5,9 +5,11 @@ export const DivLayout = styled.div` {
   border: 1px solid var(--light);
   background-color: var(--secondary-alt-color);
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   align-content: center; 
+  overflow:hidden;
 }`;
 
 export const ButtonBar = styled.div` {
@@ -26,6 +28,10 @@ export const SpanRemoveLayoutCell = styled.span` {
 }`;
 
 export const SpanEditLayoutCell = styled.span` {
+    position:absolute;
     padding: 3px 5px;
+    left: 0;
+    top: 0;
     cursor: pointer;
 }`;
+
