@@ -1,0 +1,23 @@
+type Trend {
+    _id: ID!
+    trendId: String!
+    username: String
+    user: User
+    aliases: [ String! ]
+    trendGraphs: [TrendGraph]
+}
+
+
+type Query {
+    trends: [Trend]
+    trend(trendId: String!): [Trend]
+    trend_similar(trendId: String!): [Trend]
+}
+
+type Mutation {
+    createTrend(trendId: String!, username: String!): Trend
+}
+
+type Subscription {
+    trendMutated: trendMutationPayload
+}

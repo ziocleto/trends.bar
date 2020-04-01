@@ -1,0 +1,6 @@
+type Dataset {
+    trendId: ID!
+    source: String
+    sourceDocument: String
+    sourceName: String
+}
