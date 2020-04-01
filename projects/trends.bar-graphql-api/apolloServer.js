@@ -1,7 +1,7 @@
 import {app, httpServer} from "./httpserver";
 const {ApolloServer} = require('apollo-server-express');
 import typeDefs from './graphql/typeDefs';
-import {gqlResolvers} from "./graphql/resolvers/resolvers";
+import resolvers from './graphql/resolvers';
 import {gqlDataSources} from "./graphql/datasources/datasources";
 import * as authController from "eh_auth_and_auth/controllers/authController";
 
@@ -9,7 +9,7 @@ const logger = require('eh_logger');
 
 const schema = {
   typeDefs,
-  resolvers: gqlResolvers,
+  resolvers,
   dataSources: gqlDataSources,
   context: async ({req, connection}) => {
     if (connection) {
