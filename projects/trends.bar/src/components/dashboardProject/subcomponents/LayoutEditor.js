@@ -37,14 +37,6 @@ export const LayoutEditor = ({username}) => {
     );
   }, [trendLayoutQuery]);
 
-  useEffect( () => {
-    if (editingCellKey!=null) {
-      setEditingCellContent(layout.gridContent.filter(v => v.i===editingCellKey)[0]);
-    } else {
-      setEditingCellContent(null);
-    }
-  }, [editingCellKey]);
-
   const onGridLayoutChange = (gridLayout) => {
     setLayout( {
       ...layout,
@@ -88,6 +80,7 @@ export const LayoutEditor = ({username}) => {
   const onEditCell = (cellCode) => {
     //console.log("Edit cell "+cellCode);
     setEditingCellKey(cellCode);
+    setEditingCellContent(layout.gridContent.filter(v => v.i===cellCode)[0]);
   }
 
   const onSaveLayout = () => {
@@ -110,6 +103,7 @@ export const LayoutEditor = ({username}) => {
       gridContent: newGridContent
     });
     setEditingCellKey(null);
+    setEditingCellContent(null);
   }
 
   const onCancelSaveCellContent = () => {

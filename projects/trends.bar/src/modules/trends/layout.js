@@ -31,10 +31,41 @@ export const getDefaultTrendLayout = (trendId, username) => {
 };
 
 export const getDefaultCellContent = (i) => {
+  return getDefaultWidgetContent("text",i);
+}
+
+export const getDefaultWidgetContent = (type,i) => {
+  switch (type) {
+    case "text": {
+      return getDefaultWidgetTextContent(i);
+    }
+    case "table": {
+      return getDefaultWidgetTableContent(i);
+    }
+    default: {
+      return getDefaultWidgetTextContent(i);
+    }
+  }
+}
+
+const getDefaultWidgetTextContent = (i) => {
   return {
     i: i.toString(),
     type: "text",
     title: "Title "+i.toString(),
-    subTitle: "Subtitle "+i.toString()
+    titleJSON: "",
+    subtitle: "Subtitle "+i.toString(),
+    subtitleJSON: ""
+  };
+}
+
+const getDefaultWidgetTableContent = (i) => {
+  return {
+    i: i.toString(),
+    type: "table",
+    title: "Title TABLE "+i.toString(),
+    titleJSON: "",
+    subtitle: "Subtitle TABLE "+i.toString(),
+    subtitleJSON: ""
   };
 }

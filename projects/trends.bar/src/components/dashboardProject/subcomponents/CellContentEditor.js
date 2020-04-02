@@ -1,11 +1,12 @@
 import "./react-grid-styles.css"
 import "./react-resizable-styles.css"
 
-import React, {Fragment, useEffect, useState} from "react";
+import React, {Fragment, useState} from "react";
 import {Button, ButtonGroup, ButtonToolbar, Dropdown, DropdownButton} from "react-bootstrap";
 import {ContentWidget} from "./ContentWidget";
 import {Content} from "./CellContentEditor.styled";
 import {ContentWidgetEditor} from "./ContentWidgetEditor";
+import {getDefaultWidgetContent} from "../../../modules/trends/layout";
 
 export const CellContentEditor = ({data,content,onSave,onCancel}) => {
 
@@ -19,10 +20,8 @@ export const CellContentEditor = ({data,content,onSave,onCancel}) => {
     }
     const setType = (type) => {
         console.log("Set type: ",type);
-        setCellContent({
-            ...content,
-            type: type
-        })
+        const newContent = getDefaultWidgetContent(type, content.i);
+        setCellContent(newContent);
     }
 
     const onUpdateWidget = (content) => {
@@ -51,7 +50,7 @@ export const CellContentEditor = ({data,content,onSave,onCancel}) => {
                 </ButtonGroup>
             </ButtonToolbar>
             <br/>
-            <ContentWidgetEditor data={data} config={cellContent} onUpdate={onUpdateWidget}/>
+            <ContentWidgetEditor config={cellContent} onUpdate={onUpdateWidget}/>
             <Content>
                 <ContentWidget data={data} config={cellContent}/>
             </Content>

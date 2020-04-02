@@ -26,6 +26,12 @@ input TrendLayoutInput {
     cols: Int
     width: Int
     gridLayout: [TrendGridLayoutInput!]
+    gridContent: [ContentWidgetInput!]
+}
+
+input ContentWidgetInput {
+    type: String!
+    i: String!
 }
 
 type TrendLayout {
@@ -40,16 +46,11 @@ type TrendLayout {
     gridContent: [ContentWidget]
 }
 
-type ContentWidgetTitle {
-    type: String
-    title: String
-    subTitle: String
-}
-
-type ContentWidget {
+interface ContentWidget {
     type: String!
     i: String!
 }
+
 
 type Query {
     trendLayouts(trendId: String!, username:String!): [TrendLayout]
