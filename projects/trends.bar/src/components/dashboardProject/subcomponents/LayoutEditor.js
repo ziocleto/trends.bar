@@ -44,6 +44,7 @@ export const LayoutEditor = ({username}) => {
           const queryData = getQueryLoadedWithValueArrayNotEmpty(trendDataQuery);
           if (queryData) {
             setTrendData(queryData);
+            console.log(JSON.stringify(queryData));
           }
         }
     );
@@ -173,7 +174,7 @@ export const LayoutEditor = ({username}) => {
               {/*>*/}
               {/*  Edit*/}
               {/*</Button>*/}
-              <ContentWidget data={null} config={layout.gridContent[layout.gridLayout.findIndex(v=> v.i===elem.i)]}/>
+              <ContentWidget data={trendData} config={layout.gridContent[layout.gridLayout.findIndex(v=> v.i===elem.i)]}/>
             </DivLayout>
           );
         })}
