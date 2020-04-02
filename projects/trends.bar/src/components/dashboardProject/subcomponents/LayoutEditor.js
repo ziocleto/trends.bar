@@ -20,7 +20,7 @@ export const LayoutEditor = ({username}) => {
 
   const [trendLayoutMutation] = useMutation(upsertTrendLayout);
   const trendLayoutQuery = useQuery(getTrendLayouts(), {variables: {name: username, trendId: trendId}});
-  const trendDataQuery = useQuery(getTrendGraphsByUserTrendId(), {variables: {name: username, trendId: trendId+"a"}});
+  const trendDataQuery = useQuery(getTrendGraphsByUserTrendId(), {variables: {name: username, trendId: trendId}});
 
   const [layout, setLayout] = useState(getDefaultTrendLayout(trendId, username));
   const [absoluteIndex, setAbsoluteIndex] = useState(Math.max(...(layout.gridLayout.map((v)=> Number(v.i))))+1);
