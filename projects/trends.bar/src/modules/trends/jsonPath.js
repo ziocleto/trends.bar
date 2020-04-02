@@ -1,6 +1,7 @@
 import jp from 'jsonpath'
 
 const getJsonPath = (text) => {
+    if ( !text ) return null;
     var re = new RegExp('jp`(.+)`');
     var match  = text.match(re);
     if (match)
