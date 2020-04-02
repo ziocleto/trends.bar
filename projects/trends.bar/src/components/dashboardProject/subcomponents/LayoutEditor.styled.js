@@ -1,22 +1,17 @@
 import styled from "styled-components";
 
 export const DivLayout = styled.div` {
-  margin: 5px;
+  margin: 2px;
   border: 1px solid var(--light);
-  background-color: var(--secondary-alt-color);
+  border-radius: 5px;
+  background-color: var(--dark-color-transparent);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   align-content: center; 
   overflow:hidden;
-}`;
-
-export const ButtonBar = styled.div` {
-    margin: 5px;
-    padding: 5px;
-    border-top: 1px solid var(--light);
-    border-bottom: 1px solid var(--light);
+  cursor: pointer;
 }`;
 
 export const SpanRemoveLayoutCell = styled.span` {

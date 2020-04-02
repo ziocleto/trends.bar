@@ -12,7 +12,7 @@ import {LayoutEditor} from "./subcomponents/LayoutEditor";
 export const DashboardProject = ({auth}) => {
 
   const trendId = sanitizeURLParams(getFileNameOnlyNoExt(useLocation().pathname));
-  const [activeTab, setActiveTab] = useState("DataSources");
+  const [activeTab, setActiveTab] = useState("Layout");
 
   if (!isUserAuthenticated(auth) || trendId === null) {
     return (<Fragment/>)
