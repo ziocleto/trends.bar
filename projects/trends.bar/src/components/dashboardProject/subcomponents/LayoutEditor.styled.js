@@ -3,12 +3,7 @@ import styled from "styled-components";
 export const DivLayout = styled.div` {
   margin: 5px;
   border: 1px solid var(--light);
-  background-color: var(--secondary-alt-color);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  align-content: center; 
+  // background-color: var(--secondary-alt-color);
   overflow:hidden;
 }`;
 

@@ -2,7 +2,7 @@ import "./react-grid-styles.css"
 import "./react-resizable-styles.css"
 
 import React, {Fragment} from "react";
-import {Subtitle, Title} from "./ContentWidgetText.styled";
+import {Container, Title, Subtitle} from "./ContentWidgetText.styled";
 import {getTextFromJsonPath} from "../../../modules/trends/jsonPath";
 
 export const ContentWidgetText = ({data,config}) => {
@@ -12,8 +12,10 @@ export const ContentWidgetText = ({data,config}) => {
 
     return (
         <Fragment>
-            <Title>{title}</Title>
-            <Subtitle>{subtitle}</Subtitle>
+            <Container>
+                <Title>{title}</Title>
+                <Subtitle>{subtitle}</Subtitle>
+            </Container>
         </Fragment>
     )
 }

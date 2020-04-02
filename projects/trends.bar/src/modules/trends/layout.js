@@ -61,7 +61,29 @@ const getDefaultWidgetTableContent = (i) => {
   return {
     i: i.toString(),
     type: "table",
-    title: "Title TABLE "+i.toString(),
-    subtitle: "Subtitle TABLE "+i.toString(),
+    keyTitle: "key",
+    keyQuery: "$[0].values[*]",
+    keyField: "x",
+    keyTransform: "toDateDD/MM/YYYY",
+    columns: [
+      {
+        title: "value",
+        query: "$[0].values[*]",
+        field: "y",
+        transform: ""
+      },
+      {
+        title: "value 2",
+        query: "$[1].values[*]",
+        field: "y",
+        transform: ""
+      },
+      {
+        title: "value 3",
+        query: "$[2].values[*]",
+        field: "y",
+        transform: ""
+      }
+    ]
   };
 }
