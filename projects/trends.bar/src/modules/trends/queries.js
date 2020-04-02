@@ -78,8 +78,32 @@ export const getTrendLayouts = () => {
                   type
                   i
                   title
-                  subTitle
+                  subtitle
               }
           }
       }`;
 };
+
+export const getTrendGraphsByUserTrendId = () => {
+    return gql`
+        query getTrends($trendId:String!, $name:String!) {
+            trendGraphs(trendId:$trendId, username:$name) {
+                trendId
+                username
+                title
+                label
+                values {
+                    x
+                    y
+                }
+                valuesDx {
+                    x
+                    y
+                }
+                valuesDx2 {
+                    x
+                    y
+                }
+            }
+        }`;
+}

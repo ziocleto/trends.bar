@@ -8,7 +8,7 @@ import {Button, ButtonGroup, ButtonToolbar} from "react-bootstrap";
 import {getDefaultCellContent, getDefaultTrendLayout} from "../../../modules/trends/layout";
 import {upsertTrendLayout} from "../../../modules/trends/mutations";
 import {useMutation, useQuery} from "@apollo/react-hooks";
-import {getTrendLayouts} from "../../../modules/trends/queries";
+import {getTrendGraphsByUserTrendId, getTrendLayouts} from "../../../modules/trends/queries";
 import {useTrendIdGetter} from "../../../modules/trends/globals";
 import {getQueryLoadedWithValueArrayNotEmpty} from "../../../futuremodules/graphqlclient/query";
 import {CellContentEditor} from "./CellContentEditor";
@@ -20,11 +20,13 @@ export const LayoutEditor = ({username}) => {
 
   const [trendLayoutMutation] = useMutation(upsertTrendLayout);
   const trendLayoutQuery = useQuery(getTrendLayouts(), {variables: {name: username, trendId: trendId}});
+  const trendDataQuery = useQuery(getTrendGraphsByUserTrendId(), {variables: {name: username, trendId: trendId}});
 
   const [layout, setLayout] = useState(getDefaultTrendLayout(trendId, username));
   const [absoluteIndex, setAbsoluteIndex] = useState(Math.max(...(layout.gridLayout.map((v,i)=> Number(v.i))))+1);
   const [editingCellKey,setEditingCellKey] = useState(null);
   const [editingCellContent, setEditingCellContent] = useState(null);
+  const [trendData, setTrendData] = useState({});
 
   useEffect(() => {
     trendLayoutQuery.refetch().then(() => {
@@ -36,6 +38,17 @@ export const LayoutEditor = ({username}) => {
       }
     );
   }, [trendLayoutQuery]);
+
+  useEffect(() => {
+    trendDataQuery.refetch().then(() => {
+          const queryData = getQueryLoadedWithValueArrayNotEmpty(trendDataQuery);
+          if (queryData) {
+            setTrendData(queryData);
+          }
+        }
+    );
+  }, [trendDataQuery]);
+
 
   const onGridLayoutChange = (gridLayout) => {
     setLayout( {
@@ -109,12 +122,13 @@ export const LayoutEditor = ({username}) => {
   const onCancelSaveCellContent = () => {
     console.log("CANCEL");
     setEditingCellKey(null);
+    setEditingCellContent(null);
   }
 
   if (editingCellContent) {
     return (
         <CellContentEditor
-            data={null}
+            data={trendData}
             content={editingCellContent}
             onSave={onSaveCellContent}
             onCancel={onCancelSaveCellContent}

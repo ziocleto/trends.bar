@@ -12,16 +12,17 @@ export const CellContentEditor = ({data,content,onSave,onCancel}) => {
 
     const [cellContent,setCellContent]=useState(content);
 
-    console.log(content);
     const resetContext = () => {
         setCellContent({
             ...content
         })
     }
     const setType = (type) => {
-        console.log("Set type: ",type);
-        const newContent = getDefaultWidgetContent(type, content.i);
-        setCellContent(newContent);
+        if (content.type!==type) {
+            console.log("Set type: ",type);
+            const newContent = getDefaultWidgetContent(type, content.i);
+            setCellContent(newContent);
+        }
     }
 
     const onUpdateWidget = (content) => {
@@ -41,8 +42,8 @@ export const CellContentEditor = ({data,content,onSave,onCancel}) => {
                 <ButtonGroup className="mr-4">
                     <DropdownButton as={ButtonGroup} title={'Type: '+ cellContent.type.toUpperCase()} id="bg-nested-dropdown">
                         <Dropdown.Item onClick={() => setType('text')}>Text</Dropdown.Item>
-                        <Dropdown.Item onClick={() => setType('graph')}>Graph</Dropdown.Item>
-                        <Dropdown.Item onClick={() => setType('table')}>Table</Dropdown.Item>
+                        {/*<Dropdown.Item onClick={() => setType('graph')}>Graph</Dropdown.Item>*/}
+                        {/*<Dropdown.Item onClick={() => setType('table')}>Table</Dropdown.Item>*/}
                     </DropdownButton>
                 </ButtonGroup>
                 <ButtonGroup className="mr-2">
