@@ -20,10 +20,10 @@ export const LayoutEditor = ({username}) => {
 
   const [trendLayoutMutation] = useMutation(upsertTrendLayout);
   const trendLayoutQuery = useQuery(getTrendLayouts(), {variables: {name: username, trendId: trendId}});
-  const trendDataQuery = useQuery(getTrendGraphsByUserTrendId(), {variables: {name: username, trendId: trendId}});
+  const trendDataQuery = useQuery(getTrendGraphsByUserTrendId(), {variables: {name: username, trendId: trendId+"a"}});
 
   const [layout, setLayout] = useState(getDefaultTrendLayout(trendId, username));
-  const [absoluteIndex, setAbsoluteIndex] = useState(Math.max(...(layout.gridLayout.map((v,i)=> Number(v.i))))+1);
+  const [absoluteIndex, setAbsoluteIndex] = useState(Math.max(...(layout.gridLayout.map((v)=> Number(v.i))))+1);
   const [editingCellKey,setEditingCellKey] = useState(null);
   const [editingCellContent, setEditingCellContent] = useState(null);
   const [trendData, setTrendData] = useState({});
@@ -33,7 +33,7 @@ export const LayoutEditor = ({username}) => {
         const queryLayout = getQueryLoadedWithValueArrayNotEmpty(trendLayoutQuery);
         if (queryLayout) {
           setLayout(queryLayout[0]);
-          setAbsoluteIndex(Math.max(...(queryLayout[0].gridLayout.map((v, i) => Number(v.i)))) + 1);
+          setAbsoluteIndex(Math.max(...(queryLayout[0].gridLayout.map((v) => Number(v.i)))) + 1);
         }
       }
     );
@@ -44,7 +44,6 @@ export const LayoutEditor = ({username}) => {
           const queryData = getQueryLoadedWithValueArrayNotEmpty(trendDataQuery);
           if (queryData) {
             setTrendData(queryData);
-            console.log(JSON.stringify(queryData));
           }
         }
     );
@@ -70,14 +69,14 @@ export const LayoutEditor = ({username}) => {
       y: Infinity,
       w: 1,
       h: 1
-    })
+    });
     newGridContent.push(getDefaultCellContent(newIndex));
     setLayout({
       ...layout,
       gridLayout: newGridLayout,
       gridContent: newGridContent
     });
-  }
+  };
 
   const onRemoveCell = (cellCode) => {
     const newGridLayout = [...layout.gridLayout];
@@ -89,13 +88,13 @@ export const LayoutEditor = ({username}) => {
       gridLayout: newGridLayout,
       gridContent: newGridContent
     });
-  }
+  };
 
   const onEditCell = (cellCode) => {
     //console.log("Edit cell "+cellCode);
     setEditingCellKey(cellCode);
     setEditingCellContent(layout.gridContent.filter(v => v.i===cellCode)[0]);
-  }
+  };
 
   const onSaveLayout = () => {
     //console.log(trendId);
@@ -105,8 +104,8 @@ export const LayoutEditor = ({username}) => {
       variables: {
         trendLayout: layout
       }
-    });
-  }
+    }).then();
+  };
 
   const onSaveCellContent = (content) => {
     console.log("SAVE", JSON.stringify((content)));
@@ -118,13 +117,13 @@ export const LayoutEditor = ({username}) => {
     });
     setEditingCellKey(null);
     setEditingCellContent(null);
-  }
+  };
 
   const onCancelSaveCellContent = () => {
     console.log("CANCEL");
     setEditingCellKey(null);
     setEditingCellContent(null);
-  }
+  };
 
   if (editingCellContent) {
     return (
@@ -148,8 +147,7 @@ export const LayoutEditor = ({username}) => {
           <Button onClick={onSaveLayout}>Save Layout</Button>
         </ButtonGroup>
       </ButtonToolbar>
-      <GridLayout className="layout"
-                  layout={layout.gridLayout}
+      <GridLayout layout={layout.gridLayout}
                   cols={layout.cols * layout.granularity}
                   rowHeight={layout.width / (layout.cols * layout.granularity)}
                   width={layout.width}
@@ -158,13 +156,13 @@ export const LayoutEditor = ({username}) => {
           return (
             <DivLayout key={elem.i}>
               <SpanRemoveLayoutCell title="Remove cell">
-                <Button variant="warning" onClick={() => onRemoveCell(elem.i)}>
-                  X
+                <Button variant="outline-danger" onClick={() => onRemoveCell(elem.i)}>
+                  <i className={"fas fa-minus-circle"}/>
                 </Button>
               </SpanRemoveLayoutCell>
               <SpanEditLayoutCell title="Edit cell">
-                <Button variant="warning" onClick={() => onEditCell(elem.i)}>
-                  E
+                <Button variant="outline-info" onClick={() => onEditCell(elem.i)}>
+                  <i className={"fas fa-edit"}/>
                 </Button>
               </SpanEditLayoutCell>
               {/*<Button*/}
