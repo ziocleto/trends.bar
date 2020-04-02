@@ -53,9 +53,7 @@ const getDefaultWidgetTextContent = (i) => {
     i: i.toString(),
     type: "text",
     title: "Title "+i.toString(),
-    titleJSON: "",
-    subtitle: "Subtitle "+i.toString(),
-    subtitleJSON: ""
+    subTitle: "Subtitle "+i.toString(),
   };
 }
 
@@ -64,8 +62,6 @@ const getDefaultWidgetTableContent = (i) => {
     i: i.toString(),
     type: "table",
     title: "Title TABLE "+i.toString(),
-    titleJSON: "",
-    subtitle: "Subtitle TABLE "+i.toString(),
-    subtitleJSON: ""
+    subTitle: "Subtitle TABLE "+i.toString(),
   };
 }

@@ -9,7 +9,7 @@ export const ContentWidgetText = ({data,config}) => {
     return (
         <Fragment>
             <Title>{config.title}</Title>
-            <SubTitle>{config.subtitle}</SubTitle>
+            <SubTitle>{config.subtTitle}</SubTitle>
         </Fragment>
     )
 }

@@ -8,6 +8,39 @@ type TrendGridLayout {
     static: Boolean
 }
 
+type TrendLayout {
+    _id: ID!
+    name: String
+    trendId: String
+    username: String
+    granularity: Int
+    cols: Int
+    width: Int
+    gridLayout: [TrendGridLayout]
+    gridContent: [ContentWidgetTitle]
+}
+
+interface ContentWidgetBase {
+    type: String!
+    i: String!
+}
+
+type ContentWidgetTitle implements ContentWidgetBase {
+    type: String!
+    i: String!
+    title: String
+    subTitle: String
+}
+
+union ContentWidget = ContentWidgetTitle
+
+input ContentWidgetTitleInput {
+    type: String!
+    i: String!
+    title: String
+    subTitle: String
+}
+
 input TrendGridLayoutInput {
     i: String
     x: Int
@@ -26,31 +59,8 @@ input TrendLayoutInput {
     cols: Int
     width: Int
     gridLayout: [TrendGridLayoutInput!]
-    gridContent: [ContentWidgetInput!]
+    gridContent: [ContentWidgetTitleInput!]
 }
-
-input ContentWidgetInput {
-    type: String!
-    i: String!
-}
-
-type TrendLayout {
-    _id: ID!
-    name: String
-    trendId: String
-    username: String
-    granularity: Int
-    cols: Int
-    width: Int
-    gridLayout: [TrendGridLayout]
-    gridContent: [ContentWidget]
-}
-
-interface ContentWidget {
-    type: String!
-    i: String!
-}
-
 
 type Query {
     trendLayouts(trendId: String!, username:String!): [TrendLayout]

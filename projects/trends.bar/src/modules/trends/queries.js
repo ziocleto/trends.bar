@@ -24,15 +24,15 @@ export const getTrends = (trendId) => {
 };
 
 export const getSimilarTrends = (trendId) => {
-    return gql`
-        {
-            trend_similar (trendId: "${trendId}") {
-                trendId
-                user {
-                    name
-                }
-            }
-        }`;
+  return gql`
+      {
+          trend_similar (trendId: "${trendId}") {
+              trendId
+              user {
+                  name
+              }
+          }
+      }`;
 };
 
 export const getScript = () => {
@@ -56,24 +56,30 @@ export const getScripts = () => {
 };
 
 export const getTrendLayouts = () => {
-    return gql`
+  return gql`
       query getTrendLayouts($trendId:String!, $name:String!) {
           trendLayouts(trendId:$trendId, username:$name) {
-            name
-            username
-            trendId
-            cols
-            granularity
-            width
-            gridLayout {
-                i
-                x
-                y
-                w
-                h
-                moved
-                static
-            }
+              name
+              username
+              trendId
+              cols
+              granularity
+              width
+              gridLayout {
+                  i
+                  x
+                  y
+                  w
+                  h
+                  moved
+                  static
+              }
+              gridContent {
+                  type
+                  i
+                  title
+                  subTitle
+              }
           }
       }`;
 };
