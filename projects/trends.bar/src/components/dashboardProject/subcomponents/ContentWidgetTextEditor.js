@@ -23,7 +23,7 @@ export const ContentWidgetTextEditor = ({config,onUpdate}) => {
                         Title
                     </Form.Label>
                     <Col>
-                        <Form.Control size="sm" type="text" defaultValue={content.title} onChange={(e) => onChange("title", e.target.value)}/>
+                        <Form.Control size="sm" type="text" value={content.title} onChange={(e) => onChange("title", e.target.value)}/>
                     </Col>
                 </Form.Row>
                 <Form.Row>
@@ -31,7 +31,7 @@ export const ContentWidgetTextEditor = ({config,onUpdate}) => {
                         Subtitle
                     </Form.Label>
                     <Col>
-                        <Form.Control size="sm" type="text" defaultValue={content.subtitle} onChange={(e) => onChange("subtitle", e.target.value)}/>
+                        <Form.Control size="sm" type="text" value={content.subtitle} onChange={(e) => onChange("subtitle", e.target.value)}/>
                     </Col>
                 </Form.Row>
             </Form.Group>

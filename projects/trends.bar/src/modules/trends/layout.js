@@ -42,9 +42,48 @@ export const getDefaultWidgetContent = (type,i) => {
     case "table": {
       return getDefaultWidgetTableContent(i);
     }
+    case "graphxy": {
+      return getDefaultWidgetGraphXYContent(i);
+    }
     default: {
       return getDefaultWidgetTextContent(i);
     }
+  }
+}
+
+const getDefaultWidgetGraphXYContent = (i) => {
+  return {
+    i: i.toString(),
+    type: "graphxy",
+    series: [
+      {
+        title: "Casi",
+        query: "$[?(@.title=='casi' && @.label=='Lombardia')].values[*]",
+        fieldX: "x",
+        transformX: "toDateDD/MM/YYYY",
+        fieldY: "y",
+        transformY: ""
+      },
+      {
+        title: "Morti",
+        query: "$[?(@.title=='morti' && @.label=='Lombardia')].values[*]",
+        fieldX: "x",
+        transformX: "toDateDD/MM/YYYY",
+        fieldY: "y",
+        transformY: ""
+      }
+    ]
+  }
+}
+
+export const getDefaultWidgetGraphXYSerieContent = () => {
+  return {
+    title: "Serie",
+    query: "$[0].values[*]",
+    fieldX: "x",
+    transformX: "toDateDD/MM/YYYY",
+    fieldY: "y",
+    transformY: ""
   }
 }
 

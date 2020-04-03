@@ -18,7 +18,7 @@ export const CellContentEditor = ({data,content,onSave,onCancel}) => {
         })
     }
     const setType = (type) => {
-        if (content.type!==type) {
+        if (cellContent.type!==type) {
             console.log("Set type: ",type);
             const newContent = getDefaultWidgetContent(type, content.i);
             setCellContent(newContent);
@@ -43,6 +43,7 @@ export const CellContentEditor = ({data,content,onSave,onCancel}) => {
                     <DropdownButton as={ButtonGroup} title={'Type: '+ cellContent.type.toUpperCase()} id="bg-nested-dropdown">
                         <Dropdown.Item onClick={() => setType('text')}>Text</Dropdown.Item>
                         <Dropdown.Item onClick={() => setType('table')}>Table</Dropdown.Item>
+                        <Dropdown.Item onClick={() => setType('graphxy')}>Graph XY</Dropdown.Item>
                         {/*<Dropdown.Item onClick={() => setType('graph')}>Graph</Dropdown.Item>*/}
                     </DropdownButton>
                 </ButtonGroup>

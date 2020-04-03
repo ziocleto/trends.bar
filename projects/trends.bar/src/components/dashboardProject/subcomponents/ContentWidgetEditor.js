@@ -4,6 +4,7 @@ import "./react-resizable-styles.css"
 import React, {Fragment} from "react";
 import {ContentWidgetTextEditor} from './ContentWidgetTextEditor'
 import {ContentWidgetTableEditor} from "./ContentWidgetTableEditor";
+import {ContentWidgetGraphXYEditor} from "./ContentWidgetGraphXYEditor";
 
 export const ContentWidgetEditor = ({config,onUpdate}) => {
 
@@ -15,6 +16,10 @@ export const ContentWidgetEditor = ({config,onUpdate}) => {
         case "table":
             return (
                 <ContentWidgetTableEditor config={config} onUpdate={onUpdate}/>
+            );
+        case "graphxy":
+            return (
+                <ContentWidgetGraphXYEditor config={config} onUpdate={onUpdate}/>
             );
         default:
             return (<Fragment></Fragment>);
