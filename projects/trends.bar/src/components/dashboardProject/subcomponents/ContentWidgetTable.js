@@ -33,7 +33,7 @@ export const ContentWidgetTable = ({data,config}) => {
         }
     }
 
-    console.log("MATRIX: ",JSON.stringify(matrixData));
+    //console.log("MATRIX: ",JSON.stringify(matrixData));
 
     //console.log("KEYDATA",JSON.stringify(keyData));
 

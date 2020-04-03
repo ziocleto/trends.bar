@@ -61,29 +61,21 @@ const getDefaultWidgetTableContent = (i) => {
   return {
     i: i.toString(),
     type: "table",
-    keyTitle: "key",
+    keyTitle: "Date",
     keyQuery: "$[0].values[*]",
     keyField: "x",
     keyTransform: "toDateDD/MM/YYYY",
     columns: [
-      {
-        title: "value",
-        query: "$[0].values[*]",
-        field: "y",
-        transform: ""
-      },
-      {
-        title: "value 2",
-        query: "$[1].values[*]",
-        field: "y",
-        transform: ""
-      },
-      {
-        title: "value 3",
-        query: "$[2].values[*]",
-        field: "y",
-        transform: ""
-      }
+        getDefaultWidgetTableColumnContent()
     ]
   };
+}
+
+export const getDefaultWidgetTableColumnContent = () => {
+  return {
+    title: "Column",
+    query: "$[0].values[*]",
+    field: "y",
+    transform: ""
+  }
 }
