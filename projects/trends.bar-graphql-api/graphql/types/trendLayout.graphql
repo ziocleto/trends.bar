@@ -17,28 +17,49 @@ type TrendLayout {
     cols: Int
     width: Int
     gridLayout: [TrendGridLayout]
-    gridContent: [ContentWidgetTitle]
+    gridContent: [ContentWidget]
 }
 
-interface ContentWidgetBase {
-    type: String!
-    i: String!
+type ContentWidgetTableColumn {
+    title: String
+    query: String
+    field: String
+    transform: String
 }
 
-type ContentWidgetTitle implements ContentWidgetBase {
+type ContentWidget {
     type: String!
     i: String!
+
     title: String
     subtitle: String
+
+    tableKeyTitle: String
+    tableKeyQuery: String
+    tableKeyField: String
+    tableKeyTransform: String
+    tableColumns: [ContentWidgetTableColumn]
 }
 
-union ContentWidget = ContentWidgetTitle
+input ContentWidgetTableColumnInput {
+    title: String
+    query: String
+    field: String
+    transform: String
+}
 
 input ContentWidgetTitleInput {
     type: String!
     i: String!
+
     title: String
     subtitle: String
+
+    tableKeyTitle: String
+    tableKeyQuery: String
+    tableKeyField: String
+    tableKeyTransform: String
+    tableColumns: [ContentWidgetTableColumnInput]
 }
 
 input TrendGridLayoutInput {

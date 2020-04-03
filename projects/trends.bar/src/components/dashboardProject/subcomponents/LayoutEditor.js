@@ -23,8 +23,8 @@ export const LayoutEditor = ({username}) => {
   const trendDataQuery = useQuery(getTrendGraphsByUserTrendId(), {variables: {name: username, trendId: trendId}});
 
   const [layout, setLayout] = useState(getDefaultTrendLayout(trendId, username));
-  const [absoluteIndex, setAbsoluteIndex] = useState(Math.max(...(layout.gridLayout.map((v)=> Number(v.i))))+1);
-  const [editingCellKey,setEditingCellKey] = useState(null);
+  const [absoluteIndex, setAbsoluteIndex] = useState(Math.max(...(layout.gridLayout.map((v) => Number(v.i)))) + 1);
+  const [editingCellKey, setEditingCellKey] = useState(null);
   const [editingCellContent, setEditingCellContent] = useState(null);
   const [trendData, setTrendData] = useState({});
 
@@ -41,17 +41,18 @@ export const LayoutEditor = ({username}) => {
 
   useEffect(() => {
     trendDataQuery.refetch().then(() => {
-          const queryData = getQueryLoadedWithValueArrayNotEmpty(trendDataQuery);
-          if (queryData) {
-            setTrendData(queryData);
-          }
+        const queryData = getQueryLoadedWithValueArrayNotEmpty(trendDataQuery);
+        if (queryData) {
+          setTrendData(queryData);
+          console.log(queryData);
         }
+      }
     );
   }, [trendDataQuery]);
 
 
   const onGridLayoutChange = (gridLayout) => {
-    setLayout( {
+    setLayout({
       ...layout,
       gridLayout: gridLayout
     });
@@ -61,8 +62,8 @@ export const LayoutEditor = ({username}) => {
     const newGridLayout = [...layout.gridLayout];
     const newGridContent = [...layout.gridContent];
     const newIndex = absoluteIndex;
-    console.log("NI"+ newIndex);
-    setAbsoluteIndex(newIndex+1);
+    console.log("NI" + newIndex);
+    setAbsoluteIndex(newIndex + 1);
     newGridLayout.push({
       i: newIndex.toString(),
       x: 0,
@@ -81,8 +82,8 @@ export const LayoutEditor = ({username}) => {
   const onRemoveCell = (cellCode) => {
     const newGridLayout = [...layout.gridLayout];
     const newGridContent = [...layout.gridContent];
-    newGridLayout.splice(newGridLayout.findIndex(c => c.i===cellCode),1);
-    newGridContent.splice(newGridContent.findIndex(c => c.i===cellCode),1);
+    newGridLayout.splice(newGridLayout.findIndex(c => c.i === cellCode), 1);
+    newGridContent.splice(newGridContent.findIndex(c => c.i === cellCode), 1);
     setLayout({
       ...layout,
       gridLayout: newGridLayout,
@@ -93,13 +94,13 @@ export const LayoutEditor = ({username}) => {
   const onEditCell = (cellCode) => {
     //console.log("Edit cell "+cellCode);
     setEditingCellKey(cellCode);
-    setEditingCellContent(layout.gridContent.filter(v => v.i===cellCode)[0]);
+    setEditingCellContent(layout.gridContent.filter(v => v.i === cellCode)[0]);
   };
 
   const onSaveLayout = () => {
     //console.log(trendId);
     //console.log(username);
-    console.log("SAVING:",layout);
+    console.log("SAVING:", layout);
     trendLayoutMutation({
       variables: {
         trendLayout: layout
@@ -110,7 +111,7 @@ export const LayoutEditor = ({username}) => {
   const onSaveCellContent = (content) => {
     console.log("SAVE", JSON.stringify((content)));
     const newGridContent = [...layout.gridContent];
-    newGridContent[newGridContent.findIndex(c => c.i===editingCellKey)]={...content};
+    newGridContent[newGridContent.findIndex(c => c.i === editingCellKey)] = {...content};
     setLayout({
       ...layout,
       gridContent: newGridContent
@@ -127,12 +128,12 @@ export const LayoutEditor = ({username}) => {
 
   if (editingCellContent) {
     return (
-        <CellContentEditor
-            data={trendData}
-            content={editingCellContent}
-            onSave={onSaveCellContent}
-            onCancel={onCancelSaveCellContent}
-        />
+      <CellContentEditor
+        data={trendData}
+        content={editingCellContent}
+        onSave={onSaveCellContent}
+        onCancel={onCancelSaveCellContent}
+      />
     )
   }
 
@@ -172,7 +173,8 @@ export const LayoutEditor = ({username}) => {
               {/*>*/}
               {/*  Edit*/}
               {/*</Button>*/}
-              <ContentWidget data={trendData} config={layout.gridContent[layout.gridLayout.findIndex(v=> v.i===elem.i)]}/>
+              <ContentWidget data={trendData}
+                             config={layout.gridContent[layout.gridLayout.findIndex(v => v.i === elem.i)]}/>
             </DivLayout>
           );
         })}

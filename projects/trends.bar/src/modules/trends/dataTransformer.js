@@ -3,23 +3,26 @@ import numeraljs from 'numeraljs'
 
 export const transformData = (source, transform) => {
 
-    let result=source;
-    try {
-        if (transform!==undefined && transform!==null && transform.startsWith("toDate")) {
-            const format=transform.substr(6);
-            result=moment.unix(source).format(format);
-        } else if (transform!==undefined && transform!==null && transform.startsWith("toFormatNumber")) {
-            console.log(transform);
-            const format=transform.substr(14);
-            console.log(format);
-            result=numeraljs(source).format(format);
-            console.log(result);
-        }
-
-    } catch (ex) {
-        console.log("Error in transform data", ex);
-        result=source;
+  let result = source;
+  try {
+    if (transform) {
+      if (transform.startsWith("toDate")) {
+        const format = transform.substr(6);
+        return moment.unix(source).format(format);
+      }
+      if (transform.startsWith("tomsDate")) {
+        const format = transform.substr(8);
+        return moment.unix(source/1000).format(format);
+      }
+      if (transform.startsWith("toFormatNumber")) {
+        const format = transform.substr(14);
+        return numeraljs(source).format(format);
+      }
     }
+  } catch (ex) {
+    console.log("Error in transform data", ex);
+    result = source;
+  }
 
-    return result;
+  return result;
 }

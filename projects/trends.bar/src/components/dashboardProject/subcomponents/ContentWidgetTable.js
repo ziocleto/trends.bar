@@ -17,25 +17,21 @@ export const ContentWidgetTable = ({data,config}) => {
         return dataRow.map((v,i)=>(typeof v==="object" && v[field]!==undefined)?v[field]:null).filter(v => v!==null);
     }
 
-    const keyData = getDataColumn(data, config.keyQuery, config.keyField);
-    const matrixData = keyData.map(e => { return { key: e, transformedKey: transformData(e,config.keyTransform), columns: []}});
-    for (let c=0;c<config.columns.length;c++) {
-        const column = config.columns[c];
+    const keyData = getDataColumn(data, config.tableKeyQuery, config.tableKeyField);
+    const matrixData = keyData.map(e => { return { key: e, transformedKey: transformData(e,config.tableKeyTransform), tableColumns: []}});
+    for (let c=0;c<config.tableColumns.length;c++) {
+        const column = config.tableColumns[c];
         const colDataRow = getDataRow(data,column.query);
         for (let k=0;k<matrixData.length;k++) {
-            const colDataColumnIndex=colDataRow.findIndex(e => e[config.keyField]===matrixData[k]["key"]);
+            const colDataColumnIndex=colDataRow.findIndex(e => e[config.tableKeyField]===matrixData[k]["key"]);
             if (colDataColumnIndex!==-1) {
                 const colDataColumn = colDataRow[colDataColumnIndex][column.field];
-                matrixData[k].columns.push(transformData(colDataColumn, column.transform));
+                matrixData[k].tableColumns.push(transformData(colDataColumn, column.transform));
             } else {
-                matrixData[k].columns.push(null);
+                matrixData[k].tableColumns.push(null);
             }
         }
     }
-
-    //console.log("MATRIX: ",JSON.stringify(matrixData));
-
-    //console.log("KEYDATA",JSON.stringify(keyData));
 
     return (
         <Fragment>
@@ -43,9 +39,9 @@ export const ContentWidgetTable = ({data,config}) => {
                 <Table striped bordered hover size="sm">
                     <thead>
                         <tr>
-                            <th>{config.keyTitle}</th>
+                            <th>{config.tableKeyTitle}</th>
                             {
-                                config.columns.map( (e,i) => (
+                                config.tableColumns.map( (e,i) => (
                                     <th key={'th'+i.toString()}>{e.title}</th>
                                 ))
                             }
@@ -57,7 +53,7 @@ export const ContentWidgetTable = ({data,config}) => {
                                 <tr key={"tr"+i.toString()}>
                                     <td>{e.transformedKey}</td>
                                     {
-                                        e.columns.map((c,k)=> (
+                                        e.tableColumns.map((c,k)=> (
                                             <td key={"td"+i.toString()+"-"+k.toString()}>{c}</td>
                                         ))
                                     }

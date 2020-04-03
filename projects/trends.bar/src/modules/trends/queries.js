@@ -79,6 +79,17 @@ export const getTrendLayouts = () => {
                   i
                   title
                   subtitle
+
+                  tableKeyTitle
+                  tableKeyQuery
+                  tableKeyField
+                  tableKeyTransform
+                  tableColumns {
+                      title
+                      query
+                      field
+                      transform
+                  }
               }
           }
       }`;

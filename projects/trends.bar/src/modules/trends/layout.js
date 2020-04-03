@@ -100,11 +100,11 @@ const getDefaultWidgetTableContent = (i) => {
   return {
     i: i.toString(),
     type: "table",
-    keyTitle: "Date",
-    keyQuery: "$[0].values[*]",
-    keyField: "x",
-    keyTransform: "toDateDD/MM/YYYY",
-    columns: [
+    tableKeyTitle: "Date",
+    tableKeyQuery: "$[0].values[*]",
+    tableKeyField: "x",
+    tableKeyTransform: "toDateDD/MM/YYYY",
+    tableColumns: [
         getDefaultWidgetTableColumnContent()
     ]
   };

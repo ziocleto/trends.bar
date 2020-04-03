@@ -6,11 +6,15 @@ import {TrendGrid} from "../common.styled";
 import GridLayout from "react-grid-layout";
 import {DivLayout} from "../dashboardProject/subcomponents/LayoutEditor.styled";
 import {ContentWidget} from "../dashboardProject/subcomponents/ContentWidget";
-import {getTrendLayouts} from "../../modules/trends/queries";
-import {getQueryLoadedWithValueArrayNotEmpty} from "../../futuremodules/graphqlclient/query";
+import {getTrendGraphsByUserTrendId, getTrendLayouts} from "../../modules/trends/queries";
+import {
+  checkQueryLoadedWithValue,
+  getQueryLoadedWithValue,
+  getQueryLoadedWithValueArrayNotEmpty
+} from "../../futuremodules/graphqlclient/query";
 
 // const CanvasJSChart = CanvasJSReact.CanvasJSChart;
-//
+
 // const EmptyTrend = ({trendId}) => {
 //   return (
 //     <TrendGrid>
@@ -28,7 +32,7 @@ import {getQueryLoadedWithValueArrayNotEmpty} from "../../futuremodules/graphqlc
 //     </TrendGrid>
 //   )
 // };
-//
+
 // const TrendPage = () => {
 //
 //   const groupBy = "Country";
@@ -132,6 +136,7 @@ const TrendPage = () => {
   const [username, trendId] = trendIdFull.split("/");
 
   const trendLayoutQuery = useQuery(getTrendLayouts(), {variables: {name: username, trendId: trendId}});
+  const queryResults = useQuery(getTrendGraphsByUserTrendId(), {variables: {name: username, trendId: trendId}});
 
   const [layout, setLayout] = useState(null);
 
@@ -145,7 +150,7 @@ const TrendPage = () => {
     );
   }, [trendLayoutQuery]);
 
-  if ( !layout ) return (<Fragment/>);
+  if ( !layout || !checkQueryLoadedWithValue(queryResults) ) return (<Fragment/>);
 
   return (
     <TrendGrid>
@@ -156,7 +161,7 @@ const TrendPage = () => {
         {layout.gridLayout.map(elem => {
           return (
             <DivLayout key={elem.i}>
-              <ContentWidget data={null} config={layout.gridContent[layout.gridLayout.findIndex(v=> v.i===elem.i)]}/>
+              <ContentWidget data={getQueryLoadedWithValue(queryResults)} config={layout.gridContent[layout.gridLayout.findIndex(v=> v.i===elem.i)]}/>
             </DivLayout>
           );
         })}

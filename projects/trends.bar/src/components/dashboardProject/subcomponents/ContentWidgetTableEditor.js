@@ -10,7 +10,7 @@ export const ContentWidgetTableEditor = ({config,onUpdate}) => {
 
     console.log(config);
     const [content,setContent] = useState(config);
-    const [currentColumnIndex,setCurrentColumnIndex] = useState(config.columns.length>0?0:-1);
+    const [currentColumnIndex,setCurrentColumnIndex] = useState(config.tableColumns.length>0?0:-1);
 
     const onChange = (property, value) => {
         const newContent = {...content};
@@ -21,7 +21,7 @@ export const ContentWidgetTableEditor = ({config,onUpdate}) => {
 
     const onChangeColumnField = (property, value) => {
         const newContent = {...content};
-        newContent.columns[currentColumnIndex][property]=value;
+        newContent.tableColumns[currentColumnIndex][property]=value;
         setContent(newContent);
         onUpdate(newContent);
     }
@@ -34,8 +34,8 @@ export const ContentWidgetTableEditor = ({config,onUpdate}) => {
     const removeColumn = () => {
         if (currentColumnIndex>-1) {
             const newContent = {...content};
-            newContent.columns.splice(currentColumnIndex,1);
-            setCurrentColumnIndex(newContent.columns.length>0?0:-1);
+            newContent.tableColumns.splice(currentColumnIndex,1);
+            setCurrentColumnIndex(newContent.tableColumns.length>0?0:-1);
             setContent(newContent);
             onUpdate(newContent);
         }
@@ -43,8 +43,8 @@ export const ContentWidgetTableEditor = ({config,onUpdate}) => {
 
     const addColumn = () => {
         const newContent = {...content};
-        newContent.columns.push(getDefaultWidgetTableColumnContent());
-        setCurrentColumnIndex(newContent.columns.length-1);
+        newContent.tableColumns.push(getDefaultWidgetTableColumnContent());
+        setCurrentColumnIndex(newContent.tableColumns.length-1);
         setContent(newContent);
         onUpdate(newContent);
     }
@@ -57,13 +57,13 @@ export const ContentWidgetTableEditor = ({config,onUpdate}) => {
                         Key Title
                     </Form.Label>
                     <Col>
-                        <Form.Control size="sm" type="text" value={content.keyTitle} onChange={(e) => onChange("keyTitle", e.target.value)}/>
+                        <Form.Control size="sm" type="text" value={content.tableKeyTitle} onChange={(e) => onChange("tableKeyTitle", e.target.value)}/>
                     </Col>
                     <Form.Label column="sm" lg={2}>
                         Key Query
                     </Form.Label>
                     <Col>
-                        <Form.Control size="sm" type="text" value={content.keyQuery} onChange={(e) => onChange("keyQuery", e.target.value)}/>
+                        <Form.Control size="sm" type="text" value={content.tableKeyQuery} onChange={(e) => onChange("tableKeyQuery", e.target.value)}/>
                     </Col>
                 </Form.Row>
                 <Form.Row>
@@ -71,13 +71,13 @@ export const ContentWidgetTableEditor = ({config,onUpdate}) => {
                         Key Field
                     </Form.Label>
                     <Col>
-                        <Form.Control size="sm" type="text" value={content.keyField} onChange={(e) => onChange("keyField", e.target.value)}/>
+                        <Form.Control size="sm" type="text" value={content.tableKeyField} onChange={(e) => onChange("tableKeyField", e.target.value)}/>
                     </Col>
                     <Form.Label column="sm" lg={2}>
                         Key Transform
                     </Form.Label>
                     <Col>
-                        <Form.Control size="sm" type="text" value={content.keyTransform} onChange={(e) => onChange("keyTransform", e.target.value)}/>
+                        <Form.Control size="sm" type="text" value={content.tableKeyTransform} onChange={(e) => onChange("tableKeyTransform", e.target.value)}/>
                     </Col>
                 </Form.Row>
             </Form.Group>
@@ -88,9 +88,9 @@ export const ContentWidgetTableEditor = ({config,onUpdate}) => {
                     </Form.Label>
                     <Col>
                         <Form.Control as="select" size="sm" value={currentColumnIndex} onChange={selectColumn} {...(currentColumnIndex===-1 && { disabled: "disabled" })} >
-                            { content.columns.length===0 && <option value={-1}>No columns defined...</option>}
+                            { content.tableColumns.length===0 && <option value={-1}>No columns defined...</option>}
                             {
-                                content.columns.length>0 && content.columns.map((c,i) => (
+                                content.tableColumns.length>0 && content.tableColumns.map((c,i) => (
                                     <option key={ "col" + i.toString()} value={i}>{ "# "+i.toString()+" "+c.title}</option>
                                 ))
                             }
@@ -110,13 +110,13 @@ export const ContentWidgetTableEditor = ({config,onUpdate}) => {
                         Title
                     </Form.Label>
                     <Col>
-                        <Form.Control size="sm" type="text" value={config.columns[currentColumnIndex].title} onChange={(e) => onChangeColumnField("title", e.target.value)}/>
+                        <Form.Control size="sm" type="text" value={config.tableColumns[currentColumnIndex].title} onChange={(e) => onChangeColumnField("title", e.target.value)}/>
                     </Col>
                     <Form.Label column="sm" lg={2}>
                         Query
                     </Form.Label>
                     <Col>
-                        <Form.Control size="sm" type="text" value={config.columns[currentColumnIndex].query} onChange={(e) => onChangeColumnField("query", e.target.value)}/>
+                        <Form.Control size="sm" type="text" value={config.tableColumns[currentColumnIndex].query} onChange={(e) => onChangeColumnField("query", e.target.value)}/>
                     </Col>
                 </Form.Row>
                 <Form.Row>
@@ -124,13 +124,13 @@ export const ContentWidgetTableEditor = ({config,onUpdate}) => {
                         Field
                     </Form.Label>
                     <Col>
-                        <Form.Control size="sm" type="text" value={config.columns[currentColumnIndex].field} onChange={(e) => onChangeColumnField("field", e.target.value)}/>
+                        <Form.Control size="sm" type="text" value={config.tableColumns[currentColumnIndex].field} onChange={(e) => onChangeColumnField("field", e.target.value)}/>
                     </Col>
                     <Form.Label column="sm" lg={2}>
                         Transform
                     </Form.Label>
                     <Col>
-                        <Form.Control size="sm" type="text" value={config.columns[currentColumnIndex].transform} onChange={(e) => onChangeColumnField("transform", e.target.value)}/>
+                        <Form.Control size="sm" type="text" value={config.tableColumns[currentColumnIndex].transform} onChange={(e) => onChangeColumnField("transform", e.target.value)}/>
                     </Col>
                 </Form.Row>
             </Form.Group>}
