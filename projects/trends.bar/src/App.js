@@ -15,7 +15,7 @@ import {apiSilent, useApi} from "./futuremodules/api/apiEntryPoint";
 import {loadUser} from "./futuremodules/auth/authApiCalls";
 import {Auth} from "./futuremodules/auth/authAccessors";
 import {DashboardProject} from "./components/dashboardProject/DashboardProject";
-import {Body} from "./components/common.styled";
+import {Body} from "./futuremodules/reactComponentStyles/reactCommon.styled";
 
 initEH();
 

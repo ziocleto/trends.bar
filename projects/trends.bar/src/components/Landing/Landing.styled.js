@@ -18,11 +18,6 @@ export const LandingInner = styled.div` {
   margin: calc(var(--navbar-height) + 3rem) auto;
 }`;
 
-export const LandingSearchBar = styled.div` {
-  width: 50%;
-  overflow: hidden;
-}`;
-
 export const SearchBarResultContainer = styled.div` {
   display: flex;
   width: 50%;

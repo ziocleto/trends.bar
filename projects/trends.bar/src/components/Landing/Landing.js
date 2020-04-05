@@ -1,7 +1,6 @@
 import React, {Fragment, useEffect, useRef, useState} from "react";
 import {
   LandingInner,
-  LandingSearchBar,
   LandingSection,
   SearchBarResultContainer,
   SearchBarResultTrendId,
@@ -10,6 +9,7 @@ import {
 import {getSimilarTrends} from "../../modules/trends/queries";
 import {useQuery} from "@apollo/react-hooks";
 import {Redirect} from "react-router-dom";
+import {Logo1TextSpan, Logo2TextSpan, NiceSearchBar} from "../../futuremodules/reactComponentStyles/reactCommon.styled";
 
 const SearchResults = ({trendIdPartial}) => {
   const {data, loading} = useQuery(getSimilarTrends(trendIdPartial));
@@ -73,19 +73,19 @@ const Landing = () => {
     <LandingSection>
       <LandingInner>
         <div>
-          <span className="colorLogo1">Search </span>
-          <span className="colorLogo2">trend</span>
+          <Logo1TextSpan>Search </Logo1TextSpan>
+          <Logo2TextSpan>trend</Logo2TextSpan>
         </div>
-        <LandingSearchBar>
-          <input
+        <NiceSearchBar
+            marginTop={"20px"}
+            width={"50%"}
             ref={searchBox}
             type="text"
             className="search-bar"
             id="search-bar"
             autoComplete={"off"}
-            onChange={e => setTrendIdPartial(e.target.value)}
-          />
-        </LandingSearchBar>
+            onChange={e => setTrendIdPartial(e.target.value)}>
+        </NiceSearchBar>
         <SearchResults trendIdPartial={trendIdPartial}/>
       </LandingInner>
     </LandingSection>

@@ -2,7 +2,6 @@ import React, {Fragment, useEffect, useState} from "react";
 import {sanitizePathRoot} from "../../futuremodules/utils/utils";
 import {useQuery} from "@apollo/react-hooks";
 import {useLocation} from "react-router-dom";
-import {TrendGrid} from "../common.styled";
 import GridLayout from "react-grid-layout";
 import {DivLayout} from "../dashboardProject/subcomponents/LayoutEditor.styled";
 import {ContentWidget} from "../dashboardProject/subcomponents/ContentWidget";
@@ -150,23 +149,22 @@ const TrendPage = () => {
     );
   }, [trendLayoutQuery]);
 
-  if ( !layout || !checkQueryLoadedWithValue(queryResults) ) return (<Fragment/>);
+  if (!layout || !checkQueryLoadedWithValue(queryResults)) return (<Fragment/>);
 
   return (
-    <TrendGrid>
-      <GridLayout layout={layout.gridLayout}
-                  cols={layout.cols * layout.granularity}
-                  rowHeight={layout.width / (layout.cols * layout.granularity)}
-                  width={layout.width}>
-        {layout.gridLayout.map(elem => {
-          return (
-            <DivLayout key={elem.i}>
-              <ContentWidget data={getQueryLoadedWithValue(queryResults)} config={layout.gridContent[layout.gridLayout.findIndex(v=> v.i===elem.i)]}/>
-            </DivLayout>
-          );
-        })}
-      </GridLayout>
-    </TrendGrid>
+    <GridLayout layout={layout.gridLayout}
+                cols={layout.cols * layout.granularity}
+                rowHeight={layout.width / (layout.cols * layout.granularity)}
+                width={layout.width}>
+      {layout.gridLayout.map(elem => {
+        return (
+          <DivLayout key={elem.i}>
+            <ContentWidget data={getQueryLoadedWithValue(queryResults)}
+                           config={layout.gridContent[layout.gridLayout.findIndex(v => v.i === elem.i)]}/>
+          </DivLayout>
+        );
+      })}
+    </GridLayout>
   );
 };
 

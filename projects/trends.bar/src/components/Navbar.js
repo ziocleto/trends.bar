@@ -10,6 +10,7 @@ import {
   isReservedWordSanitized,
   sanitizeAvoidReservedWords
 } from "../futuremodules/utils/utils";
+import {Logo1TextSpan, Logo2TextSpan} from "../futuremodules/reactComponentStyles/reactCommon.styled";
 
 const Navbar = (props) => {
 
@@ -55,8 +56,8 @@ const Navbar = (props) => {
           setTrend(null).then();
         }}>
           <Link to={"/"}>
-            <span className="colorLogo1">T</span>
-            <span>rends</span> <span className="colorLogo2">B</span>
+            <Logo1TextSpan>T</Logo1TextSpan>
+            <span>rends</span> <Logo2TextSpan>B</Logo2TextSpan>
             <span>ar</span>
           </Link>
         </Navbareh>

@@ -1,5 +1,4 @@
 import React from "reactn";
-import {TrendGrid} from "../common.styled";
 import {getUserName, isUserAuthenticated} from "../../futuremodules/auth/authAccessors";
 import {getFileNameOnlyNoExt, sanitizeURLParams} from "../../futuremodules/utils/utils";
 import {useLocation} from "react-router-dom";
@@ -22,17 +21,17 @@ export const DashboardProject = ({auth}) => {
   const username = getUserName(auth);
 
   return (
-    <TrendGrid>
-      <ProjectTabs>
-        <Tabs activeKey={activeTab} onSelect={k => {setActiveTab(k)}}>
-          <Tab eventKey="Layout" title="Layout">
-            <LayoutEditor username={username}/>
-          </Tab>
-          <Tab eventKey="DataSources" title="DataSources">
-            <ScriptCodeEditor username={username}/>
-          </Tab>
-        </Tabs>
-      </ProjectTabs>
-    </TrendGrid>
+    <ProjectTabs>
+      <Tabs id={"ptabid"} activeKey={activeTab} onSelect={k => {
+        setActiveTab(k)
+      }}>
+        <Tab eventKey="Layout" title="Layout">
+          <LayoutEditor username={username}/>
+        </Tab>
+        <Tab eventKey="DataSources" title="DataSources">
+          <ScriptCodeEditor username={username}/>
+        </Tab>
+      </Tabs>
+    </ProjectTabs>
   );
 };
