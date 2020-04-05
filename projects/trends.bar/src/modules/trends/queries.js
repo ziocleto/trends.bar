@@ -90,6 +90,16 @@ export const getTrendLayouts = () => {
                       field
                       transform
                   }
+                  
+                  graphXYTitle
+                  graphXYSeries {
+                      title
+                      query
+                      fieldX
+                      transformX
+                      fieldY
+                      transformY
+                  }
               }
           }
       }`;

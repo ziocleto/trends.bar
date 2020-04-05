@@ -10,7 +10,7 @@ export const ContentWidgetGraphXYEditor = ({config,onUpdate}) => {
 
     console.log(config);
     const [content,setContent] = useState(config);
-    const [currentSerieIndex,setCurrentSerieIndex] = useState(config.series.length>0?0:-1);
+    const [currentSerieIndex,setCurrentSerieIndex] = useState(config.graphXYSeries.length>0?0:-1);
 
     const onChange = (property, value) => {
         const newContent = {...content};
@@ -21,7 +21,7 @@ export const ContentWidgetGraphXYEditor = ({config,onUpdate}) => {
 
     const onChangeSerieField = (property, value) => {
         const newContent = {...content};
-        newContent.series[currentSerieIndex][property]=value;
+        newContent.graphXYSeries[currentSerieIndex][property]=value;
         setContent(newContent);
         onUpdate(newContent);
     }
@@ -34,8 +34,8 @@ export const ContentWidgetGraphXYEditor = ({config,onUpdate}) => {
     const removeSerie = () => {
         if (currentSerieIndex>-1) {
             const newContent = {...content};
-            newContent.series.splice(currentSerieIndex,1);
-            setCurrentSerieIndex(newContent.series.length>0?0:-1);
+            newContent.graphXYSeries.splice(currentSerieIndex,1);
+            setCurrentSerieIndex(newContent.graphXYSeries.length>0?0:-1);
             setContent(newContent);
             onUpdate(newContent);
         }
@@ -43,8 +43,8 @@ export const ContentWidgetGraphXYEditor = ({config,onUpdate}) => {
 
     const addSerie = () => {
         const newContent = {...content};
-        newContent.series.push(getDefaultWidgetGraphXYSerieContent());
-        setCurrentSerieIndex(newContent.series.length-1);
+        newContent.graphXYSeries.push(getDefaultWidgetGraphXYSerieContent());
+        setCurrentSerieIndex(newContent.graphXYSeries.length-1);
         setContent(newContent);
         onUpdate(newContent);
     }
@@ -57,7 +57,7 @@ export const ContentWidgetGraphXYEditor = ({config,onUpdate}) => {
                         Title
                     </Form.Label>
                     <Col>
-                        <Form.Control size="sm" type="text" value={content.title} onChange={(e) => onChange("title", e.target.value)}/>
+                        <Form.Control size="sm" type="text" value={content.graphXYTitle} onChange={(e) => onChange("graphXYTitle", e.target.value)}/>
                     </Col>
                 </Form.Row>
             </Form.Group>
@@ -68,9 +68,9 @@ export const ContentWidgetGraphXYEditor = ({config,onUpdate}) => {
                     </Form.Label>
                     <Col>
                         <Form.Control as="select" size="sm" value={currentSerieIndex} onChange={selectSerie} {...(currentSerieIndex===-1 && { disabled: "disabled" })} >
-                            { content.series.length===0 && <option value={-1}>No series defined...</option>}
+                            { content.graphXYSeries.length===0 && <option value={-1}>No graphXYSeries defined...</option>}
                             {
-                                content.series.length>0 && content.series.map((c,i) => (
+                                content.graphXYSeries.length>0 && content.graphXYSeries.map((c,i) => (
                                     <option key={ "col" + i.toString()} value={i}>{ "# "+i.toString()+" "+c.title}</option>
                                 ))
                             }
@@ -90,13 +90,13 @@ export const ContentWidgetGraphXYEditor = ({config,onUpdate}) => {
                         Title
                     </Form.Label>
                     <Col>
-                        <Form.Control size="sm" type="text" value={config.series[currentSerieIndex].title} onChange={(e) => onChangeSerieField("title", e.target.value)}/>
+                        <Form.Control size="sm" type="text" value={config.graphXYSeries[currentSerieIndex].title} onChange={(e) => onChangeSerieField("title", e.target.value)}/>
                     </Col>
                     <Form.Label column="sm" lg={2}>
                         Query
                     </Form.Label>
                     <Col>
-                        <Form.Control size="sm" type="text" value={config.series[currentSerieIndex].query} onChange={(e) => onChangeSerieField("query", e.target.value)}/>
+                        <Form.Control size="sm" type="text" value={config.graphXYSeries[currentSerieIndex].query} onChange={(e) => onChangeSerieField("query", e.target.value)}/>
                     </Col>
                 </Form.Row>
                 <Form.Row>
@@ -104,13 +104,13 @@ export const ContentWidgetGraphXYEditor = ({config,onUpdate}) => {
                         Field
                     </Form.Label>
                     <Col>
-                        <Form.Control size="sm" type="text" value={config.series[currentSerieIndex].fieldX} onChange={(e) => onChangeSerieField("fieldX", e.target.value)}/>
+                        <Form.Control size="sm" type="text" value={config.graphXYSeries[currentSerieIndex].fieldX} onChange={(e) => onChangeSerieField("fieldX", e.target.value)}/>
                     </Col>
                     <Form.Label column="sm" lg={2}>
                         Transform
                     </Form.Label>
                     <Col>
-                        <Form.Control size="sm" type="text" value={config.series[currentSerieIndex].transformX} onChange={(e) => onChangeSerieField("transformX", e.target.value)}/>
+                        <Form.Control size="sm" type="text" value={config.graphXYSeries[currentSerieIndex].transformX} onChange={(e) => onChangeSerieField("transformX", e.target.value)}/>
                     </Col>
                 </Form.Row>
                 <Form.Row>
@@ -118,13 +118,13 @@ export const ContentWidgetGraphXYEditor = ({config,onUpdate}) => {
                         Field
                     </Form.Label>
                     <Col>
-                        <Form.Control size="sm" type="text" value={config.series[currentSerieIndex].fieldY} onChange={(e) => onChangeSerieField("fieldY", e.target.value)}/>
+                        <Form.Control size="sm" type="text" value={config.graphXYSeries[currentSerieIndex].fieldY} onChange={(e) => onChangeSerieField("fieldY", e.target.value)}/>
                     </Col>
                     <Form.Label column="sm" lg={2}>
                         Transform
                     </Form.Label>
                     <Col>
-                        <Form.Control size="sm" type="text" value={config.series[currentSerieIndex].transformY} onChange={(e) => onChangeSerieField("transformY", e.target.value)}/>
+                        <Form.Control size="sm" type="text" value={config.graphXYSeries[currentSerieIndex].transformY} onChange={(e) => onChangeSerieField("transformY", e.target.value)}/>
                     </Col>
                 </Form.Row>
             </Form.Group>}

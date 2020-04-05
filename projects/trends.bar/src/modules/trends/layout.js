@@ -55,8 +55,8 @@ const getDefaultWidgetGraphXYContent = (i) => {
   return {
     i: i.toString(),
     type: "graphxy",
-    title: "Graph title",
-    series: [
+    graphXYTitle: "Graph title",
+    graphXYSeries: [
         getDefaultWidgetGraphXYSerieContent()
     ]
   }

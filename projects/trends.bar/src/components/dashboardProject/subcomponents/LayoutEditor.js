@@ -156,6 +156,8 @@ export const LayoutEditor = ({username}) => {
         {layout.gridLayout.map(elem => {
           return (
             <DivLayout key={elem.i}>
+              <ContentWidget data={trendData}
+                             config={layout.gridContent[layout.gridLayout.findIndex(v => v.i === elem.i)]}/>
               <SpanRemoveLayoutCell title="Remove cell">
                 <Button variant="outline-danger" onClick={() => onRemoveCell(elem.i)}>
                   <i className={"fas fa-minus-circle"}/>
@@ -166,15 +168,6 @@ export const LayoutEditor = ({username}) => {
                   <i className={"fas fa-edit"}/>
                 </Button>
               </SpanEditLayoutCell>
-              {/*<Button*/}
-              {/*  variant="secondary"*/}
-              {/*  title="Edit cell content"*/}
-              {/*  onClick={() => onEditCell(elem.i)}*/}
-              {/*>*/}
-              {/*  Edit*/}
-              {/*</Button>*/}
-              <ContentWidget data={trendData}
-                             config={layout.gridContent[layout.gridLayout.findIndex(v => v.i === elem.i)]}/>
             </DivLayout>
           );
         })}

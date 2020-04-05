@@ -27,6 +27,15 @@ type ContentWidgetTableColumn {
     transform: String
 }
 
+type ContentWidgetGraphXYContent {
+    title: String
+    query: String
+    fieldX: String
+    transformX: String
+    fieldY: String
+    transformY: String
+}
+
 type ContentWidget {
     type: String!
     i: String!
@@ -39,6 +48,9 @@ type ContentWidget {
     tableKeyField: String
     tableKeyTransform: String
     tableColumns: [ContentWidgetTableColumn]
+
+    graphXYTitle: String
+    graphXYSeries: [ContentWidgetGraphXYContent]
 }
 
 input ContentWidgetTableColumnInput {
@@ -48,7 +60,16 @@ input ContentWidgetTableColumnInput {
     transform: String
 }
 
-input ContentWidgetTitleInput {
+input ContentWidgetGraphXYContentInput {
+    title: String
+    query: String
+    fieldX: String
+    transformX: String
+    fieldY: String
+    transformY: String
+}
+
+input ContentWidgetInput {
     type: String!
     i: String!
 
@@ -60,6 +81,9 @@ input ContentWidgetTitleInput {
     tableKeyField: String
     tableKeyTransform: String
     tableColumns: [ContentWidgetTableColumnInput]
+
+    graphXYTitle: String
+    graphXYSeries: [ContentWidgetGraphXYContentInput]
 }
 
 input TrendGridLayoutInput {
@@ -80,7 +104,7 @@ input TrendLayoutInput {
     cols: Int
     width: Int
     gridLayout: [TrendGridLayoutInput!]
-    gridContent: [ContentWidgetTitleInput!]
+    gridContent: [ContentWidgetInput!]
 }
 
 type Query {

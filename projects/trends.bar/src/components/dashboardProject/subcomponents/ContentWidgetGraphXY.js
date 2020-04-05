@@ -8,22 +8,21 @@ import CanvasJSReact from'../../../assets/canvasjs.react';
 var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
-
 export const ContentWidgetGraphXY = ({data,config}) => {
 
     let chart = useRef();
     const graphData=[];
-    for (let i=0;i<config.series.length;i++) {
+    for (let i=0;i<config.graphXYSeries.length;i++) {
         try {
-            const serieData = getArrayFromJsonPath(data, config.series[i].query).map(e => {
+            const serieData = getArrayFromJsonPath(data, config.graphXYSeries[i].query).map(e => {
                 const serieRow = {
-                    label: transformData(e[config.series[i].fieldX], config.series[i].transformX),
-                    y: transformData(e[config.series[i].fieldY], config.series[i].transformY)
+                    label: transformData(e[config.graphXYSeries[i].fieldX], config.graphXYSeries[i].transformX),
+                    y: transformData(e[config.graphXYSeries[i].fieldY], config.graphXYSeries[i].transformY)
                 }
                 return serieRow;
             });
             graphData.push({
-                name: config.series[i].title,
+                name: config.graphXYSeries[i].title,
                 type: "area",
                 showInLegend: true,
                 fillOpacity: 0.3,
@@ -35,25 +34,32 @@ export const ContentWidgetGraphXY = ({data,config}) => {
     }
     //console.log("GRAPHDATA:", JSON.stringify(graphData[0].data));
 
+    const itemclick = e => {
+        if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+            e.dataSeries.visible = false;
+        } else {
+            e.dataSeries.visible = true;
+        }
+        e.chart.render();
+    };
+
     const options = {
-        title: {
-            text: config.title
+        zoomEnabled: true,
+        axisX: {
+            valueFormatString: "DD MMM"
         },
-        animationEnabled: true,
-        theme: "dark2",
-        toolTip:{
-            content: "{name} {label}: {y}"
+        title: {
+            text: config.graphXYTitle
         },
         legend: {
-            horizontalAlign: "center", // "center" , "right"
-            verticalAlign: "bottom",  // "top" , "bottom"
-            fontSize: 15
+            cursor: "pointer",
+            itemclick: itemclick
         },
-        axisX:{
-            interlacedColor: "#202020",
-            labelAngle: -45,
-            interval: graphData.length===0 || graphData[0].dataPoints.length<30?1:Math.ceil(graphData[0].dataPoints.length/30)
-        },
+        theme: "dark1",
+        backgroundColor: "#00000000",
+        animationEnabled: true,
+        interactivityEnabled: true,
+
         data: graphData
     };
 
