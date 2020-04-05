@@ -55,23 +55,9 @@ const getDefaultWidgetGraphXYContent = (i) => {
   return {
     i: i.toString(),
     type: "graphxy",
+    title: "Graph title",
     series: [
-      {
-        title: "Casi",
-        query: "$[?(@.title=='casi' && @.label=='Lombardia')].values[*]",
-        fieldX: "x",
-        transformX: "toDateDD/MM/YYYY",
-        fieldY: "y",
-        transformY: ""
-      },
-      {
-        title: "Morti",
-        query: "$[?(@.title=='morti' && @.label=='Lombardia')].values[*]",
-        fieldX: "x",
-        transformX: "toDateDD/MM/YYYY",
-        fieldY: "y",
-        transformY: ""
-      }
+        getDefaultWidgetGraphXYSerieContent()
     ]
   }
 }
@@ -81,7 +67,7 @@ export const getDefaultWidgetGraphXYSerieContent = () => {
     title: "Serie",
     query: "$[0].values[*]",
     fieldX: "x",
-    transformX: "toDateDD/MM/YYYY",
+    transformX: "toDateDD/MM",
     fieldY: "y",
     transformY: ""
   }

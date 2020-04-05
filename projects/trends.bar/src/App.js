@@ -17,7 +17,6 @@ import {Auth} from "./futuremodules/auth/authAccessors";
 import {DashboardProject} from "./components/dashboardProject/DashboardProject";
 import {Body} from "./components/common.styled";
 
-
 initEH();
 
 const App = () => {

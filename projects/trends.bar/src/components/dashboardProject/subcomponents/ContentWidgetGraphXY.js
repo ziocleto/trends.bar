@@ -1,89 +1,76 @@
 import "./react-grid-styles.css"
 import "./react-resizable-styles.css"
 
-import React, {Fragment} from "react";
-import { ResponsiveLine } from "@nivo/line"
+import React, {Fragment, useRef} from "react";
 import {getArrayFromJsonPath} from "../../../modules/trends/jsonPath";
 import {transformData} from "../../../modules/trends/dataTransformer";
+import CanvasJSReact from'../../../assets/canvasjs.react';
+var CanvasJS = CanvasJSReact.CanvasJS;
+var CanvasJSChart = CanvasJSReact.CanvasJSChart;
+
 
 export const ContentWidgetGraphXY = ({data,config}) => {
 
+    let chart = useRef();
     const graphData=[];
     for (let i=0;i<config.series.length;i++) {
         try {
             const serieData = getArrayFromJsonPath(data, config.series[i].query).map(e => {
                 const serieRow = {
-                    x: transformData(e[config.series[i].fieldX], config.series[i].transformX),
+                    label: transformData(e[config.series[i].fieldX], config.series[i].transformX),
                     y: transformData(e[config.series[i].fieldY], config.series[i].transformY)
                 }
                 return serieRow;
             });
             graphData.push({
-               id: config.series[i].title,
-               data: serieData
+                name: config.series[i].title,
+                type: "area",
+                showInLegend: true,
+                fillOpacity: 0.3,
+                dataPoints: serieData
             });
         } catch (ex) {
             console.log("Error building graphxy", ex)
         }
     }
+    //console.log("GRAPHDATA:", JSON.stringify(graphData[0].data));
 
-    console.log("GRAPHDATA:", JSON.stringify(graphData));
+    const options = {
+        title: {
+            text: config.title
+        },
+        animationEnabled: true,
+        theme: "dark2",
+        toolTip:{
+            content: "{name} {label}: {y}"
+        },
+        legend: {
+            horizontalAlign: "center", // "center" , "right"
+            verticalAlign: "bottom",  // "top" , "bottom"
+            fontSize: 15
+        },
+        axisX:{
+            interlacedColor: "#202020",
+            labelAngle: -45,
+            interval: graphData.length===0 || graphData[0].dataPoints.length<30?1:Math.ceil(graphData[0].dataPoints.length/30)
+        },
+        data: graphData
+    };
 
+    const containerProps = {
+        height: "100%"
+    };
     return (
         <Fragment>
-            <ResponsiveLine
-                data={graphData}
-                margin={{ top: 50, right: 110, bottom: 50, left: 60 }}
-                xScale={{ type: 'point' }}
-                yScale={{ type: 'linear', min: 0, max: 'auto', stacked: false, reverse: false }}
-                axisTop={null}
-                axisRight={null}
-                axisBottom={{
-                    orient: 'bottom',
-                    tickSize: 5,
-                    tickPadding: 5,
-                    tickRotation: -45,
-                }}
-                axisLeft={{
-                    orient: 'left',
-                    tickSize: 5,
-                    tickPadding: 5,
-                    tickRotation: 0,
-                }}
-                colors={{ scheme: 'nivo' }}
-                pointSize={10}
-                pointColor={{ theme: 'background' }}
-                pointBorderWidth={2}
-                pointBorderColor={{ from: 'serieColor' }}
-                pointLabel="y"
-                pointLabelYOffset={-12}
-                useMesh={true}
-                legends={[
-                    {
-                        anchor: 'bottom-right',
-                        direction: 'column',
-                        justify: false,
-                        translateX: 100,
-                        translateY: 0,
-                        itemsSpacing: 0,
-                        itemDirection: 'left-to-right',
-                        itemWidth: 80,
-                        itemHeight: 20,
-                        itemOpacity: 0.75,
-                        symbolSize: 12,
-                        symbolShape: 'circle',
-                        symbolBorderColor: 'rgba(0, 0, 0, .5)',
-                        effects: [
-                            {
-                                on: 'hover',
-                                style: {
-                                    itemBackground: 'rgba(0, 0, 0, .03)',
-                                    itemOpacity: 1
-                                }
-                            }
-                        ]
-                    }
-                ]}
+            <CanvasJSChart
+                // im using the index just for the example
+                // you will only need to use dataPoints.toString().
+                // when the data is not the same as the previous data
+                // it will remount the component and trigger the animation
+                key={graphData.toString()}
+                options={options}
+                containerProps = {containerProps}
+                onRef={ref => (chart.current = ref)}
             />
         </Fragment>
     );
