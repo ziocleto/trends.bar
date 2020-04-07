@@ -4,8 +4,9 @@ import "./react-resizable-styles.css"
 import React, {Fragment, useRef} from "react";
 import {getArrayFromJsonPath} from "../../../modules/trends/jsonPath";
 import {transformData} from "../../../modules/trends/dataTransformer";
-import CanvasJSReact from'../../../assets/canvasjs.react';
-var CanvasJS = CanvasJSReact.CanvasJS;
+import CanvasJSReact from '../../../assets/canvasjs.react';
+
+// var CanvasJS = CanvasJSReact.CanvasJS;
 var CanvasJSChart = CanvasJSReact.CanvasJSChart;
 
 export const ContentWidgetGraphXY = ({data,config}) => {

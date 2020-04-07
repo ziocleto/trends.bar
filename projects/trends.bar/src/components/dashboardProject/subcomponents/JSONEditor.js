@@ -57,6 +57,7 @@ export const JSONEditor = () => {
 
   return (
     <CodeMirror
+      id={"CodeMirrorScirpt"}
       value={getCurrFileText()}
       options={{
         mode: "application/json",

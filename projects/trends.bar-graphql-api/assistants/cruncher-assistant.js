@@ -175,7 +175,7 @@ export class Cruncher {
     for (const elem of resjson) {
       // If label is present in the csv raw then used it, otherwise it as the string specified in the json field 'label'
       let cvsLabelField = elem[group.label] ? elem[group.label] : group.label;
-      if ( group.labelTransform && group.labelTransform == "Country" ) {
+      if ( group.labelTransform && group.labelTransform === "Country" ) {
         cvsLabelField = this.applyCountryPostTransformRule(cvsLabelField);
       }
       const xValue = elem[group.x] ? elem[group.x] : defaultXValue;
@@ -225,33 +225,37 @@ export class Cruncher {
       graphQueries: this.graphQueries
     }
   }
-
 }
 
 // {
+//   "source": "https://github.com/CSSEGISandData/COVID-19",
+//   "sourceDocument": "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/$timestamp.csv",
+//   "timestamp": "$timestamp",
+//   "timestampFormat": "MM-DD-YYYY",
+//   "urlParser": "documentDirect",
+//   "version": "v3",
+//   "dataSequence": "Cumulative",
 //   "groups": [
 //   {
-//     "key": "Cases",
 //     "label": "Country/Region",
+//     "labelTransform": "Country",
+//     "key": "Cases",
 //     "x": "$timestamp",
 //     "y": "Confirmed"
 //   },
 //   {
-//     "key": "Deaths",
 //     "label": "Country/Region",
+//     "labelTransform": "Country",
+//     "key": "Deaths",
 //     "x": "$timestamp",
 //     "y": "Deaths"
 //   },
 //   {
-//     "key": "Recovered",
 //     "label": "Country/Region",
+//     "labelTransform": "Country",
+//     "key": "Recovered",
 //     "x": "$timestamp",
 //     "y": "Recovered"
 //   }
-// ],
-//   "sourceDocument": "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/01-22-2020.csv",
-//   "timestamp": "01/22/2020",
-//   "timestampFormat": "MM-DD-YYYY",
-//   "dataSequence": "Cumulative",
-//   "version": "v3"
+// ]
 // }

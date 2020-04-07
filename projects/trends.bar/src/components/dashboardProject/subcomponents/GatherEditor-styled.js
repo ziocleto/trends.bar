@@ -4,12 +4,18 @@ export const ScriptEditorGrid = styled.div` {
   --gridGrapX: 10px;
   display: grid;
   grid-template-columns: 50% calc(50% - var(--gridGrapX));
-  grid-template-rows: 3em calc(100% - 3em);
+  grid-template-rows: 3em 6em 10em;
   grid-gap: 2px var(--gridGrapX);
-  grid-template-areas: "scriptTitle  outputTabs"
-                       "script       scriptOutput";
+  grid-template-areas: "scriptTitle     outputTabs"
+                       "scriptVariables scriptOutput"
+                       "script          scriptOutput";
   //height: calc(100vh - var(--navbar-height) - 150px);
   margin-top: 5px;
+}`;
+
+export const ScriptVariables = styled.div` {
+  grid-area: scriptVariables;
+  height: 6em;
 }`;
 
 export const ScriptTitle = styled.div` {
@@ -50,7 +56,7 @@ export const ScriptFileName = styled.div` {
   padding: 0.33em;
 }`;
 
-export const ScriptEditor = styled.div` {
+export const ScriptEditorContainer = styled.div` {
   grid-area: script;
 }`;
 
@@ -89,4 +95,14 @@ export const DangerColorDiv = styled.div `{
 
 export const PrimaryColor = styled.span `{
   color: var(--primary)
+}`;
+
+export const FormGroupBorder = styled.div` {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--info);
+  border-radius: 3px;
+  padding: 5px;
+  border: 1px solid var(--gray);
+  margin-bottom: 10px;
 }`;

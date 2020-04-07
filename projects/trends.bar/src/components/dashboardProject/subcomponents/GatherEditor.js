@@ -2,12 +2,13 @@ import React, {Fragment, useGlobal, useState} from "reactn";
 import {Controlled as CodeMirror} from "react-codemirror2";
 import Button from "react-bootstrap/Button";
 import {
-  ScriptEditor,
+  ScriptEditorContainer,
   ScriptEditorGrid,
   ScriptOutput,
   ScriptOutputTabs,
   ScriptResultTabs,
-  ScriptTitle
+  ScriptTitle,
+  ScriptVariables
 } from "./GatherEditor-styled";
 import {useMutation, useQuery} from "@apollo/react-hooks";
 import {CRAWL_TREND_GRAPH, UPSERT_TREND_GRAPH} from "../../../modules/trends/mutations";
@@ -17,7 +18,6 @@ import {Tab, Tabs} from "react-bootstrap";
 import 'codemirror/addon/lint/lint.css';
 import {alertDangerNoMovie, alertSuccess, useAlert} from "../../../futuremodules/alerts/alerts";
 import {FileManagementHeader} from "./FileManagementHeader";
-import {JSONEditor} from "./JSONEditor";
 import {useEffect} from "react";
 import {EditingUserTrend, generateUniqueNameWithArrayCheck} from "../../../modules/trends/globals";
 import {
@@ -25,6 +25,7 @@ import {
   checkQueryHasLoadedWithData,
   queryGetValue
 } from "../../../futuremodules/graphqlclient/query";
+import {ScriptEditor} from "./ScriptEditor";
 
 require("codemirror/lib/codemirror.css");
 require("codemirror/theme/material.css");
@@ -143,9 +144,12 @@ export const ScriptCodeEditor = ({username}) => {
       <ScriptTitle>
         <FileManagementHeader username={username} onRunCallback={onRunCallback}/>
       </ScriptTitle>
-      <ScriptEditor>
-        <JSONEditor/>
-      </ScriptEditor>
+      <ScriptVariables>
+        {/*<KeyValueForm/>*/}
+      </ScriptVariables>
+      <ScriptEditorContainer>
+        <ScriptEditor/>
+      </ScriptEditorContainer>
 
       {response.data && (
         <Fragment>

@@ -5,7 +5,14 @@
 }
 
 .CodeMirror {
-    min-height: calc(100vh - var(--navbar-height) - 46px - 58px);
+    min-height: calc(100vh - var(--navbar-height) - 46px - 58px - 6em);
     border: solid 1px var(--gray); /*change color of the swatch border here*/
     border-radius: 4px;
 }
+
+/*.CodeMirrorVariables {*/
+/*    min-height: 6em;*/
+/*    max-height: 6em;*/
+/*    border: solid 1px var(--gray); !*change color of the swatch border here*!*/
+/*    border-radius: 4px;*/
+/*}*/

@@ -6,6 +6,7 @@ import {app, initServer, runServer} from "./httpserver";
 
 const usersRoute = require("eh_auth_and_auth/routes/usersRoute");
 const tokenRoute = require("eh_auth_and_auth/routes/tokenRoute");
+const fetchRoute = require("./restful-api/fetchRoute");
 
 const init = () => {
   dbi.initDB().then();
@@ -17,6 +18,7 @@ const init = () => {
 const use = () => {
   app.use("/", tokenRoute);
   app.use("/user", usersRoute);
+  app.use("/fetch", fetchRoute);
   app.use(authController.authenticate);
 }
 
