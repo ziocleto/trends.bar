@@ -107,7 +107,6 @@ export class Cruncher {
   finaliseCrunch(key, title, xValue, wc, dataSequence = null) {
     const graphElem = graphAssistant.declare(this.graphType, key, title, "", dataSequence);
     const value = graphAssistant.prepareSingleValue(graphElem.type, xValue, wc);
-    this.traces += (key + ", " + title + ", " + xValue + ", " + wc + "\n");
     this.dataEntry(graphElem, value);
   }
 
@@ -170,24 +169,25 @@ export class Cruncher {
         this.finaliseCrunch(key, cvsLabelField, elem[action.csv.x], elem[action.csv.y], action.dataSequence);
       }
     }
-
   }
 
-  async crunchFunctions(f, xValue) {
-    for (const dataset of f.datasets) {
-      const title = dataset.title;
-      for (const action of dataset.actions) {
-        if (this.checkTimeStampValid(action.validRange, xValue)) {
-          await this.crunchAction(f.key, title, action);
-          break;
-        }
+  async crunchGroups(resjson, group, defaultXValue, dataSequence) {
+    for (const elem of resjson) {
+      // If label is present in the csv raw then used it, otherwise it as the string specified in the json field 'label'
+      let cvsLabelField = elem[group.label] ? elem[group.label] : group.label;
+      if ( group.labelTransform && group.labelTransform == "Country" ) {
+        cvsLabelField = this.applyCountryPostTransformRule(cvsLabelField);
       }
+      const xValue = elem[group.x] ? elem[group.x] : defaultXValue;
+      this.finaliseCrunch(group.key, cvsLabelField, xValue, elem[group.y], dataSequence);
     }
   }
 
   async crunch(query) {
-    for (const f of query.functions) {
-      await this.crunchFunctions(f, this.defaultXValue);
+    const nparse = new Parser(this.parser.text);
+    const resjson = await csv().fromString(nparse.text);
+    for (const group of query.groups) {
+      await this.crunchGroups(resjson, group, this.defaultXValue, query.dataSequence);
     }
 
     // Remap to array
@@ -200,11 +200,24 @@ export class Cruncher {
     this.graphQueries.forEach( elem => {
       if (elem.values.length > 1 && elem.dataSequence === "Cumulative") {
         for (let i = 1; i < elem.values.length; i++) {
-          if (elem.values[i].y === 0 && elem.values[i - 1].y > 0) {
+          if (elem.values[i].y === 0 && elem.values[i - 1].y > 0 &&
+            elem.values[i].x !== 0 && elem.values[i - 1].x ) {
             elem.values[i].y = elem.values[i - 1].y;
           }
         }
+
+        let red = {};
+        for ( const v of elem.values ) {
+          if ( !red[v.x] ) red[v.x] = 0;
+          red[v.x] += v.y;
+        }
+        elem.values = [];
+        // Remap to red
+        for ( const e in red ) {
+          elem.values.push({ x:parseInt(e), y:red[e]});
+        }
       }
+      this.traces += (elem.title + ", " + elem.label + ", " + JSON.stringify(elem.values) + "\n");
     });
 
     return {
@@ -214,3 +227,31 @@ export class Cruncher {
   }
 
 }
+
+// {
+//   "groups": [
+//   {
+//     "key": "Cases",
+//     "label": "Country/Region",
+//     "x": "$timestamp",
+//     "y": "Confirmed"
+//   },
+//   {
+//     "key": "Deaths",
+//     "label": "Country/Region",
+//     "x": "$timestamp",
+//     "y": "Deaths"
+//   },
+//   {
+//     "key": "Recovered",
+//     "label": "Country/Region",
+//     "x": "$timestamp",
+//     "y": "Recovered"
+//   }
+// ],
+//   "sourceDocument": "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/01-22-2020.csv",
+//   "timestamp": "01/22/2020",
+//   "timestampFormat": "MM-DD-YYYY",
+//   "dataSequence": "Cumulative",
+//   "version": "v3"
+// }

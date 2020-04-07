@@ -52,10 +52,12 @@ input CrawlingDatasets {
     actions: [CrawlingActions]
 }
 
-input CrawlingFunctions {
-    type: String
+input CrawlingGroups {
+    label: String
+    labelTransform: String
     key: String
-    datasets: [CrawlingDatasets]
+    x: BigInt!
+    y: BigInt!
 }
 
 input CrawlingScript {
@@ -68,8 +70,9 @@ input CrawlingScript {
     graphType: [String]
     timestamp: String
     timestampFormat: String
+    dataSequence: String
     version: String!
-    functions: [CrawlingFunctions]
+    groups: [CrawlingGroups]
 }
 
 type Query {
