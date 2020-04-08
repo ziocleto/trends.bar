@@ -44,7 +44,6 @@ export const LayoutEditor = ({username}) => {
         const queryData = getQueryLoadedWithValueArrayNotEmpty(trendDataQuery);
         if (queryData) {
           setTrendData(queryData);
-          console.log(queryData);
         }
       }
     );

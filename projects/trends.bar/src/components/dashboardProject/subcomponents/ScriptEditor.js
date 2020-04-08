@@ -1,10 +1,27 @@
 import React from "reactn";
 import {Fragment, useEffect, useState} from "react";
 import {Button, Col, Container, Dropdown, Form, InputGroup, Row, Tab, Table, Tabs} from "react-bootstrap";
-import {DangerColorDiv, DangerColorTd, FormGroupBorder, GroupTransform} from "./GatherEditor-styled";
+import {DangerColorSpan, DangerColorTd, FormGroupBorder, GroupTransform} from "./GatherEditor-styled";
 import {api, useApi} from "../../../futuremodules/api/apiEntryPoint";
 import {getCSVGraphKeys} from "../../../futuremodules/fetch/fetchApiCalls";
 import {LightColorTextSpanBold} from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
+
+const getDefaultLabelTransformOf = (group) => {
+  if ( group.toLowerCase().includes("country") ) {
+    return "Country";
+  }
+  return "None";
+};
+
+const getLabelTransformOfGroup = (scriptJson, groupName) => {
+  if ( !scriptJson ) return "None";
+  for ( const group of scriptJson.groups ) {
+    if (group.label === groupName) {
+      return group.labelTransform;
+    }
+  }
+  return "None";
+};
 
 export const ScriptEditor = () => {
 
@@ -24,7 +41,7 @@ export const ScriptEditor = () => {
         for (const elem of csvKeyNumberValues["y"]) {
           sj["groups"].push({
             label: group,
-            labelTransform: "",
+            labelTransform: getDefaultLabelTransformOf(group),
             key: elem,
             x: csvKeyNumberValues["x"][0],
             y: elem
@@ -41,9 +58,6 @@ export const ScriptEditor = () => {
       ...formData,
       [e.target.name]: e.target.value
     });
-  };
-
-  const onSubmit = e => {
   };
 
   const onDeleteEntity = (elem) => {
@@ -99,44 +113,6 @@ export const ScriptEditor = () => {
     </Fragment>
   );
 
-  const middleHeadPart = (key) => {
-    if (key === "group") {
-      return (
-        <Fragment>
-          <th>
-            As
-          </th>
-          <th>
-            Transform
-          </th>
-        </Fragment>
-      )
-    } else {
-      return (
-        <Fragment>
-          <th>
-            As
-          </th>
-        </Fragment>
-      )
-    }
-  };
-
-  const csvHeadFor = (key) => {
-    const middle = middleHeadPart(key);
-    return (
-      <tr>
-        <th>
-          CSV field
-        </th>
-        {middle}
-        <th>
-          Remove
-        </th>
-      </tr>
-    )
-  };
-
   const DeleteCSVElem = (props) => {
     return (
       <DangerColorTd onClick={() => onDeleteEntity(props.elem)}>
@@ -147,67 +123,10 @@ export const ScriptEditor = () => {
 
   const DeleteCSVGroup = (props) => {
     return (
-      <DangerColorDiv onClick={() => onDeleteGroup(props.elem)}>
+      <DangerColorSpan onClick={() => onDeleteGroup(props.elem)}>
         <i className="fas fa-minus-circle"/>
-      </DangerColorDiv>
+      </DangerColorSpan>
     )
-  };
-
-  const csvTdFor = (key, elem) => {
-    if (key === "group") {
-      return (
-        <tr key={elem}>
-          <td>{elem}</td>
-          <td><b>{elem}</b></td>
-          <td>
-            <Dropdown>
-              <Dropdown.Toggle variant="success" size={"sm"}>
-                None
-              </Dropdown.Toggle>
-              <Dropdown.Menu>
-                <Dropdown.Item>None</Dropdown.Item>
-                <Dropdown.Item>Country</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
-          </td>
-          <DeleteCSVElem keyV={key} elem={elem}/>
-        </tr>
-      )
-    } else {
-      return (
-        <tr key={elem}>
-          <td>{elem}</td>
-          <td><b>{elem}</b></td>
-          <DeleteCSVElem keyV={key} elem={elem}/>
-        </tr>
-      )
-    }
-  };
-
-  const formCSVKeyElements = (elemKey, title) => {
-    let ret = (<Fragment/>);
-    if (csvKeyNumberValues && csvKeyNumberValues[elemKey]) {
-      ret = (
-        <FormGroupBorder>
-          <div>
-            <h4><b>{title}</b></h4>
-          </div>
-          <div>
-            <Table striped bordered hover variant="dark" size="sm">
-              <thead>
-              {csvHeadFor(elemKey)}
-              </thead>
-              <tbody>
-              {csvKeyNumberValues[elemKey].map(elem => (
-                csvTdFor(elemKey, elem)
-              ))}
-              </tbody>
-            </Table>
-          </div>
-        </FormGroupBorder>
-      )
-    }
-    return ret;
   };
 
   const csvScriptHead = () => {
@@ -260,14 +179,14 @@ export const ScriptEditor = () => {
                     <Dropdown>
                       Group Transform:{" "}
                       <Dropdown.Toggle variant="success" size={"sm"}>
-                        None
+                        {getLabelTransformOfGroup(scriptJson, e)}
                       </Dropdown.Toggle>
                       <Dropdown.Menu>
                         <Dropdown.Item>None</Dropdown.Item>
                         <Dropdown.Item>Country</Dropdown.Item>
                       </Dropdown.Menu>
                     </Dropdown>
-                    <DeleteCSVGroup elem={e}/>
+                    <div>Remove group <DeleteCSVGroup elem={e}/></div>
                   </GroupTransform>
                   <br/>
                   <Table striped bordered hover variant="dark" size="sm">
@@ -292,18 +211,12 @@ export const ScriptEditor = () => {
     <Container fluid>
       <Row>
         <Col sm={12}>
-          <Form onSubmit={(ev) => onSubmit(ev)}>
+          <Form>
             <Form.Group as={Row}>
               {formLabelInputSubmitEntry(2, 10, "Source", "source", "Url of your source here", true)}
             </Form.Group>
             {scriptOutputTables()}
-            {/*{formCSVKeyElements("group", "Group By")}*/}
-            {/*{formCSVKeyElements("x", "Timeline Axis")}*/}
-            {/*{formCSVKeyElements("y", "Value Axis")}*/}
             <br/>
-            <Button variant="success">
-              Submit
-            </Button>
           </Form>
         </Col>
       </Row>

@@ -83,7 +83,7 @@ export const DangerColor = styled.span`{
   color: var(--danger);
 }`;
 
-export const DangerColorDiv = styled.div`{
+const dangerButton = `
   color: var(--danger-color);
   align-self: center;
   cursor: pointer;
@@ -95,21 +95,18 @@ export const DangerColorDiv = styled.div`{
   :active {
     color: var(--middle-grey-color);
   }
+`;
+
+export const DangerColorSpan = styled.span`{
+  ${dangerButton}
+}`;
+
+export const DangerColorDiv = styled.div`{
+  ${dangerButton}
 }`;
 
 export const DangerColorTd = styled.td`{
-  color:  var(--danger-color);
-  align-self: center;
-  cursor: pointer;
-  
-  :hover {
-    color: var(--white);
-  }
-  
-  :active {
-    color: var(--middle-grey-color);
-  }
-
+  ${dangerButton}
 }`;
 
 export const PrimaryColor = styled.span`{
