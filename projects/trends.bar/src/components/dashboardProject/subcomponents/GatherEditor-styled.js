@@ -3,12 +3,12 @@ import styled from "styled-components";
 export const ScriptEditorGrid = styled.div` {
   --gridGrapX: 10px;
   display: grid;
-  grid-template-columns: 50% calc(50% - var(--gridGrapX));
+  grid-template-columns: 100%;
   grid-template-rows: 3em 6em 10em;
   grid-gap: 2px var(--gridGrapX);
-  grid-template-areas: "scriptTitle     outputTabs"
-                       "scriptVariables scriptOutput"
-                       "script          scriptOutput";
+  grid-template-areas: "scriptTitle     "
+                       "scriptVariables "
+                       "script          ";
   //height: calc(100vh - var(--navbar-height) - 150px);
   margin-top: 5px;
 }`;
@@ -67,7 +67,7 @@ export const ScriptOutputTabs = styled.div` {
   align-self: center;
 }`;
 
-export const ScriptResultTabs = styled.div ` {
+export const ScriptResultTabs = styled.div` {
   
 }`;
 
@@ -75,25 +75,29 @@ export const ScriptOutput = styled.div` {
   grid-area: scriptOutput;
 }`;
 
-export const InfoColor = styled.span `{
+export const InfoColor = styled.span`{
   color: var(--info)
 }`;
 
-export const DangerColor = styled.span `{
+export const DangerColor = styled.span`{
   color: var(--danger);
 }`;
 
-export const DangerColorDiv = styled.div `{
-  color: var(--secondary);
+export const DangerColorDiv = styled.div`{
+  color: var(--danger-color);
   align-self: center;
   cursor: pointer;
   
   :hover {
-    color: var(--danger-color);
+    color: var(--white);
+  }
+  
+  :active {
+    color: var(--middle-grey-color);
   }
 }`;
 
-export const DangerColorTd = styled.td `{
+export const DangerColorTd = styled.td`{
   color:  var(--danger-color);
   align-self: center;
   cursor: pointer;
@@ -108,16 +112,22 @@ export const DangerColorTd = styled.td `{
 
 }`;
 
-export const PrimaryColor = styled.span `{
+export const PrimaryColor = styled.span`{
   color: var(--primary)
 }`;
 
 export const FormGroupBorder = styled.div` {
   display: flex;
   flex-direction: column;
-  background-color: var(--info);
   border-radius: 3px;
-  padding: 5px;
+  padding: 10px;
   border: 1px solid var(--gray);
-  margin-bottom: 10px;
+  margin-top: 10px;
 }`;
+
+export const GroupTransform = styled.div` {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}`;
+
