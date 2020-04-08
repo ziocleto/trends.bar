@@ -68,7 +68,7 @@ export class trendGraphDataSource extends MongoDataSourceExtended {
     }
     newValues.push(ret.values[ret.values.length - 1]);
 
-    if (query.dataSequence === "Cumulative") {
+    if (query.cumulative) {
       newValuesDx = graphAssistant.firstDerivativeOf(newValues);
       newValuesDx2 = graphAssistant.firstDerivativeOf(newValuesDx);
       newValuesDxPerc = graphAssistant.firstDerivativePercOf(newValuesDx);

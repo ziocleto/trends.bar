@@ -20,7 +20,7 @@ export const CRAWL_TREND_GRAPH = gql`
                 label
                 subLabel
                 type
-                dataSequence
+                cumulative
                 values {
                     x
                     y

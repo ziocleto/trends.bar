@@ -40,7 +40,6 @@ input CrawlingPostTransform {
 input CrawlingActions {
     regex: CrawlingRegexp
     csv: CrawlingCSV
-    dataSequence: String
     startRegex: CrawlingRegexp
     endRegex: CrawlingRegexp
     validRange: CrawlingDateRange
@@ -55,6 +54,7 @@ input CrawlingDatasets {
 input CrawlingGroups {
     label: String
     labelTransform: String
+    cumulative: Boolean
     key: String
     x: BigInt!
     y: BigInt!
@@ -70,8 +70,6 @@ input CrawlingScript {
     graphType: [String]
     timestamp: String
     timestampFormat: String
-    dataSequence: String
-    version: String!
     groups: [CrawlingGroups]
 }
 

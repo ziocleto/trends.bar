@@ -5,13 +5,7 @@ import {DangerColorSpan, DangerColorTd, FormGroupBorder, GroupTransform} from ".
 import {api, useApi} from "../../../futuremodules/api/apiEntryPoint";
 import {getCSVGraphKeys} from "../../../futuremodules/fetch/fetchApiCalls";
 import {LightColorTextSpanBold} from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
-
-const getDefaultLabelTransformOf = (group) => {
-  if ( group.toLowerCase().includes("country") ) {
-    return "Country";
-  }
-  return "None";
-};
+import {useTrendIdGetter} from "../../../modules/trends/globals";
 
 const getLabelTransformOfGroup = (scriptJson, groupName) => {
   if ( !scriptJson ) return "None";
@@ -25,34 +19,17 @@ const getLabelTransformOfGroup = (scriptJson, groupName) => {
 
 export const ScriptEditor = () => {
 
+  const trendId = useTrendIdGetter();
   const [formData, setFromData] = useState({});
   const [scriptJson, setScriptJson] = useState(null);
   const fetchApi = useApi('fetch');
-  const csvKeyNumberValues = fetchApi[0];
-
-  console.log(scriptJson);
+  const fetchResult = fetchApi[0];
 
   useEffect(() => {
-    if (csvKeyNumberValues) {
-      console.log(csvKeyNumberValues);
-      let sj = {};
-      sj["source"] = formData.source;
-      sj["groups"] = [];
-      for (const group of csvKeyNumberValues["group"]) {
-        for (const elem of csvKeyNumberValues["y"]) {
-          sj["groups"].push({
-            label: group,
-            labelTransform: getDefaultLabelTransformOf(group),
-            key: elem,
-            x: csvKeyNumberValues["x"][0],
-            y: elem
-          });
-        }
-      }
-      console.log(sj);
-      setScriptJson(sj);
+    if (fetchResult) {
+      setScriptJson(fetchResult.script);
     }
-  }, [csvKeyNumberValues, formData.source]);
+  }, [fetchResult]);
 
   const onChange = e => {
     setFromData({
@@ -82,20 +59,8 @@ export const ScriptEditor = () => {
   };
 
   const gatherSource = () => {
-    api(fetchApi, getCSVGraphKeys, formData.source).then();
+    api(fetchApi, getCSVGraphKeys, { url: formData.sourceDocument, trendId}).then( r => console.log(r));
   };
-
-  // const formLabelInputEntry = (ls, vs, label, key, placeholder = "", required = false, defaultValue = null) => (
-  //   <Fragment>
-  //     <Form.Label column sm={ls} className={"text-white font-weight-bold"}>
-  //       {label}
-  //     </Form.Label>
-  //     <Col sm={vs}>
-  //       <Form.Control name={key} placeholder={placeholder} defaultValue={defaultValue}
-  //                     onChange={e => onChange(e)} required={required}/>
-  //     </Col>
-  //   </Fragment>
-  // );
 
   const formLabelInputSubmitEntry = (ls, vs, label, key, placeholder = "", required = false, defaultValue = null) => (
     <Fragment key={key}>
@@ -158,7 +123,6 @@ export const ScriptEditor = () => {
     return ret.map(re => re);
   };
 
-
   const scriptOutputTables = () => {
     let ret = (<Fragment/>);
     if (scriptJson && scriptJson.groups && scriptJson.groups.length > 0) {
@@ -214,7 +178,7 @@ export const ScriptEditor = () => {
         <Col sm={12}>
           <Form>
             <Form.Group as={Row}>
-              {formLabelInputSubmitEntry(2, 10, "Source", "source", "Url of your source here", true)}
+              {formLabelInputSubmitEntry(2, 10, "Source", "sourceDocument", "Url of your source here", true)}
             </Form.Group>
             {scriptOutputTables()}
             <br/>
@@ -222,5 +186,5 @@ export const ScriptEditor = () => {
         </Col>
       </Row>
     </Container>
-  )
+  );
 };

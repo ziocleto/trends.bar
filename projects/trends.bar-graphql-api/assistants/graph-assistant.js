@@ -16,13 +16,13 @@ module.exports = {
     return (type.substr(0, module.exports.xyType().length) === module.exports.xyType());
   },
 
-  declare: (type, title, label = "", subLabel = "", dataSequence = "" ) => {
+  declare: (type, title, label = "", subLabel = "", cumulative = true ) => {
     return {
       type,
       title,
       label,
       subLabel,
-      dataSequence
+      cumulative
     }
   },
 
