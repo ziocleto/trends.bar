@@ -7,6 +7,20 @@ const csv = require('csvtojson');
 
 const router = express.Router();
 
+const checkIfNumberSequence = (resjson, vk) => {
+  for ( let index = 1; index < resjson.length; index++ ) {
+    if ( isNaN(Number(resjson[index][vk])) ) return false;
+  }
+  return true;
+};
+
+const checkIfDateSequence = (resjson, vk) => {
+  for ( let index = 1; index < resjson.length; index++ ) {
+    if ( isNaN(Date.parse(resjson[index][vk])) ) return false;
+  }
+  return true;
+};
+
 router.post("/csvgraphkeys", async (req, res, next) => {
   try {
     const url = Object.keys(req.body)[0];
@@ -25,9 +39,9 @@ router.post("/csvgraphkeys", async (req, res, next) => {
     if ( resjson.length > 1 ) {
       const valueKeys = Object.keys(resjson[0]);
       for ( const vk of valueKeys ) {
-        if ( !isNaN(Number(resjson[1][vk])) ) {
+        if ( checkIfNumberSequence(resjson, vk)  ) {
           keys["y"] ? keys["y"].push(vk) : keys['y'] = [vk];
-        } else if ( !isNaN(Date.parse(resjson[1][vk])) ) {
+        } else if ( checkIfDateSequence(resjson, vk ) ) {
           keys["x"] ? keys["x"].push(vk) : keys['x'] = [vk];
         } else {
           keys["group"] ? keys["group"].push(vk) : keys['group'] = [vk];

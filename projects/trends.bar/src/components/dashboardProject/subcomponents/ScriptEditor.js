@@ -34,6 +34,7 @@ export const ScriptEditor = () => {
 
   useEffect(() => {
     if (csvKeyNumberValues) {
+      console.log(csvKeyNumberValues);
       let sj = {};
       sj["source"] = formData.source;
       sj["groups"] = [];
