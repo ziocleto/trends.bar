@@ -16,14 +16,12 @@ module.exports = {
     return (type.substr(0, module.exports.xyType().length) === module.exports.xyType());
   },
 
-  declare: (type, title, groupName, label = "", subLabel = "", cumulative = true ) => {
+  declare: (type, title, label = "", subLabel = "" ) => {
     return {
       type,
       title,
-      groupName,
       label,
       subLabel,
-      cumulative
     }
   },
 

@@ -102,15 +102,13 @@ router.post("/csvgraphkeys", async (req, res, next) => {
       groupQuerySet[group] = [];
       groupQuerySetOfSet[group] = {};
       graphQueries.map( elem => {
-        if ( elem.group === group ) {
+        if ( elem.subLabel === group ) {
           groupQuerySet[group].push(elem);
           // groupQuerySetOfSet[group] = .push(elem);
           groupQuerySetOfSet[group][elem.label] ? groupQuerySetOfSet[group][elem.label].push(elem) : groupQuerySetOfSet[group][elem.label]=[elem];
         }
       });
     }
-
-    console.log(groupQuerySetOfSet);
 
     const ret = {
       urlKey: url,

@@ -54,7 +54,6 @@ input CrawlingDatasets {
 input CrawlingGroups {
     label: String
     labelTransform: String
-    cumulative: Boolean
     key: String
     x: BigInt!
     y: BigInt!

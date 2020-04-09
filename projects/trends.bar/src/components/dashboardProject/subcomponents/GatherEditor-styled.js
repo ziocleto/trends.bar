@@ -66,10 +66,6 @@ export const InfoColor = styled.span`{
   color: var(--info)
 }`;
 
-export const DangerColor = styled.span`{
-  color: var(--danger);
-}`;
-
 const dangerButton = `
   color: var(--danger-color);
   align-self: center;
@@ -96,31 +92,10 @@ export const DangerColorTd = styled.td`{
   ${dangerButton}
 }`;
 
-export const PrimaryColor = styled.span`{
-  color: var(--primary)
-}`;
-
-export const FormGroupBorder = styled.div` {
-  display: grid;
-  grid-template-columns: 17% 83%;
-  width: 100%;
-  border-radius: 3px;
-  padding: 10px;
-  border: 1px solid var(--gray);
+export const ScriptResultContainer = styled.div` {
   margin-top: 10px;
 }`;
 
 export const ScriptGraphContainer = styled.div `{
   min-height: 500px;
-}`;
-
-export const GroupTransform = styled.div` {
-  display: flex;
-  width: 100%;
-  justify-content: space-between;
-}`;
-
-export const GroupKeyContainer = styled.div` {
-  display: grid;
-  grid-template-columns: 17% 83%;
 }`;

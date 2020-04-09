@@ -58,12 +58,10 @@ export class Cruncher {
     const query = {
       trendId: this.trendId,
       username: this.username,
-      group: graph.groupName,
       title: graph.title,
       label: graph.label,
       subLabel: graph.subLabel,
       type: this.graphType,
-      cumulative: graph.cumulative
     };
     const ivalue = {
       x: Date.parse(value.x),
@@ -106,9 +104,9 @@ export class Cruncher {
   }
 
   finaliseCrunch(group, title, xValue, wc) {
-    const {key, cumulative} = group;
+    const key = group.key;
     const groupName = group.label;
-    const graphElem = graphAssistant.declare(this.graphType, key, groupName, title, "", cumulative);
+    const graphElem = graphAssistant.declare(this.graphType, key, title, groupName);
     const value = graphAssistant.prepareSingleValue(graphElem.type, xValue, wc);
     this.dataEntry(graphElem, value);
   }
@@ -200,28 +198,28 @@ export class Cruncher {
 
     // Sanitize if needed
     // Sanitize cumulative
-    this.graphQueries.forEach( elem => {
-      if (elem.values.length > 1 && elem.cumulative) {
-        for (let i = 1; i < elem.values.length; i++) {
-          if (elem.values[i].y === 0 && elem.values[i - 1].y > 0 &&
-            elem.values[i].x !== 0 && elem.values[i - 1].x ) {
-            elem.values[i].y = elem.values[i - 1].y;
-          }
-        }
-
-        let red = {};
-        for ( const v of elem.values ) {
-          if ( !red[v.x] ) red[v.x] = 0;
-          red[v.x] += v.y;
-        }
-        elem.values = [];
-        // Remap to red
-        for ( const e in red ) {
-          elem.values.push({ x:parseInt(e), y:red[e]});
-        }
-      }
-      this.traces += (elem.title + ", " + elem.label + ", " + JSON.stringify(elem.values) + "\n");
-    });
+    // this.graphQueries.forEach( elem => {
+    //   if (elem.values.length > 1 && elem.cumulative) {
+    //     for (let i = 1; i < elem.values.length; i++) {
+    //       if (elem.values[i].y === 0 && elem.values[i - 1].y > 0 &&
+    //         elem.values[i].x !== 0 && elem.values[i - 1].x ) {
+    //         elem.values[i].y = elem.values[i - 1].y;
+    //       }
+    //     }
+    //
+    //     let red = {};
+    //     for ( const v of elem.values ) {
+    //       if ( !red[v.x] ) red[v.x] = 0;
+    //       red[v.x] += v.y;
+    //     }
+    //     elem.values = [];
+    //     // Remap to red
+    //     for ( const e in red ) {
+    //       elem.values.push({ x:parseInt(e), y:red[e]});
+    //     }
+    //   }
+    //   this.traces += (elem.title + ", " + elem.label + ", " + JSON.stringify(elem.values) + "\n");
+    // });
 
     return {
       traces: this.traces,

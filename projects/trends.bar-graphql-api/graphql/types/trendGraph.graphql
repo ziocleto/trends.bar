@@ -36,7 +36,6 @@ type GraphQuery {
     label: String
     subLabel: String
     type: String
-    cumulative: Boolean
     values: [DateInt]
 }
 
@@ -47,7 +46,6 @@ input GraphQueryInput {
     label: String
     subLabel: String
     type: String
-    cumulative: Boolean
     values: [DateIntInput]
 }
 
