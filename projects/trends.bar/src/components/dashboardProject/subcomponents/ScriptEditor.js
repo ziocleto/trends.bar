@@ -150,8 +150,13 @@ export const ScriptEditor = () => {
     );
   };
 
-  const groupItems = () => {
-    return (<div>Ciao a tutti</div>);
+  const groupItems = (e) => {
+    const keys = Object.keys(fetchResult.groupQuerySet[e]);
+    return (
+      <div>
+        {keys.map( key => (<p key={key}>{key}</p>) )}
+      </div>
+    );
   };
 
   const scriptOutputTables = () => {
@@ -165,7 +170,7 @@ export const ScriptEditor = () => {
                 <Tab key={e} eventKey={e} title={groupMenuHandler(e)}>
                   <FormGroupBorder>
                     <div>
-                      {groupItems()}
+                      {groupItems(e)}
                     </div>
                     <div>
                       <Table striped bordered hover variant="dark" size="sm">
@@ -177,7 +182,7 @@ export const ScriptEditor = () => {
                         </tbody>
                       </Table>
                       <ScriptGraphContainer>
-                        <GraphXY data={fetchResult.groupQuerySet[e]} config={getDefaultWidgetContent("graphxy", 0)}/>
+                        {/*<GraphXY data={fetchResult.groupQuerySet[e]} config={getDefaultWidgetContent("graphxy", 0)}/>*/}
                       </ScriptGraphContainer>
                     </div>
                   </FormGroupBorder>

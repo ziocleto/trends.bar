@@ -96,22 +96,28 @@ router.post("/csvgraphkeys", async (req, res, next) => {
     groupsSet.forEach(e => groupSetArray.push(e));
 
     let groupQuerySet = {};
+    let groupQuerySetOfSet = {};
 
     for ( const group of groupSetArray ) {
       groupQuerySet[group] = [];
+      groupQuerySetOfSet[group] = {};
       graphQueries.map( elem => {
         if ( elem.group === group ) {
           groupQuerySet[group].push(elem);
+          // groupQuerySetOfSet[group] = .push(elem);
+          groupQuerySetOfSet[group][elem.label] ? groupQuerySetOfSet[group][elem.label].push(elem) : groupQuerySetOfSet[group][elem.label]=[elem];
         }
       });
     }
+
+    console.log(groupQuerySetOfSet);
 
     const ret = {
       urlKey: url,
       script: script,
       crawledText: text,
       traces: traces,
-      groupQuerySet: groupQuerySet,
+      groupQuerySet: groupQuerySetOfSet,
       dataset: datasetElem
     };
 
