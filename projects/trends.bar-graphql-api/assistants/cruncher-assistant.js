@@ -62,10 +62,10 @@ export class Cruncher {
       label: graph.label,
       subLabel: graph.subLabel,
       type: this.graphType,
-      dataSequence: graph.dataSequence
+      cumulative: graph.cumulative
     };
     const ivalue = {
-      x: moment(value.x).valueOf(),
+      x: Date.parse(value.x),
       y: Number(value.y)
     };
     const qhash = hash(query);
@@ -104,8 +104,8 @@ export class Cruncher {
     return match;
   }
 
-  finaliseCrunch(key, title, xValue, wc, dataSequence = null) {
-    const graphElem = graphAssistant.declare(this.graphType, key, title, "", dataSequence);
+  finaliseCrunch(key, title, xValue, wc, cumulative) {
+    const graphElem = graphAssistant.declare(this.graphType, key, title, "", cumulative);
     const value = graphAssistant.prepareSingleValue(graphElem.type, xValue, wc);
     this.dataEntry(graphElem, value);
   }
@@ -138,40 +138,40 @@ export class Cruncher {
     return {title: r1, y: parseIntWithSpaces(r2)}
   }
 
-  async crunchAction(key, title, action) {
-    const nparse = new Parser(this.parser.text.substring(this.getParserStartIndex(action.startRegex),
-      this.getParserEndIndex(action.endRegex)));
+  // async crunchAction(key, title, action) {
+  //   const nparse = new Parser(this.parser.text.substring(this.getParserStartIndex(action.startRegex),
+  //     this.getParserEndIndex(action.endRegex)));
+  //
+  //   if (action.regex) {
+  //     let results = [];
+  //     const resolver = regExResolver(action.regex);
+  //     const regex = makeRegExpFromJSON(action.regex);
+  //     if (resolver === regExResolverSingle) {
+  //       const parsedData = nparse.find(regex);
+  //       if (!parsedData || parsedData.length === 0) throw "Error parsing";
+  //       results.push({y: parseIntWithSpaces(parsedData[1]), title});
+  //     } else if (resolver === regExResolverAccumulator) {
+  //       results.push({y: nparse.findAllAccumulate(regex), title});
+  //     } else if (resolver === regExResolverPostTransform) {
+  //       for (const r of nparse.findAll(regex)) {
+  //         results.push(await this.applyPost(r, action.postTransform, title));
+  //       }
+  //     }
+  //
+  //     for (const result of results) {
+  //       this.finaliseCrunch(key, result.title, this.defaultXValue, result.y);
+  //     }
+  //   } else if (action.csv) {
+  //     const resjson = await csv().fromString(nparse.text);
+  //     for (const elem of resjson) {
+  //       // If label is present in the csv raw then used it, otherwise it as the string specified in the json field 'label'
+  //       const cvsLabelField = elem[action.csv.label] ? elem[action.csv.label] : action.csv.label;
+  //       this.finaliseCrunch(key, cvsLabelField, elem[action.csv.x], elem[action.csv.y]);
+  //     }
+  //   }
+  // }
 
-    if (action.regex) {
-      let results = [];
-      const resolver = regExResolver(action.regex);
-      const regex = makeRegExpFromJSON(action.regex);
-      if (resolver === regExResolverSingle) {
-        const parsedData = nparse.find(regex);
-        if (!parsedData || parsedData.length === 0) throw "Error parsing";
-        results.push({y: parseIntWithSpaces(parsedData[1]), title});
-      } else if (resolver === regExResolverAccumulator) {
-        results.push({y: nparse.findAllAccumulate(regex), title});
-      } else if (resolver === regExResolverPostTransform) {
-        for (const r of nparse.findAll(regex)) {
-          results.push(await this.applyPost(r, action.postTransform, title));
-        }
-      }
-
-      for (const result of results) {
-        this.finaliseCrunch(key, result.title, this.defaultXValue, result.y);
-      }
-    } else if (action.csv) {
-      const resjson = await csv().fromString(nparse.text);
-      for (const elem of resjson) {
-        // If label is present in the csv raw then used it, otherwise it as the string specified in the json field 'label'
-        const cvsLabelField = elem[action.csv.label] ? elem[action.csv.label] : action.csv.label;
-        this.finaliseCrunch(key, cvsLabelField, elem[action.csv.x], elem[action.csv.y], action.dataSequence);
-      }
-    }
-  }
-
-  async crunchGroups(resjson, group, defaultXValue, dataSequence) {
+  async crunchGroups(resjson, group, defaultXValue) {
     for (const elem of resjson) {
       // If label is present in the csv raw then used it, otherwise it as the string specified in the json field 'label'
       let cvsLabelField = elem[group.label] ? elem[group.label] : group.label;
@@ -179,7 +179,7 @@ export class Cruncher {
         cvsLabelField = this.applyCountryPostTransformRule(cvsLabelField);
       }
       const xValue = elem[group.x] ? elem[group.x] : defaultXValue;
-      this.finaliseCrunch(group.key, cvsLabelField, xValue, elem[group.y], dataSequence);
+      this.finaliseCrunch(group.key, cvsLabelField, xValue, elem[group.y], group.cumulative);
     }
   }
 
@@ -187,7 +187,7 @@ export class Cruncher {
     const nparse = new Parser(this.parser.text);
     const resjson = await csv().fromString(nparse.text);
     for (const group of query.groups) {
-      await this.crunchGroups(resjson, group, this.defaultXValue, query.dataSequence);
+      await this.crunchGroups(resjson, group, this.defaultXValue);
     }
 
     // Remap to array
@@ -198,7 +198,7 @@ export class Cruncher {
     // Sanitize if needed
     // Sanitize cumulative
     this.graphQueries.forEach( elem => {
-      if (elem.values.length > 1 && elem.dataSequence === "Cumulative") {
+      if (elem.values.length > 1 && elem.cumulative) {
         for (let i = 1; i < elem.values.length; i++) {
           if (elem.values[i].y === 0 && elem.values[i - 1].y > 0 &&
             elem.values[i].x !== 0 && elem.values[i - 1].x ) {

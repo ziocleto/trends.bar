@@ -18,8 +18,8 @@ const init = () => {
 const use = () => {
   app.use("/", tokenRoute);
   app.use("/user", usersRoute);
-  app.use("/fetch", fetchRoute);
   app.use(authController.authenticate);
+  app.use("/fetch", fetchRoute);
 }
 
 init();
