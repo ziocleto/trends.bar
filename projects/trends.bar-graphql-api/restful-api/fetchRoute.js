@@ -90,12 +90,30 @@ router.post("/csvgraphkeys", async (req, res, next) => {
     const cruncher = new Cruncher(trendId, username, text, graphAssistant.xyDateInt(), "embedded");
     const {traces, graphQueries} = await cruncher.crunch(script);
 
+    let groupsSet = new Set();
+    let groupSetArray = [];
+    script.groups.map(elem => groupsSet.add(elem.label));
+    groupsSet.forEach(e => groupSetArray.push(e));
+
+    let groupQuerySet = {};
+
+    for ( const group of groupSetArray ) {
+      groupQuerySet[group] = [];
+      graphQueries.map( elem => {
+        if ( elem.group === group ) {
+          groupQuerySet[group].push(elem);
+        }
+      });
+    }
+
     const ret = {
       urlKey: url,
       script: script,
       crawledText: text,
       traces: traces,
+      groupsSetArray: groupSetArray,
       graphQueries: graphQueries,
+      groupQuerySet: groupQuerySet,
       dataset: datasetElem
     };
 

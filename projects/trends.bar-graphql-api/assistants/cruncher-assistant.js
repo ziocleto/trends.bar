@@ -58,6 +58,7 @@ export class Cruncher {
     const query = {
       trendId: this.trendId,
       username: this.username,
+      group: graph.groupName,
       title: graph.title,
       label: graph.label,
       subLabel: graph.subLabel,
@@ -104,8 +105,10 @@ export class Cruncher {
     return match;
   }
 
-  finaliseCrunch(key, title, xValue, wc, cumulative) {
-    const graphElem = graphAssistant.declare(this.graphType, key, title, "", cumulative);
+  finaliseCrunch(group, title, xValue, wc) {
+    const {key, cumulative} = group;
+    const groupName = group.label;
+    const graphElem = graphAssistant.declare(this.graphType, key, groupName, title, "", cumulative);
     const value = graphAssistant.prepareSingleValue(graphElem.type, xValue, wc);
     this.dataEntry(graphElem, value);
   }
@@ -179,7 +182,7 @@ export class Cruncher {
         cvsLabelField = this.applyCountryPostTransformRule(cvsLabelField);
       }
       const xValue = elem[group.x] ? elem[group.x] : defaultXValue;
-      this.finaliseCrunch(group.key, cvsLabelField, xValue, elem[group.y], group.cumulative);
+      this.finaliseCrunch(group, cvsLabelField, xValue, elem[group.y]);
     }
   }
 

@@ -1,16 +1,7 @@
 import styled from "styled-components";
 
 export const ScriptEditorGrid = styled.div` {
-  --gridGrapX: 10px;
-  display: grid;
-  grid-template-columns: 100%;
-  grid-template-rows: 3em 6em 10em;
-  grid-gap: 2px var(--gridGrapX);
-  grid-template-areas: "scriptTitle     "
-                       "scriptVariables "
-                       "script          ";
-  //height: calc(100vh - var(--navbar-height) - 150px);
-  margin-top: 5px;
+  margin-top: 20px;
 }`;
 
 export const ScriptVariables = styled.div` {
@@ -54,10 +45,6 @@ export const ScriptFileName = styled.div` {
   border-radius: 3px;
   background-color: var(--primary);
   padding: 0.33em;
-}`;
-
-export const ScriptEditorContainer = styled.div` {
-  grid-area: script;
 }`;
 
 export const ScriptOutputTabs = styled.div` {
@@ -114,12 +101,15 @@ export const PrimaryColor = styled.span`{
 }`;
 
 export const FormGroupBorder = styled.div` {
-  display: flex;
-  flex-direction: column;
+  width: 100%;
   border-radius: 3px;
   padding: 10px;
   border: 1px solid var(--gray);
   margin-top: 10px;
+}`;
+
+export const ScriptGraphContainer = styled.div `{
+  min-height: 500px;
 }`;
 
 export const GroupTransform = styled.div` {
