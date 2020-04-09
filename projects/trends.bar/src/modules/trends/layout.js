@@ -56,6 +56,7 @@ const getDefaultWidgetGraphXYContent = (i) => {
     i: i.toString(),
     type: "graphxy",
     graphXYTitle: "Graph title",
+    graphXYXDataType: "data",
     graphXYSeries: [
         getDefaultWidgetGraphXYSerieContent()
     ]
@@ -67,9 +68,13 @@ export const getDefaultWidgetGraphXYSerieContent = () => {
     title: "Serie",
     query: "$[0].values[*]",
     fieldX: "x",
-    transformX: "toDateDD/MM",
+    transformX: "tomsDate",
     fieldY: "y",
-    transformY: ""
+    transformY: "",
+    fillArea: "false",
+    bullet: "circle",
+    lineWidth: "1",
+    lineStyle: "1"
   }
 }
 

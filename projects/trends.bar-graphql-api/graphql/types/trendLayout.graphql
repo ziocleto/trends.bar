@@ -34,6 +34,11 @@ type ContentWidgetGraphXYContent {
     transformX: String
     fieldY: String
     transformY: String
+    fillArea: String
+    bullet: String
+    lineWidth: String
+    lineStyle: String
+
 }
 
 type ContentWidget {
@@ -50,6 +55,7 @@ type ContentWidget {
     tableColumns: [ContentWidgetTableColumn]
 
     graphXYTitle: String
+    graphXYXDataType: String
     graphXYSeries: [ContentWidgetGraphXYContent]
 }
 
@@ -67,6 +73,10 @@ input ContentWidgetGraphXYContentInput {
     transformX: String
     fieldY: String
     transformY: String
+    fillArea: String
+    bullet: String
+    lineWidth: String
+    lineStyle: String
 }
 
 input ContentWidgetInput {
@@ -83,6 +93,7 @@ input ContentWidgetInput {
     tableColumns: [ContentWidgetTableColumnInput]
 
     graphXYTitle: String
+    graphXYXDataType: String
     graphXYSeries: [ContentWidgetGraphXYContentInput]
 }
 

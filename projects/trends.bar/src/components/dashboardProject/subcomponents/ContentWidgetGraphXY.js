@@ -1,11 +1,11 @@
 import "./react-grid-styles.css"
 import "./react-resizable-styles.css"
 
-import React, {Fragment, useState, useRef, useEffect} from "react";
+import React, {Fragment, useState, useEffect} from "react";
 import {getArrayFromJsonPath} from "../../../modules/trends/jsonPath";
 import {transformData} from "../../../modules/trends/dataTransformer";
 import uniqueId from "lodash/uniqueId";
-// import CanvasJSReact from '../../../assets/canvasjs.react';
+import numeraljs from 'numeraljs'
 import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
 //import am4themes_animated from "@amcharts/amcharts4/themes/animated";
@@ -19,33 +19,28 @@ am4core.useTheme(am4themes_dark);
 
 export const ContentWidgetGraphXY = ({data,config}) => {
 
-    let chart = useRef();
+    //let chart = useRef();
 
     let grafo = null;
     const [graphId] = useState(uniqueId('graph-'));
 
     useEffect(() => {
-        console.log('mounted ');
 
         const graphData=[];
         for (let i=0;i<config.graphXYSeries.length;i++) {
             try {
                 const serieData = getArrayFromJsonPath(data, config.graphXYSeries[i].query).map(e => {
                     const serieRow = {
-                        label: transformData(e[config.graphXYSeries[i].fieldX], config.graphXYSeries[i].transformX),
+                        x: transformData(e[config.graphXYSeries[i].fieldX], config.graphXYSeries[i].transformX),
                         y: transformData(e[config.graphXYSeries[i].fieldY], config.graphXYSeries[i].transformY)
                     }
                     return serieRow;
                 });
                 graphData.push({
                     name: config.graphXYSeries[i].title,
-                    // type: "area",
-                    // showInLegend: true,
-                    // fillOpacity: 0.3,
                     data: serieData
                 });
             } catch (ex) {
-                console.log("Error building graphxy", ex)
             }
         }
 
@@ -53,34 +48,61 @@ export const ContentWidgetGraphXY = ({data,config}) => {
 
         chart.paddingRight = 20;
 
-        // let data = [];
-        // for (let i = 1; i < 366; i++) {
-        //     visits += Math.round((Math.random() < 0.5 ? 1 : -1) * Math.random() * 10);
-        //     data.push({ date: new Date(2018, 0, i), name: "name" + i, value: visits });
-        // }
+        let xAxis = null;
+        if (config.graphXYXDataType==="value") {
+            xAxis = chart.xAxes.push(new am4charts.ValueAxis());
+        } else if (config.graphXYXDataType==="category") {
+            xAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+        } else {
+            xAxis = chart.xAxes.push(new am4charts.DateAxis());
+        }
 
-        // chart.data = graphData[0].data;
+        xAxis.renderer.minGridDistance = 50;
+        xAxis.renderer.grid.template.location = 0.5;
+        xAxis.startLocation = 0.5;
+        xAxis.endLocation = 0.5;
 
-        var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
-        dateAxis.renderer.minGridDistance = 50;
-        dateAxis.renderer.grid.template.location = 0.5;
-        dateAxis.startLocation = 0.5;
-        dateAxis.endLocation = 0.5;
-
-// Create value axis
+        // Create value axis
         var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
 
         graphData.forEach((e,i) => {
-            console.log(`Serie: ${e.name}`);
-            console.log(`${JSON.stringify(e.data)}`);
             let series = chart.series.push(new am4charts.LineSeries());
             series.name=e.name;
             series.dataFields.valueY = "y";
-            series.dataFields.dateX = "label";
-            series.tooltipText = "{dateX.formatDate(dd/MM)} - {name} {valueY.value}";
-            series.strokeWidth = 3;
-            series.tensionX = 0.8;
-            series.bullets.push(new am4charts.CircleBullet());
+            if (config.graphXYXDataType==="value") {
+                series.dataFields.valueX = "x";
+                series.tooltipText = "{valueX} - {name} {valueY.value}";
+            } else if (config.graphXYXDataType==="category") {
+                series.dataFields.categoryX = "x";
+                series.tooltipText = "{categoryX} - {name} {valueY.value}";
+            } else {
+                series.dataFields.dateX = "x";
+                series.tooltipText = "{dateX.formatDate(dd/MM)} - {name} {valueY.value}";
+            }
+            if (config.graphXYSeries[i].fillArea==="true") {
+                series.fillOpacity = 0.2;
+            } else {
+                series.fillOpacity = 0;
+            }
+
+            if (numeraljs(config.graphXYSeries[i].lineWidth).value()===0) {
+                series.strokeWidth = 1;
+            } else {
+                series.strokeWidth = numeraljs(config.graphXYSeries[i].lineWidth).value();
+            }
+            series.strokeDasharray = config.graphXYSeries[i].lineStyle;
+            series.tensionX = 1;
+            if (config.graphXYSeries[i].bullet==="square") {
+                let bullet = series.bullets.push(new am4charts.Bullet());
+                let square = bullet.createChild(am4core.Rectangle);
+                square.width = 5;
+                square.height = 5;
+                square.horizontalCenter = "middle";
+                square.verticalCenter = "middle";
+            } else if (config.graphXYSeries[i].bullet==="circle") {
+                let bullet = series.bullets.push(new am4charts.CircleBullet());
+                bullet.circle.radius=2.5;
+            }
             series.data = e.data;
         });
 
@@ -92,60 +114,15 @@ export const ContentWidgetGraphXY = ({data,config}) => {
         grafo = chart;
 
         return () => {
-            console.log('will unmount');
             if (grafo) {
                 grafo.dispose();
             }
         }
     }, [data,config]);
 
-    //console.log("GRAPHDATA:", JSON.stringify(graphData[0].data));
-
-    // const itemclick = e => {
-    //     if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
-    //         e.dataSeries.visible = false;
-    //     } else {
-    //         e.dataSeries.visible = true;
-    //     }
-    //     e.chart.render();
-    // };
-    //
-    // const options = {
-    //     zoomEnabled: true,
-    //     axisX: {
-    //         valueFormatString: "DD MMM"
-    //     },
-    //     title: {
-    //         text: config.graphXYTitle
-    //     },
-    //     legend: {
-    //         cursor: "pointer",
-    //         itemclick: itemclick
-    //     },
-    //     theme: "dark1",
-    //     backgroundColor: "#00000000",
-    //     animationEnabled: true,
-    //     interactivityEnabled: true,
-    //
-    //     data: graphData
-    // };
-    //
-    // const containerProps = {
-    //     height: "100%"
-    // };
     return (
         <Fragment>
             <div id={graphId} style={{ width: "100%", height: "100%" }}></div>
-            {/*<CanvasJSChart*/}
-            {/*    // im using the index just for the example*/}
-            {/*    // you will only need to use dataPoints.toString().*/}
-            {/*    // when the data is not the same as the previous data*/}
-            {/*    // it will remount the component and trigger the animation*/}
-            {/*    key={graphData.toString()}*/}
-            {/*    options={options}*/}
-            {/*    containerProps = {containerProps}*/}
-            {/*    onRef={ref => (chart.current = ref)}*/}
-            {/*/>*/}
         </Fragment>
     );
 }
