@@ -101,6 +101,8 @@ export const PrimaryColor = styled.span`{
 }`;
 
 export const FormGroupBorder = styled.div` {
+  display: grid;
+  grid-template-columns: 17% 83%;
   width: 100%;
   border-radius: 3px;
   padding: 10px;
@@ -118,3 +120,7 @@ export const GroupTransform = styled.div` {
   justify-content: space-between;
 }`;
 
+export const GroupKeyContainer = styled.div` {
+  display: grid;
+  grid-template-columns: 17% 83%;
+}`;

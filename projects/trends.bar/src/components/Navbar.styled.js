@@ -46,5 +46,7 @@ export const NavbarTitle = styled.div `{
 }`;
 
 export const Mx1 = styled.span` {
+  width: 10px;
   min-width: 10px;
+  margin-left: 10px;
 }`;

@@ -111,8 +111,6 @@ router.post("/csvgraphkeys", async (req, res, next) => {
       script: script,
       crawledText: text,
       traces: traces,
-      groupsSetArray: groupSetArray,
-      graphQueries: graphQueries,
       groupQuerySet: groupQuerySet,
       dataset: datasetElem
     };
