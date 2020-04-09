@@ -1,15 +1,19 @@
 import React from "reactn";
 import {Fragment, useEffect, useState} from "react";
-import {Button, Col, Container, Dropdown, Form, InputGroup, Row, Tab, Table, Tabs} from "react-bootstrap";
-import {DangerColorSpan, DangerColorTd, FormGroupBorder, ScriptGraphContainer} from "./GatherEditor-styled";
+import {Button, Col, Container, Dropdown, Form, InputGroup, Nav, Row, Tab, Table, Tabs} from "react-bootstrap";
+import {DangerColorSpan, DangerColorTd, ScriptGraphContainer} from "./GatherEditor-styled";
 import {api, useApi} from "../../../futuremodules/api/apiEntryPoint";
 import {getCSVGraphKeys} from "../../../futuremodules/fetch/fetchApiCalls";
-import {Flex, LightColorTextSpanBold} from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
+import {
+  Flex,
+  LightColorTextSpanBold,
+  MarginBorderDiv
+} from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {useTrendIdGetter} from "../../../modules/trends/globals";
-import {GraphXY} from "../../../futuremodules/graphs/GraphXY";
 import {arrayExistsNotEmptyOnObject, arrayObjectExistsNotEmpty} from "../../../futuremodules/utils/utils";
-import {getDefaultWidgetContent} from "../../../modules/trends/layout";
 import {Mx1} from "../../Navbar.styled";
+import {getDefaultWidgetContent} from "../../../modules/trends/layout";
+import {GraphXY} from "../../../futuremodules/graphs/GraphXY";
 
 
 const getLabelTransformOfGroup = (scriptJson, groupName) => {
@@ -27,13 +31,20 @@ export const ScriptEditor = () => {
   const trendId = useTrendIdGetter();
   const [formData, setFromData] = useState({});
   const [groupTabKey, setGroupTabKey] = useState(null);
+  const [subGroupTabKey, setSubGroupTabKey] = useState(null);
   const fetchApi = useApi('fetch');
   const [fetchResult, setFetchResult] = fetchApi;
 
   useEffect(() => {
     if (fetchResult) {
-      console.log(fetchResult);
-      if (arrayObjectExistsNotEmpty(fetchResult.groupQuerySet)) setGroupTabKey(Object.keys(fetchResult.groupQuerySet)[0]);
+      // console.log(fetchResult);
+      if (arrayObjectExistsNotEmpty(fetchResult.groupQuerySet)) {
+        const groupKey = Object.keys(fetchResult.groupQuerySet)[0];
+        setGroupTabKey(groupKey);
+        if ( arrayObjectExistsNotEmpty(fetchResult.groupQuerySet[groupKey])) {
+          setSubGroupTabKey(Object.keys(fetchResult.groupQuerySet[groupKey])[0]);
+        }
+      }
     }
   }, [fetchResult]);
 
@@ -105,27 +116,22 @@ export const ScriptEditor = () => {
   const csvScriptHead = () => {
     return (
       <tr>
-        <th>Name</th>
-        <th>X Axis</th>
-        <th>Y Axis</th>
+        <th>Value</th>
         <th>Remove</th>
       </tr>
     )
   };
 
-  const csvScriptTD = (e) => {
+  const csvScriptTD = (e, key) => {
     let ret = [];
-    for (const elem of fetchResult.script.groups) {
-      if (elem.label === e) {
-        ret.push((
-          <tr key={elem.key}>
-            <td><b>{elem.key}</b></td>
-            <td><b>{elem.x}</b></td>
-            <td><b>{elem.y}</b></td>
-            <DeleteCSVElem elem={elem}/>
-          </tr>
-        ));
-      }
+    for (const elem of fetchResult.groupQuerySet[e][key]) {
+      const uk = e+key;
+      ret.push((
+        <tr key={uk+elem.title}>
+          <td><b>{elem.title}</b></td>
+          <DeleteCSVElem elem={elem}/>
+        </tr>
+      ));
     }
     return ret.map(re => re);
   };
@@ -150,12 +156,38 @@ export const ScriptEditor = () => {
     );
   };
 
-  const groupItems = (e) => {
+  const groupItemsNavKeys = (e) => {
     const keys = Object.keys(fetchResult.groupQuerySet[e]);
     return (
-      <div>
-        {keys.map( key => (<p key={key}>{key}</p>) )}
-      </div>
+        keys.map(key => (<Nav.Item key={key}>
+            <Nav.Link eventKey={key}>{key}</Nav.Link>
+          </Nav.Item>
+        ))
+    );
+  };
+
+  const groupItemsPanelsGroupKeys = (e) => {
+    const keys = Object.keys(fetchResult.groupQuerySet[e]);
+    return (
+      keys.map(key => (
+        <Tab.Content key={key}>
+          <Tab.Pane eventKey={key}>
+            <div>
+              <Table striped bordered hover variant="dark" size="sm">
+                <thead>
+                {csvScriptHead()}
+                </thead>
+                <tbody>
+                {csvScriptTD(e, key)}
+                </tbody>
+              </Table>
+              <ScriptGraphContainer>
+                <GraphXY data={fetchResult.groupQuerySet[e][key]} config={getDefaultWidgetContent("graphxy", 0)}/>
+              </ScriptGraphContainer>
+            </div>
+          </Tab.Pane>
+        </Tab.Content>
+      ))
     );
   };
 
@@ -168,24 +200,25 @@ export const ScriptEditor = () => {
             {Object.keys(fetchResult.groupQuerySet).map(e => {
               return (
                 <Tab key={e} eventKey={e} title={groupMenuHandler(e)}>
-                  <FormGroupBorder>
-                    <div>
-                      {groupItems(e)}
-                    </div>
-                    <div>
-                      <Table striped bordered hover variant="dark" size="sm">
-                        <thead>
-                        {csvScriptHead()}
-                        </thead>
-                        <tbody>
-                        {csvScriptTD(e)}
-                        </tbody>
-                      </Table>
-                      <ScriptGraphContainer>
-                        {/*<GraphXY data={fetchResult.groupQuerySet[e]} config={getDefaultWidgetContent("graphxy", 0)}/>*/}
-                      </ScriptGraphContainer>
-                    </div>
-                  </FormGroupBorder>
+                  <MarginBorderDiv>
+                    <Tab.Container activeKey={subGroupTabKey} onSelect={k => setSubGroupTabKey(k)}>
+                      <Row>
+                        <Col sm={2}>
+                          <Nav variant="pills" className="flex-column">
+                            {groupItemsNavKeys(e)}
+                          </Nav>
+                        </Col>
+                        <Col sm={10}>
+                          {groupItemsPanelsGroupKeys(e)}
+                        </Col>
+                      </Row>
+                    </Tab.Container>
+                  </MarginBorderDiv>
+                  {/*<FormGroupBorder>*/}
+                  {/*  <div>*/}
+                  {/*    {groupItems(e)}*/}
+                  {/*  </div>*/}
+                  {/*</FormGroupBorder>*/}
                 </Tab>
               )
             })}
