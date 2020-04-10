@@ -11,6 +11,9 @@ import {EditingUserTrend} from "../../../modules/trends/globals";
 import {Flex, InfoTextSpan} from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {Mx1} from "../../Navbar.styled";
 import {DangerColorSpan} from "../../dashboardProject/subcomponents/GatherEditor-styled";
+import {useEffect} from "react";
+import {checkQueryHasLoadedWithData, getQueryLoadedWithValue} from "../../../futuremodules/graphqlclient/query";
+import {arrayExistsNotEmpty} from "../../../futuremodules/utils/utils";
 
 const YourAssetsTitle = () => {
   return (
@@ -82,7 +85,14 @@ const UserAssets = (props) => {
 
   const name = getAuthUserName(props.auth);
   const [, setEditingUserTrend] = useGlobal(EditingUserTrend);
-  const {data, loading} = useQuery(getUserTrends(), {variables: {name}});
+  const userTrendsQuery = useQuery(getUserTrends(), {variables: {name}});
+  const [trends, setUserTrends] = useState(null);
+
+  useEffect(() => {
+    if (checkQueryHasLoadedWithData(userTrendsQuery)) {
+      setUserTrends(getQueryLoadedWithValue(userTrendsQuery).trends);
+    }
+  }, [userTrendsQuery]);
 
   const onManageProject = name => {
     // setCurrentManagedProject(name);
@@ -91,58 +101,53 @@ const UserAssets = (props) => {
   const onRemoveProject = name => {
   };
 
-  let userProjects = (
+  const userProjects = arrayExistsNotEmpty(trends) ? (
+    <Flex>
+      {trends.map(elem => {
+          const trendId = elem.trendId;
+          const projectLink = "/dashboardproject/" + trendId;
+          return (
+            <div key={`fragment-${trendId}`}>
+              <LinkContainer to={projectLink} onClick={() => setEditingUserTrend(trendId)}>
+                <SplitButton
+                  title={<b>{trendId}</b>}
+                  variant="primary"
+                  id={`dropdown-split-variants-${trendId}`}
+                  key={trendId}
+                >
+                  <LinkContainer to={projectLink}>
+                    <Dropdown.Item
+                      eventKey="1"
+                    >
+                      Open
+                    </Dropdown.Item>
+                  </LinkContainer>
+                  <Dropdown.Item
+                    eventKey="2"
+                    onClick={e => onManageProject(trendId)}
+                  >
+                    Invite People
+                  </Dropdown.Item>
+                  <Dropdown.Divider/>
+                  <Dropdown.Item
+                    eventKey="3"
+                    variant="danger"
+                    onClick={e => onRemoveProject(trendId)}
+                  >
+                    <DangerColorSpan>Delete</DangerColorSpan>
+                  </Dropdown.Item>
+                </SplitButton>
+              </LinkContainer>
+              <Mx1/>
+            </div>)
+        }
+      )}
+    </Flex>
+  ) : (
     <InfoTextSpan>
       It feels quite lonely in here!
     </InfoTextSpan>
   );
-
-  if (data && loading === false) {
-    const trends = data.user.trends;
-    userProjects = (
-      <Flex>
-        {trends.map(elem => {
-            const trendId = elem.trendId;
-            const projectLink = "/dashboardproject/" + trendId;
-            return (
-              <div key={`fragment-${trendId}`}>
-                <LinkContainer to={projectLink} onClick={ () => setEditingUserTrend(trendId)}>
-                  <SplitButton
-                    title={<b>{trendId}</b>}
-                    variant="primary"
-                    id={`dropdown-split-variants-${trendId}`}
-                    key={trendId}
-                  >
-                    <LinkContainer to={projectLink}>
-                      <Dropdown.Item
-                        eventKey="1"
-                      >
-                        Open
-                      </Dropdown.Item>
-                    </LinkContainer>
-                    <Dropdown.Item
-                      eventKey="2"
-                      onClick={e => onManageProject(trendId)}
-                    >
-                      Invite People
-                    </Dropdown.Item>
-                    <Dropdown.Divider/>
-                    <Dropdown.Item
-                      eventKey="3"
-                      variant="danger"
-                      onClick={e => onRemoveProject(trendId)}
-                    >
-                      <DangerColorSpan>Delete</DangerColorSpan>
-                    </Dropdown.Item>
-                  </SplitButton>
-                </LinkContainer>
-                <Mx1/>
-              </div>)
-          }
-        )}
-      </Flex>
-    );
-  }
 
   return (
     <Fragment>
