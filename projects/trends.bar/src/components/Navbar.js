@@ -2,7 +2,7 @@ import React, {Fragment} from "react";
 import {useGlobal} from "reactn";
 import {Link, useLocation} from "react-router-dom";
 import {ProgressBar} from "../futuremodules/progressbar/ProgressBar";
-import {NavbarComponent, Navbareh, NavbarGrid, NavbarLogo, NavbarTitle, UserNameText} from "./Navbar.styled";
+import {Navbareh, NavbarGrid, NavbarLogo, NavbarTitle, UserNameText} from "./Navbar.styled";
 import {getUserName, logoffFromProject, useGetAuth} from "../futuremodules/auth/authAccessors";
 import {
   getFileNameOnlyNoExt,
@@ -10,7 +10,7 @@ import {
   isReservedWordSanitized,
   sanitizeAvoidReservedWords
 } from "../futuremodules/utils/utils";
-import {Logo1TextSpan, Logo2TextSpan} from "../futuremodules/reactComponentStyles/reactCommon.styled";
+import {Logo1TextSpan, Logo2TextSpan, NavbarComponent} from "../futuremodules/reactComponentStyles/reactCommon.styled";
 
 const Navbar = (props) => {
 

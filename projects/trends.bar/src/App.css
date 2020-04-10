@@ -16,7 +16,9 @@
   --primary-color-dark: rgb(20, 100, 112);
   --primary-color-light: rgb(23, 162, 244);
   --dark-color: #343a40;
+  --navbar-color-transparent: #343a40EF;
   --dark-color-transparent: #343a4070;
+  --dark-color-transparent-very: #343a4010;
   --light-color: #f4f4f4;
   --danger-color: #dc3545;
   --happy-color: #dcd505;
@@ -32,7 +34,6 @@
   --scheme-color-2: #fccb7b;
   --scheme-color-3: #8ae9e9;
   --mainMargin: 2%;
-  height: 100vh;
 }
 
 * {

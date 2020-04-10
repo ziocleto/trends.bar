@@ -7,11 +7,10 @@ import {getCSVGraphKeys} from "../../../futuremodules/fetch/fetchApiCalls";
 import {
   Flex,
   LightColorTextSpanBold,
-  MarginBorderDiv
+  MarginBorderDiv, Mx1
 } from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {useTrendIdGetter} from "../../../modules/trends/globals";
 import {arrayExistsNotEmptyOnObject, arrayObjectExistsNotEmpty} from "../../../futuremodules/utils/utils";
-import {Mx1} from "../../Navbar.styled";
 import {getDefaultWidgetContent} from "../../../modules/trends/layout";
 import {GraphXY} from "../../../futuremodules/graphs/GraphXY";
 import {alertSuccess, useAlert} from "../../../futuremodules/alerts/alerts";

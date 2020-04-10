@@ -8,8 +8,7 @@ import {alertIfSuccessful, api, useApi} from "../../../futuremodules/api/apiEntr
 import {sendInvitationToProject} from "../../../futuremodules/auth/projectApiCalls";
 import {getAuthUserName, getAuthWithGlobal} from "../../../futuremodules/auth/authAccessors";
 import {EditingUserTrend} from "../../../modules/trends/globals";
-import {Flex, InfoTextSpan} from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
-import {Mx1} from "../../Navbar.styled";
+import {Flex, InfoTextSpan, Mx1} from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {DangerColorSpan} from "../../dashboardProject/subcomponents/GatherEditor-styled";
 import {useEffect} from "react";
 import {checkQueryHasLoadedWithData, getQueryLoadedWithValue} from "../../../futuremodules/graphqlclient/query";
