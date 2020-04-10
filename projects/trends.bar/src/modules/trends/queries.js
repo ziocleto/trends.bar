@@ -7,6 +7,7 @@ export const getUserTrends = () => {
               name
               trends {
                   trendId
+                  username
               }
           }
       }`;

@@ -1,36 +1,49 @@
-import React, {withGlobal} from "reactn";
+import React, {useGlobal, withGlobal} from "reactn";
 import {getAuthUserName, getAuthWithGlobal} from "../../futuremodules/auth/authAccessors";
 import {Redirect} from "react-router-dom";
 import {ScriptCodeEditor} from "./subcomponents/GatherEditor";
 import {Tab, Tabs} from "react-bootstrap";
-import {ProjectTabs} from "./DashboardProject.styled";
+import {ProjectClose, ProjectContent, ProjectTabs} from "./DashboardProject.styled";
 import {Fragment, useState} from "react";
 import {LayoutEditor} from "./subcomponents/LayoutEditor";
+import {CloseButtonDiv} from "../../futuremodules/reactComponentStyles/reactCommon.styled";
+import {EditingUserTrend} from "../../modules/trends/globals";
 
 const DashboardProject = (props) => {
 
   const [activeTab, setActiveTab] = useState("DataSources");
+  const [currEditingTrend, setEditingUserTrend] = useGlobal(EditingUserTrend);
   const username = getAuthUserName(props.auth);
 
-  if ( props.auth === null ) {
+  if (props.auth === null) {
     return (<Redirect to={"/"}/>);
   }
-  if ( props.auth === undefined ) {
+  if (props.auth === undefined) {
     return (<Fragment/>)
+  }
+  if (currEditingTrend === null) {
+    return (<Redirect to={"/dashboarduser"}/>);
   }
 
   return (
     <ProjectTabs>
-      <Tabs id={"ptabid"} activeKey={activeTab} onSelect={k => {
-        setActiveTab(k)
-      }}>
-        <Tab eventKey="Layout" title="Layout">
-          <LayoutEditor username={username}/>
-        </Tab>
-        <Tab eventKey="DataSources" title="DataSources">
-          <ScriptCodeEditor username={username}/>
-        </Tab>
-      </Tabs>
+      <ProjectClose>
+        <CloseButtonDiv onClick={ () => setEditingUserTrend(null)}>
+          <b><i className="fas fa-times"/></b>
+        </CloseButtonDiv>
+      </ProjectClose>
+      <ProjectContent>
+        <Tabs id={"ptabid"} activeKey={activeTab} onSelect={k => {
+          setActiveTab(k)
+        }}>
+          <Tab eventKey="Layout" title="Layout">
+            <LayoutEditor username={username}/>
+          </Tab>
+          <Tab eventKey="DataSources" title="DataSources">
+            <ScriptCodeEditor username={username}/>
+          </Tab>
+        </Tabs>
+      </ProjectContent>
     </ProjectTabs>
   );
 };

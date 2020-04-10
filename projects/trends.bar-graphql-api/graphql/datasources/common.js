@@ -17,6 +17,12 @@ export class MongoDataSourceExtended extends MongoDataSource {
     // return this.model.find({});
   }
 
+  async removeWithFinalAllReturn(query, retQuery) {
+    await this.model.remove(query).collation({locale: "en", strength: 2});
+    // The result of remove is a find of the remaining documents, this might change
+    return this.model.find(retQuery).collation({locale: "en", strength: 2});
+  }
+
   async findSimilar(query) {
     return await this.model.find({trendId: {"$regex": query.trendId, "$options": "i"}});
   }

@@ -66,32 +66,6 @@ export const InfoColor = styled.span`{
   color: var(--info)
 }`;
 
-const dangerButton = `
-  color: var(--danger-color);
-  align-self: center;
-  cursor: pointer;
-  
-  :hover {
-    color: var(--white);
-  }
-  
-  :active {
-    color: var(--middle-grey-color);
-  }
-`;
-
-export const DangerColorSpan = styled.span`{
-  ${dangerButton}
-}`;
-
-export const DangerColorDiv = styled.div`{
-  ${dangerButton}
-}`;
-
-export const DangerColorTd = styled.td`{
-  ${dangerButton}
-}`;
-
 export const ScriptResultContainer = styled.div` {
   margin-top: 10px;
 }`;

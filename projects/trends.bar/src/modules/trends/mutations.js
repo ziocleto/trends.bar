@@ -1,8 +1,21 @@
 import gql from "graphql-tag";
+import {getQueryLoadedWithValueArrayNotEmpty} from "../../futuremodules/graphqlclient/query";
+import {useGlobal} from "reactn";
+import {currentUserTrends} from "./globals";
+import {useMutation} from "@apollo/react-hooks";
+import {useConfirmAlertWithWriteCheckShort} from "../../futuremodules/alerts/alerts";
 
 export const CREATE_TREND = gql`
     mutation CreateTrend($trendId: String!, $username: String!) {
         createTrend(trendId: $trendId, username: $username) {
+            trendId
+            username
+        }
+    }`;
+
+export const REMOVE_TREND = gql`
+    mutation RemoveTrend($trendId: String!, $username: String!) {
+        removeTrend(trendId: $trendId, username: $username) {
             trendId
             username
         }
@@ -72,3 +85,29 @@ export const upsertTrendLayout = gql`
             _id
         }
     }`;
+
+
+const removeTrend = async (trendId, username, removeTrendMutation, setUserTrends) => {
+    await removeTrendMutation({
+        variables: {
+            trendId,
+            username
+        }
+    }).then( r => {
+        const res = getQueryLoadedWithValueArrayNotEmpty(r);
+        setUserTrends(res);
+    }
+    );
+};
+
+export const useRemoveTrend = () => {
+    const [, setUserTrends] = useGlobal(currentUserTrends);
+    const [removeTrendMutation] = useMutation(REMOVE_TREND);
+    const confirmDeleteAlert = useConfirmAlertWithWriteCheckShort();
+
+    const updater = (trendId, username) => {
+        confirmDeleteAlert(trendId, () => removeTrend(trendId, username, removeTrendMutation, setUserTrends)).then() ;
+    };
+
+    return updater;
+};

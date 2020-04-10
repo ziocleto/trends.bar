@@ -16,6 +16,11 @@ export default {
       const query = {trendId: args.trendId, username: args.username};
       return await dataSources.trends.upsert(query, query);
     },
+    async removeTrend(parent, args, {dataSources}) {
+      const query = {trendId: args.trendId, username: args.username};
+      const retQuery = {username: args.username};
+      return await dataSources.trends.removeWithFinalAllReturn(query, retQuery);
+    },
   },
 
 };

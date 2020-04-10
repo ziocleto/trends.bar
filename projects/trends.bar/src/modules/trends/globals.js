@@ -4,7 +4,8 @@ import {useLocation} from "react-router-dom";
 
 const uniqueNamesGenerator = require('project-name-generator');
 
-export const EditingUserTrend = 'editingUserTrend';
+export const EditingUserTrend  = 'editingUserTrend';
+export const currentUserTrends = 'currentUserTrends';
 
 export const generateUniqueNameWithArrayCheck = (arrayToCheck) => {
   let defaultFileName = uniqueNamesGenerator().dashed;

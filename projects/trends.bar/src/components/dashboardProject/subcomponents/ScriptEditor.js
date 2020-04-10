@@ -1,10 +1,12 @@
 import React from "reactn";
 import {Fragment, useEffect, useState} from "react";
 import {Button, Col, Container, Dropdown, Form, InputGroup, Nav, Row, Tab, Table, Tabs} from "react-bootstrap";
-import {DangerColorSpan, DangerColorTd, ScriptGraphContainer, ScriptResultContainer} from "./GatherEditor-styled";
+import {ScriptGraphContainer, ScriptResultContainer} from "./GatherEditor-styled";
 import {api, useApi} from "../../../futuremodules/api/apiEntryPoint";
 import {getCSVGraphKeys} from "../../../futuremodules/fetch/fetchApiCalls";
 import {
+  DangerColorSpan,
+  DangerColorTd,
   Flex,
   LightColorTextSpanBold,
   MarginBorderDiv, Mx1
