@@ -5,5 +5,5 @@ export const DashboardUserInnerMargins = styled.div` {
 }`;
 
 export const DashboardUserFragment = styled.div` {
-  margin: 6% 3%;
+  margin: 3% 3%;
 }`;

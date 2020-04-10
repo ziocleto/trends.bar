@@ -1,16 +1,17 @@
-import React, {Fragment, useGlobal, useState} from "reactn";
+import React, {Fragment, useGlobal, useState, withGlobal} from "reactn";
 import {alertWarning, NotificationAlert} from "../../../futuremodules/alerts/alerts";
 import {useMutation} from "@apollo/react-hooks";
 import {CREATE_TREND} from "../../../modules/trends/mutations";
 import {DashboardUserInnerMargins} from "../DashboardUser.styled";
-import {getUserName} from "../../../futuremodules/auth/authAccessors";
+import {getAuthUserName, getAuthWithGlobal} from "../../../futuremodules/auth/authAccessors";
+import {Button, Form, InputGroup} from "react-bootstrap";
 
-export const AssetCreator = ({auth}) => {
+const AssetCreator = (props) => {
 
   const [,alertStore] = useGlobal(NotificationAlert);
   const [createTrendM] = useMutation(CREATE_TREND);
   const [newTrendFormInput, setNewTrendFormInput] = useState();
-  const name = getUserName(auth);
+  const name = getAuthUserName(props.auth);
 
   const onCreateProject = e => {
     e.preventDefault();
@@ -25,7 +26,7 @@ export const AssetCreator = ({auth}) => {
       }
     }).then().catch((e) => {
       alertWarning(alertStore, "Big problem with this trend");
-    });;
+    });
   };
 
   return (
@@ -33,17 +34,18 @@ export const AssetCreator = ({auth}) => {
       <DashboardUserInnerMargins>
         <i className="fas fa-plus-circle"/> Create New Trend
       </DashboardUserInnerMargins>
-      <form className="form" onSubmit={e => onCreateProject(e)}>
-        <div className="form-group">
-          <input
-            type="text"
-            placeholder="Trend Name"
-            name="projectNew"
-            onChange={e => setNewTrendFormInput(e.target.value)}
-          />
-        </div>
-        <input type="submit" className="btn btn-primary" value="Create"/>
-      </form>
+      <InputGroup className="mb-1">
+        <Form.Control name="projectNew" placeholder="Trend Name"
+                      onChange={e => setNewTrendFormInput(e.target.value)}/>
+        <InputGroup.Append>
+          <Button variant="info" onClick={e => onCreateProject(e)}>Create</Button>
+        </InputGroup.Append>
+      </InputGroup>
     </Fragment>
   );
-}
+};
+
+export default withGlobal(
+  global => getAuthWithGlobal(global)
+)(AssetCreator);
+

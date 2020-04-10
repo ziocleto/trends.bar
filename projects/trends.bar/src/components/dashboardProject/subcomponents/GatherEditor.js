@@ -3,10 +3,6 @@ import {ScriptEditorGrid} from "./GatherEditor-styled";
 import "./GatherEditor.css"
 import 'codemirror/addon/lint/lint.css';
 import {ScriptEditor} from "./ScriptEditor";
-import {Button} from "react-bootstrap";
-import {useMutation} from "@apollo/react-hooks";
-import {UPSERT_TREND_GRAPH} from "../../../modules/trends/mutations";
-import {alertSuccess, useAlert} from "../../../futuremodules/alerts/alerts";
 
 require("codemirror/lib/codemirror.css");
 require("codemirror/theme/material.css");

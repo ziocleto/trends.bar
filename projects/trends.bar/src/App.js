@@ -38,7 +38,7 @@ const App = () => {
         <Route exact path="/"  component={Landing}/>
         <Route exact path="/register" component={Register}/>
         <Route exact path="/login" component={Login}/>
-        <Route exact path="/dashboarduser" render={ () => <DashboardUser auth={authApi}/> } />
+        <Route exact path="/dashboarduser" component={DashboardUser} />
         <Route path="/dashboardproject" render={ () => <DashboardProject auth={authApi}/> }/>
         <Route path="/:usernameSplit/:trendIdSplit" component={TrendPage}/>
       </Switch>

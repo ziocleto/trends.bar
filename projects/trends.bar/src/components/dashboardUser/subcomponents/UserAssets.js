@@ -1,4 +1,4 @@
-import React, {Fragment, useState, useGlobal} from "reactn";
+import React, {Fragment, useGlobal, useState, withGlobal} from "reactn";
 import {DashboardUserInnerMargins} from "../DashboardUser.styled";
 import {useQuery} from "@apollo/react-hooks";
 import {getUserTrends} from "../../../modules/trends/queries";
@@ -6,8 +6,11 @@ import {LinkContainer} from "react-router-bootstrap";
 import {Button, Dropdown, FormControl, InputGroup, SplitButton} from "react-bootstrap";
 import {alertIfSuccessful, api, useApi} from "../../../futuremodules/api/apiEntryPoint";
 import {sendInvitationToProject} from "../../../futuremodules/auth/projectApiCalls";
-import {getUserName} from "../../../futuremodules/auth/authAccessors";
+import {getAuthUserName, getAuthWithGlobal} from "../../../futuremodules/auth/authAccessors";
 import {EditingUserTrend} from "../../../modules/trends/globals";
+import {Flex, InfoTextSpan} from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
+import {Mx1} from "../../Navbar.styled";
+import {DangerColorSpan} from "../../dashboardProject/subcomponents/GatherEditor-styled";
 
 const YourAssetsTitle = () => {
   return (
@@ -75,9 +78,9 @@ const ProjectManagement = ({name}) => {
   );
 };
 
-export const UserAssets = ({auth}) => {
+const UserAssets = (props) => {
 
-  const name = getUserName(auth);
+  const name = getAuthUserName(props.auth);
   const [, setEditingUserTrend] = useGlobal(EditingUserTrend);
   const {data, loading} = useQuery(getUserTrends(), {variables: {name}});
 
@@ -89,23 +92,23 @@ export const UserAssets = ({auth}) => {
   };
 
   let userProjects = (
-    <span className="normal text-primary">
+    <InfoTextSpan>
       It feels quite lonely in here!
-    </span>
+    </InfoTextSpan>
   );
 
   if (data && loading === false) {
     const trends = data.user.trends;
     userProjects = (
-      <div className="project-login">
+      <Flex>
         {trends.map(elem => {
             const trendId = elem.trendId;
             const projectLink = "/dashboardproject/" + trendId;
             return (
-              <div key={`fragment-${trendId}`} className="inliner-block my-1">
+              <div key={`fragment-${trendId}`}>
                 <LinkContainer to={projectLink} onClick={ () => setEditingUserTrend(trendId)}>
                   <SplitButton
-                    title={trendId}
+                    title={<b>{trendId}</b>}
                     variant="primary"
                     id={`dropdown-split-variants-${trendId}`}
                     key={trendId}
@@ -129,18 +132,15 @@ export const UserAssets = ({auth}) => {
                       variant="danger"
                       onClick={e => onRemoveProject(trendId)}
                     >
-                      Delete
+                      <DangerColorSpan>Delete</DangerColorSpan>
                     </Dropdown.Item>
                   </SplitButton>
                 </LinkContainer>
-                <div
-                  key={`dropdown-split-spacer-${trendId}`}
-                  className="inliner mx-1"
-                />
+                <Mx1/>
               </div>)
           }
         )}
-      </div>
+      </Flex>
     );
   }
 
@@ -152,3 +152,7 @@ export const UserAssets = ({auth}) => {
     </Fragment>
   )
 };
+
+export default withGlobal(
+  global => getAuthWithGlobal(global)
+)(UserAssets);
