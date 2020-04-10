@@ -2,7 +2,7 @@ import "./App.css";
 import React, {useEffect} from "react";
 import {Route, Switch, useLocation} from 'react-router-dom';
 import Landing from "./components/Landing/Landing";
-import Navbar from "./components/Navbar";
+import Navbar from "./components/Navbar/Navbar";
 import {useGlobal} from 'reactn';
 import TrendPage from "./components/Trend/TrendPage";
 import {sanitizePathRoot} from "./futuremodules/utils/utils";
@@ -14,7 +14,7 @@ import {EHAlert} from "./futuremodules/alerts/alerts";
 import {apiSilent, useApi} from "./futuremodules/api/apiEntryPoint";
 import {loadUser} from "./futuremodules/auth/authApiCalls";
 import {Auth} from "./futuremodules/auth/authAccessors";
-import {DashboardProject} from "./components/dashboardProject/DashboardProject";
+import DashboardProject from "./components/dashboardProject/DashboardProject";
 import {Body, FakeNavBar} from "./futuremodules/reactComponentStyles/reactCommon.styled";
 
 initEH();
@@ -40,7 +40,7 @@ const App = () => {
         <Route exact path="/register" component={Register}/>
         <Route exact path="/login" component={Login}/>
         <Route exact path="/dashboarduser" component={DashboardUser} />
-        <Route path="/dashboardproject" render={ () => <DashboardProject auth={authApi}/> }/>
+        <Route path="/dashboardproject" component={DashboardProject}/>
         <Route path="/:usernameSplit/:trendIdSplit" component={TrendPage}/>
       </Switch>
       <EHAlert/>

@@ -2,11 +2,11 @@ import React, {withGlobal} from "reactn";
 import {DashboardUserFragment} from "./DashboardUser.styled";
 import {getAuthWithGlobal} from "../../futuremodules/auth/authAccessors";
 import UserAssets from "./subcomponents/UserAssets";
-import {Logoff} from "./subcomponents/Logoff";
 import AssetCreator from "./subcomponents/AssetCreator";
 import {Redirect} from "react-router-dom";
-import WelcomeToTheJungle from "./subcomponents/WelcomeToTheJungle";
 import {Fragment} from "react";
+import WelcomeToTheJungle from "../../futuremodules/auth/components/WelcomeToTheJungle";
+import {Logoff} from "../../futuremodules/auth/components/Logoff";
 
 const DashboardUser = (props) => {
 

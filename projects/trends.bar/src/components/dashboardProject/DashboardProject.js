@@ -1,24 +1,23 @@
-import React from "reactn";
-import {getUserName, isUserAuthenticated} from "../../futuremodules/auth/authAccessors";
-import {getFileNameOnlyNoExt, sanitizeURLParams} from "../../futuremodules/utils/utils";
-import {useLocation} from "react-router-dom";
+import React, {withGlobal} from "reactn";
+import {getAuthUserName, getAuthWithGlobal} from "../../futuremodules/auth/authAccessors";
+import {Redirect} from "react-router-dom";
 import {ScriptCodeEditor} from "./subcomponents/GatherEditor";
 import {Tab, Tabs} from "react-bootstrap";
 import {ProjectTabs} from "./DashboardProject.styled";
 import {Fragment, useState} from "react";
 import {LayoutEditor} from "./subcomponents/LayoutEditor";
 
-export const DashboardProject = ({auth}) => {
+const DashboardProject = (props) => {
 
-  const trendId = sanitizeURLParams(getFileNameOnlyNoExt(useLocation().pathname));
   const [activeTab, setActiveTab] = useState("DataSources");
+  const username = getAuthUserName(props.auth);
 
-  if (!isUserAuthenticated(auth) || trendId === null) {
-    return (<Fragment/>)
-    // return (<Redirect to={"/"}/>)
+  if ( props.auth === null ) {
+    return (<Redirect to={"/"}/>);
   }
-
-  const username = getUserName(auth);
+  if ( props.auth === undefined ) {
+    return (<Fragment/>)
+  }
 
   return (
     <ProjectTabs>
@@ -35,3 +34,7 @@ export const DashboardProject = ({auth}) => {
     </ProjectTabs>
   );
 };
+
+export default withGlobal(
+  global => getAuthWithGlobal(global)
+)(DashboardProject);
