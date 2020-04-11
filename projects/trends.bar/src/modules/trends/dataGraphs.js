@@ -213,4 +213,19 @@ export const positiveSignForDx2 = (elem) => {
 
 export const float100ToPerc = (value) => {
   return Number(value).toFixed(2)+"%";
-}
+};
+
+export const graphArrayToGraphTree = ( sourceArray, key1, key2 ) => {
+  const ret = {};
+  const groupsSet = new Set();
+  sourceArray.map(elem => groupsSet.add(elem[key1]));
+  for ( const group of groupsSet.values() ) {
+    ret[group] = {};
+    sourceArray.map( elem => {
+      if ( elem[key1] === group ) {
+        ret[group][elem[key2]] ? ret[group][elem[key2]].push(elem) : ret[group][elem[key2]]=[elem];
+      }
+    });
+  }
+  return ret;
+};

@@ -68,8 +68,16 @@ export const InfoColor = styled.span`{
 
 export const ScriptResultContainer = styled.div` {
   margin-top: 10px;
+  padding-top: 10px;
+  border-radius: 3px;
+  border: 1px solid var(--gray);
 }`;
 
-export const ScriptGraphContainer = styled.div `{
+export const ScriptElementsContainer = styled.div`{
+  max-height: 400px;
+  overflow-y: scroll;
+}`;
+
+export const ScriptGraphContainer = styled.div`{
   min-height: 500px;
 }`;
