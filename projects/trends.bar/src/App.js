@@ -23,7 +23,6 @@ const App = () => {
   const location = useLocation();
   const [trend] = useGlobal('trendId');
   const trendId = sanitizePathRoot(trend ? trend : location.pathname);
-  // const [usernameSplit, trendIdSplit] = trendId.split("/");
 
   const authApi = useApi(Auth);
   useEffect(() => {
@@ -36,7 +35,7 @@ const App = () => {
       <Navbar trendId={trendId}/>
       <FakeNavBar/>
       <Switch>
-        <Route exact path="/"  component={Landing}/>
+        <Route exact path="/" component={Landing}/>
         <Route exact path="/register" component={Register}/>
         <Route exact path="/login" component={Login}/>
         <Route exact path="/dashboarduser" component={DashboardUser} />

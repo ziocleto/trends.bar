@@ -1,3 +1,4 @@
+import {ApolloError} from "apollo-server-errors";
 
 export default {
   Query: {
@@ -14,7 +15,11 @@ export default {
   Mutation: {
     async createTrend(parent, args, {dataSources}) {
       const query = {trendId: args.trendId, username: args.username};
-      return await dataSources.trends.upsert(query, query);
+      const ret = await dataSources.trends.save(query);
+      if ( !ret ) {
+        throw new ApolloError("Trend already exists");
+      }
+      return ret;
     },
     async removeTrend(parent, args, {dataSources}) {
       const query = {trendId: args.trendId, username: args.username};

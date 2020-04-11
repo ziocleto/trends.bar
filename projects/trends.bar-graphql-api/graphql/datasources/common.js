@@ -40,4 +40,19 @@ export class MongoDataSourceExtended extends MongoDataSource {
     return await dbi.upsert(this.model, query, data);
   }
 
+  async save(query) {
+    try {
+      const found = await this.model.findOne(query);
+      if ( found ) {
+        return null;
+      }
+      const newElem = new this.model(query);
+      await newElem.save();
+      return query;
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
+  }
+
 }

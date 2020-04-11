@@ -15,7 +15,7 @@ type Query {
 }
 
 type Mutation {
-    createTrend(trendId: String!, username: String!): Trend
+    createTrend(trendId: String!, username: String!): Trend!
     removeTrend(trendId: String!, username: String!): [Trend]
 }
 

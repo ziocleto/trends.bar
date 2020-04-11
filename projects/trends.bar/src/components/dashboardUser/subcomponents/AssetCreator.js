@@ -1,45 +1,25 @@
-import React, {useGlobal, useState, withGlobal} from "reactn";
-import {alertWarning, NotificationAlert} from "../../../futuremodules/alerts/alerts";
-import {useMutation} from "@apollo/react-hooks";
-import {CREATE_TREND} from "../../../modules/trends/mutations";
+import React, {useState, withGlobal} from "reactn";
+import {useAlertWarning} from "../../../futuremodules/alerts/alerts";
+import {useCreateTrend} from "../../../modules/trends/mutations";
 import {DashboardUserInnerMargins} from "../DashboardUser.styled";
 import {getAuthUserName, getAuthWithGlobal} from "../../../futuremodules/auth/authAccessors";
 import {Button, Form, InputGroup} from "react-bootstrap";
 import {Div50} from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
-import {currentUserTrends, EditingUserTrend} from "../../../modules/trends/globals";
-import {getQueryLoadedWithValue} from "../../../futuremodules/graphqlclient/query";
 
 const AssetCreator = (props) => {
 
-  const [, alertStore] = useGlobal(NotificationAlert);
-  const [createTrendM] = useMutation(CREATE_TREND);
+  const alert = useAlertWarning();
   const [newTrendFormInput, setNewTrendFormInput] = useState();
-  const [userTrends, setUserTrends] = useGlobal(currentUserTrends);
-  const [, setEditingUserTrend] = useGlobal(EditingUserTrend);
-  const name = getAuthUserName(props.auth);
+  const createTrend = useCreateTrend();
 
   const onCreateProject = e => {
     e.preventDefault();
-    e.target.value = "";
+    // NDDado: We can optionally reset the form text field with: `e.target.value = "";`
     if (!newTrendFormInput) {
-      alertWarning(alertStore, "I see no trend in here!");
+      alert("I see no trend in here!");
       return;
     }
-    createTrendM({
-      variables: {
-        trendId: newTrendFormInput,
-        username: name
-      }
-    }).then(r => {
-        const newValue = getQueryLoadedWithValue(r);
-        let trends = [ newValue, ...userTrends];
-        setUserTrends(trends).then(
-          () => setEditingUserTrend(newValue.trendId)
-        );
-      }
-    ).catch((e) => {
-      alertWarning(alertStore, "Big problem with this trend");
-    });
+    createTrend(newTrendFormInput, getAuthUserName(props.auth));
   };
 
   return (
