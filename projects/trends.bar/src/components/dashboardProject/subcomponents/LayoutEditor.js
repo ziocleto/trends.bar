@@ -43,6 +43,7 @@ export const LayoutEditor = ({username}) => {
     trendDataQuery.refetch().then(() => {
         const queryData = getQueryLoadedWithValueArrayNotEmpty(trendDataQuery);
         if (queryData) {
+          console.log("Query Data", queryData);
           setTrendData(queryData);
         }
       }

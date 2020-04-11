@@ -114,18 +114,25 @@ export const getTrendGraphsByUserTrendId = () => {
                 username
                 title
                 label
+                subLabel
                 values {
-                    x
-                    y
-                }
-                valuesDx {
-                    x
-                    y
-                }
-                valuesDx2 {
                     x
                     y
                 }
             }
         }`;
+};
+
+export const getTrendGraphsByUserTrendIdNoValues = () => {
+    return gql`
+        query getTrends($trendId:String!, $name:String!) {
+            trendGraphs(trendId:$trendId, username:$name) {
+                trendId
+                username
+                title
+                label
+                subLabel
+            }
+        }`;
 }
+

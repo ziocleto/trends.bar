@@ -8,10 +8,11 @@ import {Fragment, useState} from "react";
 import {LayoutEditor} from "./subcomponents/LayoutEditor";
 import {CloseButtonDiv} from "../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {EditingUserTrend} from "../../modules/trends/globals";
+import {OverviewEditor} from "./subcomponents/OverviewEditor";
 
 const DashboardProject = (props) => {
 
-  const [activeTab, setActiveTab] = useState("DataSources");
+  const [activeTab, setActiveTab] = useState("Overview");
   const [currEditingTrend, setEditingUserTrend] = useGlobal(EditingUserTrend);
   const username = getAuthUserName(props.auth);
 
@@ -36,6 +37,9 @@ const DashboardProject = (props) => {
         <Tabs id={"ptabid"} activeKey={activeTab} onSelect={k => {
           setActiveTab(k)
         }}>
+          <Tab eventKey="Overview" title="Overview">
+            <OverviewEditor username={username}/>
+          </Tab>
           <Tab eventKey="Layout" title="Layout">
             <LayoutEditor username={username}/>
           </Tab>
