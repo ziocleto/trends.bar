@@ -88,7 +88,7 @@ export const ContentWidgetGraphXYEditor = ({config,onUpdate}) => {
                                     { content.graphXYSeries.length===0 && <option value={-1}>No graphXYSeries defined...</option>}
                                     {
                                         content.graphXYSeries.length>0 && content.graphXYSeries.map((c,i) => (
-                                            <option key={ "col" + i.toString()} value={i}>{ "# "+i.toString()+" "+c.title}</option>
+                                            <option key={ "col" + i.toString()} value={i}>{ "# "+i.toString()+" "+c.yValueName}</option>
                                         ))
                                     }
                                 </Form.Control>
@@ -107,7 +107,7 @@ export const ContentWidgetGraphXYEditor = ({config,onUpdate}) => {
                                 Title
                             </Form.Label>
                             <Col>
-                                <Form.Control size="sm" type="text" value={config.graphXYSeries[currentSerieIndex].title} onChange={(e) => onChangeSerieField("title", e.target.value)}/>
+                                <Form.Control size="sm" type="text" value={config.graphXYSeries[currentSerieIndex].yValueName} onChange={(e) => onChangeSerieField("title", e.target.value)}/>
                             </Col>
                             <Form.Label column="sm" lg={2}>
                                 Query

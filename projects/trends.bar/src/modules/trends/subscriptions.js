@@ -30,8 +30,8 @@ export const trendGraphSubcription = () => {
                           sourceName
                       }
                       graph {
-                          label
-                          subLabel
+                          yValueSubGroup
+                          yValueGroup
                       }
                       values
                   }

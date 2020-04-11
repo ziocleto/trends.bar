@@ -30,8 +30,8 @@ export const CRAWL_TREND_GRAPH = gql`
                 trendId
                 username
                 title
-                label
-                subLabel
+                yValueSubGroup
+                yValueGroup
                 type
                 cumulative
                 values {

@@ -12,7 +12,7 @@ export const getTrendGraphs = () => {
               trendGraphs {
                   title
                   label
-                  subLabel
+                  yValueGroup
                   values{
                       x
                       y
@@ -46,7 +46,7 @@ export const isEmptyGraph = data => {
 
 const checkTitleAndLabelBelongToGraph = (trendGraph, titles, label) => {
   for ( const title of titles ) {
-    if (trendGraph.title === title && trendGraph.label === label) return true;
+    if (trendGraph.yValueName === title && trendGraph.yValueSubGroup === label) return true;
   }
   return false;
 }
@@ -86,27 +86,27 @@ export const elaborateDataGraphs = (data, label, titles) => {
   for (const trendGraph of data) {
     if ( checkTitleAndLabelBelongToGraph(trendGraph, titles, label ) ) {
       allPoints.push( {
-        label: "Total " + trendGraph.title,
+        label: "Total " + trendGraph.yValueName,
         data: trendGraph.values,
         type: "area",
       });
       if ( arrayExistsNotEmpty(trendGraph.valuesDx) ) {
         allPoints.push( {
-          label: "Daily " + trendGraph.title,
+          label: "Daily " + trendGraph.yValueName,
           data: trendGraph.valuesDx,
           type: "column",
         });
       }
       // if ( arrayExistsNotEmpty(trendGraph.valuesDxPerc) ) {
       //   allPoints.push( {
-      //     label: trendGraph.title + " SpeedPerc",
+      //     label: trendGraph.yValueName + " SpeedPerc",
       //     data: trendGraph.valuesDxPerc,
       //     type: "column",
       //   });
       // }
       // if ( arrayExistsNotEmpty(trendGraph.valuesDx2) ) {
       //   allPoints.push( {
-      //     label: trendGraph.title + " Acceleration",
+      //     label: trendGraph.yValueName + " Acceleration",
       //     data: trendGraph.valuesDx2,
       //     type: "spline",
       //   });
@@ -120,7 +120,7 @@ export const elaborateDataGraphs = (data, label, titles) => {
       xValueType: "dateTime",
       showInLegend: true,
       type: points.type,
-      legendText: points.label,
+      legendText: points.yValueSubGroup,
       dataPoints: points.data
     });
   }
@@ -137,7 +137,7 @@ export const groupData = ( graphData, groupBy, fields, sortBy, sortOrder = 1 ) =
   let countries = {};
   for (const elem of graphData) {
     for ( const field of fields ) {
-      if ( elem.title === field ) {
+      if ( elem.yValueName === field ) {
         countries[elem[groupBy[0]]] = {
           ...countries[elem[groupBy[0]]],
           [field]: elem.values[elem.values.length - 1].y
@@ -172,7 +172,7 @@ export const groupDataWithDerivatives = ( graphData, groupBy, fields, sortBy, so
   let countries = {};
   for (const elem of graphData) {
     for ( const field of fields ) {
-      if ( elem.title === field ) {
+      if ( elem.yValueName === field ) {
         countries[elem[groupBy[0]]] = {
           ...countries[elem[groupBy[0]]],
           [field]: elem.values[elem.values.length - 1].y,

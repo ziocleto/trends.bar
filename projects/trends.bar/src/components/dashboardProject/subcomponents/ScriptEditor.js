@@ -23,7 +23,7 @@ import {UPSERT_TREND_GRAPH} from "../../../modules/trends/mutations";
 const getLabelTransformOfGroup = (scriptJson, groupName) => {
   if (!scriptJson) return "";
   for (const group of scriptJson.groups) {
-    if (group.label === groupName) {
+    if (group.yValueSubGroup === groupName) {
       return group.labelTransform === "None" ? "" : group.labelTransform;
     }
   }
@@ -157,8 +157,8 @@ export const ScriptEditor = () => {
       for (const elem of fetchResult.groupQuerySet[e][key]) {
         const uk = e + key;
         ret.push((
-          <tr key={uk + elem.title}>
-            <td><b>{elem.title}</b></td>
+          <tr key={uk + elem.yValueName}>
+            <td><b>{elem.yValueName}</b></td>
             <DeleteCSVElem elem={elem}/>
           </tr>
         ));

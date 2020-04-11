@@ -91,7 +91,7 @@ import {
 //                        setSortIndex(elem.key);
 //                        setSortOrder(sortOrder === 1 ? -1 : 1);
 //                      }}>
-//                   {elem.label}
+//                   {elem.yValueSubGroup}
 //                 </TH>)
 //               )
 //             }

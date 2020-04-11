@@ -42,7 +42,7 @@ export const ContentWidgetTable = ({data,config}) => {
                             <th>{config.tableKeyTitle}</th>
                             {
                                 config.tableColumns.map( (e,i) => (
-                                    <th key={'th'+i.toString()}>{e.title}</th>
+                                    <th key={'th'+i.toString()}>{e.yValueName}</th>
                                 ))
                             }
                         </tr>

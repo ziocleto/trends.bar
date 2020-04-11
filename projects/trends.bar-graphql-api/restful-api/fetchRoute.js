@@ -41,7 +41,7 @@ const defaultScriptFromCSV = (url, cvsGroups) => {
   for (const group of groups["group"]) {
     for (const elem of groups["y"]) {
       sj["groups"].push({
-        label: group,
+        yValueSubGroup: group,
         labelTransform: getDefaultLabelTransformOf(group),
         key: elem,
         x: groups["x"][0],
@@ -92,7 +92,7 @@ router.post("/csvgraphkeys", async (req, res, next) => {
 
     let groupsSet = new Set();
     let groupSetArray = [];
-    script.groups.map(elem => groupsSet.add(elem.label));
+    script.groups.map(elem => groupsSet.add(elem.yValueSubGroup));
     groupsSet.forEach(e => groupSetArray.push(e));
 
     let groupQuerySet = {};
@@ -102,10 +102,10 @@ router.post("/csvgraphkeys", async (req, res, next) => {
       groupQuerySet[group] = [];
       groupQuerySetOfSet[group] = {};
       graphQueries.map( elem => {
-        if ( elem.subLabel === group ) {
+        if ( elem.yValueGroup === group ) {
           groupQuerySet[group].push(elem);
           // groupQuerySetOfSet[group] = .push(elem);
-          groupQuerySetOfSet[group][elem.label] ? groupQuerySetOfSet[group][elem.label].push(elem) : groupQuerySetOfSet[group][elem.label]=[elem];
+          groupQuerySetOfSet[group][elem.yValueSubGroup] ? groupQuerySetOfSet[group][elem.yValueSubGroup].push(elem) : groupQuerySetOfSet[group][elem.yValueSubGroup]=[elem];
         }
       });
     }

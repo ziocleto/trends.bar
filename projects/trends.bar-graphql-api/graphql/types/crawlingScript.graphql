@@ -18,7 +18,7 @@ input CrawlingRegexp {
 }
 
 input CrawlingCSV {
-    label: String
+    yValueSubGroup: String
     x: String
     y: String
 }
@@ -47,12 +47,12 @@ input CrawlingActions {
 }
 
 input CrawlingDatasets {
-    title: String
+    yValueName: String
     actions: [CrawlingActions]
 }
 
 input CrawlingGroups {
-    label: String
+    yValueSubGroup: String
     labelTransform: String
     key: String
     x: BigInt!

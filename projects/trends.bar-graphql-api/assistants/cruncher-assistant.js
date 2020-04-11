@@ -58,9 +58,9 @@ export class Cruncher {
     const query = {
       trendId: this.trendId,
       username: this.username,
-      title: graph.title,
-      label: graph.label,
-      subLabel: graph.subLabel,
+      yValueName: graph.yValueName,
+      yValueSubGroup: graph.yValueSubGroup,
+      yValueGroup: graph.yValueGroup,
       type: this.graphType,
     };
     const ivalue = {
@@ -103,10 +103,10 @@ export class Cruncher {
     return match;
   }
 
-  finaliseCrunch(group, title, xValue, wc) {
+  finaliseCrunch(group, yValueName, xValue, wc) {
     const key = group.key;
-    const groupName = group.label;
-    const graphElem = graphAssistant.declare(this.graphType, key, title, groupName);
+    const groupName = group.yValueSubGroup;
+    const graphElem = graphAssistant.declare(this.graphType, key, yValueName, groupName);
     const value = graphAssistant.prepareSingleValue(graphElem.type, xValue, wc);
     this.dataEntry(graphElem, value);
   }
@@ -127,19 +127,19 @@ export class Cruncher {
     return this.parser.text.length;
   }
 
-  async applyPost(match, pbt, title) {
-    let r1 = title;
+  async applyPost(match, pbt, yValueName) {
+    let r1 = yValueName;
     let r2 = match[1];
     if (pbt) {
       const elem = this.applyPostTransformRule(pbt, match[pbt.sourceIndex]);
-      const titleFinal = title.replace(pbt.dest, elem);
+      const titleFinal = yValueName.replace(pbt.dest, elem);
       r1 = titleFinal;
       r2 = match[pbt.valueIndex];
     }
-    return {title: r1, y: parseIntWithSpaces(r2)}
+    return {yValueName: r1, y: parseIntWithSpaces(r2)}
   }
 
-  // async crunchAction(key, title, action) {
+  // async crunchAction(key, yValueName, action) {
   //   const nparse = new Parser(this.parser.text.substring(this.getParserStartIndex(action.startRegex),
   //     this.getParserEndIndex(action.endRegex)));
   //
@@ -150,23 +150,23 @@ export class Cruncher {
   //     if (resolver === regExResolverSingle) {
   //       const parsedData = nparse.find(regex);
   //       if (!parsedData || parsedData.length === 0) throw "Error parsing";
-  //       results.push({y: parseIntWithSpaces(parsedData[1]), title});
+  //       results.push({y: parseIntWithSpaces(parsedData[1]), yValueName});
   //     } else if (resolver === regExResolverAccumulator) {
-  //       results.push({y: nparse.findAllAccumulate(regex), title});
+  //       results.push({y: nparse.findAllAccumulate(regex), yValueName});
   //     } else if (resolver === regExResolverPostTransform) {
   //       for (const r of nparse.findAll(regex)) {
-  //         results.push(await this.applyPost(r, action.postTransform, title));
+  //         results.push(await this.applyPost(r, action.postTransform, yValueName));
   //       }
   //     }
   //
   //     for (const result of results) {
-  //       this.finaliseCrunch(key, result.title, this.defaultXValue, result.y);
+  //       this.finaliseCrunch(key, result.yValueName, this.defaultXValue, result.y);
   //     }
   //   } else if (action.csv) {
   //     const resjson = await csv().fromString(nparse.text);
   //     for (const elem of resjson) {
-  //       // If label is present in the csv raw then used it, otherwise it as the string specified in the json field 'label'
-  //       const cvsLabelField = elem[action.csv.label] ? elem[action.csv.label] : action.csv.label;
+  //       // If yValueSubGroup is present in the csv raw then used it, otherwise it as the string specified in the json field 'yValueSubGroup'
+  //       const cvsLabelField = elem[action.csv.yValueSubGroup] ? elem[action.csv.yValueSubGroup] : action.csv.yValueSubGroup;
   //       this.finaliseCrunch(key, cvsLabelField, elem[action.csv.x], elem[action.csv.y]);
   //     }
   //   }
@@ -174,8 +174,8 @@ export class Cruncher {
 
   async crunchGroups(resjson, group, defaultXValue) {
     for (const elem of resjson) {
-      // If label is present in the csv raw then used it, otherwise it as the string specified in the json field 'label'
-      let cvsLabelField = elem[group.label] ? elem[group.label] : group.label;
+      // If yValueSubGroup is present in the csv raw then used it, otherwise it as the string specified in the json field 'yValueSubGroup'
+      let cvsLabelField = elem[group.yValueSubGroup] ? elem[group.yValueSubGroup] : group.yValueSubGroup;
       if ( group.labelTransform && group.labelTransform === "Country" ) {
         cvsLabelField = this.applyCountryPostTransformRule(cvsLabelField);
       }
@@ -218,7 +218,7 @@ export class Cruncher {
     //       elem.values.push({ x:parseInt(e), y:red[e]});
     //     }
     //   }
-    //   this.traces += (elem.title + ", " + elem.label + ", " + JSON.stringify(elem.values) + "\n");
+    //   this.traces += (elem.yValueName + ", " + elem.yValueSubGroup + ", " + JSON.stringify(elem.values) + "\n");
     // });
 
     return {
@@ -238,21 +238,21 @@ export class Cruncher {
 //   "dataSequence": "Cumulative",
 //   "groups": [
 //   {
-//     "label": "Country/Region",
+//     "yValueSubGroup": "Country/Region",
 //     "labelTransform": "Country",
 //     "key": "Cases",
 //     "x": "$timestamp",
 //     "y": "Confirmed"
 //   },
 //   {
-//     "label": "Country/Region",
+//     "yValueSubGroup": "Country/Region",
 //     "labelTransform": "Country",
 //     "key": "Deaths",
 //     "x": "$timestamp",
 //     "y": "Deaths"
 //   },
 //   {
-//     "label": "Country/Region",
+//     "yValueSubGroup": "Country/Region",
 //     "labelTransform": "Country",
 //     "key": "Recovered",
 //     "x": "$timestamp",

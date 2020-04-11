@@ -78,9 +78,9 @@ export const OverviewEditor = ({username}) => {
           const tGroups = new Set();
           const tGroupElements = new Set();
           queryData.map(elem => {
-            tValues.add(elem.title);
-            tGroups.add(elem.label);
-            tGroupElements.add(elem.subLabel);
+            tValues.add(elem.yValueName);
+            tGroups.add(elem.yValueSubGroup);
+            tGroupElements.add(elem.yValueGroup);
           });
           setValues(tValues);
           setGroups(tGroups);

@@ -97,7 +97,7 @@ export const ContentWidgetTableEditor = ({config,onUpdate}) => {
                                     { content.tableColumns.length===0 && <option value={-1}>No columns defined...</option>}
                                     {
                                         content.tableColumns.length>0 && content.tableColumns.map((c,i) => (
-                                            <option key={ "col" + i.toString()} value={i}>{ "# "+i.toString()+" "+c.title}</option>
+                                            <option key={ "col" + i.toString()} value={i}>{ "# "+i.toString()+" "+c.yValueName}</option>
                                         ))
                                     }
                                 </Form.Control>
@@ -116,7 +116,7 @@ export const ContentWidgetTableEditor = ({config,onUpdate}) => {
                                 Title
                             </Form.Label>
                             <Col>
-                                <Form.Control size="sm" type="text" value={config.tableColumns[currentColumnIndex].title} onChange={(e) => onChangeColumnField("title", e.target.value)}/>
+                                <Form.Control size="sm" type="text" value={config.tableColumns[currentColumnIndex].yValueName} onChange={(e) => onChangeColumnField("title", e.target.value)}/>
                             </Col>
                             <Form.Label column="sm" lg={2}>
                                 Query

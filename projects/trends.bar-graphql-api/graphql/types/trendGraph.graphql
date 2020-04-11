@@ -19,9 +19,9 @@ type TrendGraph {
     _id: ID!
     trendId: String!
     username: String!
-    title: String
-    label: String
-    subLabel: String
+    yValueName: String
+    yValueSubGroup: String
+    yValueGroup: String
     type: String!
     values: [ DateInt ]!
     valuesDx: [ DateInt ]
@@ -32,9 +32,9 @@ type TrendGraph {
 type GraphQuery {
     trendId: String!
     username: String!
-    title: String
-    label: String
-    subLabel: String
+    yValueName: String
+    yValueSubGroup: String
+    yValueGroup: String
     type: String
     values: [DateInt]
 }
@@ -42,17 +42,17 @@ type GraphQuery {
 input GraphQueryInput {
     trendId: String!
     username: String!
-    title: String
-    label: String
-    subLabel: String
+    yValueName: String
+    yValueSubGroup: String
+    yValueGroup: String
     type: String
     values: [DateIntInput]
 }
 
 
 type Query {
-    trendGraph(username:String!,trendId:String!,label:String!,title:String!): TrendGraph
-    trendGraphs(username:String,trendId:String,label:String,title:String): [TrendGraph]
+    trendGraph(username:String!,trendId:String!,yValueSubGroup:String!,yValueName:String!): TrendGraph
+    trendGraphs(username:String,trendId:String,yValueSubGroup:String,yValueName:String): [TrendGraph]
 }
 
 type Mutation {

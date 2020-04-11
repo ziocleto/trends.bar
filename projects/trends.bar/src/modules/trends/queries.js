@@ -78,7 +78,7 @@ export const getTrendLayouts = () => {
               gridContent {
                   type
                   i
-                  title
+                  yValueName
                   subtitle
 
                   tableKeyTitle
@@ -86,7 +86,7 @@ export const getTrendLayouts = () => {
                   tableKeyField
                   tableKeyTransform
                   tableColumns {
-                      title
+                      yValueName
                       query
                       field
                       transform
@@ -94,7 +94,7 @@ export const getTrendLayouts = () => {
                   
                   graphXYTitle
                   graphXYSeries {
-                      title
+                      yValueName
                       query
                       fieldX
                       transformX
@@ -112,9 +112,9 @@ export const getTrendGraphsByUserTrendId = () => {
             trendGraphs(trendId:$trendId, username:$name) {
                 trendId
                 username
-                title
-                label
-                subLabel
+                yValueName
+                yValueSubGroup
+                yValueGroup
                 values {
                     x
                     y
@@ -129,9 +129,9 @@ export const getTrendGraphsByUserTrendIdNoValues = () => {
             trendGraphs(trendId:$trendId, username:$name) {
                 trendId
                 username
-                title
-                label
-                subLabel
+                yValueName
+                yValueSubGroup
+                yValueGroup
             }
         }`;
 }
