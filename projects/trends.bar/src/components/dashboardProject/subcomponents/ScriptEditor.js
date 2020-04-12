@@ -38,7 +38,7 @@ export const ScriptEditor = () => {
 
   useEffect(() => {
     if (fetchResult) {
-      console.log(fetchResult);
+      console.log("Fetch result ", fetchResult);
       const gt = graphArrayToGraphTree(fetchResult.graphQueries, "yValueGroup", "yValueSubGroup");
       const groupTabKey = Object.keys(gt)[0];
       const subGroupTabKey = Object.keys(gt[groupTabKey])[0];

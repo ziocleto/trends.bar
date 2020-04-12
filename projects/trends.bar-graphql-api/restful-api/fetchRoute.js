@@ -34,7 +34,8 @@ const checkIfDateSequence = (resjson, vk) => {
   return true;
 };
 
-const scriptInjectFromCSV = (sj, cvsGroups) => {
+const scriptInjectFromCSV = (script, cvsGroups) => {
+  let sj = script;
   sj["groups"] = [];
   const groups = cvsGroups;
   for (const group of groups["group"]) {
@@ -118,37 +119,6 @@ router.post("/csvgraphkeys", async (req, res, next) => {
   }
 });
 
-const upsertUniqueXValue = async (model, query) => {
-  let queryOnly = query;
-  const values = query.values;
-  delete queryOnly.values;
-
-  const data = {
-    ...query,
-    $push: {
-      values: {
-        $each: values,
-        $sort: {x: 1}
-      }
-    }
-  };
-  const ret = await db.upsert(model, queryOnly, data);
-
-  let newValues = [];
-  for (let index = 0; index < ret.values.length - 1; index++) {
-    if (ret.values[index].x !== ret.values[index + 1].x) {
-      newValues.push(ret.values[index]);
-    }
-  }
-  newValues.push(ret.values[ret.values.length - 1]);
-
-  await model.updateOne(query, {
-    $set: {
-      values: newValues,
-    }
-  });
-};
-
 router.put("/script", async (req, res, next) => {
   try {
     const query = {username: req.body.username, trendId: req.body.trendId, name: req.body.name};
@@ -156,7 +126,7 @@ router.put("/script", async (req, res, next) => {
     const script = await crawlingScriptModel.findOne(query);
     const ret = await runScript(script.toObject());
     for (const graph of ret.graphQueries) {
-      await upsertUniqueXValue( trendGraphModel, graph);
+      await db.upsertUniqueXValue( trendGraphModel, graph);
     }
     res.send(req.body);
   } catch (ex) {
