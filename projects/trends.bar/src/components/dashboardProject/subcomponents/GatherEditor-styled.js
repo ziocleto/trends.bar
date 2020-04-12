@@ -81,3 +81,28 @@ export const ScriptElementsContainer = styled.div`{
 export const ScriptGraphContainer = styled.div`{
   min-height: 500px;
 }`;
+
+export const ScriptKeyContainer = styled.div` {
+  --margin:3px;
+  margin: var(--margin);
+  padding: 5px;
+  width: calc(100% - (var(--margin) * 2));
+  border-radius: 3px;
+  border: 1px solid var(--gray);
+  background-color: ${props => props.selected ? "var(--dark)" : "none"};
+  cursor: pointer;
+  
+  :hover {
+    box-shadow: 0 0 3px 1px var(--primary-color);
+  }
+  
+  :active {
+    box-shadow: 0 0 1px 1px var(--primary-color);
+  }
+}`;
+
+export const ScriptKeyContainerTitle = styled.h4` {
+  --margin: 0 10px;
+  color: var(--info);
+  font-weight: bold;  
+}`;

@@ -38,7 +38,7 @@ const UserAssets = (props) => {
         <i className="fas fa-rocket"/> Your Trends:
       </DashboardUserInnerMargins>
       {hasTrends && (
-        <Flex>
+        <Flex justifyContent={"start"}>
           {trends.map(elem => {
               const trendId = elem.trendId;
               const projectLink = "/dashboardproject/" + trendId;

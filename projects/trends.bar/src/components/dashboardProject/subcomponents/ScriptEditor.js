@@ -1,16 +1,19 @@
 import React from "reactn";
 import {Fragment, useEffect, useState} from "react";
-import {Button, Col, Container, Dropdown, Form, InputGroup, ListGroup, Nav, Row, Tab, Table} from "react-bootstrap";
-import {ScriptElementsContainer, ScriptGraphContainer, ScriptResultContainer} from "./GatherEditor-styled";
+import {Button, Col, Container, Dropdown, Form, InputGroup, Row} from "react-bootstrap";
+import {
+  ScriptElementsContainer,
+  ScriptKeyContainer,
+  ScriptKeyContainerTitle,
+  ScriptResultContainer
+} from "./GatherEditor-styled";
 import {api, useApi} from "../../../futuremodules/api/apiEntryPoint";
 import {getCSVGraphKeys} from "../../../futuremodules/fetch/fetchApiCalls";
 import {
-  DangerColorDiv,
   DangerColorSpan,
-  DangerColorTd,
   Flex,
-  LightColorTextSpanBold,
-  Mx1
+  FlexVertical,
+  LightColorTextSpanBold
 } from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {useTrendIdGetter} from "../../../modules/trends/globals";
 import {arrayObjectExistsNotEmpty} from "../../../futuremodules/utils/utils";
@@ -20,6 +23,8 @@ import {alertSuccess, useAlert} from "../../../futuremodules/alerts/alerts";
 import {useMutation} from "@apollo/react-hooks";
 import {UPSERT_TREND_GRAPH} from "../../../modules/trends/mutations";
 import {graphArrayToGraphTree} from "../../../modules/trends/dataGraphs";
+import {object} from "@amcharts/amcharts4/core";
+import {has} from "@amcharts/amcharts4/.internal/core/utils/Array";
 
 const getLabelTransformOfGroup = (scriptJson, groupName) => {
   if (!scriptJson) return "";
@@ -44,21 +49,66 @@ export const ScriptEditor = () => {
   useEffect(() => {
     if (fetchResult) {
       const gt = graphArrayToGraphTree(fetchResult.graphQueries, "yValueGroup", "yValueSubGroup");
-      setCompositeGraphTree(gt);
+      const groupTabKey = Object.keys(gt)[0];
+      const subGroupTabKey = Object.keys(gt[groupTabKey])[0];
+      setGraphTree({
+        tree: gt,
+        groupTabKey: groupTabKey,
+        subGroupTabKey: subGroupTabKey
+      });
     }
   }, [fetchResult]);
 
-  const setCompositeGraphTree = (gt) => {
-    const groupTabKey = Object.keys(gt)[0];
-    let subGroupTabKey = null;
-    if (arrayObjectExistsNotEmpty(gt[groupTabKey])) {
-      subGroupTabKey = Object.keys(gt[groupTabKey])[0];
+  const setFirstGroupKey = (gt) => {
+    let hasOne = true;
+    if ( !arrayObjectExistsNotEmpty(gt.tree) ) {
+      hasOne = false;
     }
+    if ( hasOne ) {
+      for ( const elem of Object.keys(gt.tree) ) {
+        if ( arrayObjectExistsNotEmpty(gt.tree[elem]) ) {
+          gt.groupTabKey = elem;
+          getFirstSubGroupKey(gt);
+          hasOne = true;
+          break;
+        }
+      }
+    }
+    if (!hasOne) {
+      gt.groupTabKey = null;
+      gt.subGroupTabKey = null;
+      delete gt.tree;
+    }
+  };
 
-    setGraphTree( {
-      tree: gt,
-      groupTabKey: groupTabKey,
-      subGroupTabKey: subGroupTabKey
+  const getFirstSubGroupKey = (gt) => {
+    if (arrayObjectExistsNotEmpty(gt.tree[gt.groupTabKey])) {
+      gt.subGroupTabKey = Object.keys(gt.tree[gt.groupTabKey])[0];
+    }
+  };
+
+  const setFirstSubGroupKey = (gt) => {
+    if (arrayObjectExistsNotEmpty(gt.tree[gt.groupTabKey])) {
+      gt.subGroupTabKey = Object.keys(gt.tree[gt.groupTabKey])[0];
+    } else {
+      delete gt.tree[gt.groupTabKey];
+      setFirstGroupKey(gt);
+    }
+  };
+
+  const setGroupKey = (e, gk) => {
+    e.stopPropagation();
+    let tmp = graphTree;
+    tmp.groupTabKey = gk;
+    getFirstSubGroupKey(tmp);
+    setGraphTree({...tmp});
+  };
+
+  const setSubGroupKey = (e, sgk) => {
+    e.stopPropagation();
+    setGraphTree({
+      ...graphTree,
+      subGroupTabKey: sgk
     });
   };
 
@@ -69,37 +119,31 @@ export const ScriptEditor = () => {
     });
   };
 
-  const checkDeleteItemGroup = (tmp) => {
-    if ( Object.keys(tmp[graphTree.groupTabKey]).length === 0  ) {
-      delete tmp[graphTree.groupTabKey];
+  const onDeleteEntity = (e, elem) => {
+    e.stopPropagation();
+    let tmp = graphTree;
+    tmp.tree[graphTree.groupTabKey][graphTree.subGroupTabKey] = tmp.tree[graphTree.groupTabKey][graphTree.subGroupTabKey].filter(e => e.yValueName !== elem);
+    if (Object.keys(tmp.tree[graphTree.groupTabKey][graphTree.subGroupTabKey]).length === 0) {
+      delete tmp.tree[graphTree.groupTabKey][graphTree.subGroupTabKey];
+      setFirstSubGroupKey(tmp);
     }
+    setGraphTree({...tmp});
   };
 
-  const checkDeleteSubGroup = (tmp) => {
-    if ( Object.keys( tmp[graphTree.groupTabKey][graphTree.subGroupTabKey]).length === 0  ) {
-      delete  tmp[graphTree.groupTabKey][graphTree.subGroupTabKey];
-      checkDeleteItemGroup(tmp);
-    }
+  const onDeleteSubGroup = (e, elem) => {
+    e.stopPropagation();
+    let tmp = graphTree;
+    delete tmp.tree[graphTree.groupTabKey][elem];
+    setFirstSubGroupKey(tmp);
+    setGraphTree({...tmp});
   };
 
-  const onDeleteEntity = (elem) => {
-    let tmp = graphTree.tree;
-    tmp[graphTree.groupTabKey][graphTree.subGroupTabKey] = tmp[graphTree.groupTabKey][graphTree.subGroupTabKey].filter(e => e.yValueName !== elem);
-    checkDeleteSubGroup(tmp);
-    setCompositeGraphTree(tmp);
-  };
-
-  const onDeleteSubGroup = (elem) => {
-    let tmp = graphTree.tree;
-    delete tmp[graphTree.groupTabKey][elem];
-    checkDeleteItemGroup(tmp);
-    setCompositeGraphTree(tmp);
-  };
-
-  const onDeleteGroup = (elem) => {
-    let tmp = graphTree.tree;
-    delete tmp[elem];
-    setCompositeGraphTree(tmp);
+  const onDeleteGroup = (e, elem) => {
+    e.stopPropagation();
+    let tmp = graphTree;
+    delete tmp.tree[elem];
+    setFirstGroupKey(tmp);
+    setGraphTree({...tmp});
   };
 
   const gatherAllGraphs = () => {
@@ -147,51 +191,37 @@ export const ScriptEditor = () => {
     </Fragment>
   );
 
-  const DeleteCSVElem = (props) => {
-    return (
-      <DangerColorSpan onClick={() => onDeleteEntity(props.elem)}>
-        <i className="fas fa-minus-circle"/>
-      </DangerColorSpan>
-    )
-  };
-
-  const DeleteCSVGroup = (props) => {
-    return (
-      <DangerColorSpan onClick={() => onDeleteGroup(props.elem)}>
-        <i className="fas fa-minus-circle"/>
-      </DangerColorSpan>
-    )
-  };
-
   const DeleteItem = (props) => {
     return (
-      <DangerColorSpan onClick={() => props.callback(props.elem)}>
+      <DangerColorSpan onClick={(e) => props.callback(e, props.elem)}>
         <i className="fas fa-minus-circle"/>
       </DangerColorSpan>
     )
   };
-
 
   const groupMenuHandler = (e) => {
     return (
       <Flex>
-        <Dropdown>
-          <Dropdown.Toggle variant="success" size={"sm"}>
-            {getLabelTransformOfGroup(fetchResult.script, e)}
-          </Dropdown.Toggle>
-          <Dropdown.Menu>
-            <Dropdown.Item>Not specified</Dropdown.Item>
-            <Dropdown.Item>Country</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-        <Mx1/>
-        <LightColorTextSpanBold>{e}</LightColorTextSpanBold>
-        <Mx1/>
-        <DeleteCSVGroup elem={e}/>
+        <div>
+          <Dropdown>
+            <Dropdown.Toggle variant="success" size={"sm"}>
+              {getLabelTransformOfGroup(fetchResult.script, e)}
+            </Dropdown.Toggle>
+            <Dropdown.Menu>
+              <Dropdown.Item>Not specified</Dropdown.Item>
+              <Dropdown.Item>Country</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+        </div>
+        <div>
+          <LightColorTextSpanBold>{e}</LightColorTextSpanBold>
+        </div>
+        <div>
+          <DeleteItem elem={e} callback={onDeleteGroup}/>
+        </div>
       </Flex>
     );
   };
-
 
   console.log(graphTree);
   const scriptOutputTables = () => {
@@ -203,93 +233,65 @@ export const ScriptEditor = () => {
             <Row>
               <Col>
                 <ScriptElementsContainer>
-                  <ListGroup>
+                  <FlexVertical>
+                    <ScriptKeyContainerTitle>
+                      Groups
+                    </ScriptKeyContainerTitle>
                     {Object.keys(graphTree.tree).map(elem =>
-                      (<ListGroup.Item key={elem}>
+                      (<ScriptKeyContainer key={elem}
+                                           selected={elem === graphTree.groupTabKey}
+                                           onClick={e => setGroupKey(e, elem)}>
                         {groupMenuHandler(elem)}
-                      </ListGroup.Item>)
+                      </ScriptKeyContainer>)
                     )}
-                  </ListGroup>
+                  </FlexVertical>
                 </ScriptElementsContainer>
               </Col>
               <Col>
                 <ScriptElementsContainer>
-                  <ListGroup>
+                  <FlexVertical>
+                    <ScriptKeyContainerTitle>
+                      Sub Groups
+                    </ScriptKeyContainerTitle>
                     {Object.keys(graphTree.tree[graphTree.groupTabKey]).map(elem =>
-                      (<ListGroup.Item key={elem}>
-                        <Container>
-                          <Row>
-                            <Col sm={9}>
-                              <div><b>{elem}</b></div>
-                            </Col>
-                            <Col>
-                              <DeleteItem elem={elem} callback={onDeleteSubGroup}/>
-                            </Col>
-                          </Row>
-                        </Container>
-                      </ListGroup.Item>)
+                      (<ScriptKeyContainer key={elem}
+                                           selected={elem === graphTree.subGroupTabKey}
+                                           onClick={(e) => setSubGroupKey(e, elem)}>
+                        <Flex>
+                          <div><b>{elem}</b></div>
+                          <DeleteItem elem={elem} callback={onDeleteSubGroup}/>
+                        </Flex>
+                      </ScriptKeyContainer>)
                     )}
-                  </ListGroup>
+                  </FlexVertical>
                 </ScriptElementsContainer>
               </Col>
               <Col>
                 <ScriptElementsContainer>
-                  <ListGroup>
+                  <FlexVertical>
+                    <ScriptKeyContainerTitle>
+                      Values
+                    </ScriptKeyContainerTitle>
                     {graphTree.tree[graphTree.groupTabKey][graphTree.subGroupTabKey].map(elem =>
-                      (<ListGroup.Item key={elem.yValueName}>
-                        <Container>
-                          <Row>
-                            <Col sm={9}>
-                              <div><b>{elem.yValueName}</b></div>
-                            </Col>
-                            <Col>
-                              <DeleteItem elem={elem.yValueName} callback={onDeleteEntity}/>
-                            </Col>
-                          </Row>
-                        </Container>
-                      </ListGroup.Item>)
+                      (<ScriptKeyContainer key={elem.yValueName} variant={"light"}>
+                        <Flex>
+                          <div><b>{elem.yValueName}</b></div>
+                          <DeleteItem elem={elem.yValueName} callback={onDeleteEntity}/>
+                        </Flex>
+                      </ScriptKeyContainer>)
                     )}
-                  </ListGroup>
+                  </FlexVertical>
                 </ScriptElementsContainer>
               </Col>
             </Row>
             <Row>
               <Col>
-                {<GraphXY data={graphTree.tree[graphTree.groupTabKey][graphTree.subGroupTabKey]} config={getDefaultWidgetContent("graphxy", 0)}/>}
+                {<GraphXY data={graphTree.tree[graphTree.groupTabKey][graphTree.subGroupTabKey]}
+                          config={getDefaultWidgetContent("graphxy", 0)}/>}
               </Col>
             </Row>
           </Container>
         </ScriptResultContainer>
-        // <ScriptResultContainer>
-        //   <Tabs id={"tid"} variant="pills" activeKey={groupTabKey} onSelect={k => setGroupTabKey(k)}>
-        //     {Object.keys(graphTree.tree).map(e => {
-        //       return (
-        //         <Tab key={e} eventKey={e} title={groupMenuHandler(e)}>
-        //           {e === groupTabKey &&
-        //           <MarginBorderDiv>
-        //             <Tab.Container activeKey={subGroupTabKey} onSelect={k => setSubGroupTabKey(k)}>
-        //               <Row>
-        //                 <Col sm={2}>
-        //                   <Nav variant="pills" className="flex-column">
-        //                     {groupItemsNavKeys(e)}
-        //                   </Nav>
-        //                 </Col>
-        //                 <Col sm={10}>
-        //                   {groupItemsPanelsGroupKeys(e)}
-        //                 </Col>
-        //               </Row>
-        //             </Tab.Container>
-        //           </MarginBorderDiv>
-        //           }
-        //         </Tab>
-        //       )
-        //     })}
-        //   </Tabs>
-        //   <Button variant={"success"}
-        //           onClick={() => publishGraphs()}>
-        //     Publish
-        //   </Button>
-        // </ScriptResultContainer>
       )
     }
     return ret;
