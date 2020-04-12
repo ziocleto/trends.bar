@@ -221,11 +221,11 @@ export const graphArrayToGraphTree = ( sourceArray, key1, key2 ) => {
   sourceArray.map(elem => groupsSet.add(elem[key1]));
   for ( const group of groupsSet.values() ) {
     ret[group] = {};
-    sourceArray.map( elem => {
+    for ( const elem of sourceArray) {
       if ( elem[key1] === group ) {
         ret[group][elem[key2]] ? ret[group][elem[key2]].push(elem) : ret[group][elem[key2]]=[elem];
       }
-    });
+    }
   }
   return ret;
 };

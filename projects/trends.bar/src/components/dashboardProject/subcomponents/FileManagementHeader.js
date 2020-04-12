@@ -13,7 +13,7 @@ import {Fragment, useEffect} from "react";
 import {alertDangerNoMovie, useAlert, useConfirmAlertWithWriteCheck} from "../../../futuremodules/alerts/alerts";
 import {useLazyQuery, useMutation} from "@apollo/react-hooks";
 import {REMOVE_SCRIPT} from "../../../modules/trends/mutations";
-import {LabelWithRename} from "./LabelWithRename";
+import {LabelWithRename} from "../../../futuremodules/labelWithRename/LabelWithRename";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import {getScript} from "../../../modules/trends/queries";

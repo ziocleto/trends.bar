@@ -9,22 +9,15 @@ import {
 } from "./GatherEditor-styled";
 import {api, useApi} from "../../../futuremodules/api/apiEntryPoint";
 import {getCSVGraphKeys} from "../../../futuremodules/fetch/fetchApiCalls";
-import {
-  DangerColorSpan,
-  Flex,
-  FlexVertical,
-  LightColorTextSpanBold
-} from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
+import {DangerColorSpan, Flex, FlexVertical, Mx1} from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {useTrendIdGetter} from "../../../modules/trends/globals";
 import {arrayObjectExistsNotEmpty} from "../../../futuremodules/utils/utils";
-import {getDefaultWidgetContent} from "../../../modules/trends/layout";
 import {GraphXY} from "../../../futuremodules/graphs/GraphXY";
 import {alertSuccess, useAlert} from "../../../futuremodules/alerts/alerts";
 import {useMutation} from "@apollo/react-hooks";
 import {UPSERT_TREND_GRAPH} from "../../../modules/trends/mutations";
 import {graphArrayToGraphTree} from "../../../modules/trends/dataGraphs";
-import {object} from "@amcharts/amcharts4/core";
-import {has} from "@amcharts/amcharts4/.internal/core/utils/Array";
+import {LabelWithRename} from "../../../futuremodules/labelWithRename/LabelWithRename";
 
 const getLabelTransformOfGroup = (scriptJson, groupName) => {
   if (!scriptJson) return "";
@@ -61,12 +54,12 @@ export const ScriptEditor = () => {
 
   const setFirstGroupKey = (gt) => {
     let hasOne = true;
-    if ( !arrayObjectExistsNotEmpty(gt.tree) ) {
+    if (!arrayObjectExistsNotEmpty(gt.tree)) {
       hasOne = false;
     }
-    if ( hasOne ) {
-      for ( const elem of Object.keys(gt.tree) ) {
-        if ( arrayObjectExistsNotEmpty(gt.tree[elem]) ) {
+    if (hasOne) {
+      for (const elem of Object.keys(gt.tree)) {
+        if (arrayObjectExistsNotEmpty(gt.tree[elem])) {
           gt.groupTabKey = elem;
           getFirstSubGroupKey(gt);
           hasOne = true;
@@ -146,6 +139,35 @@ export const ScriptEditor = () => {
     setGraphTree({...tmp});
   };
 
+  const renameGroup = (oldName, newName) => {
+    let tmp = graphTree;
+    const values = tmp.tree[oldName];
+    delete tmp.tree[oldName];
+    tmp.tree[newName] = values;
+    tmp.groupTabKey = newName;
+    setGraphTree({...tmp});
+  };
+
+  const renameSubGroup = (oldName, newName) => {
+    let tmp = graphTree;
+    const values = tmp.tree[graphTree.groupTabKey][oldName];
+    delete tmp.tree[graphTree.groupTabKey][oldName];
+    tmp.tree[graphTree.groupTabKey][newName] = values;
+    tmp.subGroupTabKey = newName;
+    setGraphTree({...tmp});
+  };
+
+  const renameYValueName = (oldName, newName) => {
+    let tmp = graphTree;
+    tmp.tree[graphTree.groupTabKey][graphTree.subGroupTabKey].map(elem => {
+      if (elem.yValueName === oldName) {
+        elem.yValueName = newName;
+      }
+      return elem;
+    });
+    setGraphTree({...tmp});
+  };
+
   const gatherAllGraphs = () => {
     const ret = [];
     for (const group of Object.keys(fetchResult.groupQuerySet)) {
@@ -203,27 +225,35 @@ export const ScriptEditor = () => {
     return (
       <Flex>
         <div>
-          <Dropdown>
-            <Dropdown.Toggle variant="success" size={"sm"}>
-              {getLabelTransformOfGroup(fetchResult.script, e)}
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              <Dropdown.Item>Not specified</Dropdown.Item>
-              <Dropdown.Item>Country</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
-        </div>
-        <div>
-          <LightColorTextSpanBold>{e}</LightColorTextSpanBold>
+          <Flex>
+            <div>
+              <Dropdown>
+                <Dropdown.Toggle variant="success" size={"sm"}>
+                  {getLabelTransformOfGroup(fetchResult.script, e)}
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <Dropdown.Item>Not specified</Dropdown.Item>
+                  <Dropdown.Item>Country</Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
+            <Mx1/>
+            <div><b>
+              <LabelWithRename
+                defaultValue={e}
+                updater={(newValue) => renameGroup(e, newValue)}
+              /></b>
+            </div>
+          </Flex>
         </div>
         <div>
           <DeleteItem elem={e} callback={onDeleteGroup}/>
         </div>
       </Flex>
-    );
+    )
   };
 
-  console.log(graphTree);
+  // console.log(graphTree);
   const scriptOutputTables = () => {
     let ret = (<Fragment/>);
     if (graphTree && arrayObjectExistsNotEmpty(graphTree.tree)) {
@@ -258,7 +288,14 @@ export const ScriptEditor = () => {
                                            selected={elem === graphTree.subGroupTabKey}
                                            onClick={(e) => setSubGroupKey(e, elem)}>
                         <Flex>
-                          <div><b>{elem}</b></div>
+                          <div>
+                            <b>
+                              <LabelWithRename
+                                defaultValue={elem}
+                                updater={(newValue) => renameSubGroup(elem, newValue)}
+                              />
+                            </b>
+                          </div>
                           <DeleteItem elem={elem} callback={onDeleteSubGroup}/>
                         </Flex>
                       </ScriptKeyContainer>)
@@ -275,7 +312,14 @@ export const ScriptEditor = () => {
                     {graphTree.tree[graphTree.groupTabKey][graphTree.subGroupTabKey].map(elem =>
                       (<ScriptKeyContainer key={elem.yValueName} variant={"light"}>
                         <Flex>
-                          <div><b>{elem.yValueName}</b></div>
+                          <div>
+                            <b>
+                              <LabelWithRename
+                                defaultValue={elem.yValueName}
+                                updater={(newValue) => renameYValueName(elem.yValueName, newValue)}
+                              />
+                            </b>
+                          </div>
                           <DeleteItem elem={elem.yValueName} callback={onDeleteEntity}/>
                         </Flex>
                       </ScriptKeyContainer>)
@@ -286,11 +330,23 @@ export const ScriptEditor = () => {
             </Row>
             <Row>
               <Col>
-                {<GraphXY data={graphTree.tree[graphTree.groupTabKey][graphTree.subGroupTabKey]}
-                          config={getDefaultWidgetContent("graphxy", 0)}/>}
+                {
+                  <GraphXY data={graphTree.tree[graphTree.groupTabKey][graphTree.subGroupTabKey]}
+                           config={
+                             {
+                               title: graphTree.subGroupTabKey
+                             }
+                           }
+                  />
+                }
               </Col>
             </Row>
           </Container>
+          <br/>
+          <Button variant={"success"}
+                  onClick={() => publishGraphs()}>
+            Publish
+          </Button>
         </ScriptResultContainer>
       )
     }
