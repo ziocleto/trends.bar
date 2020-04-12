@@ -43,13 +43,13 @@ const makeRegExpFromJSON = json => {
 }
 
 export class Cruncher {
-  constructor(trendId, username, text, graphType, defaultXValue) {
+  constructor(trendId, username, resjson, graphType, defaultXValue) {
     this.trendId = trendId;
     this.username = username;
     this.traces = "";
     this.graphQueries = [];
     this.graphQueriesMap = {};
-    this.parser = new Parser(text);
+    this.resjson = resjson;
     this.graphType = graphType;
     this.defaultXValue = defaultXValue;
   }
@@ -103,10 +103,10 @@ export class Cruncher {
     return match;
   }
 
-  finaliseCrunch(group, yValueName, xValue, wc) {
+  finaliseCrunch(group, subGroup, xValue, wc) {
     const key = group.key;
-    const groupName = group.yValueSubGroup;
-    const graphElem = graphAssistant.declare(this.graphType, key, yValueName, groupName);
+    const groupName = group.yValueGroup;
+    const graphElem = graphAssistant.declare(this.graphType, key, subGroup, groupName);
     const value = graphAssistant.prepareSingleValue(graphElem.type, xValue, wc);
     this.dataEntry(graphElem, value);
   }
@@ -172,23 +172,21 @@ export class Cruncher {
   //   }
   // }
 
-  async crunchGroups(resjson, group, defaultXValue) {
-    for (const elem of resjson) {
+  async crunchGroups(group) {
+    for (const elem of this.resjson) {
       // If yValueSubGroup is present in the csv raw then used it, otherwise it as the string specified in the json field 'yValueSubGroup'
-      let cvsLabelField = elem[group.yValueSubGroup] ? elem[group.yValueSubGroup] : group.yValueSubGroup;
+      let subGroup = elem[group.yValueGroup] ? elem[group.yValueGroup] : group.yValueGroup;
       if ( group.labelTransform && group.labelTransform === "Country" ) {
-        cvsLabelField = this.applyCountryPostTransformRule(cvsLabelField);
+        subGroup = this.applyCountryPostTransformRule(subGroup);
       }
-      const xValue = elem[group.x] ? elem[group.x] : defaultXValue;
-      this.finaliseCrunch(group, cvsLabelField, xValue, elem[group.y]);
+      const xValue = elem[group.x] ? elem[group.x] : this.defaultXValue;
+      this.finaliseCrunch(group, subGroup, xValue, elem[group.y]);
     }
   }
 
   async crunch(query) {
-    const nparse = new Parser(this.parser.text);
-    const resjson = await csv().fromString(nparse.text);
     for (const group of query.groups) {
-      await this.crunchGroups(resjson, group, this.defaultXValue);
+      await this.crunchGroups(group);
     }
 
     // Remap to array
@@ -221,10 +219,7 @@ export class Cruncher {
     //   this.traces += (elem.yValueName + ", " + elem.yValueSubGroup + ", " + JSON.stringify(elem.values) + "\n");
     // });
 
-    return {
-      traces: this.traces,
-      graphQueries: this.graphQueries
-    }
+    return this.graphQueries;
   }
 }
 

@@ -8,21 +8,19 @@ import {
   ScriptResultContainer
 } from "./GatherEditor-styled";
 import {api, useApi} from "../../../futuremodules/api/apiEntryPoint";
-import {getCSVGraphKeys} from "../../../futuremodules/fetch/fetchApiCalls";
+import {getCSVGraphKeys, putScript} from "../../../futuremodules/fetch/fetchApiCalls";
 import {DangerColorSpan, Flex, FlexVertical, Mx1} from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {useTrendIdGetter} from "../../../modules/trends/globals";
 import {arrayObjectExistsNotEmpty} from "../../../futuremodules/utils/utils";
 import {GraphXY} from "../../../futuremodules/graphs/GraphXY";
 import {alertSuccess, useAlert} from "../../../futuremodules/alerts/alerts";
-import {useMutation} from "@apollo/react-hooks";
-import {UPSERT_TREND_GRAPH} from "../../../modules/trends/mutations";
 import {graphArrayToGraphTree} from "../../../modules/trends/dataGraphs";
 import {LabelWithRename} from "../../../futuremodules/labelWithRename/LabelWithRename";
 
 const getLabelTransformOfGroup = (scriptJson, groupName) => {
   if (!scriptJson) return "";
   for (const group of scriptJson.groups) {
-    if (group.yValueSubGroup === groupName) {
+    if (group.yValueGroup === groupName) {
       return group.labelTransform === "None" ? "" : group.labelTransform;
     }
   }
@@ -37,10 +35,10 @@ export const ScriptEditor = () => {
   const fetchApi = useApi('fetch');
   const [fetchResult] = fetchApi;
   const alertStore = useAlert();
-  const [upsertTrendGraph] = useMutation(UPSERT_TREND_GRAPH);
 
   useEffect(() => {
     if (fetchResult) {
+      console.log(fetchResult);
       const gt = graphArrayToGraphTree(fetchResult.graphQueries, "yValueGroup", "yValueSubGroup");
       const groupTabKey = Object.keys(gt)[0];
       const subGroupTabKey = Object.keys(gt[groupTabKey])[0];
@@ -168,27 +166,9 @@ export const ScriptEditor = () => {
     setGraphTree({...tmp});
   };
 
-  const gatherAllGraphs = () => {
-    const ret = [];
-    for (const group of Object.keys(fetchResult.groupQuerySet)) {
-      for (const subGroup of Object.keys(fetchResult.groupQuerySet[group])) {
-        for (const graph of fetchResult.groupQuerySet[group][subGroup]) {
-          ret.push(graph);
-        }
-      }
-    }
-    return ret;
-  };
-
   const publishGraphs = () => {
-    upsertTrendGraph({
-      variables: {
-        graphQueries: gatherAllGraphs()
-      }
-    }).then(() =>
-      alertSuccess(alertStore, "All set and done!")
-    ).catch((e) => {
-      console.log("Uacci uari uari", e);
+    api( fetchApi, putScript, fetchResult.script ).then( () => {
+      alertSuccess(alertStore, "All set and done!");
     });
   };
 
