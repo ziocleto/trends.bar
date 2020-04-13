@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
-export const ScriptEditorGrid = styled.div` {
-  margin-top: 20px;
+export const DataSourcesContainer = styled.div` {
+  margin: 3% 3%;
 }`;
 
 export const ScriptVariables = styled.div` {

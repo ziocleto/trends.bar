@@ -5,6 +5,7 @@ import {DashboardUserInnerMargins} from "../DashboardUser.styled";
 import {getAuthUserName, getAuthWithGlobal} from "../../../futuremodules/auth/authAccessors";
 import {Button, Form, InputGroup} from "react-bootstrap";
 import {Div50} from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
+import {RocketTitle} from "../../../futuremodules/reactComponentStyles/reactCommon";
 
 const AssetCreator = (props) => {
 
@@ -25,7 +26,7 @@ const AssetCreator = (props) => {
   return (
     <Div50>
       <DashboardUserInnerMargins>
-        <i className="fas fa-plus-circle"/> Create New Trend
+        <RocketTitle text={"Create New Trend:"}/>
       </DashboardUserInnerMargins>
       <InputGroup className="mb-1">
         <Form.Control name="projectNew" placeholder="Trend Name"

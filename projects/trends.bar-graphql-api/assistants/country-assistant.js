@@ -1839,6 +1839,9 @@ export const findInternal = (source, list) => {
       return countryListSimpleMap[country];
     }
   }
+  if ( countryListAlpha3[source] ) {
+    return countryListAlpha3[source];
+  }
   throw "country " + source + " not found in our database";
 }
 

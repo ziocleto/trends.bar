@@ -4,6 +4,7 @@ import {Cruncher} from "../assistants/cruncher-assistant";
 import * as graphAssistant from "../assistants/graph-assistant";
 import {crawlingScriptModel} from "../models/crawlingScript";
 import {trendGraphModel} from "../models/trendGraph";
+import {lastPathElement} from "eh_helpers";
 
 const express = require("express");
 const logger = require("eh_logger");
@@ -101,27 +102,48 @@ const getCSVKeys = (resjson) => {
 
 const createDefaultScript = ( url, trendId, username) => {
   return {
-    name: url.substring(url.lastIndexOf('/') + 1),
+    name: lastPathElement(url),
     sourceDocument:url,
     trendId,
     username,
   };
-
 };
 
 const runScript = async (script) => {
   const resjson = await fetchCSV(script.sourceDocument);
-  script.keys = getCSVKeys(resjson);
+  if ( !script.keys ) {
+    script.keys = getCSVKeys(resjson);
+  }
   const cruncher = new Cruncher(script.trendId, script.username, resjson, graphAssistant.xyDateInt(), "embedded");
   const graphQueries = await cruncher.crunch(script);
   return {script, crawledText: resjson, graphQueries, error: null};
 };
 
-router.post("/csvgraphkeys", async (req, res, next) => {
+router.get("/scripts/:trendId", async (req, res, next) => {
+  try {
+    let retO = await crawlingScriptModel.find( { trendId: req.params.trendId, username: req.user.name} ).collation({locale: "en", strength: 2});
+    let ret = [];
+    for ( let elem of retO ) {
+      ret.push(elem.toObject());
+    }
+    res.send( {
+      api: lastPathElement(req.url),
+      ret
+    });
+  } catch (ex) {
+    logger.error(ex);
+    res.status(400).send(ex);
+  }
+});
+
+router.post("/addnewscript", async (req, res, next) => {
   try {
     const defaultScript = createDefaultScript(req.body.url, req.body.trendId, req.user.name);
     const ret = await runScript(defaultScript);
-    res.send(ret);
+    res.send( {
+      api: lastPathElement(req.url),
+      ret
+    });
   } catch (ex) {
     const err = `Error fetching: ${JSON.stringify(req.body)} because ${ex}`
     logger.error(err);
@@ -138,7 +160,10 @@ router.put("/script", async (req, res, next) => {
     for (const graph of ret.graphQueries) {
       await db.upsertUniqueXValue( trendGraphModel, graph);
     }
-    res.send(req.body);
+    res.send( {
+      api: lastPathElement(req.url),
+      ret: req.body
+    });
   } catch (ex) {
     const err = `Error scripting: ${JSON.stringify(req.body)} because ${ex}`
     logger.error(err);

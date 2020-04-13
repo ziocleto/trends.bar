@@ -4,7 +4,7 @@ import {
   FileManagementElement,
   FileManagementSxPadding,
   InfoColor
-} from "./GatherEditor-styled";
+} from "./DataSources/DataSources-styled";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
 import Button from "react-bootstrap/Button";

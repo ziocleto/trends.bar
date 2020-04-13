@@ -11,6 +11,7 @@ import {useEffect} from "react";
 import {checkQueryHasLoadedWithData, getQueryLoadedWithValue} from "../../../futuremodules/graphqlclient/query";
 import {arrayExistsNotEmpty} from "../../../futuremodules/utils/utils";
 import {useRemoveTrend} from "../../../modules/trends/mutations";
+import {PlusTitle} from "../../../futuremodules/reactComponentStyles/reactCommon";
 
 const UserAssets = (props) => {
 
@@ -35,7 +36,7 @@ const UserAssets = (props) => {
   return (
     <Fragment>
       <DashboardUserInnerMargins>
-        <i className="fas fa-rocket"/> Your Trends:
+        <PlusTitle text={"Your Trends:"}/>
       </DashboardUserInnerMargins>
       {hasTrends && (
         <Flex justifyContent={"start"}>

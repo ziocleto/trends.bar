@@ -1,49 +1,37 @@
 import React from "reactn";
 import {Fragment, useEffect, useState} from "react";
-import {Button, Col, Container, Dropdown, Form, InputGroup, Row} from "react-bootstrap";
+import {Button, Col, Container, Dropdown, Row} from "react-bootstrap";
 import {
   ScriptElementsContainer,
   ScriptKeyContainer,
   ScriptKeyContainerTitle,
   ScriptResultContainer
-} from "./GatherEditor-styled";
-import {api, useApi} from "../../../futuremodules/api/apiEntryPoint";
-import {getCSVGraphKeys, putScript} from "../../../futuremodules/fetch/fetchApiCalls";
-import {DangerColorSpan, Flex, FlexVertical, Mx1} from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
-import {useTrendIdGetter} from "../../../modules/trends/globals";
-import {arrayObjectExistsNotEmpty} from "../../../futuremodules/utils/utils";
-import {GraphXY} from "../../../futuremodules/graphs/GraphXY";
-import {alertSuccess, useAlert} from "../../../futuremodules/alerts/alerts";
-import {graphArrayToGraphTree} from "../../../modules/trends/dataGraphs";
-import {LabelWithRename} from "../../../futuremodules/labelWithRename/LabelWithRename";
-
-const getLabelTransformOfGroup = (scriptJson, groupName) => {
-  if (!scriptJson) return "";
-  for (const group of scriptJson.keys.group) {
-    if (group.yValueGroup === groupName) {
-      return group.labelTransform === "None" ? "" : group.labelTransform;
-    }
-  }
-  return "";
-};
+} from "./DataSources-styled";
+import {api, useApi} from "../../../../futuremodules/api/apiEntryPoint";
+import {putScript} from "../../../../futuremodules/fetch/fetchApiCalls";
+import {DangerColorSpan, Flex, FlexVertical, Mx1} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
+import {arrayObjectExistsNotEmpty} from "../../../../futuremodules/utils/utils";
+import {GraphXY} from "../../../../futuremodules/graphs/GraphXY";
+import {alertSuccess, useAlert} from "../../../../futuremodules/alerts/alerts";
+import {graphArrayToGraphTree} from "../../../../modules/trends/dataGraphs";
+import {LabelWithRename} from "../../../../futuremodules/labelWithRename/LabelWithRename";
 
 export const ScriptEditor = () => {
 
-  const trendId = useTrendIdGetter();
-  const [formData, setFromData] = useState({});
   const [graphTree, setGraphTree] = useState(null);
   const fetchApi = useApi('fetch');
   const [fetchResult] = fetchApi;
   const alertStore = useAlert();
 
   useEffect(() => {
-    if (fetchResult) {
+    if (fetchResult && fetchResult.api === "addNewScript") {
       console.log("Fetch result ", fetchResult);
-      const gt = graphArrayToGraphTree(fetchResult.graphQueries, "yValueGroup", "yValueSubGroup");
+      const res = fetchResult.ret;
+      const gt = graphArrayToGraphTree(res.graphQueries, "yValueGroup", "yValueSubGroup");
       const groupTabKey = Object.keys(gt)[0];
       const subGroupTabKey = Object.keys(gt[groupTabKey])[0];
       setGraphTree({
-        script: fetchResult.script,
+        script: res.script,
         tree: gt,
         groupTabKey: groupTabKey,
         subGroupTabKey: subGroupTabKey
@@ -101,13 +89,6 @@ export const ScriptEditor = () => {
     setGraphTree({
       ...graphTree,
       subGroupTabKey: sgk
-    });
-  };
-
-  const onChange = e => {
-    setFromData({
-      ...formData,
-      [e.target.name]: e.target.value
     });
   };
 
@@ -173,32 +154,31 @@ export const ScriptEditor = () => {
     setGraphTree({...tmp});
   };
 
+  const getLabelTransformOfGroup = (groupName) => {
+    for (const group of graphTree.script.keys.group) {
+      if (group.yValueGroup === groupName) {
+        return group.labelTransform === "None" ? "" : group.labelTransform;
+      }
+    }
+    return "";
+  };
+
+  const setLabelTransformOfGroup = (groupName, newTransform) => {
+    let tmp = graphTree;
+    tmp.script.keys.group.map( elem => {
+      if (elem.yValueGroup === groupName) {
+        elem.labelTransform = newTransform;
+      }
+      return elem;
+    });
+    setGraphTree({...tmp});
+  };
+
   const publishGraphs = () => {
-    api(fetchApi, putScript, fetchResult.script).then(() => {
+    api(fetchApi, putScript, graphTree.script).then(() => {
       alertSuccess(alertStore, "All set and done!");
     });
   };
-
-  const gatherSource = () => {
-    api(fetchApi, getCSVGraphKeys, {url: formData.sourceDocument, trendId}).then();
-  };
-
-  const formLabelInputSubmitEntry = (ls, vs, label, key, placeholder = "", required = false, defaultValue = null) => (
-    <Fragment key={key}>
-      <Form.Label column sm={ls} className={"text-white font-weight-bold"}>
-        {label}
-      </Form.Label>
-      <Col sm={vs}>
-        <InputGroup className="mb-1">
-          <Form.Control name={key} placeholder={placeholder} defaultValue={defaultValue}
-                        onChange={e => onChange(e)} required={required}/>
-          <InputGroup.Append>
-            <Button variant="info" onClick={() => gatherSource()}>Gather</Button>
-          </InputGroup.Append>
-        </InputGroup>
-      </Col>
-    </Fragment>
-  );
 
   const DeleteItem = (props) => {
     return (
@@ -216,11 +196,11 @@ export const ScriptEditor = () => {
             <div>
               <Dropdown>
                 <Dropdown.Toggle variant="success" size={"sm"}>
-                  {getLabelTransformOfGroup(graphTree.script, e)}
+                  {getLabelTransformOfGroup(e)}
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
-                  <Dropdown.Item>Not specified</Dropdown.Item>
-                  <Dropdown.Item>Country</Dropdown.Item>
+                  <Dropdown.Item onClick={ () => setLabelTransformOfGroup(e, "None") }>Not specified</Dropdown.Item>
+                  <Dropdown.Item onClick={ () => setLabelTransformOfGroup(e, "Country") }>Country</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
             </div>
@@ -341,15 +321,12 @@ export const ScriptEditor = () => {
   };
 
   return (
-    <Container fluid>
-      <Row>
-        {formLabelInputSubmitEntry(2, 10, "Source", "sourceDocument", "Url of your source here", true)}
-      </Row>
+    <Fragment>
       <Row>
         <Col>
           {scriptOutputTables()}
         </Col>
       </Row>
-    </Container>
+    </Fragment>
   );
 };

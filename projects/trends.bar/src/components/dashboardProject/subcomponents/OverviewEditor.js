@@ -1,62 +1,13 @@
-import React, {Fragment, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {My1} from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {Col, Container, ListGroup, Row} from "react-bootstrap";
 import {DashboardUserFragment} from "../../dashboardUser/DashboardUser.styled";
 import {useQuery} from "@apollo/react-hooks";
-import {getSimilarTrends, getTrendGraphsByUserTrendIdNoValues} from "../../../modules/trends/queries";
-import {Redirect} from "react-router-dom";
-import {SearchBarResultContainer, SearchBarResultTrendId, SearchBarResultUser} from "../../Landing/Landing.styled";
+import {getTrendGraphsByUserTrendIdNoValues} from "../../../modules/trends/queries";
 import {useTrendIdGetter} from "../../../modules/trends/globals";
 import {getQueryLoadedWithValueArrayNotEmpty} from "../../../futuremodules/graphqlclient/query";
 
-const SearchResults = ({trendIdPartial}) => {
-  const {data, loading} = useQuery(getSimilarTrends(trendIdPartial));
-  const [results, setResults] = useState([]);
-  const [finalized, setfinalized] = useState({
-    clicked: false,
-    username: "",
-    trendId: ""
-  });
-
-  if (data && data.trend_similar && loading === false) {
-    if (results !== data.trend_similar) {
-      setResults(data.trend_similar);
-    }
-  }
-
-  if (finalized.clicked) {
-    return <Redirect push={true} to={`/${finalized.username}/${finalized.trendId}`}/>
-  }
-
-  return (
-    <Fragment>
-      {results.map(e => {
-        const key = e.trendId + e.user.name;
-        return (
-          <SearchBarResultContainer
-            key={key}
-            onClick={() => setfinalized({
-              clicked: true,
-              username: e.user.name,
-              trendId: e.trendId
-            })}
-          >
-            <SearchBarResultTrendId>
-              {e.trendId}
-            </SearchBarResultTrendId>
-            <SearchBarResultUser>
-              <i className="fas fa-user"/>{" "}{e.user.name}
-            </SearchBarResultUser>
-          </SearchBarResultContainer>
-        )
-      })
-      }
-    </Fragment>
-  )
-};
-
 export const OverviewEditor = ({username}) => {
-  const [trendIdPartial, onTrendSelector] = useState(null);
   const trendId = useTrendIdGetter();
 
   const [values, setValues] = useState(new Set());
@@ -81,6 +32,7 @@ export const OverviewEditor = ({username}) => {
             tValues.add(elem.yValueName);
             tGroups.add(elem.yValueSubGroup);
             tGroupElements.add(elem.yValueGroup);
+            return elem;
           });
           setValues(tValues);
           setGroups(tGroups);
@@ -105,6 +57,7 @@ export const OverviewEditor = ({username}) => {
                 // groupQuerySetOfSet[group] = .push(elem);
                 groupQuerySetOfSet[group][elem.yValueSubGroup] ? groupQuerySetOfSet[group][elem.yValueSubGroup].push(elem) : groupQuerySetOfSet[group][elem.yValueSubGroup] = [elem];
               }
+              return elem;
             });
           }
           // console.log("Set of sets", groupQuerySetOfSet);

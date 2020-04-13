@@ -1,7 +1,7 @@
 import React, {useGlobal, withGlobal} from "reactn";
 import {getAuthUserName, getAuthWithGlobal} from "../../futuremodules/auth/authAccessors";
 import {Redirect} from "react-router-dom";
-import {ScriptCodeEditor} from "./subcomponents/GatherEditor";
+import {DataSources} from "./subcomponents/DataSources/DataSources";
 import {Tab, Tabs} from "react-bootstrap";
 import {ProjectClose, ProjectContent, ProjectTabs} from "./DashboardProject.styled";
 import {Fragment, useState} from "react";
@@ -44,7 +44,7 @@ const DashboardProject = (props) => {
             <LayoutEditor username={username}/>
           </Tab>
           <Tab eventKey="DataSources" title="DataSources">
-            <ScriptCodeEditor username={username}/>
+            <DataSources username={username}/>
           </Tab>
         </Tabs>
       </ProjectContent>
