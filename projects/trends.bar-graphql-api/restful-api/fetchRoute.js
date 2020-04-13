@@ -34,23 +34,23 @@ const checkIfDateSequence = (resjson, vk) => {
   return true;
 };
 
-const scriptInjectFromCSV = (script, cvsGroups) => {
-  let sj = script;
-  sj["groups"] = [];
-  const groups = cvsGroups;
-  for (const group of groups["group"]) {
-    for (const elem of groups["y"]) {
-      sj["groups"].push({
-        yValueGroup: group,
-        labelTransform: getDefaultLabelTransformOf(group),
-        key: elem,
-        x: groups["x"][0],
-        y: elem
-      });
-    }
-  }
-  return sj;
-};
+// const scriptInjectFromCSV = (script, cvsGroups) => {
+//   let sj = script;
+//   sj["groups"] = [];
+//   const groups = cvsGroups;
+//   for (const group of groups["group"]) {
+//     for (const elem of groups["y"]) {
+//       sj["groups"].push({
+//         yValueGroup: group,
+//         labelTransform: getDefaultLabelTransformOf(group),
+//         key: elem,
+//         x: groups["x"][0],
+//         y: elem
+//       });
+//     }
+//   }
+//   return sj;
+// };
 
 const fetchURL = async (url) => {
   const response = await fetch(url);
@@ -78,11 +78,22 @@ const getCSVKeys = (resjson) => {
   const valueKeys = Object.keys(resjson[0]);
   for (const vk of valueKeys) {
     if (checkIfNumberSequence(resjson, vk)) {
-      keys["y"] ? keys["y"].push(vk) : keys['y'] = [vk];
+      const vkd = {
+        key: vk,
+        y: vk
+      };
+      keys["y"] ? keys["y"].push(vkd) : keys['y'] = [vkd];
     } else if (checkIfDateSequence(resjson, vk)) {
-      keys["x"] ? keys["x"].push(vk) : keys['x'] = [vk];
+      const vkd = {
+        x: vk
+      };
+      keys["x"] ? keys["x"].push(vkd) : keys['x'] = [vkd];
     } else {
-      keys["group"] ? keys["group"].push(vk) : keys['group'] = [vk];
+      const vkd = {
+        yValueGroup: vk,
+        labelTransform: getDefaultLabelTransformOf(vk)
+      };
+      keys["group"] ? keys["group"].push(vkd) : keys['group'] = [vkd];
     }
   }
   return keys;
@@ -100,8 +111,7 @@ const createDefaultScript = ( url, trendId, username) => {
 
 const runScript = async (script) => {
   const resjson = await fetchCSV(script.sourceDocument);
-  const keys = getCSVKeys(resjson);
-  script = scriptInjectFromCSV(script, keys);
+  script.keys = getCSVKeys(resjson);
   const cruncher = new Cruncher(script.trendId, script.username, resjson, graphAssistant.xyDateInt(), "embedded");
   const graphQueries = await cruncher.crunch(script);
   return {script, crawledText: resjson, graphQueries, error: null};

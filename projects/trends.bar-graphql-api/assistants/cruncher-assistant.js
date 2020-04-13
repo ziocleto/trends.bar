@@ -103,11 +103,11 @@ export class Cruncher {
     return match;
   }
 
-  finaliseCrunch(group, subGroup, xValue, wc) {
-    const key = group.key;
+  finaliseCrunch(group, subGroup, xValue, yValue) {
+    const key = yValue.key;
     const groupName = group.yValueGroup;
     const graphElem = graphAssistant.declare(this.graphType, key, subGroup, groupName);
-    const value = graphAssistant.prepareSingleValue(graphElem.type, xValue, wc);
+    const value = graphAssistant.prepareSingleValue(graphElem.type, xValue, yValue.y);
     this.dataEntry(graphElem, value);
   }
 
@@ -172,21 +172,32 @@ export class Cruncher {
   //   }
   // }
 
-  async crunchGroups(group) {
+  async crunchGroups(group, xValues, yValues) {
     for (const elem of this.resjson) {
-      // If yValueSubGroup is present in the csv raw then used it, otherwise it as the string specified in the json field 'yValueSubGroup'
-      let subGroup = elem[group.yValueGroup] ? elem[group.yValueGroup] : group.yValueGroup;
-      if ( group.labelTransform && group.labelTransform === "Country" ) {
-        subGroup = this.applyCountryPostTransformRule(subGroup);
+      let subGroup = elem[group.yValueGroup];
+      if ( subGroup && subGroup.length > 0 ) {
+        if ( group.labelTransform && group.labelTransform === "Country" ) {
+          subGroup = this.applyCountryPostTransformRule(subGroup);
+        }
+        // Loop for every x values candidates found
+        for ( const xv of xValues ) {
+          const xValue = elem[xv.x];
+          // Loop for every y values candidates found
+          for ( const yv of yValues ) {
+            const yValue = {
+              y: elem[yv.y],
+              key: yv.key
+            };
+            this.finaliseCrunch(group, subGroup, xValue, yValue);
+          }
+        }
       }
-      const xValue = elem[group.x] ? elem[group.x] : this.defaultXValue;
-      this.finaliseCrunch(group, subGroup, xValue, elem[group.y]);
     }
   }
 
-  async crunch(query) {
-    for (const group of query.groups) {
-      await this.crunchGroups(group);
+  async crunch(script) {
+    for (const group of script.keys.group) {
+      await this.crunchGroups(group, script.keys.x, script.keys.y);
     }
 
     // Remap to array

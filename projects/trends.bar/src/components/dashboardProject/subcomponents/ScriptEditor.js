@@ -19,7 +19,7 @@ import {LabelWithRename} from "../../../futuremodules/labelWithRename/LabelWithR
 
 const getLabelTransformOfGroup = (scriptJson, groupName) => {
   if (!scriptJson) return "";
-  for (const group of scriptJson.groups) {
+  for (const group of scriptJson.keys.group) {
     if (group.yValueGroup === groupName) {
       return group.labelTransform === "None" ? "" : group.labelTransform;
     }
