@@ -43,6 +43,7 @@ export const ScriptEditor = () => {
       const groupTabKey = Object.keys(gt)[0];
       const subGroupTabKey = Object.keys(gt[groupTabKey])[0];
       setGraphTree({
+        script: fetchResult.script,
         tree: gt,
         groupTabKey: groupTabKey,
         subGroupTabKey: subGroupTabKey
@@ -118,6 +119,7 @@ export const ScriptEditor = () => {
       delete tmp.tree[graphTree.groupTabKey][graphTree.subGroupTabKey];
       setFirstSubGroupKey(tmp);
     }
+    tmp.script.keys.y = tmp.script.keys.y.filter(eg => eg.key !== elem);
     setGraphTree({...tmp});
   };
 
@@ -133,6 +135,7 @@ export const ScriptEditor = () => {
     e.stopPropagation();
     let tmp = graphTree;
     delete tmp.tree[elem];
+    tmp.script.keys.group = tmp.script.keys.group.filter(eg => eg.yValueGroup !== elem);
     setFirstGroupKey(tmp);
     setGraphTree({...tmp});
   };
@@ -163,11 +166,15 @@ export const ScriptEditor = () => {
       }
       return elem;
     });
+    tmp.script.keys.y = tmp.script.keys.y.map(eg => {
+      if ( eg.key === oldName ) eg.key = newName;
+      return eg;
+    });
     setGraphTree({...tmp});
   };
 
   const publishGraphs = () => {
-    api( fetchApi, putScript, fetchResult.script ).then( () => {
+    api(fetchApi, putScript, fetchResult.script).then(() => {
       alertSuccess(alertStore, "All set and done!");
     });
   };
@@ -209,7 +216,7 @@ export const ScriptEditor = () => {
             <div>
               <Dropdown>
                 <Dropdown.Toggle variant="success" size={"sm"}>
-                  {getLabelTransformOfGroup(fetchResult.script, e)}
+                  {getLabelTransformOfGroup(graphTree.script, e)}
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
                   <Dropdown.Item>Not specified</Dropdown.Item>
