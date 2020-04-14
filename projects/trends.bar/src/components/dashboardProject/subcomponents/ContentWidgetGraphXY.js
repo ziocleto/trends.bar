@@ -37,7 +37,7 @@ export const ContentWidgetGraphXY = ({data, config}) => {
           return serieRow;
         });
         graphData.push({
-          name: config.graphXYSeries[i].yValueName,
+          name: config.graphXYSeries[i].title,
           data: serieData
         });
       } catch (ex) {

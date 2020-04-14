@@ -23,7 +23,7 @@ export const ContentWidgetTextEditor = ({config,onUpdate}) => {
                         Title
                     </Form.Label>
                     <Col>
-                        <Form.Control size="sm" type="text" value={content.yValueName} onChange={(e) => onChange("title", e.target.value)}/>
+                        <Form.Control size="sm" type="text" value={content.title} onChange={(e) => onChange("title", e.target.value)}/>
                     </Col>
                 </Form.Row>
                 <Form.Row>

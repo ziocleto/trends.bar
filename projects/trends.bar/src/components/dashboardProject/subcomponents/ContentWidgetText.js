@@ -7,7 +7,7 @@ import {getTextFromJsonPath} from "../../../modules/trends/jsonPath";
 
 export const ContentWidgetText = ({data,config}) => {
 
-    const title = getTextFromJsonPath(data,config.yValueName);
+    const title = getTextFromJsonPath(data,config.title);
     const subtitle = getTextFromJsonPath(data,config.subtitle);
 
     return (

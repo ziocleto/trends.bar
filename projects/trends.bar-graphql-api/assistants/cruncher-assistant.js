@@ -1,14 +1,5 @@
 import moment from "moment";
-import {
-  parseIntWithSpaces,
-  Parser,
-  regExResolver,
-  regExResolverAccumulator,
-  regExResolverPostTransform,
-  regExResolverSingle,
-  sanitizeExtraSpaces,
-  sanitizeNewLines
-} from "./parser-assistant";
+import {parseIntWithSpaces, sanitizeExtraSpaces, sanitizeNewLines} from "./parser-assistant";
 import * as countryAssistant from "./country-assistant";
 
 const graphAssistant = require("./graph-assistant");

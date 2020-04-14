@@ -78,7 +78,7 @@ export const getTrendLayouts = () => {
               gridContent {
                   type
                   i
-                  yValueName
+                  title
                   subtitle
 
                   tableKeyTitle
@@ -86,7 +86,7 @@ export const getTrendLayouts = () => {
                   tableKeyField
                   tableKeyTransform
                   tableColumns {
-                      yValueName
+                      title
                       query
                       field
                       transform
@@ -94,7 +94,7 @@ export const getTrendLayouts = () => {
                   
                   graphXYTitle
                   graphXYSeries {
-                      yValueName
+                      title
                       query
                       fieldX
                       transformX
