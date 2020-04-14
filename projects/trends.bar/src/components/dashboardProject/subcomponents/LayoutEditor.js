@@ -13,6 +13,11 @@ import {useTrendIdGetter} from "../../../modules/trends/globals";
 import {getQueryLoadedWithValueArrayNotEmpty} from "../../../futuremodules/graphqlclient/query";
 import {CellContentEditor} from "./CellContentEditor";
 import {ContentWidget} from "./ContentWidget";
+import {
+  CloseButtonDiv,
+  DangerColorSpan,
+  InfoTextSpanBold, LightTextSpanBold
+} from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
 
 export const LayoutEditor = ({username}) => {
 
@@ -139,7 +144,6 @@ export const LayoutEditor = ({username}) => {
 
   return (
     <Fragment>
-      <br/>
       <ButtonToolbar className="justify-content-between" aria-label="Toolbar with Button groups">
         <ButtonGroup aria-label="First group">
           <Button onClick={onAddCell}>Add Cell</Button>{' '}
@@ -159,14 +163,14 @@ export const LayoutEditor = ({username}) => {
               <ContentWidget data={trendData}
                              config={layout.gridContent[layout.gridLayout.findIndex(v => v.i === elem.i)]}/>
               <SpanRemoveLayoutCell title="Remove cell">
-                <Button variant="outline-danger" onClick={() => onRemoveCell(elem.i)}>
-                  <i className={"fas fa-minus-circle"}/>
-                </Button>
+                <CloseButtonDiv onClick={() => onRemoveCell(elem.i)}>
+                  <DangerColorSpan><i className={"fas fa-times"}/></DangerColorSpan>
+                </CloseButtonDiv>
               </SpanRemoveLayoutCell>
               <SpanEditLayoutCell title="Edit cell">
-                <Button variant="outline-info" onClick={() => onEditCell(elem.i)}>
+                <CloseButtonDiv variant="outline-info" onClick={() => onEditCell(elem.i)}>
                   <i className={"fas fa-edit"}/>
-                </Button>
+                </CloseButtonDiv>
               </SpanEditLayoutCell>
             </DivLayout>
           );

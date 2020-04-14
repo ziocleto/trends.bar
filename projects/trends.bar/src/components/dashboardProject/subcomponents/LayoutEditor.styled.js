@@ -3,6 +3,7 @@ import styled from "styled-components";
 export const DivLayout = styled.div` {
   margin: 2px;
   border: 1px solid var(--light);
+  border-radius: 5px;
   background-color: var(--dark-color-transparent);
   overflow:hidden;
   cursor: pointer;

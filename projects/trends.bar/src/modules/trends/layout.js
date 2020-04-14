@@ -2,7 +2,7 @@ export const getDefaultTrendLayout = (trendId, username) => {
 
   const granularity = 3;
   const cols = 3;
-  const width = 984;
+  const width = 1024;
   const name = "Grid3x3";
 
   let gridLayout = [];

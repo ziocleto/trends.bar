@@ -35,24 +35,6 @@ const checkIfDateSequence = (resjson, vk) => {
   return true;
 };
 
-// const scriptInjectFromCSV = (script, cvsGroups) => {
-//   let sj = script;
-//   sj["groups"] = [];
-//   const groups = cvsGroups;
-//   for (const group of groups["group"]) {
-//     for (const elem of groups["y"]) {
-//       sj["groups"].push({
-//         yValueGroup: group,
-//         labelTransform: getDefaultLabelTransformOf(group),
-//         key: elem,
-//         x: groups["x"][0],
-//         y: elem
-//       });
-//     }
-//   }
-//   return sj;
-// };
-
 const fetchURL = async (url) => {
   const response = await fetch(url);
   if (response.status < 200 || response.status > 299) {

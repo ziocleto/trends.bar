@@ -70,7 +70,17 @@ export class Cruncher {
     const qhash = hash(query);
 
     if (this.graphQueriesMap[qhash]) {
-      this.graphQueriesMap[qhash].values.push(ivalue)
+      let addValue = false;
+      for ( let elem of this.graphQueriesMap[qhash].values ) {
+        if ( elem.x === ivalue.x ) {
+          elem.y += ivalue.y;
+          addValue = true;
+          break;
+        }
+      }
+      if ( !addValue) {
+        this.graphQueriesMap[qhash].values.push(ivalue)
+      }
     } else {
       this.graphQueriesMap[qhash] = {
         ...query,

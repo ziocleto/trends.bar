@@ -12,7 +12,7 @@ import {OverviewEditor} from "./subcomponents/OverviewEditor";
 
 const DashboardProject = (props) => {
 
-  const [activeTab, setActiveTab] = useState("DataSources");
+  const [activeTab, setActiveTab] = useState("Layout");
   const [currEditingTrend, setEditingUserTrend] = useGlobal(EditingUserTrend);
   const username = getAuthUserName(props.auth);
 
