@@ -136,12 +136,13 @@ router.get("/scripts/:trendId", async (req, res, next) => {
   }
 });
 
-router.post("/addnewscript", async (req, res, next) => {
+router.post("/script", async (req, res, next) => {
   try {
     const defaultScript = createDefaultScript(req.body.url, req.body.trendId, req.user.name);
     const ret = await runScript(defaultScript);
     res.send( {
       api: lastPathElement(req.url),
+      method: "post",
       ret
     });
   } catch (ex) {
@@ -153,8 +154,10 @@ router.post("/addnewscript", async (req, res, next) => {
 
 router.put("/script", async (req, res, next) => {
   try {
-    const query = {username: req.body.username, trendId: req.body.trendId, name: req.body.name};
-    await db.upsert(crawlingScriptModel, query, req.body);
+    const query = {username: req.body.username, trendId: req.body.trendId, sourceDocument: req.body.sourceDocument};
+    let data = req.body;
+    delete data._id;
+    await db.upsert(crawlingScriptModel, query, data);
     const script = await crawlingScriptModel.findOne(query);
     const ret = await runScript(script.toObject());
     for (const graph of ret.graphQueries) {
@@ -162,13 +165,55 @@ router.put("/script", async (req, res, next) => {
     }
     res.send( {
       api: lastPathElement(req.url),
+      method: "put",
       ret: req.body
     });
   } catch (ex) {
-    const err = `Error scripting: ${JSON.stringify(req.body)} because ${ex}`
+    const err = `Error putting: ${JSON.stringify(req.body)} because ${ex}`
     logger.error(err);
     res.status(400).send(err);
   }
 });
+
+router.patch("/script", async (req, res, next) => {
+  try {
+    const query = {username: req.user.name, trendId: req.body.trendId, name: req.body.name};
+    const script = await crawlingScriptModel.findOne(query);
+    const ret = await runScript(script.toObject());
+    res.send( {
+      api: lastPathElement(req.url),
+      method: "patch",
+      ret
+    });
+  } catch (ex) {
+    const err = `Error patching: ${JSON.stringify(req.body)} because ${ex}`
+    logger.error(err);
+    res.status(400).send(err);
+  }
+});
+
+router.delete("/script", async (req, res, next) => {
+  try {
+    const query = {username: req.user.name, trendId: req.body.trendId, name: req.body.name};
+    await crawlingScriptModel.deleteOne(query);
+
+    let retO = await crawlingScriptModel.find( { trendId: req.body.trendId, username: req.user.name} ).collation({locale: "en", strength: 2});
+    let ret = [];
+    for ( let elem of retO ) {
+      ret.push(elem.toObject());
+    }
+
+    res.send( {
+      api: lastPathElement(req.url),
+      method: "delete",
+      ret
+    });
+  } catch (ex) {
+    const err = `Error patching: ${JSON.stringify(req.body)} because ${ex}`
+    logger.error(err);
+    res.status(400).send(err);
+  }
+});
+
 
 module.exports = router;

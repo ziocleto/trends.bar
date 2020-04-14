@@ -9,23 +9,38 @@ import {
 } from "./DataSources-styled";
 import {api, useApi} from "../../../../futuremodules/api/apiEntryPoint";
 import {putScript} from "../../../../futuremodules/fetch/fetchApiCalls";
-import {DangerColorSpan, Flex, FlexVertical, Mx1} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
-import {arrayObjectExistsNotEmpty} from "../../../../futuremodules/utils/utils";
+import {
+  CloseButtonDiv,
+  DangerColorSpan,
+  Flex,
+  FlexVertical,
+  LightTextSpan,
+  Mx1,
+  SecondaryAltColorTextSpanBold
+} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
+import {arrayExistsNotEmptyOnObject, arrayObjectExistsNotEmpty} from "../../../../futuremodules/utils/utils";
 import {GraphXY} from "../../../../futuremodules/graphs/GraphXY";
 import {alertSuccess, useAlert} from "../../../../futuremodules/alerts/alerts";
 import {graphArrayToGraphTree} from "../../../../modules/trends/dataGraphs";
 import {LabelWithRename} from "../../../../futuremodules/labelWithRename/LabelWithRename";
+import {useGlobalState, useGlobalUpdater} from "../../../../futuremodules/globalhelper/globalHelper";
+import {EditingUserTrendDataSource} from "../../../../modules/trends/globals";
+import {RowSeparator, RowSeparatorDouble} from "../../../../futuremodules/reactComponentStyles/reactCommon";
+import {isStatusCodeSuccessful} from "../../../../futuremodules/api/apiStatus";
 
 export const ScriptEditor = () => {
 
   const [graphTree, setGraphTree] = useState(null);
+  const setEditingDataSource = useGlobalUpdater(EditingUserTrendDataSource);
+  const isEditingDataSource = useGlobalState(EditingUserTrendDataSource);
   const fetchApi = useApi('fetch');
   const [fetchResult] = fetchApi;
   const alertStore = useAlert();
 
   useEffect(() => {
-    if (fetchResult && fetchResult.api === "addNewScript") {
-      console.log("Fetch result ", fetchResult);
+    if (fetchResult && (
+      (fetchResult.api === "script" && fetchResult.method === "post") ||
+      (fetchResult.api === "script" && fetchResult.method === "patch"))) {
       const res = fetchResult.ret;
       const gt = graphArrayToGraphTree(res.graphQueries, "yValueGroup", "yValueSubGroup");
       const groupTabKey = Object.keys(gt)[0];
@@ -36,8 +51,10 @@ export const ScriptEditor = () => {
         groupTabKey: groupTabKey,
         subGroupTabKey: subGroupTabKey
       });
+      console.log("setting editing state");
+      setEditingDataSource(true).then();
     }
-  }, [fetchResult]);
+  }, [fetchResult, setEditingDataSource]);
 
   const setFirstGroupKey = (gt) => {
     let hasOne = true;
@@ -148,9 +165,15 @@ export const ScriptEditor = () => {
       return elem;
     });
     tmp.script.keys.y = tmp.script.keys.y.map(eg => {
-      if ( eg.key === oldName ) eg.key = newName;
+      if (eg.key === oldName) eg.key = newName;
       return eg;
     });
+    setGraphTree({...tmp});
+  };
+
+  const renameScript = (newName) => {
+    let tmp = graphTree;
+    tmp.script.name = newName;
     setGraphTree({...tmp});
   };
 
@@ -165,7 +188,7 @@ export const ScriptEditor = () => {
 
   const setLabelTransformOfGroup = (groupName, newTransform) => {
     let tmp = graphTree;
-    tmp.script.keys.group.map( elem => {
+    tmp.script.keys.group.map(elem => {
       if (elem.yValueGroup === groupName) {
         elem.labelTransform = newTransform;
       }
@@ -175,8 +198,10 @@ export const ScriptEditor = () => {
   };
 
   const publishGraphs = () => {
-    api(fetchApi, putScript, graphTree.script).then(() => {
-      alertSuccess(alertStore, "All set and done!");
+    api(fetchApi, putScript, graphTree.script).then((r) => {
+      if (isStatusCodeSuccessful(r.status.code)) {
+        alertSuccess(alertStore, "All set and done!", () => setEditingDataSource(false));
+      }
     });
   };
 
@@ -199,8 +224,8 @@ export const ScriptEditor = () => {
                   {getLabelTransformOfGroup(e)}
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
-                  <Dropdown.Item onClick={ () => setLabelTransformOfGroup(e, "None") }>Not specified</Dropdown.Item>
-                  <Dropdown.Item onClick={ () => setLabelTransformOfGroup(e, "Country") }>Country</Dropdown.Item>
+                  <Dropdown.Item onClick={() => setLabelTransformOfGroup(e, "None")}>Not specified</Dropdown.Item>
+                  <Dropdown.Item onClick={() => setLabelTransformOfGroup(e, "Country")}>Country</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
             </div>
@@ -220,20 +245,69 @@ export const ScriptEditor = () => {
     )
   };
 
-  // console.log(graphTree);
-  const scriptOutputTables = () => {
-    let ret = (<Fragment/>);
-    if (graphTree && arrayObjectExistsNotEmpty(graphTree.tree)) {
-      ret = (
-        <ScriptResultContainer>
-          <Container fluid>
+  const hasData = arrayExistsNotEmptyOnObject(graphTree, "tree") && isEditingDataSource;
+
+  const scriptHeader = (
+    <Fragment>
+      <Row>
+        <Col>
+          <Flex>
+            <div>
+              <Button variant={"success"}
+                      onClick={() => publishGraphs()}>
+                Publish
+              </Button>
+            </div>
+            <div>
+              <CloseButtonDiv onClick={() => setEditingDataSource(false).then()}>
+                <b><i className="fas fa-times"/></b>
+              </CloseButtonDiv>
+            </div>
+          </Flex>
+        </Col>
+      </Row>
+      <RowSeparator/>
+      <Row>
+        <Col sm={2}>
+          <SecondaryAltColorTextSpanBold>Name:</SecondaryAltColorTextSpanBold>
+        </Col>
+        <Col sm={10}>
+          <LabelWithRename
+            defaultValue={isEditingDataSource && graphTree.script.name}
+            updater={(newValue) => renameScript(newValue)}
+          />
+        </Col>
+      </Row>
+      <RowSeparator/>
+      <Row>
+        <Col sm={2}>
+          <SecondaryAltColorTextSpanBold>Source:</SecondaryAltColorTextSpanBold>
+        </Col>
+        <Col sm={10}>
+          <LightTextSpan>
+            {isEditingDataSource && graphTree.script.sourceDocument}
+          </LightTextSpan>
+        </Col>
+      </Row>
+    </Fragment>
+  );
+
+  return (
+    <Fragment>
+      {isEditingDataSource &&
+      <ScriptResultContainer>
+        <Container fluid>
+          {scriptHeader}
+          <RowSeparatorDouble/>
+          {hasData &&
+          <Fragment>
             <Row>
               <Col>
+                <ScriptKeyContainerTitle>
+                  Groups
+                </ScriptKeyContainerTitle>
                 <ScriptElementsContainer>
                   <FlexVertical>
-                    <ScriptKeyContainerTitle>
-                      Groups
-                    </ScriptKeyContainerTitle>
                     {Object.keys(graphTree.tree).map(elem =>
                       (<ScriptKeyContainer key={elem}
                                            selected={elem === graphTree.groupTabKey}
@@ -245,11 +319,11 @@ export const ScriptEditor = () => {
                 </ScriptElementsContainer>
               </Col>
               <Col>
+                <ScriptKeyContainerTitle>
+                  Sub Groups
+                </ScriptKeyContainerTitle>
                 <ScriptElementsContainer>
                   <FlexVertical>
-                    <ScriptKeyContainerTitle>
-                      Sub Groups
-                    </ScriptKeyContainerTitle>
                     {Object.keys(graphTree.tree[graphTree.groupTabKey]).map(elem =>
                       (<ScriptKeyContainer key={elem}
                                            selected={elem === graphTree.subGroupTabKey}
@@ -271,11 +345,11 @@ export const ScriptEditor = () => {
                 </ScriptElementsContainer>
               </Col>
               <Col>
+                <ScriptKeyContainerTitle>
+                  Values
+                </ScriptKeyContainerTitle>
                 <ScriptElementsContainer>
                   <FlexVertical>
-                    <ScriptKeyContainerTitle>
-                      Values
-                    </ScriptKeyContainerTitle>
                     {graphTree.tree[graphTree.groupTabKey][graphTree.subGroupTabKey].map(elem =>
                       (<ScriptKeyContainer key={elem.yValueName} variant={"light"}>
                         <Flex>
@@ -308,25 +382,11 @@ export const ScriptEditor = () => {
                 }
               </Col>
             </Row>
-          </Container>
-          <br/>
-          <Button variant={"success"}
-                  onClick={() => publishGraphs()}>
-            Publish
-          </Button>
-        </ScriptResultContainer>
-      )
-    }
-    return ret;
-  };
-
-  return (
-    <Fragment>
-      <Row>
-        <Col>
-          {scriptOutputTables()}
-        </Col>
-      </Row>
+          </Fragment>
+          }
+        </Container>
+      </ScriptResultContainer>
+      }
     </Fragment>
   );
 };

@@ -67,7 +67,6 @@ export const InfoColor = styled.span`{
 }`;
 
 export const ScriptResultContainer = styled.div` {
-  margin-top: 10px;
   padding-top: 10px;
   border-radius: 3px;
   border: 1px solid var(--gray);
