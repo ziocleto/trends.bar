@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import {checkBoolDefinedAndTrue} from "../../../../futuremodules/utils/utils";
 
 export const DataSourcesContainer = styled.div` {
   margin: 3% 3%;
@@ -88,7 +89,7 @@ export const ScriptKeyContainer = styled.div` {
   width: calc(100% - (var(--margin) * 2));
   border-radius: 3px;
   border: 1px solid var(--gray);
-  background-color: ${props => props.selected ? "var(--primary)" : "none"};
+  background-color: ${props => checkBoolDefinedAndTrue(props.selected) ? "var(--primary)" : "none"};
   cursor: pointer;
   
   :hover {
