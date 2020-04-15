@@ -16,8 +16,9 @@ import {
   SecondaryAltColorTextSpanBold
 } from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {LabelWithRename} from "../../../../futuremodules/labelWithRename/LabelWithRename";
-import {RowSeparator} from "../../../../futuremodules/reactComponentStyles/reactCommon";
+import {RowSeparator, RowSeparatorDouble} from "../../../../futuremodules/reactComponentStyles/reactCommon";
 import {modalGraphTreeHeight} from "./ModalDatasetPicker-styled";
+import {ContentWidgetText} from "../ContentWidgetText";
 
 export const ModalDatasetPixel = (props) => {
 
@@ -80,20 +81,10 @@ export const ModalDatasetPixel = (props) => {
       <Modal.Body>
         <ScriptResultContainer>
           <Container fluid>
-            <Row>
-              <Col>
-                <Flex justifyContent={"center"}>
-                  <SecondaryAltColorTextSpanBold
-                    fontSize={"var(--font-size-lead)"}>
-                    <LabelWithRename
-                      defaultValue={props.defaultValue}
-                      updater={(newValue) => props.updater(newValue)}
-                    />
-                  </SecondaryAltColorTextSpanBold>
-                </Flex>
-              </Col>
-            </Row>
             <RowSeparator/>
+            <ContentWidgetText config={props.widget} onSave={(newValue) => props.updater(newValue)}/>
+
+            <RowSeparatorDouble/>
             <Row>
 
               <Col>
