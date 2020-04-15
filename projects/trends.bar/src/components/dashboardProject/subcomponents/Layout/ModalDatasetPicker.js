@@ -20,6 +20,7 @@ import {
 import {modalGraphTreeHeight} from "./ModalDatasetPicker-styled";
 import {ContentWidgetText} from "../ContentWidgetText";
 import {ContentWidgetMenuBar} from "../LayoutEditor.styled";
+import {ContentWidgetTable} from "../ContentWidgetTable";
 
 export const ModalDatasetPixel = (props) => {
 
@@ -50,7 +51,6 @@ export const ModalDatasetPixel = (props) => {
   };
 
   useEffect(() => {
-
     if ( datasets ) {
       if ( !keys ) {
         setKeys(startupState());
@@ -100,8 +100,11 @@ export const ModalDatasetPixel = (props) => {
     });
   };
 
-  const setWidgetType = () => {
-
+  const setWidgetType = (widgetType) => {
+    setKeys({
+      ...keys,
+      widgetType
+    });
   };
 
   return (
@@ -131,16 +134,16 @@ export const ModalDatasetPixel = (props) => {
                 <b>=</b>
               </ButtonDiv>
               <Mx05/>
-              <ButtonDiv variant="outline-info" onClick={() => setWidgetType()}>
+              <ButtonDiv variant="outline-info" onClick={() => setWidgetType("text")}>
                 <i className={"fas fa-bars"}/>
               </ButtonDiv>
               <Mx05/>
-              <ButtonDiv variant="outline-info" onClick={() => setWidgetType()}>
+              <ButtonDiv variant="outline-info" onClick={() => setWidgetType("table")}>
                 <i className={"fas fa-table"}/>
               </ButtonDiv>
               <Mx05/>
               <ButtonDiv variant="outline-info" onClick={() => setWidgetType()}>
-                <i className={"fas fa-chart-line"}/>
+                <i className={"fas fa-chart-line"}/>table
               </ButtonDiv>
             </Flex>
             <ButtonDiv onClick={() => props.onClose()}>
@@ -151,7 +154,10 @@ export const ModalDatasetPixel = (props) => {
         <Container fluid>
           <RowSeparatorDouble/>
           <RowSeparator/>
-          <ContentWidgetText config={props.widget} onSave={(newValue) => props.updater(newValue)}/>
+          {props.widget.type === "text" &&
+          <ContentWidgetText config={props.widget} onSave={(newValue) => props.updater(newValue)}/>}
+          {props.widget.type === "table" &&
+          <ContentWidgetTable config={props.widget} onSave={(newValue) => props.updater(newValue)}/>}
           <RowSeparatorDoubleHR/>
           <Row>
 
