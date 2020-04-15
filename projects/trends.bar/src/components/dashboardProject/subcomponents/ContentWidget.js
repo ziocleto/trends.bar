@@ -47,7 +47,7 @@ export const ContentWidget = ({data, config, onSave}) => {
                                                          defaultValue={config.title}
                                                          updater={(newValue) => onSave({
                                                            ...config,
-                                                           title: newValue
+                                                           ...newValue
                                                          })}/>}
     </Container>
   )

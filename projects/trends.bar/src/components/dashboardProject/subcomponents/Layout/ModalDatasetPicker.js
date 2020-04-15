@@ -1,4 +1,4 @@
-import React, {Fragment, useState} from "react";
+import React, {Fragment, useEffect, useState} from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import {EditingLayoutDataSource} from "../../../../modules/trends/globals";
@@ -23,12 +23,21 @@ import {ContentWidgetText} from "../ContentWidgetText";
 export const ModalDatasetPixel = (props) => {
 
   const datasets = useGlobalState(EditingLayoutDataSource);
-  const [keys, setKeys] = useState(null);
+  const [keys, setKeys] = useState({
+    groupKey: Object.keys(datasets)[0],
+    subGroupKey: Object.keys(datasets[Object.keys(datasets)[0]])[0],
+    valueNameKey: Object.keys(datasets[Object.keys(datasets)[0]][Object.keys(datasets[Object.keys(datasets)[0]])[0]])[0],
+    value: null
+  });
 
   const groupKey = keys && keys.groupKey;
   const subGroupKey = keys && keys.subGroupKey;
   const valueNameKey = keys && keys.valueNameKey;
   let value = keys && keys.value;
+
+  useEffect( () => {
+    setLastValue();
+  }, [] );
 
   const setGroupKey = (k) => {
     setKeys({
@@ -51,23 +60,30 @@ export const ModalDatasetPixel = (props) => {
     });
   };
 
-  // const setValue = (k) => {
-  //   setKeys({
-  //     groupKey,
-  //     subGroupKey,
-  //     valueNameKey,
-  //     value: k
-  //   });
-  // };
+  const setValue = (k) => {
+    setKeys({
+      groupKey,
+      subGroupKey,
+      valueNameKey,
+      value: k
+    });
+  };
 
   const setFirstValue = () => {
-    return datasets[groupKey][subGroupKey][valueNameKey][0];
+    value = datasets[groupKey][subGroupKey][valueNameKey][0].y;
+    props.updater( {
+      title: value,
+      subtitle: valueNameKey
+    });
   };
 
   const setLastValue = () => {
     const length = datasets[groupKey][subGroupKey][valueNameKey].length;
     value = datasets[groupKey][subGroupKey][valueNameKey][length - 1].y;
-    props.updater(value);
+    props.updater({
+      title: value,
+      subtitle: valueNameKey
+    });
   };
 
   return (
@@ -83,7 +99,6 @@ export const ModalDatasetPixel = (props) => {
           <Container fluid>
             <RowSeparator/>
             <ContentWidgetText config={props.widget} onSave={(newValue) => props.updater(newValue)}/>
-
             <RowSeparatorDouble/>
             <Row>
 
