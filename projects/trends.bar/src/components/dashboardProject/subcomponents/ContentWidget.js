@@ -6,24 +6,36 @@ import {ContentWidgetText} from './ContentWidgetText'
 import {ContentWidgetTable} from "./ContentWidgetTable";
 import {ContentWidgetGraphXY} from "./ContentWidgetGraphXY";
 
-export const ContentWidget = ({data,config,onSave}) => {
+export const ContentWidget = ({data, config, onSave}) => {
 
-    switch (config.type) {
-        case "text":
-            return (
-                <ContentWidgetText data={data} config={config} onSave={onSave}/>
-            );
-        case "table":
-            return (
-                <ContentWidgetTable data={data} config={config}/>
-            );
-        case "graphxy":
-            return (
-                <ContentWidgetGraphXY data={data} config={config}/>
-            );
-        default:
-            return (
-                <Fragment></Fragment>
-            );
-    }
-}
+  // const [showDatasetPicker, setShowDatasetPicker] = useState(false);
+
+  let contentBody;
+  switch (config.type) {
+    case "text":
+      contentBody = (
+        <ContentWidgetText config={config} onSave={onSave}/>
+      );
+      break;
+    case "table":
+      contentBody = (
+        <ContentWidgetTable data={data} config={config}/>
+      );
+      break;
+    case "graphxy":
+      contentBody = (
+        <ContentWidgetGraphXY data={data} config={config}/>
+      );
+      break;
+    default:
+      contentBody = (
+        <Fragment/>
+      );
+  }
+
+  return (
+    <Fragment>
+      {contentBody}
+    </Fragment>
+  )
+};

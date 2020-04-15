@@ -1,19 +1,19 @@
 import "./react-grid-styles.css"
 import "./react-resizable-styles.css"
 
-import React, {Fragment, useState} from "react";
+import React, {Fragment, useState} from "reactn";
 import {Container, Subtitle, Title} from "./ContentWidgetText.styled";
 import {ModalDatasetPixel} from "./Layout/ModalDatasetPicker";
 
-export const ContentWidgetText = ({data, config, onSave}) => {
+export const ContentWidgetText = ({config, onSave}) => {
 
+  // const [showDatasetPicker, setShowDatasetPicker] = useGlobal("aaa");
   const [showDatasetPicker, setShowDatasetPicker] = useState(false);
 
   return (
     <Fragment>
-      <Container>
-        <Title
-          onClick={ () => setShowDatasetPicker(true)}>
+      <Container onClick={ () => setShowDatasetPicker(true)}>
+        <Title>
           {config.title}
         </Title>
         <Subtitle>{config.subtitle}</Subtitle>

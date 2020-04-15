@@ -17,6 +17,7 @@ import {
 } from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {LabelWithRename} from "../../../../futuremodules/labelWithRename/LabelWithRename";
 import {RowSeparator} from "../../../../futuremodules/reactComponentStyles/reactCommon";
+import {modalGraphTreeHeight} from "./ModalDatasetPicker-styled";
 
 export const ModalDatasetPixel = (props) => {
 
@@ -100,7 +101,10 @@ export const ModalDatasetPixel = (props) => {
                   Groups
                 </ScriptKeyContainerTitle>
                 <ScriptElementsContainer>
-                  <FlexVertical>
+                  <FlexVertical
+                    justifyContent={"start"}
+                    height={modalGraphTreeHeight}
+                  >
                     {Object.keys(datasets).map(elem =>
                       (<ScriptKeyContainer key={elem}
                                            selected={elem === groupKey}
@@ -117,7 +121,10 @@ export const ModalDatasetPixel = (props) => {
                   Sub Groups
                 </ScriptKeyContainerTitle>
                 <ScriptElementsContainer>
-                  <FlexVertical>
+                  <FlexVertical
+                    justifyContent={"start"}
+                    height={modalGraphTreeHeight}
+                  >
                     {groupKey && Object.keys(datasets[groupKey]).map(elem =>
                       (<ScriptKeyContainer key={elem}
                                            selected={elem === subGroupKey}
@@ -135,7 +142,10 @@ export const ModalDatasetPixel = (props) => {
                   Elements
                 </ScriptKeyContainerTitle>
                 <ScriptElementsContainer>
-                  <FlexVertical>
+                  <FlexVertical
+                    justifyContent={"start"}
+                    height={modalGraphTreeHeight}
+                  >
                     {subGroupKey && Object.keys(datasets[groupKey][subGroupKey]).map(elem =>
                       (<ScriptKeyContainer key={groupKey + subGroupKey + elem}
                                            selected={elem === valueNameKey}
@@ -153,7 +163,10 @@ export const ModalDatasetPixel = (props) => {
                   Values
                 </ScriptKeyContainerTitle>
                 <ScriptElementsContainer>
-                  <FlexVertical>
+                  <FlexVertical
+                    justifyContent={"start"}
+                    height={modalGraphTreeHeight}
+                  >
                     {valueNameKey &&
                     <Fragment>
                       <ScriptKeyContainer key={groupKey + subGroupKey + valueNameKey + "last"}
