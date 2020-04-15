@@ -6,6 +6,7 @@ const uniqueNamesGenerator = require('project-name-generator');
 
 export const EditingUserTrend            = 'editingUserTrend';
 export const EditingUserTrendDataSource  = 'editingUserTrendDataSource';
+export const EditingLayoutDataSource     = 'editingLayoutDataSource';
 export const currentUserTrends           = 'currentUserTrends';
 
 export const generateUniqueNameWithArrayCheck = (arrayToCheck) => {

@@ -6,12 +6,12 @@ import {ContentWidgetText} from './ContentWidgetText'
 import {ContentWidgetTable} from "./ContentWidgetTable";
 import {ContentWidgetGraphXY} from "./ContentWidgetGraphXY";
 
-export const ContentWidget = ({data,config}) => {
+export const ContentWidget = ({data,config,onSave}) => {
 
     switch (config.type) {
         case "text":
             return (
-                <ContentWidgetText data={data} config={config}/>
+                <ContentWidgetText data={data} config={config} onSave={onSave}/>
             );
         case "table":
             return (

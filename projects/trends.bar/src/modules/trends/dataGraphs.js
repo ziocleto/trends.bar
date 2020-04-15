@@ -229,3 +229,29 @@ export const graphArrayToGraphTree = ( sourceArray, key1, key2 ) => {
   }
   return ret;
 };
+
+export const graphArrayToGraphTree2 = ( sourceArray, key1, key2, key3, key4 ) => {
+  let ret = {};
+  const groupsSet = new Set();
+  const yValueSet = new Set();
+  sourceArray.map(elem => groupsSet.add(elem[key1]));
+  sourceArray.map(elem => yValueSet.add(elem[key3]));
+  console.log(yValueSet);
+  for ( const group of groupsSet.values() ) {
+    ret[group] = {};
+    for ( const elem of sourceArray) {
+      const subGroup = elem[key2];
+      if ( elem[key1] === group ) {
+        for ( const yv of yValueSet.values() ) {
+          if ( !ret[group][subGroup] ) {
+            ret[group][subGroup] = {};
+          }
+          if ( elem[key3] === yv ) {
+            ret[group][subGroup][yv] = elem[key4];
+          }
+        }
+      }
+    }
+  }
+  return ret;
+};

@@ -13,11 +13,7 @@ import {useTrendIdGetter} from "../../../modules/trends/globals";
 import {getQueryLoadedWithValueArrayNotEmpty} from "../../../futuremodules/graphqlclient/query";
 import {CellContentEditor} from "./CellContentEditor";
 import {ContentWidget} from "./ContentWidget";
-import {
-  CloseButtonDiv,
-  DangerColorSpan,
-  InfoTextSpanBold, LightTextSpanBold
-} from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
+import {CloseButtonDiv, DangerColorSpan} from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
 
 export const LayoutEditor = ({username}) => {
 
@@ -29,7 +25,7 @@ export const LayoutEditor = ({username}) => {
 
   const [layout, setLayout] = useState(getDefaultTrendLayout(trendId, username));
   const [absoluteIndex, setAbsoluteIndex] = useState(Math.max(...(layout.gridLayout.map((v) => Number(v.i)))) + 1);
-  const [editingCellKey, setEditingCellKey] = useState(null);
+  const [,setEditingCellKey] = useState(null);
   const [editingCellContent, setEditingCellContent] = useState(null);
   const [trendData, setTrendData] = useState({});
 
@@ -114,15 +110,15 @@ export const LayoutEditor = ({username}) => {
   };
 
   const onSaveCellContent = (content) => {
-    console.log("SAVE", JSON.stringify((content)));
+    // console.log("SAVE", JSON.stringify((content)));
     const newGridContent = [...layout.gridContent];
-    newGridContent[newGridContent.findIndex(c => c.i === editingCellKey)] = {...content};
+    newGridContent[newGridContent.findIndex(c => c.i === content.i)] = {...content};
     setLayout({
       ...layout,
       gridContent: newGridContent
     });
-    setEditingCellKey(null);
-    setEditingCellContent(null);
+    // setEditingCellKey(null);
+    // setEditingCellContent(null);
   };
 
   const onCancelSaveCellContent = () => {
@@ -153,15 +149,17 @@ export const LayoutEditor = ({username}) => {
         </ButtonGroup>
       </ButtonToolbar>
       <GridLayout layout={layout.gridLayout}
-                  cols={layout.cols * layout.granularity}
-                  rowHeight={layout.width / (layout.cols * layout.granularity)}
-                  width={layout.width}
+                  cols={12}
+                  rowHeight={50}
+                  width={1024}
                   onLayoutChange={onGridLayoutChange}>
         {layout.gridLayout.map(elem => {
           return (
             <DivLayout key={elem.i}>
               <ContentWidget data={trendData}
-                             config={layout.gridContent[layout.gridLayout.findIndex(v => v.i === elem.i)]}/>
+                             config={layout.gridContent[layout.gridLayout.findIndex(v => v.i === elem.i)]}
+                             onSave={onSaveCellContent}
+              />
               <SpanRemoveLayoutCell title="Remove cell">
                 <CloseButtonDiv onClick={() => onRemoveCell(elem.i)}>
                   <DangerColorSpan><i className={"fas fa-times"}/></DangerColorSpan>

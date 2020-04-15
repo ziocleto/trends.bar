@@ -2,7 +2,7 @@ import "./react-grid-styles.css"
 import "./react-resizable-styles.css"
 
 import React, {Fragment, useState} from "react";
-import {Form,Col} from "react-bootstrap";
+import {Col, Form} from "react-bootstrap";
 
 export const ContentWidgetTextEditor = ({config,onUpdate}) => {
 
@@ -37,4 +37,4 @@ export const ContentWidgetTextEditor = ({config,onUpdate}) => {
             </Form.Group>
         </Fragment>
     );
-}
+};

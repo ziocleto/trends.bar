@@ -88,7 +88,7 @@ export const ScriptKeyContainer = styled.div` {
   width: calc(100% - (var(--margin) * 2));
   border-radius: 3px;
   border: 1px solid var(--gray);
-  background-color: ${props => props.selected ? "var(--dark)" : "none"};
+  background-color: ${props => props.selected ? "var(--primary)" : "none"};
   cursor: pointer;
   
   :hover {
