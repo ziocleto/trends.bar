@@ -7,7 +7,7 @@ import {ContentWidgetTable} from "./ContentWidgetTable";
 import {ContentWidgetGraphXY} from "./ContentWidgetGraphXY";
 import {ModalDatasetPixel} from "./Layout/ModalDatasetPicker";
 import {Container} from "./ContentWidgetText.styled";
-import {FlexVertical} from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
+import {FlexHighlighter, FlexVertical} from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
 
 export const ContentWidget = ({data, config, onSave}) => {
 
@@ -17,10 +17,12 @@ export const ContentWidget = ({data, config, onSave}) => {
   switch (config.type) {
     case "text":
       contentBody = (
-        <FlexVertical justifyContent={"center"}
+        <FlexHighlighter
+          justifyContent={"center"}
+          padding={"15px"}
           onClick={ () => setShowDatasetPicker({ [config.i]: true})}>
           <ContentWidgetText config={config} onSave={onSave}/>
-        </FlexVertical>
+        </FlexHighlighter>
       );
       break;
     case "table":
