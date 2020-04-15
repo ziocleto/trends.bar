@@ -3,7 +3,7 @@ import "./react-resizable-styles.css"
 
 import React, {Fragment, useEffect, useState} from "react";
 import GridLayout from 'react-grid-layout';
-import {DivLayout, SpanEditLayoutCell, SpanRemoveLayoutCell} from "./LayoutEditor.styled";
+import {DivLayout, SpanRemoveLayoutCell} from "./LayoutEditor.styled";
 import {Button, ButtonGroup, ButtonToolbar} from "react-bootstrap";
 import {getDefaultCellContent, getDefaultTrendLayout} from "../../../modules/trends/layout";
 import {upsertTrendLayout} from "../../../modules/trends/mutations";
@@ -13,7 +13,7 @@ import {useTrendIdGetter} from "../../../modules/trends/globals";
 import {getQueryLoadedWithValueArrayNotEmpty} from "../../../futuremodules/graphqlclient/query";
 import {CellContentEditor} from "./CellContentEditor";
 import {ContentWidget} from "./ContentWidget";
-import {CloseButtonDiv, DangerColorSpan} from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
+import {ButtonDiv, DangerColorSpan} from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
 
 export const LayoutEditor = ({username}) => {
 
@@ -25,7 +25,7 @@ export const LayoutEditor = ({username}) => {
 
   const [layout, setLayout] = useState(getDefaultTrendLayout(trendId, username));
   const [absoluteIndex, setAbsoluteIndex] = useState(Math.max(...(layout.gridLayout.map((v) => Number(v.i)))) + 1);
-  const [,setEditingCellKey] = useState(null);
+  const [, setEditingCellKey] = useState(null);
   const [editingCellContent, setEditingCellContent] = useState(null);
   const [trendData, setTrendData] = useState({});
 
@@ -92,11 +92,11 @@ export const LayoutEditor = ({username}) => {
     });
   };
 
-  const onEditCell = (cellCode) => {
-    //console.log("Edit cell "+cellCode);
-    setEditingCellKey(cellCode);
-    setEditingCellContent(layout.gridContent.filter(v => v.i === cellCode)[0]);
-  };
+  // const onEditCell = (cellCode) => {
+  //   //console.log("Edit cell "+cellCode);
+  //   setEditingCellKey(cellCode);
+  //   setEditingCellContent(layout.gridContent.filter(v => v.i === cellCode)[0]);
+  // };
 
   const onSaveLayout = () => {
     //console.log(trendId);
@@ -161,15 +161,10 @@ export const LayoutEditor = ({username}) => {
                              onSave={onSaveCellContent}
               />
               <SpanRemoveLayoutCell title="Remove cell">
-                <CloseButtonDiv onClick={() => onRemoveCell(elem.i)}>
+                <ButtonDiv onClick={() => onRemoveCell(elem.i)}>
                   <DangerColorSpan><i className={"fas fa-times"}/></DangerColorSpan>
-                </CloseButtonDiv>
+                </ButtonDiv>
               </SpanRemoveLayoutCell>
-              <SpanEditLayoutCell title="Edit cell">
-                <CloseButtonDiv variant="outline-info" onClick={() => onEditCell(elem.i)}>
-                  <i className={"fas fa-edit"}/>
-                </CloseButtonDiv>
-              </SpanEditLayoutCell>
             </DivLayout>
           );
         })}

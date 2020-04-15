@@ -10,7 +10,7 @@ import {
 import {api, useApi} from "../../../../futuremodules/api/apiEntryPoint";
 import {putScript} from "../../../../futuremodules/fetch/fetchApiCalls";
 import {
-  CloseButtonDiv,
+  ButtonDiv,
   DangerColorSpan,
   Flex,
   FlexVertical,
@@ -259,9 +259,9 @@ export const ScriptEditor = () => {
               </Button>
             </div>
             <div>
-              <CloseButtonDiv onClick={() => setEditingDataSource(false).then()}>
+              <ButtonDiv onClick={() => setEditingDataSource(false).then()}>
                 <b><i className="fas fa-times"/></b>
-              </CloseButtonDiv>
+              </ButtonDiv>
             </div>
           </Flex>
         </Col>

@@ -17,11 +17,13 @@ export const SpanRemoveLayoutCell = styled.span` {
     cursor: pointer;
 }`;
 
-export const SpanEditLayoutCell = styled.span` {
+export const ContentWidgetMenuBar = styled.div` {
     position:absolute;
-    padding: 3px 5px;
     left: 0;
     top: 0;
-    cursor: pointer;
+    width: 100%;
+    font-size: var(--font-size-one);
+    height: calc( var(--font-size-one) * 2 );
+    background-color: var(--primary);
 }`;
 

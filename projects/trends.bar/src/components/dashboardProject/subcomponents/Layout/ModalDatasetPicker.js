@@ -5,10 +5,21 @@ import {EditingLayoutDataSource} from "../../../../modules/trends/globals";
 import {useGlobalState} from "../../../../futuremodules/globalhelper/globalHelper";
 import {ScriptElementsContainer, ScriptKeyContainer, ScriptKeyContainerTitle} from "../DataSources/DataSources-styled";
 import {Col, Container, Row} from "react-bootstrap";
-import {Flex, FlexVertical} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
-import {RowSeparator, RowSeparatorDoubleHR} from "../../../../futuremodules/reactComponentStyles/reactCommon";
+import {
+  ButtonDiv,
+  DangerColorSpan,
+  Flex,
+  FlexVertical,
+  Mx05
+} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
+import {
+  RowSeparator,
+  RowSeparatorDouble,
+  RowSeparatorDoubleHR
+} from "../../../../futuremodules/reactComponentStyles/reactCommon";
 import {modalGraphTreeHeight} from "./ModalDatasetPicker-styled";
 import {ContentWidgetText} from "../ContentWidgetText";
+import {ContentWidgetMenuBar} from "../LayoutEditor.styled";
 
 export const ModalDatasetPixel = (props) => {
 
@@ -23,6 +34,8 @@ export const ModalDatasetPixel = (props) => {
     return datasets[keys.groupKey][keys.subGroupKey][keys.valueNameKey][length - 1].y;
   };
 
+  const [keys, setKeys] = useState(null);
+
   const startupState = () => {
     const groupKey = props.widget.groupKey || Object.keys(datasets)[0];
     const subGroupKey = props.widget.subGroupKey || Object.keys(datasets[Object.keys(datasets)[0]])[0];
@@ -36,19 +49,25 @@ export const ModalDatasetPixel = (props) => {
     }
   };
 
-  const [keys, setKeys] = useState(startupState);
-
   useEffect(() => {
-    const value = keys.valueFunction(keys);
-    props.updater({
-      title: value,
-      subtitle: keys.valueNameKey,
-      groupKey: keys.groupKey,
-      subGroupKey: keys.subGroupKey,
-      valueNameKey: keys.valueNameKey,
-      valueFunction: keys.valueFunction
-    });
-  }, [keys]);
+
+    if ( datasets ) {
+      if ( !keys ) {
+        setKeys(startupState());
+      } else {
+        const value = keys.valueFunction(keys);
+        props.updater({
+          title: value,
+          subtitle: keys.valueNameKey,
+          groupKey: keys.groupKey,
+          subGroupKey: keys.subGroupKey,
+          valueNameKey: keys.valueNameKey,
+          valueFunction: keys.valueFunction
+        });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [keys, datasets]);
 
   const setGroupKey = (k) => {
     setKeys({
@@ -81,25 +100,56 @@ export const ModalDatasetPixel = (props) => {
     });
   };
 
+  const setWidgetType = () => {
+
+  };
+
   return (
-    <Modal
+    <Fragment>
+    {keys && (
+      <Modal
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
       centered
       show={true}
       onHide={() => props.onClose()}
     >
-      <Modal.Header closeButton>
-        <Modal.Title>
-          <Flex justifyContent={"center"}>
-            <div>
-              {keys.subGroupKey}
-            </div>
-          </Flex>
-        </Modal.Title>
-      </Modal.Header>
       <Modal.Body>
+        <ContentWidgetMenuBar>
+          <Flex alignContent={"center"}
+                height={"100%"}
+                padding={"0 8px"}
+          >
+            <Flex alignContent={"center"}
+                  height={"100%"}
+                  padding={"0"}>
+              <ButtonDiv variant="outline-info" onClick={() => setWidgetType()}>
+                <b>-</b>
+              </ButtonDiv>
+              <Mx05/>
+              <ButtonDiv variant="outline-info" onClick={() => setWidgetType()}>
+                <b>=</b>
+              </ButtonDiv>
+              <Mx05/>
+              <ButtonDiv variant="outline-info" onClick={() => setWidgetType()}>
+                <i className={"fas fa-bars"}/>
+              </ButtonDiv>
+              <Mx05/>
+              <ButtonDiv variant="outline-info" onClick={() => setWidgetType()}>
+                <i className={"fas fa-table"}/>
+              </ButtonDiv>
+              <Mx05/>
+              <ButtonDiv variant="outline-info" onClick={() => setWidgetType()}>
+                <i className={"fas fa-chart-line"}/>
+              </ButtonDiv>
+            </Flex>
+            <ButtonDiv onClick={() => props.onClose()}>
+              <DangerColorSpan><i className={"fas fa-times"}/></DangerColorSpan>
+            </ButtonDiv>
+          </Flex>
+        </ContentWidgetMenuBar>
         <Container fluid>
+          <RowSeparatorDouble/>
           <RowSeparator/>
           <ContentWidgetText config={props.widget} onSave={(newValue) => props.updater(newValue)}/>
           <RowSeparatorDoubleHR/>
@@ -205,5 +255,7 @@ export const ModalDatasetPixel = (props) => {
         </Button>
       </Modal.Footer>
     </Modal>
-  );
+    )}
+    </Fragment>
+  )
 };

@@ -7,7 +7,7 @@ import {ContentWidgetTable} from "./ContentWidgetTable";
 import {ContentWidgetGraphXY} from "./ContentWidgetGraphXY";
 import {ModalDatasetPixel} from "./Layout/ModalDatasetPicker";
 import {Container} from "./ContentWidgetText.styled";
-import {FlexHighlighter, FlexVertical} from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
+import {FlexHighlighter} from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
 
 export const ContentWidget = ({data, config, onSave}) => {
 
@@ -46,7 +46,6 @@ export const ContentWidget = ({data, config, onSave}) => {
       {contentBody}
       {showDatasetPicker[config.i] && <ModalDatasetPixel onClose={() => setShowDatasetPicker({})}
                                                          widget={config}
-                                                         defaultValue={config.title}
                                                          updater={(newValue) => onSave({
                                                            ...config,
                                                            ...newValue

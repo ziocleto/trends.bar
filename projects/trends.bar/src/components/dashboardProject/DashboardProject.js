@@ -6,7 +6,7 @@ import {Tab, Tabs} from "react-bootstrap";
 import {ProjectClose, ProjectContent, ProjectTabs} from "./DashboardProject.styled";
 import {Fragment, useState} from "react";
 import {LayoutEditor} from "./subcomponents/LayoutEditor";
-import {CloseButtonDiv} from "../../futuremodules/reactComponentStyles/reactCommon.styled";
+import {ButtonDiv} from "../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {EditingUserTrend} from "../../modules/trends/globals";
 import {OverviewEditor} from "./subcomponents/OverviewEditor";
 
@@ -29,9 +29,9 @@ const DashboardProject = (props) => {
   return (
     <ProjectTabs>
       <ProjectClose>
-        <CloseButtonDiv onClick={ () => setEditingUserTrend(null)}>
+        <ButtonDiv onClick={ () => setEditingUserTrend(null)}>
           <b><i className="fas fa-times"/></b>
-        </CloseButtonDiv>
+        </ButtonDiv>
       </ProjectClose>
       <ProjectContent>
         <Tabs id={"ptabid"} activeKey={activeTab} onSelect={k => {
