@@ -1,15 +1,13 @@
-import "../Layout/react-grid-styles.css"
-import "../Layout/react-resizable-styles.css"
-
 import React from "reactn";
-import {Container, Overtitle, Subtitle, Title} from "./ContentWidgetText.styled";
+import {Overtitle, Subtitle, Title} from "./ContentWidgetText.styled";
+import {WidgetVertical} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
 
-export const ContentWidgetText = ({config}) => {
+export const ContentWidgetText = ({datasets, config}) => {
   return (
-    <Container>
-      <Overtitle>{config.overtitle}</Overtitle>
-      <Title>{config.title}</Title>
-      <Subtitle>{config.subtitle}</Subtitle>
-    </Container>
+    <WidgetVertical>
+      <Overtitle>{config.subGroupKey}</Overtitle>
+      <Title>{config.valueFunction(config.groupKey, config.subGroupKey, config.valueNameKey, datasets)}</Title>
+      <Subtitle>{config.valueNameKey}</Subtitle>
+    </WidgetVertical>
   )
 };

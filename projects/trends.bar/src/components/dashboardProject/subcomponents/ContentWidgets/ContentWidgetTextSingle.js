@@ -1,13 +1,11 @@
-import "../Layout/react-grid-styles.css"
-import "../Layout/react-resizable-styles.css"
-
 import React from "reactn";
-import {Container, Title} from "./ContentWidgetText.styled";
+import {Title} from "./ContentWidgetText.styled";
+import {WidgetVertical} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
 
 export const ContentWidgetTextSingle = ({config}) => {
   return (
-    <Container>
+    <WidgetVertical>
       <Title>{config.title}</Title>
-    </Container>
+    </WidgetVertical>
   )
 };

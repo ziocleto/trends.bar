@@ -32,8 +32,6 @@ export const ModalDatasetPixel = (props) => {
   const datasets = useGlobalState(EditingLayoutDataSource);
   const [layout, setLayout] = useGlobal(globalLayoutState);
 
-  console.log("datasets", datasets);
-  console.log("layout", layout);
   if (!datasets || !layout) {
     return <Fragment/>
   }
@@ -59,15 +57,12 @@ export const ModalDatasetPixel = (props) => {
 
   const keys = layout.gridContent[props.cellIndex];
 
-  const setWidgetData = (groupKey, subGroupKey, valueNameKey, valueFunction, datasets) => {
+  const setWidgetData = (groupKey, subGroupKey, valueNameKey, valueFunction) => {
     return {
       groupKey,
       subGroupKey,
       valueNameKey,
       valueFunction,
-      overtitle: subGroupKey,
-      title: valueFunction(groupKey, subGroupKey, valueNameKey, datasets),
-      subtitle: valueNameKey
     }
   };
 
@@ -86,7 +81,7 @@ export const ModalDatasetPixel = (props) => {
 
     gc[props.cellIndex] = {
       ...gc[props.cellIndex],
-      ...setWidgetData(groupKey, subGroupKey, valueNameKey, keys.valueFunction, datasets)
+      ...setWidgetData(groupKey, subGroupKey, valueNameKey, keys.valueFunction)
     };
 
     setGridContent(gc);
@@ -97,7 +92,7 @@ export const ModalDatasetPixel = (props) => {
 
     gc[props.cellIndex] = {
       ...gc[props.cellIndex],
-      ...setWidgetData(keys.groupKey, subGroupKey, keys.valueNameKey, keys.valueFunction, datasets)
+      ...setWidgetData(keys.groupKey, subGroupKey, keys.valueNameKey, keys.valueFunction)
     };
 
     setGridContent(gc);
@@ -108,7 +103,7 @@ export const ModalDatasetPixel = (props) => {
 
     gc[props.cellIndex] = {
       ...gc[props.cellIndex],
-      ...setWidgetData(keys.groupKey, keys.subGroupKey, valueNameKey, keys.valueFunction, datasets)
+      ...setWidgetData(keys.groupKey, keys.subGroupKey, valueNameKey, keys.valueFunction)
     };
 
     setGridContent(gc);
@@ -119,7 +114,7 @@ export const ModalDatasetPixel = (props) => {
 
     gc[props.cellIndex] = {
       ...gc[props.cellIndex],
-      ...setWidgetData(keys.groupKey, keys.subGroupKey, keys.valueNameKey, valueFunction, datasets)
+      ...setWidgetData(keys.groupKey, keys.subGroupKey, keys.valueNameKey, valueFunction)
     };
 
     setGridContent(gc);

@@ -4,13 +4,13 @@ import {useQuery} from "@apollo/react-hooks";
 import {useLocation} from "react-router-dom";
 import GridLayout from "react-grid-layout";
 import {DivLayout} from "../dashboardProject/subcomponents/Layout/LayoutEditor.styled";
-import {ContentWidget} from "../dashboardProject/subcomponents/ContentWidget";
 import {getTrendGraphsByUserTrendId, getTrendLayouts} from "../../modules/trends/queries";
 import {
   checkQueryLoadedWithValue,
   getQueryLoadedWithValue,
   getQueryLoadedWithValueArrayNotEmpty
 } from "../../futuremodules/graphqlclient/query";
+import {ContentWidget} from "../dashboardProject/subcomponents/ContentWidgets/ContentWidget";
 
 // const CanvasJSChart = CanvasJSReact.CanvasJSChart;
 

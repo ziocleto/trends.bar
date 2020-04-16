@@ -3,36 +3,36 @@ import "./react-resizable-styles.css"
 
 import React, {Fragment, useEffect, useGlobal, useState} from "reactn";
 import GridLayout from 'react-grid-layout';
-import {DivLayout, SpanRemoveLayoutCell} from "./LayoutEditor.styled";
+import {DivLayout, SpanEditLayoutCell, SpanRemoveLayoutCell} from "./LayoutEditor.styled";
 import {Button, ButtonGroup, ButtonToolbar} from "react-bootstrap";
 import {getDefaultCellContent, getDefaultTrendLayout, globalLayoutState} from "../../../../modules/trends/layout";
 import {upsertTrendLayout} from "../../../../modules/trends/mutations";
 import {useMutation, useQuery} from "@apollo/react-hooks";
-import {getTrendGraphsByUserTrendId, getTrendLayouts} from "../../../../modules/trends/queries";
+import {getTrendLayouts} from "../../../../modules/trends/queries";
 import {EditingLayoutDataSource, useTrendIdGetter} from "../../../../modules/trends/globals";
 import {getQueryLoadedWithValueArrayNotEmpty} from "../../../../futuremodules/graphqlclient/query";
-import {CellContentEditor} from "../CellContentEditor";
-import {ContentWidget} from "../ContentWidget";
-import {ButtonDiv, DangerColorSpan} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
+import {
+  ButtonDiv,
+  DangerColorSpan,
+  Logo1TextSpan
+} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {useGlobalState} from "../../../../futuremodules/globalhelper/globalHelper";
+import {LayoutContentWidget} from "./LayoutContentWidget";
 
 export const LayoutEditor = ({username}) => {
 
   const trendId = useTrendIdGetter();
   const datasets = useGlobalState(EditingLayoutDataSource);
+  const [showDatasetPicker, setShowDatasetPicker] = useState({});
 
   const [trendLayoutMutation] = useMutation(upsertTrendLayout);
   const trendLayoutQuery = useQuery(getTrendLayouts(), {variables: {name: username, trendId: trendId}});
-  const trendDataQuery = useQuery(getTrendGraphsByUserTrendId(), {variables: {name: username, trendId: trendId}});
 
   const [layout, setLayout] = useGlobal(globalLayoutState);
   const [absoluteIndex, setAbsoluteIndex] = useState(0);
-  const [, setEditingCellKey] = useState(null);
-  const [editingCellContent, setEditingCellContent] = useState(null);
-  const [trendData, setTrendData] = useState({});
 
-  useEffect( ()=> {
-    if ( !layout && datasets ) {
+  useEffect(() => {
+    if (!layout && datasets) {
       const ll = {
         ...getDefaultTrendLayout(datasets),
         trendId,
@@ -41,7 +41,7 @@ export const LayoutEditor = ({username}) => {
       setAbsoluteIndex(Math.max(...(ll.gridLayout.map((v) => Number(v.i)))) + 1);
       setLayout(ll).then();
     }
-  }, [layout, setLayout, datasets, trendId, username] );
+  }, [layout, setLayout, datasets, trendId, username]);
 
   useEffect(() => {
     trendLayoutQuery.refetch().then(() => {
@@ -53,17 +53,6 @@ export const LayoutEditor = ({username}) => {
       }
     );
   }, [trendLayoutQuery, setLayout]);
-
-  useEffect(() => {
-    trendDataQuery.refetch().then(() => {
-        const queryData = getQueryLoadedWithValueArrayNotEmpty(trendDataQuery);
-        if (queryData) {
-          setTrendData(queryData);
-        }
-      }
-    );
-  }, [trendDataQuery]);
-
 
   const onGridLayoutChange = (gridLayout) => {
     setLayout({
@@ -105,12 +94,6 @@ export const LayoutEditor = ({username}) => {
     });
   };
 
-  // const onEditCell = (cellCode) => {
-  //   //console.log("Edit cell "+cellCode);
-  //   setEditingCellKey(cellCode);
-  //   setEditingCellContent(layout.gridContent.filter(v => v.i === cellCode)[0]);
-  // };
-
   const onSaveLayout = () => {
     //console.log(trendId);
     //console.log(username);
@@ -130,28 +113,9 @@ export const LayoutEditor = ({username}) => {
       ...layout,
       gridContent: newGridContent
     });
-    // setEditingCellKey(null);
-    // setEditingCellContent(null);
   };
 
-  const onCancelSaveCellContent = () => {
-    console.log("CANCEL");
-    setEditingCellKey(null);
-    setEditingCellContent(null);
-  };
-
-  if (editingCellContent) {
-    return (
-      <CellContentEditor
-        data={trendData}
-        content={editingCellContent}
-        onSave={onSaveCellContent}
-        onCancel={onCancelSaveCellContent}
-      />
-    )
-  }
-
-  if ( !layout ) {
+  if (!layout) {
     return <Fragment/>
   }
 
@@ -173,15 +137,22 @@ export const LayoutEditor = ({username}) => {
         {layout.gridLayout.map(elem => {
           return (
             <DivLayout key={elem.i}>
-              <ContentWidget data={datasets}
-                             cellIndex={elem.i}
-                             onSave={onSaveCellContent}
+              <LayoutContentWidget data={datasets}
+                                   showDatasetPicker={showDatasetPicker}
+                                   setShowDatasetPicker={setShowDatasetPicker}
+                                   cellIndex={elem.i}
+                                   onSave={onSaveCellContent}
               />
               <SpanRemoveLayoutCell title="Remove cell">
                 <ButtonDiv onClick={() => onRemoveCell(elem.i)}>
                   <DangerColorSpan><i className={"fas fa-times"}/></DangerColorSpan>
                 </ButtonDiv>
               </SpanRemoveLayoutCell>
+              <SpanEditLayoutCell title="Remove cell">
+                <ButtonDiv onClick={() => setShowDatasetPicker({[elem.i]: true})}>
+                  <Logo1TextSpan><i className={"fa fa-th"}/></Logo1TextSpan>
+                </ButtonDiv>
+              </SpanEditLayoutCell>
             </DivLayout>
           );
         })}
