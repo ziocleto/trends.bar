@@ -22,6 +22,8 @@ import {ContentWidgetText} from "../ContentWidgets/ContentWidgetText";
 import {ContentWidgetMenuBar} from "./LayoutEditor.styled";
 import {ContentWidgetTable} from "../ContentWidgetTable";
 import {globalLayoutState, setFirstValue, setLastValue} from "../../../../modules/trends/layout";
+import {ContentWidgetTextSingle} from "../ContentWidgets/ContentWidgetTextSingle";
+import {ContentWidgetTextWithSubtitle} from "../ContentWidgets/ContentWidgetTextWithSubtitle";
 
 export const ModalDatasetPixel = (props) => {
 
@@ -151,11 +153,11 @@ export const ModalDatasetPixel = (props) => {
             <Flex alignContent={"center"}
                   height={"100%"}
                   padding={"0"}>
-              <ButtonDiv variant="outline-info" onClick={() => setWidgetType()}>
+              <ButtonDiv variant="outline-info" onClick={() => setWidgetType("text-single")}>
                 <b><i className={"fas fa-minus"}/></b>
               </ButtonDiv>
               <Mx05/>
-              <ButtonDiv variant="outline-info" onClick={() => setWidgetType()}>
+              <ButtonDiv variant="outline-info" onClick={() => setWidgetType("text-subtitle")}>
                 <b><i className={"fas fa-equals"}/></b>
               </ButtonDiv>
               <Mx05/>
@@ -179,10 +181,14 @@ export const ModalDatasetPixel = (props) => {
         <Container fluid>
           <RowSeparatorDouble/>
           <RowSeparator/>
+          {keys.type === "text-single" &&
+          <ContentWidgetTextSingle config={keys} />}
+          {keys.type === "text-subtitle" &&
+          <ContentWidgetTextWithSubtitle config={keys}/>}
           {keys.type === "text" &&
-          <ContentWidgetText config={keys} onSave={(newValue) => props.updater(newValue)}/>}
+          <ContentWidgetText config={keys}/>}
           {keys.type === "table" &&
-          <ContentWidgetTable config={keys} onSave={(newValue) => props.updater(newValue)}/>}
+          <ContentWidgetTable config={keys}/>}
           <RowSeparatorDoubleHR/>
           <Row>
 

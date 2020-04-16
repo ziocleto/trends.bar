@@ -10,6 +10,8 @@ import {Container} from "./ContentWidgets/ContentWidgetText.styled";
 import {FlexHighlighter} from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {globalLayoutState} from "../../../modules/trends/layout";
 import {useGlobalState} from "../../../futuremodules/globalhelper/globalHelper";
+import {ContentWidgetTextSingle} from "./ContentWidgets/ContentWidgetTextSingle";
+import {ContentWidgetTextWithSubtitle} from "./ContentWidgets/ContentWidgetTextWithSubtitle";
 
 export const ContentWidget = ({data, cellIndex, onSave}) => {
 
@@ -31,6 +33,26 @@ export const ContentWidget = ({data, cellIndex, onSave}) => {
           padding={"15px"}
           onClick={ () => setShowDatasetPicker({ [config.i]: true})}>
           <ContentWidgetText config={config} onSave={onSave}/>
+        </FlexHighlighter>
+      );
+      break;
+    case "text-single":
+      contentBody = (
+        <FlexHighlighter
+          justifyContent={"center"}
+          padding={"15px"}
+          onClick={ () => setShowDatasetPicker({ [config.i]: true})}>
+          <ContentWidgetTextSingle config={config} onSave={onSave}/>
+        </FlexHighlighter>
+      );
+      break;
+    case "text-subtitle":
+      contentBody = (
+        <FlexHighlighter
+          justifyContent={"center"}
+          padding={"15px"}
+          onClick={ () => setShowDatasetPicker({ [config.i]: true})}>
+          <ContentWidgetTextWithSubtitle config={config} onSave={onSave}/>
         </FlexHighlighter>
       );
       break;
