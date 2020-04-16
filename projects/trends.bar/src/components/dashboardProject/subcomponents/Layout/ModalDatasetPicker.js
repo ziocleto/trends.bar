@@ -6,12 +6,13 @@ import {useGlobalState} from "../../../../futuremodules/globalhelper/globalHelpe
 import {ScriptElementsContainer, ScriptKeyContainer, ScriptKeyContainerTitle} from "../DataSources/DataSources-styled";
 import {Col, Container, Row} from "react-bootstrap";
 import {
+  ButtonBgDiv,
   ButtonDiv,
   DangerColorSpan,
   Div,
   Flex,
   FlexVertical,
-  Mx05
+  Mx05, RoundButtonDiv
 } from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {
   RowSeparator,
@@ -145,37 +146,43 @@ export const ModalDatasetPixel = (props) => {
             <ContentWidgetMenuBar>
               <Flex alignContent={"center"}
                     height={"100%"}
-                    padding={"0 8px"}
+                    padding={"0 10px"}
               >
                 <Flex alignContent={"center"}
                       height={"100%"}
-                      padding={"0"}>
-                  <ButtonDiv variant="outline-info" onClick={() => setWidgetType("text-single")}>
-                    <b><i className={"fas fa-minus"}/></b>
-                  </ButtonDiv>
+                      fontSize={"1.0rem"}>
+                  <ButtonBgDiv
+                    padding={"10px"}
+                    onClick={() => setWidgetType("text-single")}>
+                    <i className={"fas fa-minus"}/>
+                  </ButtonBgDiv>
                   <Mx05/>
-                  <ButtonDiv variant="outline-info" onClick={() => setWidgetType("text-subtitle")}>
-                    <b><i className={"fas fa-equals"}/></b>
-                  </ButtonDiv>
+                  <ButtonBgDiv padding={"10px"} onClick={() => setWidgetType("text-subtitle")}>
+                    <i className={"fas fa-equals"}/>
+                  </ButtonBgDiv>
                   <Mx05/>
-                  <ButtonDiv variant="outline-info" onClick={() => setWidgetType("text")}>
+                  <ButtonBgDiv padding={"10px"} active onClick={() => setWidgetType("text")}>
                     <i className={"fas fa-bars"}/>
-                  </ButtonDiv>
+                  </ButtonBgDiv>
                   <Mx05/>
-                  <ButtonDiv variant="outline-info" onClick={() => setWidgetType("table")}>
-                    <i className={"fas fa-table"}/>
-                  </ButtonDiv>
+                  <ButtonBgDiv padding={"10px"} onClick={() => setWidgetType("table")}>
+                    <i className={"fas fa-border-all"}/>
+                  </ButtonBgDiv>
                   <Mx05/>
-                  <ButtonDiv variant="outline-info" onClick={() => setWidgetType("graphxy")}>
+                  <ButtonBgDiv padding={"10px"} onClick={() => setWidgetType("graphxy")}>
                     <i className={"fas fa-chart-line"}/>
-                  </ButtonDiv>
+                  </ButtonBgDiv>
                 </Flex>
-                <ButtonDiv onClick={() => props.onClose()}>
-                  <DangerColorSpan><i className={"fas fa-times"}/></DangerColorSpan>
+                <ButtonDiv
+                  color={"light"}
+                  hoveredColor={"var(--info)"}
+                  onClick={() => props.onClose()}>
+                  <i className={"fas fa-times"}/>
                 </ButtonDiv>
               </Flex>
             </ContentWidgetMenuBar>
             <Container fluid>
+              <RowSeparatorDouble/>
               <RowSeparatorDouble/>
               <RowSeparator/>
               <Div width={"100%"} height={"100%"} maxHeight={"300px"}>

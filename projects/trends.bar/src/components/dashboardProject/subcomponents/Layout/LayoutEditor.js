@@ -143,14 +143,17 @@ export const LayoutEditor = ({username}) => {
                                    cellIndex={elem.i}
                                    onSave={onSaveCellContent}
               />
-              <SpanRemoveLayoutCell title="Remove cell">
+              <SpanRemoveLayoutCell title="Remove element">
                 <ButtonDiv onClick={() => onRemoveCell(elem.i)}>
                   <DangerColorSpan><i className={"fas fa-times"}/></DangerColorSpan>
                 </ButtonDiv>
               </SpanRemoveLayoutCell>
-              <SpanEditLayoutCell title="Remove cell">
-                <ButtonDiv onClick={() => setShowDatasetPicker({[elem.i]: true})}>
-                  <Logo1TextSpan><i className={"fa fa-th"}/></Logo1TextSpan>
+              <SpanEditLayoutCell title="Edit element">
+                <ButtonDiv
+                  color={'var(--logo-color-1)'}
+                  hoveredColor={"white"}
+                  onClick={() => setShowDatasetPicker({[elem.i]: true})}>
+                  <i className={"fa fa-edit"}/>
                 </ButtonDiv>
               </SpanEditLayoutCell>
             </DivLayout>

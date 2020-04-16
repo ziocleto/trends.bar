@@ -11,7 +11,7 @@ export const DivLayout = styled.div` {
 
 export const SpanRemoveLayoutCell = styled.span` {
     position:absolute;
-    padding: 3px 5px;
+    padding: 4px 7px;
     right: 0;
     top: 0;
     cursor: pointer;
@@ -19,7 +19,7 @@ export const SpanRemoveLayoutCell = styled.span` {
 
 export const SpanEditLayoutCell = styled.span` {
     position:absolute;
-    padding: 3px 5px;
+    padding: 4px 7px;
     left: 0;
     top: 0;
     cursor: pointer;
@@ -31,7 +31,7 @@ export const ContentWidgetMenuBar = styled.div` {
     top: 0;
     width: 100%;
     font-size: var(--font-size-one);
-    height: calc( var(--font-size-one) * 2 );
+    height: 4rem;
     background-color: var(--primary);
 }`;
 
