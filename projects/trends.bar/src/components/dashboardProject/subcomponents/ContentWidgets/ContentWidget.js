@@ -1,5 +1,4 @@
 import React, {Fragment} from "react";
-import {Div} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {ContentWidgetText} from "./ContentWidgetText";
 import {ContentWidgetTextSingle} from "./ContentWidgetTextSingle";
 import {ContentWidgetTextWithSubtitle} from "./ContentWidgetTextWithSubtitle";
@@ -31,17 +30,12 @@ export const ContentWidget = ({datasets, config}) => {
       break;
     case "table":
       contentBody = (
-        <Div>
           <ContentWidgetTable datasets={datasets} config={config}/>
-        </Div>
       );
       break;
     case "graphxy":
       contentBody = (
-        <Div
-          width={"100%"}>
           <ContentWidgetGraphXY datasets={datasets} config={config}/>
-        </Div>
       );
       break;
     default:

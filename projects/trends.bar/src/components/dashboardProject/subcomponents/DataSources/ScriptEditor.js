@@ -51,7 +51,6 @@ export const ScriptEditor = () => {
         groupTabKey: groupTabKey,
         subGroupTabKey: subGroupTabKey
       });
-      console.log("setting editing state");
       setEditingDataSource(true).then();
     }
   }, [fetchResult, setEditingDataSource]);
