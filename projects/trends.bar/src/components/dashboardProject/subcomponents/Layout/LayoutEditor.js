@@ -173,7 +173,7 @@ export const LayoutEditor = ({username}) => {
         {layout.gridLayout.map(elem => {
           return (
             <DivLayout key={elem.i}>
-              <ContentWidget data={trendData}
+              <ContentWidget data={datasets}
                              cellIndex={elem.i}
                              onSave={onSaveCellContent}
               />

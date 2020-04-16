@@ -7,7 +7,7 @@ import {ScriptElementsContainer, ScriptKeyContainer, ScriptKeyContainerTitle} fr
 import {Col, Container, Row} from "react-bootstrap";
 import {
   ButtonDiv,
-  DangerColorSpan,
+  DangerColorSpan, Div,
   Flex,
   FlexVertical,
   Mx05
@@ -20,8 +20,8 @@ import {
 import {modalGraphTreeHeight} from "./ModalDatasetPicker-styled";
 import {ContentWidgetText} from "../ContentWidgets/ContentWidgetText";
 import {ContentWidgetMenuBar} from "./LayoutEditor.styled";
-import {ContentWidgetTable} from "../ContentWidgetTable";
-import {globalLayoutState, setFirstValue, setLastValue} from "../../../../modules/trends/layout";
+import {ContentWidgetTable} from "../ContentWidgets/ContentWidgetTable";
+import {globalLayoutState, setFirstValue, getLastValue} from "../../../../modules/trends/layout";
 import {ContentWidgetTextSingle} from "../ContentWidgets/ContentWidgetTextSingle";
 import {ContentWidgetTextWithSubtitle} from "../ContentWidgets/ContentWidgetTextWithSubtitle";
 
@@ -181,14 +181,16 @@ export const ModalDatasetPixel = (props) => {
         <Container fluid>
           <RowSeparatorDouble/>
           <RowSeparator/>
+          <Div width={"100%"} height={"100%"} maxHeight={"300px"}>
           {keys.type === "text-single" &&
-          <ContentWidgetTextSingle config={keys} />}
+          <ContentWidgetTextSingle datasets={datasets} config={keys} />}
           {keys.type === "text-subtitle" &&
-          <ContentWidgetTextWithSubtitle config={keys}/>}
+          <ContentWidgetTextWithSubtitle datasets={datasets} config={keys}/>}
           {keys.type === "text" &&
-          <ContentWidgetText config={keys}/>}
+          <ContentWidgetText datasets={datasets} config={keys}/>}
           {keys.type === "table" &&
-          <ContentWidgetTable config={keys}/>}
+          <ContentWidgetTable datasets={datasets} config={keys}/>}
+          </Div>
           <RowSeparatorDoubleHR/>
           <Row>
 
@@ -266,8 +268,8 @@ export const ModalDatasetPixel = (props) => {
                   {keys.valueNameKey &&
                   <Fragment>
                     <ScriptKeyContainer key={keys.groupKey + keys.subGroupKey + keys.valueNameKey + "last"}
-                                        selected={keys.valueFunction.toString() === setLastValue.toString()}
-                                        onClick={() => setValueFunction(setLastValue)}>
+                                        selected={keys.valueFunction.toString() === getLastValue.toString()}
+                                        onClick={() => setValueFunction(getLastValue)}>
                       Last
                     </ScriptKeyContainer>
                     <ScriptKeyContainer key={keys.groupKey + keys.subGroupKey + keys.valueNameKey + "first"}

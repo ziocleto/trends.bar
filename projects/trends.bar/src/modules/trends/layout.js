@@ -4,8 +4,8 @@ export const setFirstValue = (groupKey, subGroupKey, valueNameKey, datasets) => 
   return datasets[groupKey][subGroupKey][valueNameKey][0].y;
 };
 
-export const setLastValue = (groupKey, subGroupKey, valueNameKey, datasets) => {
-  const ds = datasets[groupKey][subGroupKey][valueNameKey]
+export const getLastValue = (groupKey, subGroupKey, valueNameKey, datasets) => {
+  const ds = datasets[groupKey][subGroupKey][valueNameKey];
   return ds[ds.length - 1].y;
 };
 
@@ -59,7 +59,7 @@ const startupState = (datasets) => {
   const groupKey = Object.keys(datasets)[0];
   const subGroupKey = Object.keys(datasets[Object.keys(datasets)[0]])[0];
   const valueNameKey = Object.keys(datasets[Object.keys(datasets)[0]][Object.keys(datasets[Object.keys(datasets)[0]])[0]])[0];
-  const valueFunction = setLastValue;
+  const valueFunction = getLastValue;
   const title = valueFunction(groupKey, subGroupKey, valueNameKey, datasets);
   const subtitle = valueNameKey;
   return {
