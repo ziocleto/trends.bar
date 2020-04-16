@@ -236,7 +236,6 @@ export const graphArrayToGraphTree2 = ( sourceArray, key1, key2, key3, key4 ) =>
   const yValueSet = new Set();
   sourceArray.map(elem => groupsSet.add(elem[key1]));
   sourceArray.map(elem => yValueSet.add(elem[key3]));
-  console.log(yValueSet);
   for ( const group of groupsSet.values() ) {
     ret[group] = {};
     for ( const elem of sourceArray) {

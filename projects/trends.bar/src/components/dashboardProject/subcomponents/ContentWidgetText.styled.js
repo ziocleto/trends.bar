@@ -9,14 +9,21 @@ export const Container = styled.div` {
     align-content: center;
     height: 100%;
     overflow:scroll;
-}`
+}`;
+
+export const Overtitle = styled.div` {
+    font-size: 1.3rem;
+    color: var(--primary-color-light);
+}`;
 
 export const Title = styled.div` {
-    font-size: 2rem;
+    font-size: 2.2rem;
     font-weight: bold;
-}`
+    color: var(--secondary-alt-color);
+}`;
+
 export const Subtitle = styled.div` {
-    font-size: 1rem;
-    font-wight: light;
-}`
+    font-size: 1.15rem;
+    font-weight: bold;
+}`;
 

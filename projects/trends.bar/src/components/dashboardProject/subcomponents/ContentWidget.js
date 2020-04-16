@@ -1,17 +1,27 @@
 import "./react-grid-styles.css"
 import "./react-resizable-styles.css"
 
-import React, {Fragment, useState} from "react";
+import React, {Fragment, useEffect, useState} from "react";
 import {ContentWidgetText} from './ContentWidgetText'
 import {ContentWidgetTable} from "./ContentWidgetTable";
 import {ContentWidgetGraphXY} from "./ContentWidgetGraphXY";
 import {ModalDatasetPixel} from "./Layout/ModalDatasetPicker";
 import {Container} from "./ContentWidgetText.styled";
 import {FlexHighlighter} from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
+import {useGlobal} from "reactn";
+import {globalLayoutState} from "../../../modules/trends/layout";
+import {useGlobalState} from "../../../futuremodules/globalhelper/globalHelper";
 
-export const ContentWidget = ({data, config, onSave}) => {
+export const ContentWidget = ({data, cellIndex, onSave}) => {
 
   const [showDatasetPicker, setShowDatasetPicker] = useState({});
+  const layout = useGlobalState(globalLayoutState);
+
+  if ( !layout ) {
+    return <Fragment/>
+  }
+
+  const config = layout && layout.gridContent[layout.gridLayout.findIndex(v => v.i === cellIndex)];
 
   let contentBody;
   switch (config.type) {
@@ -44,12 +54,9 @@ export const ContentWidget = ({data, config, onSave}) => {
   return (
     <Container>
       {contentBody}
-      {showDatasetPicker[config.i] && <ModalDatasetPixel onClose={() => setShowDatasetPicker({})}
-                                                         widget={config}
-                                                         updater={(newValue) => onSave({
-                                                           ...config,
-                                                           ...newValue
-                                                         })}/>}
+      {showDatasetPicker[config.i] && <ModalDatasetPixel
+        cellIndex={config.i}
+        onClose={() => setShowDatasetPicker({})}/>}
     </Container>
   )
 };

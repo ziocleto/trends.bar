@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useState} from "react";
+import React, {Fragment, useEffect, useState, useGlobal} from "reactn";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import {EditingLayoutDataSource} from "../../../../modules/trends/globals";
@@ -21,95 +21,120 @@ import {modalGraphTreeHeight} from "./ModalDatasetPicker-styled";
 import {ContentWidgetText} from "../ContentWidgetText";
 import {ContentWidgetMenuBar} from "../LayoutEditor.styled";
 import {ContentWidgetTable} from "../ContentWidgetTable";
+import {globalLayoutState, setFirstValue, setLastValue} from "../../../../modules/trends/layout";
 
 export const ModalDatasetPixel = (props) => {
 
   const datasets = useGlobalState(EditingLayoutDataSource);
+  const [layout, setLayout] = useGlobal(globalLayoutState);
 
-  const setFirstValue = (keys) => {
-    return datasets[keys.groupKey][keys.subGroupKey][keys.valueNameKey][0].y;
-  };
+  console.log("datasets", datasets);
+  console.log("layout", layout);
+  if ( !datasets || !layout ) {
+    return <Fragment/>
+  }
 
-  const setLastValue = (keys) => {
-    const length = datasets[keys.groupKey][keys.subGroupKey][keys.valueNameKey].length;
-    return datasets[keys.groupKey][keys.subGroupKey][keys.valueNameKey][length - 1].y;
-  };
+  // useEffect(() => {
+  //   if ( datasets ) {
+  //     if ( !keys ) {
+  //       setKeys(startupState());
+  //     } else {
+  //       const value = keys.valueFunction(keys);
+  //       props.updater({
+  //         title: value,
+  //         subtitle: keys.valueNameKey,
+  //         groupKey: keys.groupKey,
+  //         subGroupKey: keys.subGroupKey,
+  //         valueNameKey: keys.valueNameKey,
+  //         valueFunction: keys.valueFunction
+  //       });
+  //     }
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [keys, datasets]);
 
-  const [keys, setKeys] = useState(null);
+  const keys = layout.gridContent[props.cellIndex];
 
-  const startupState = () => {
-    const groupKey = props.widget.groupKey || Object.keys(datasets)[0];
-    const subGroupKey = props.widget.subGroupKey || Object.keys(datasets[Object.keys(datasets)[0]])[0];
-    const valueNameKey = props.widget.valueNameKey || Object.keys(datasets[Object.keys(datasets)[0]][Object.keys(datasets[Object.keys(datasets)[0]])[0]])[0];
-    const valueFunction = props.widget.valueFunction || setLastValue;
+  const setWidgetData = (groupKey, subGroupKey, valueNameKey, valueFunction, datasets) => {
     return {
       groupKey,
       subGroupKey,
       valueNameKey,
-      valueFunction
+      valueFunction,
+      overtitle:subGroupKey,
+      title:valueFunction(groupKey, subGroupKey, valueNameKey, datasets),
+      subtitle:valueNameKey
     }
   };
 
-  useEffect(() => {
-    if ( datasets ) {
-      if ( !keys ) {
-        setKeys(startupState());
-      } else {
-        const value = keys.valueFunction(keys);
-        props.updater({
-          title: value,
-          subtitle: keys.valueNameKey,
-          groupKey: keys.groupKey,
-          subGroupKey: keys.subGroupKey,
-          valueNameKey: keys.valueNameKey,
-          valueFunction: keys.valueFunction
-        });
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [keys, datasets]);
-
-  const setGroupKey = (k) => {
-    setKeys({
-      ...keys,
-      groupKey: k,
-      subGroupKey: Object.keys(datasets[k])[0],
-      valueNameKey: Object.keys(datasets[k][Object.keys(datasets[k])[0]])[0],
-    });
+  const setGridContent = (gc) => {
+    setLayout({
+      ...layout,
+      gridContent:gc
+    }).then();
   };
 
-  const setSubGroupKey = (k) => {
-    setKeys({
-      ...keys,
-      subGroupKey: k,
-      valueNameKey: Object.keys(datasets[keys.groupKey][k])[0],
-    });
+  const setGroupKey = (groupKey) => {
+    let gc = layout.gridContent;
+
+    const subGroupKey = Object.keys(datasets[groupKey])[0];
+    const valueNameKey = Object.keys(datasets[groupKey][Object.keys(datasets[groupKey])[0]])[0];
+
+    gc[props.cellIndex] = {
+      ...gc[props.cellIndex],
+      ...setWidgetData(groupKey, subGroupKey, valueNameKey, keys.valueFunction, datasets)
+    };
+
+    setGridContent(gc);
   };
 
-  const setValueNameKey = (k) => {
-    setKeys({
-      ...keys,
-      valueNameKey: k,
-    });
+  const setSubGroupKey = (subGroupKey) => {
+    let gc = layout.gridContent;
+
+    gc[props.cellIndex] = {
+      ...gc[props.cellIndex],
+      ...setWidgetData(keys.groupKey, subGroupKey, keys.valueNameKey, keys.valueFunction, datasets)
+    };
+
+    setGridContent(gc);
   };
 
-  const setValueFunction = (k) => {
-    setKeys({
-      ...keys,
-      valueFunction: k,
-    });
+  const setValueNameKey = (valueNameKey) => {
+    let gc = layout.gridContent;
+
+    gc[props.cellIndex] = {
+      ...gc[props.cellIndex],
+      ...setWidgetData(keys.groupKey, keys.subGroupKey, valueNameKey, keys.valueFunction, datasets)
+    };
+
+    setGridContent(gc);
+  };
+
+  const setValueFunction = (valueFunction) => {
+    let gc = layout.gridContent;
+
+    gc[props.cellIndex] = {
+      ...gc[props.cellIndex],
+      ...setWidgetData(keys.groupKey, keys.subGroupKey, keys.valueNameKey, valueFunction, datasets)
+    };
+
+    setGridContent(gc);
   };
 
   const setWidgetType = (widgetType) => {
-    setKeys({
-      ...keys,
-      widgetType
-    });
+    let gc = layout.gridContent;
+
+    gc[props.cellIndex] = {
+      ...gc[props.cellIndex],
+      type:widgetType
+    };
+
+    setGridContent(gc);
   };
 
   return (
     <Fragment>
-    {keys && (
+    {layout && (
       <Modal
       size="lg"
       aria-labelledby="contained-modal-title-vcenter"
@@ -127,11 +152,11 @@ export const ModalDatasetPixel = (props) => {
                   height={"100%"}
                   padding={"0"}>
               <ButtonDiv variant="outline-info" onClick={() => setWidgetType()}>
-                <b>-</b>
+                <b><i className={"fas fa-minus"}/></b>
               </ButtonDiv>
               <Mx05/>
               <ButtonDiv variant="outline-info" onClick={() => setWidgetType()}>
-                <b>=</b>
+                <b><i className={"fas fa-equals"}/></b>
               </ButtonDiv>
               <Mx05/>
               <ButtonDiv variant="outline-info" onClick={() => setWidgetType("text")}>
@@ -143,7 +168,7 @@ export const ModalDatasetPixel = (props) => {
               </ButtonDiv>
               <Mx05/>
               <ButtonDiv variant="outline-info" onClick={() => setWidgetType()}>
-                <i className={"fas fa-chart-line"}/>table
+                <i className={"fas fa-chart-line"}/>
               </ButtonDiv>
             </Flex>
             <ButtonDiv onClick={() => props.onClose()}>
@@ -154,10 +179,10 @@ export const ModalDatasetPixel = (props) => {
         <Container fluid>
           <RowSeparatorDouble/>
           <RowSeparator/>
-          {props.widget.type === "text" &&
-          <ContentWidgetText config={props.widget} onSave={(newValue) => props.updater(newValue)}/>}
-          {props.widget.type === "table" &&
-          <ContentWidgetTable config={props.widget} onSave={(newValue) => props.updater(newValue)}/>}
+          {keys.type === "text" &&
+          <ContentWidgetText config={keys} onSave={(newValue) => props.updater(newValue)}/>}
+          {keys.type === "table" &&
+          <ContentWidgetTable config={keys} onSave={(newValue) => props.updater(newValue)}/>}
           <RowSeparatorDoubleHR/>
           <Row>
 
