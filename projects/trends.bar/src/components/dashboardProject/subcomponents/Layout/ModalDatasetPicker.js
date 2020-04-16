@@ -7,7 +7,8 @@ import {ScriptElementsContainer, ScriptKeyContainer, ScriptKeyContainerTitle} fr
 import {Col, Container, Row} from "react-bootstrap";
 import {
   ButtonDiv,
-  DangerColorSpan, Div,
+  DangerColorSpan,
+  Div,
   Flex,
   FlexVertical,
   Mx05
@@ -21,9 +22,10 @@ import {modalGraphTreeHeight} from "./ModalDatasetPicker-styled";
 import {ContentWidgetText} from "../ContentWidgets/ContentWidgetText";
 import {ContentWidgetMenuBar} from "./LayoutEditor.styled";
 import {ContentWidgetTable} from "../ContentWidgets/ContentWidgetTable";
-import {globalLayoutState, setFirstValue, getLastValue} from "../../../../modules/trends/layout";
+import {getLastValue, globalLayoutState, setFirstValue} from "../../../../modules/trends/layout";
 import {ContentWidgetTextSingle} from "../ContentWidgets/ContentWidgetTextSingle";
 import {ContentWidgetTextWithSubtitle} from "../ContentWidgets/ContentWidgetTextWithSubtitle";
+import {ContentWidgetGraphXY} from "../ContentWidgets/ContentWidgetGraphXY";
 
 export const ModalDatasetPixel = (props) => {
 
@@ -32,7 +34,7 @@ export const ModalDatasetPixel = (props) => {
 
   console.log("datasets", datasets);
   console.log("layout", layout);
-  if ( !datasets || !layout ) {
+  if (!datasets || !layout) {
     return <Fragment/>
   }
 
@@ -63,16 +65,16 @@ export const ModalDatasetPixel = (props) => {
       subGroupKey,
       valueNameKey,
       valueFunction,
-      overtitle:subGroupKey,
-      title:valueFunction(groupKey, subGroupKey, valueNameKey, datasets),
-      subtitle:valueNameKey
+      overtitle: subGroupKey,
+      title: valueFunction(groupKey, subGroupKey, valueNameKey, datasets),
+      subtitle: valueNameKey
     }
   };
 
   const setGridContent = (gc) => {
     setLayout({
       ...layout,
-      gridContent:gc
+      gridContent: gc
     }).then();
   };
 
@@ -128,7 +130,7 @@ export const ModalDatasetPixel = (props) => {
 
     gc[props.cellIndex] = {
       ...gc[props.cellIndex],
-      type:widgetType
+      type: widgetType
     };
 
     setGridContent(gc);
@@ -136,165 +138,167 @@ export const ModalDatasetPixel = (props) => {
 
   return (
     <Fragment>
-    {layout && (
-      <Modal
-      size="lg"
-      aria-labelledby="contained-modal-title-vcenter"
-      centered
-      show={true}
-      onHide={() => props.onClose()}
-    >
-      <Modal.Body>
-        <ContentWidgetMenuBar>
-          <Flex alignContent={"center"}
-                height={"100%"}
-                padding={"0 8px"}
-          >
-            <Flex alignContent={"center"}
-                  height={"100%"}
-                  padding={"0"}>
-              <ButtonDiv variant="outline-info" onClick={() => setWidgetType("text-single")}>
-                <b><i className={"fas fa-minus"}/></b>
-              </ButtonDiv>
-              <Mx05/>
-              <ButtonDiv variant="outline-info" onClick={() => setWidgetType("text-subtitle")}>
-                <b><i className={"fas fa-equals"}/></b>
-              </ButtonDiv>
-              <Mx05/>
-              <ButtonDiv variant="outline-info" onClick={() => setWidgetType("text")}>
-                <i className={"fas fa-bars"}/>
-              </ButtonDiv>
-              <Mx05/>
-              <ButtonDiv variant="outline-info" onClick={() => setWidgetType("table")}>
-                <i className={"fas fa-table"}/>
-              </ButtonDiv>
-              <Mx05/>
-              <ButtonDiv variant="outline-info" onClick={() => setWidgetType()}>
-                <i className={"fas fa-chart-line"}/>
-              </ButtonDiv>
-            </Flex>
-            <ButtonDiv onClick={() => props.onClose()}>
-              <DangerColorSpan><i className={"fas fa-times"}/></DangerColorSpan>
-            </ButtonDiv>
-          </Flex>
-        </ContentWidgetMenuBar>
-        <Container fluid>
-          <RowSeparatorDouble/>
-          <RowSeparator/>
-          <Div width={"100%"} height={"100%"} maxHeight={"300px"}>
-          {keys.type === "text-single" &&
-          <ContentWidgetTextSingle datasets={datasets} config={keys} />}
-          {keys.type === "text-subtitle" &&
-          <ContentWidgetTextWithSubtitle datasets={datasets} config={keys}/>}
-          {keys.type === "text" &&
-          <ContentWidgetText datasets={datasets} config={keys}/>}
-          {keys.type === "table" &&
-          <ContentWidgetTable datasets={datasets} config={keys}/>}
-          </Div>
-          <RowSeparatorDoubleHR/>
-          <Row>
+      {layout && (
+        <Modal
+          size="lg"
+          aria-labelledby="contained-modal-title-vcenter"
+          centered
+          show={true}
+          onHide={() => props.onClose()}
+        >
+          <Modal.Body>
+            <ContentWidgetMenuBar>
+              <Flex alignContent={"center"}
+                    height={"100%"}
+                    padding={"0 8px"}
+              >
+                <Flex alignContent={"center"}
+                      height={"100%"}
+                      padding={"0"}>
+                  <ButtonDiv variant="outline-info" onClick={() => setWidgetType("text-single")}>
+                    <b><i className={"fas fa-minus"}/></b>
+                  </ButtonDiv>
+                  <Mx05/>
+                  <ButtonDiv variant="outline-info" onClick={() => setWidgetType("text-subtitle")}>
+                    <b><i className={"fas fa-equals"}/></b>
+                  </ButtonDiv>
+                  <Mx05/>
+                  <ButtonDiv variant="outline-info" onClick={() => setWidgetType("text")}>
+                    <i className={"fas fa-bars"}/>
+                  </ButtonDiv>
+                  <Mx05/>
+                  <ButtonDiv variant="outline-info" onClick={() => setWidgetType("table")}>
+                    <i className={"fas fa-table"}/>
+                  </ButtonDiv>
+                  <Mx05/>
+                  <ButtonDiv variant="outline-info" onClick={() => setWidgetType("graphxy")}>
+                    <i className={"fas fa-chart-line"}/>
+                  </ButtonDiv>
+                </Flex>
+                <ButtonDiv onClick={() => props.onClose()}>
+                  <DangerColorSpan><i className={"fas fa-times"}/></DangerColorSpan>
+                </ButtonDiv>
+              </Flex>
+            </ContentWidgetMenuBar>
+            <Container fluid>
+              <RowSeparatorDouble/>
+              <RowSeparator/>
+              <Div width={"100%"} height={"100%"} maxHeight={"300px"}>
+                {keys.type === "text-single" &&
+                <ContentWidgetTextSingle datasets={datasets} config={keys}/>}
+                {keys.type === "text-subtitle" &&
+                <ContentWidgetTextWithSubtitle datasets={datasets} config={keys}/>}
+                {keys.type === "text" &&
+                <ContentWidgetText datasets={datasets} config={keys}/>}
+                {keys.type === "table" &&
+                <ContentWidgetTable config={keys}/>}
+                {keys.type === "graphxy" &&
+                <ContentWidgetGraphXY datasets={datasets} config={keys}/>}
+              </Div>
+              <RowSeparatorDoubleHR/>
+              <Row>
 
-            <Col>
-              <ScriptKeyContainerTitle>
-                Groups
-              </ScriptKeyContainerTitle>
-              <ScriptElementsContainer>
-                <FlexVertical
-                  justifyContent={"start"}
-                  height={modalGraphTreeHeight}
-                >
-                  {Object.keys(datasets).map(elem =>
-                    (<ScriptKeyContainer key={elem}
-                                         selected={elem === keys.groupKey}
-                                         onClick={e => setGroupKey(elem)}>
-                      {elem}
-                    </ScriptKeyContainer>)
-                  )}
-                </FlexVertical>
-              </ScriptElementsContainer>
-            </Col>
-
-            <Col>
-              <ScriptKeyContainerTitle>
-                Sub Groups
-              </ScriptKeyContainerTitle>
-              <ScriptElementsContainer>
-                <FlexVertical
-                  justifyContent={"start"}
-                  height={modalGraphTreeHeight}
-                >
-                  {keys.groupKey && Object.keys(datasets[keys.groupKey]).map(elem =>
-                    (<ScriptKeyContainer key={elem}
-                                         selected={elem === keys.subGroupKey}
-                                         onClick={(e) => setSubGroupKey(elem)}
+                <Col>
+                  <ScriptKeyContainerTitle>
+                    Groups
+                  </ScriptKeyContainerTitle>
+                  <ScriptElementsContainer>
+                    <FlexVertical
+                      justifyContent={"start"}
+                      height={modalGraphTreeHeight}
                     >
-                      {elem}
-                    </ScriptKeyContainer>)
-                  )}
-                </FlexVertical>
-              </ScriptElementsContainer>
-            </Col>
+                      {Object.keys(datasets).map(elem =>
+                        (<ScriptKeyContainer key={elem}
+                                             selected={elem === keys.groupKey}
+                                             onClick={e => setGroupKey(elem)}>
+                          {elem}
+                        </ScriptKeyContainer>)
+                      )}
+                    </FlexVertical>
+                  </ScriptElementsContainer>
+                </Col>
 
-            <Col>
-              <ScriptKeyContainerTitle>
-                Elements
-              </ScriptKeyContainerTitle>
-              <ScriptElementsContainer>
-                <FlexVertical
-                  justifyContent={"start"}
-                  height={modalGraphTreeHeight}
-                >
-                  {keys.subGroupKey && Object.keys(datasets[keys.groupKey][keys.subGroupKey]).map(elem =>
-                    (<ScriptKeyContainer key={keys.groupKey + keys.subGroupKey + elem}
-                                         selected={elem === keys.valueNameKey}
-                                         onClick={() => setValueNameKey(elem)}
+                <Col>
+                  <ScriptKeyContainerTitle>
+                    Sub Groups
+                  </ScriptKeyContainerTitle>
+                  <ScriptElementsContainer>
+                    <FlexVertical
+                      justifyContent={"start"}
+                      height={modalGraphTreeHeight}
                     >
-                      {elem}
-                    </ScriptKeyContainer>)
-                  )}
-                </FlexVertical>
-              </ScriptElementsContainer>
-            </Col>
+                      {keys.groupKey && Object.keys(datasets[keys.groupKey]).map(elem =>
+                        (<ScriptKeyContainer key={elem}
+                                             selected={elem === keys.subGroupKey}
+                                             onClick={(e) => setSubGroupKey(elem)}
+                        >
+                          {elem}
+                        </ScriptKeyContainer>)
+                      )}
+                    </FlexVertical>
+                  </ScriptElementsContainer>
+                </Col>
 
-            <Col>
-              <ScriptKeyContainerTitle>
-                Values
-              </ScriptKeyContainerTitle>
-              <ScriptElementsContainer>
-                <FlexVertical
-                  justifyContent={"start"}
-                  height={modalGraphTreeHeight}
-                >
-                  {keys.valueNameKey &&
-                  <Fragment>
-                    <ScriptKeyContainer key={keys.groupKey + keys.subGroupKey + keys.valueNameKey + "last"}
-                                        selected={keys.valueFunction.toString() === getLastValue.toString()}
-                                        onClick={() => setValueFunction(getLastValue)}>
-                      Last
-                    </ScriptKeyContainer>
-                    <ScriptKeyContainer key={keys.groupKey + keys.subGroupKey + keys.valueNameKey + "first"}
-                                        selected={keys.valueFunction.toString() === setFirstValue.toString()}
-                                        onClick={() => setValueFunction(setFirstValue)}>
-                      First
-                    </ScriptKeyContainer>
-                  </Fragment>
-                  }
-                </FlexVertical>
-              </ScriptElementsContainer>
-            </Col>
+                <Col>
+                  <ScriptKeyContainerTitle>
+                    Elements
+                  </ScriptKeyContainerTitle>
+                  <ScriptElementsContainer>
+                    <FlexVertical
+                      justifyContent={"start"}
+                      height={modalGraphTreeHeight}
+                    >
+                      {keys.subGroupKey && Object.keys(datasets[keys.groupKey][keys.subGroupKey]).map(elem =>
+                        (<ScriptKeyContainer key={keys.groupKey + keys.subGroupKey + elem}
+                                             selected={elem === keys.valueNameKey}
+                                             onClick={() => setValueNameKey(elem)}
+                        >
+                          {elem}
+                        </ScriptKeyContainer>)
+                      )}
+                    </FlexVertical>
+                  </ScriptElementsContainer>
+                </Col>
 
-          </Row>
-        </Container>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="primary" onClick={() => {
-          props.onClose(false)
-        }}>
-          Close
-        </Button>
-      </Modal.Footer>
-    </Modal>
-    )}
+                <Col>
+                  <ScriptKeyContainerTitle>
+                    Values
+                  </ScriptKeyContainerTitle>
+                  <ScriptElementsContainer>
+                    <FlexVertical
+                      justifyContent={"start"}
+                      height={modalGraphTreeHeight}
+                    >
+                      {keys.valueNameKey &&
+                      <Fragment>
+                        <ScriptKeyContainer key={keys.groupKey + keys.subGroupKey + keys.valueNameKey + "last"}
+                                            selected={keys.valueFunction.toString() === getLastValue.toString()}
+                                            onClick={() => setValueFunction(getLastValue)}>
+                          Last
+                        </ScriptKeyContainer>
+                        <ScriptKeyContainer key={keys.groupKey + keys.subGroupKey + keys.valueNameKey + "first"}
+                                            selected={keys.valueFunction.toString() === setFirstValue.toString()}
+                                            onClick={() => setValueFunction(setFirstValue)}>
+                          First
+                        </ScriptKeyContainer>
+                      </Fragment>
+                      }
+                    </FlexVertical>
+                  </ScriptElementsContainer>
+                </Col>
+
+              </Row>
+            </Container>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="primary" onClick={() => {
+              props.onClose(false)
+            }}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      )}
     </Fragment>
   )
 };

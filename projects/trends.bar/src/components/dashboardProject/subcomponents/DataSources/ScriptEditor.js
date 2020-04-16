@@ -197,6 +197,21 @@ export const ScriptEditor = () => {
     setGraphTree({...tmp});
   };
 
+  const collectGraphData = (data) => {
+    let graphData = [];
+    for (const dataset of data) {
+      const graph = [];
+      for (const v of dataset.values) {
+        graph.push({x: new Date(v.x), y: v.y});
+      }
+      graphData.push({
+        name: dataset.yValueName,
+        data: graph
+      });
+    }
+    return graphData;
+  };
+
   const publishGraphs = () => {
     api(fetchApi, putScript, graphTree.script).then((r) => {
       if (isStatusCodeSuccessful(r.status.code)) {
@@ -372,7 +387,7 @@ export const ScriptEditor = () => {
             <Row>
               <Col>
                 {
-                  <GraphXY data={graphTree.tree[graphTree.groupTabKey][graphTree.subGroupTabKey]}
+                  <GraphXY graphData={collectGraphData(graphTree.tree[graphTree.groupTabKey][graphTree.subGroupTabKey])}
                            config={
                              {
                                title: graphTree.subGroupTabKey

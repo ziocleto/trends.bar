@@ -4,7 +4,7 @@ import "./Layout/react-resizable-styles.css"
 import React, {Fragment, useState} from "react";
 import {ContentWidgetText} from './ContentWidgets/ContentWidgetText'
 import {ContentWidgetTable} from "./ContentWidgets/ContentWidgetTable";
-import {ContentWidgetGraphXY} from "./ContentWidgetGraphXY";
+import {ContentWidgetGraphXY} from "./ContentWidgets/ContentWidgetGraphXY";
 import {ModalDatasetPixel} from "./Layout/ModalDatasetPicker";
 import {Container} from "./ContentWidgets/ContentWidgetText.styled";
 import {Div, FlexHighlighter} from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
@@ -12,13 +12,15 @@ import {globalLayoutState} from "../../../modules/trends/layout";
 import {useGlobalState} from "../../../futuremodules/globalhelper/globalHelper";
 import {ContentWidgetTextSingle} from "./ContentWidgets/ContentWidgetTextSingle";
 import {ContentWidgetTextWithSubtitle} from "./ContentWidgets/ContentWidgetTextWithSubtitle";
+import {EditingLayoutDataSource} from "../../../modules/trends/globals";
 
 export const ContentWidget = ({cellIndex}) => {
 
   const [showDatasetPicker, setShowDatasetPicker] = useState({});
   const layout = useGlobalState(globalLayoutState);
+  const datasets = useGlobalState(EditingLayoutDataSource);
 
-  if ( !layout ) {
+  if (!layout || !datasets) {
     return <Fragment/>
   }
 
@@ -31,7 +33,7 @@ export const ContentWidget = ({cellIndex}) => {
         <FlexHighlighter
           justifyContent={"center"}
           padding={"15px"}
-          onClick={ () => setShowDatasetPicker({ [config.i]: true})}>
+          onClick={() => setShowDatasetPicker({[config.i]: true})}>
           <ContentWidgetText config={config}/>
         </FlexHighlighter>
       );
@@ -41,7 +43,7 @@ export const ContentWidget = ({cellIndex}) => {
         <FlexHighlighter
           justifyContent={"center"}
           padding={"15px"}
-          onClick={ () => setShowDatasetPicker({ [config.i]: true})}>
+          onClick={() => setShowDatasetPicker({[config.i]: true})}>
           <ContentWidgetTextSingle config={config}/>
         </FlexHighlighter>
       );
@@ -51,7 +53,7 @@ export const ContentWidget = ({cellIndex}) => {
         <FlexHighlighter
           justifyContent={"center"}
           padding={"15px"}
-          onClick={ () => setShowDatasetPicker({ [config.i]: true})}>
+          onClick={() => setShowDatasetPicker({[config.i]: true})}>
           <ContentWidgetTextWithSubtitle config={config}/>
         </FlexHighlighter>
       );
@@ -59,18 +61,19 @@ export const ContentWidget = ({cellIndex}) => {
     case "table":
       contentBody = (
         <Div
-          width={"100%"}
-          height={"100%"}
-          justifyContent={"center"}
-          padding={"0"}
-          onClick={ () => setShowDatasetPicker({ [config.i]: true})}>
+          onClick={() => setShowDatasetPicker({[config.i]: true})}>
           <ContentWidgetTable config={config}/>
         </Div>
       );
       break;
     case "graphxy":
+      console.log("Rendering graph, apparently");
       contentBody = (
-        <ContentWidgetGraphXY config={config}/>
+        <Div
+          width={"100%"}
+          onClick={() => setShowDatasetPicker({[config.i]: true})}>
+          <ContentWidgetGraphXY datasets={datasets} config={config}/>
+        </Div>
       );
       break;
     default:

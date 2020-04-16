@@ -102,7 +102,6 @@ export const getDefaultWidgetGraphXYSerieContent = () => {
 
 const getDefaultWidgetTextContent = (i, datasets) => {
   const ds = startupState(datasets);
-  console.log("DS", ds);
   return {
     i: i.toString(),
     type: "text",
