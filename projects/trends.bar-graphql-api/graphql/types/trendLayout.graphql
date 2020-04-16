@@ -45,6 +45,7 @@ type ContentWidget {
     type: String!
     i: String!
 
+    overtitle: String
     title: String
     subtitle: String
 
@@ -83,6 +84,7 @@ input ContentWidgetInput {
     type: String!
     i: String!
 
+    overtitle: String
     title: String
     subtitle: String
 
