@@ -9,7 +9,7 @@ export const setLastValue = (groupKey, subGroupKey, valueNameKey, datasets) => {
   return ds[ds.length - 1].y;
 };
 
-export const getDefaultTrendLayout = (trendId, username, datasets) => {
+export const getDefaultTrendLayout = (datasets) => {
 
   const granularity = 4;
   const name = "Grid3x3";
@@ -29,8 +29,6 @@ export const getDefaultTrendLayout = (trendId, username, datasets) => {
 
   return {
     name,
-    trendId,
-    username,
     gridLayout,
     gridContent
   }

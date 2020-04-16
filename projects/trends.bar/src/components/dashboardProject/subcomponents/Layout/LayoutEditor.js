@@ -1,20 +1,20 @@
 import "./react-grid-styles.css"
 import "./react-resizable-styles.css"
 
-import React, {Fragment, useEffect, useState, useGlobal} from "reactn";
+import React, {Fragment, useEffect, useGlobal, useState} from "reactn";
 import GridLayout from 'react-grid-layout';
 import {DivLayout, SpanRemoveLayoutCell} from "./LayoutEditor.styled";
 import {Button, ButtonGroup, ButtonToolbar} from "react-bootstrap";
-import {getDefaultCellContent, getDefaultTrendLayout, globalLayoutState} from "../../../modules/trends/layout";
-import {upsertTrendLayout} from "../../../modules/trends/mutations";
+import {getDefaultCellContent, getDefaultTrendLayout, globalLayoutState} from "../../../../modules/trends/layout";
+import {upsertTrendLayout} from "../../../../modules/trends/mutations";
 import {useMutation, useQuery} from "@apollo/react-hooks";
-import {getTrendGraphsByUserTrendId, getTrendLayouts} from "../../../modules/trends/queries";
-import {EditingLayoutDataSource, useTrendIdGetter} from "../../../modules/trends/globals";
-import {getQueryLoadedWithValueArrayNotEmpty} from "../../../futuremodules/graphqlclient/query";
-import {CellContentEditor} from "./CellContentEditor";
-import {ContentWidget} from "./ContentWidget";
-import {ButtonDiv, DangerColorSpan} from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
-import {useGlobalState} from "../../../futuremodules/globalhelper/globalHelper";
+import {getTrendGraphsByUserTrendId, getTrendLayouts} from "../../../../modules/trends/queries";
+import {EditingLayoutDataSource, useTrendIdGetter} from "../../../../modules/trends/globals";
+import {getQueryLoadedWithValueArrayNotEmpty} from "../../../../futuremodules/graphqlclient/query";
+import {CellContentEditor} from "../CellContentEditor";
+import {ContentWidget} from "../ContentWidget";
+import {ButtonDiv, DangerColorSpan} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
+import {useGlobalState} from "../../../../futuremodules/globalhelper/globalHelper";
 
 export const LayoutEditor = ({username}) => {
 
@@ -33,11 +33,15 @@ export const LayoutEditor = ({username}) => {
 
   useEffect( ()=> {
     if ( !layout && datasets ) {
-      const ll = getDefaultTrendLayout(trendId, username, datasets);
+      const ll = {
+        ...getDefaultTrendLayout(datasets),
+        trendId,
+        username
+      };
       setAbsoluteIndex(Math.max(...(ll.gridLayout.map((v) => Number(v.i)))) + 1);
       setLayout(ll).then();
     }
-  }, [layout, datasets] );
+  }, [layout, setLayout, datasets, trendId, username] );
 
   useEffect(() => {
     trendLayoutQuery.refetch().then(() => {
@@ -48,7 +52,7 @@ export const LayoutEditor = ({username}) => {
         }
       }
     );
-  }, [trendLayoutQuery]);
+  }, [trendLayoutQuery, setLayout]);
 
   useEffect(() => {
     trendDataQuery.refetch().then(() => {

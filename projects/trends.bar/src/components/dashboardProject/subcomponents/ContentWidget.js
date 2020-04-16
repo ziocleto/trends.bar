@@ -1,14 +1,13 @@
-import "./react-grid-styles.css"
-import "./react-resizable-styles.css"
+import "./Layout/react-grid-styles.css"
+import "./Layout/react-resizable-styles.css"
 
-import React, {Fragment, useEffect, useState} from "react";
-import {ContentWidgetText} from './ContentWidgetText'
+import React, {Fragment, useState} from "react";
+import {ContentWidgetText} from './ContentWidgets/ContentWidgetText'
 import {ContentWidgetTable} from "./ContentWidgetTable";
 import {ContentWidgetGraphXY} from "./ContentWidgetGraphXY";
 import {ModalDatasetPixel} from "./Layout/ModalDatasetPicker";
-import {Container} from "./ContentWidgetText.styled";
+import {Container} from "./ContentWidgets/ContentWidgetText.styled";
 import {FlexHighlighter} from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
-import {useGlobal} from "reactn";
 import {globalLayoutState} from "../../../modules/trends/layout";
 import {useGlobalState} from "../../../futuremodules/globalhelper/globalHelper";
 

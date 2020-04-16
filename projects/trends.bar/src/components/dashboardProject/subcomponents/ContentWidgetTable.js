@@ -1,5 +1,5 @@
-import "./react-grid-styles.css"
-import "./react-resizable-styles.css"
+import "./Layout/react-grid-styles.css"
+import "./Layout/react-resizable-styles.css"
 
 import React, {Fragment} from "react";
 import Table from "react-bootstrap/Table";

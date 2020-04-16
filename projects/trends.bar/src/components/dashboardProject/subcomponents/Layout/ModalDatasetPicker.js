@@ -1,4 +1,4 @@
-import React, {Fragment, useEffect, useState, useGlobal} from "reactn";
+import React, {Fragment, useGlobal} from "reactn";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import {EditingLayoutDataSource} from "../../../../modules/trends/globals";
@@ -18,8 +18,8 @@ import {
   RowSeparatorDoubleHR
 } from "../../../../futuremodules/reactComponentStyles/reactCommon";
 import {modalGraphTreeHeight} from "./ModalDatasetPicker-styled";
-import {ContentWidgetText} from "../ContentWidgetText";
-import {ContentWidgetMenuBar} from "../LayoutEditor.styled";
+import {ContentWidgetText} from "../ContentWidgets/ContentWidgetText";
+import {ContentWidgetMenuBar} from "./LayoutEditor.styled";
 import {ContentWidgetTable} from "../ContentWidgetTable";
 import {globalLayoutState, setFirstValue, setLastValue} from "../../../../modules/trends/layout";
 

@@ -5,7 +5,7 @@ import {DataSources} from "./subcomponents/DataSources/DataSources";
 import {Tab, Tabs} from "react-bootstrap";
 import {ProjectClose, ProjectContent, ProjectTabs} from "./DashboardProject.styled";
 import {Fragment, useState} from "react";
-import {LayoutEditor} from "./subcomponents/LayoutEditor";
+import {LayoutEditor} from "./subcomponents/Layout/LayoutEditor";
 import {ButtonDiv} from "../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {EditingUserTrend} from "../../modules/trends/globals";
 import {OverviewEditor} from "./subcomponents/OverviewEditor";
