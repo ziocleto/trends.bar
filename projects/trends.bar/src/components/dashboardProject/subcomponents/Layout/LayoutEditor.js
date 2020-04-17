@@ -13,37 +13,14 @@ import {ButtonDiv, DangerColorSpan} from "../../../../futuremodules/reactCompone
 import {LayoutContentWidget} from "./LayoutContentWidget";
 import {SpinnerTopMiddle} from "../../../../futuremodules/spinner/Spinner";
 
-export const LayoutEditor = ({username}) => {
+export const LayoutEditor = ({layout, setLayout, datasets, username}) => {
 
-  const trendId = useTrendIdGetter();
-  const { layout, setLayout, datasets } = useGetTrend(trendId, username);
-
-  const [trendLayoutMutation] = useMutation(upsertTrendLayout);
   const [showDatasetPicker, setShowDatasetPicker] = useState({});
 
   const onGridLayoutChange = (gridLayout) => {
     setLayout({
       ...layout,
       gridLayout: gridLayout
-    });
-  };
-
-  const onAddCell = () => {
-    const newGridLayout = [...layout.gridLayout];
-    const newGridContent = [...layout.gridContent];
-    const newIndex = Math.max(...(layout.gridLayout.map((v) => Number(v.i)))) + 1;
-    newGridLayout.push({
-      i: newIndex.toString(),
-      x: 0,
-      y: Infinity,
-      w: 1,
-      h: 1
-    });
-    newGridContent.push(getDefaultCellContent(newIndex));
-    setLayout({
-      ...layout,
-      gridLayout: newGridLayout,
-      gridContent: newGridContent
     });
   };
 
@@ -57,15 +34,6 @@ export const LayoutEditor = ({username}) => {
       gridLayout: newGridLayout,
       gridContent: newGridContent
     });
-  };
-
-  const onSaveLayout = () => {
-    console.log("SAVING:", layout);
-    trendLayoutMutation({
-      variables: {
-        trendLayout: layout
-      }
-    }).then();
   };
 
   const onSaveCellContent = (content) => {
@@ -83,14 +51,6 @@ export const LayoutEditor = ({username}) => {
 
   return (
     <Fragment>
-      <ButtonToolbar className="justify-content-between" aria-label="Toolbar with Button groups">
-        <ButtonGroup aria-label="First group">
-          <Button onClick={onAddCell}>Add Cell</Button>{' '}
-        </ButtonGroup>
-        <ButtonGroup>
-          <Button onClick={onSaveLayout}>Save Layout</Button>
-        </ButtonGroup>
-      </ButtonToolbar>
       <GridLayout layout={layout.gridLayout}
                   cols={12}
                   rowHeight={50}

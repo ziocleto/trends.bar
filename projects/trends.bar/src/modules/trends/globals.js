@@ -44,23 +44,25 @@ export const useGetTrend = (trendId, username) => {
   });
 
   useEffect(() => {
-    trendDataQuery.refetch().then(() => {
-        if ( checkQueryHasLoadedWithData(trendDataQuery) ) {
-          const queryData = getQueryLoadedWithValueArrayNotEmpty(trendDataQuery);
-          if (queryData) {
-            const gt = graphArrayToGraphTree2(queryData, "yValueGroup", "yValueSubGroup", "yValueName", "values");
-            setDatasets({
-              ...datasets,
-              ...gt
-            });
-          } else {
-            setDatasets({});
+    if ( username && trendId ) {
+      trendDataQuery.refetch().then(() => {
+          if ( checkQueryHasLoadedWithData(trendDataQuery) ) {
+            const queryData = getQueryLoadedWithValueArrayNotEmpty(trendDataQuery);
+            if (queryData) {
+              const gt = graphArrayToGraphTree2(queryData, "yValueGroup", "yValueSubGroup", "yValueName", "values");
+              setDatasets({
+                ...datasets,
+                ...gt
+              });
+            } else {
+              setDatasets({});
+            }
           }
         }
-      }
-    );
+      );
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [trendDataQuery]);
+  }, [trendDataQuery, username, trendId]);
 
   useEffect(() => {
     if ( datasets ) {
