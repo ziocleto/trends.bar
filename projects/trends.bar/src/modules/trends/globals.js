@@ -3,15 +3,15 @@ import {getFileNameOnlyNoExt, sanitizeURLParams} from "../../futuremodules/utils
 import {useLocation} from "react-router-dom";
 import {useQuery} from "@apollo/react-hooks";
 import {getTrendGraphsByUserTrendId, getTrendLayouts} from "./queries";
-import {getDefaultTrendLayout, globalLayoutState} from "./layout";
+import {getDefaultTrendLayout} from "./layout";
 import {getQueryLoadedWithValueArrayNotEmpty} from "../../futuremodules/graphqlclient/query";
 import {graphArrayToGraphTree2} from "./dataGraphs";
+import {useState} from "react";
 
 const uniqueNamesGenerator = require('project-name-generator');
 
 export const EditingUserTrend            = 'editingUserTrend';
 export const EditingUserTrendDataSource  = 'editingUserTrendDataSource';
-export const EditingLayoutDataSource     = 'editingLayoutDataSource';
 export const currentUserTrends           = 'currentUserTrends';
 
 export const generateUniqueNameWithArrayCheck = (arrayToCheck) => {
@@ -29,9 +29,9 @@ export const useTrendIdGetter = () => {
 };
 
 export const useGetTrend = (trendId, username) => {
-  const [datasets, setDatasets] = useGlobal(EditingLayoutDataSource);
+  const [datasets, setDatasets] = useState();
+  const [layout, setLayout] = useState();
   const trendLayoutQuery = useQuery(getTrendLayouts(), {variables: {name: username, trendId: trendId}});
-  const [layout, setLayout] = useGlobal(globalLayoutState);
 
   const trendDataQuery = useQuery(getTrendGraphsByUserTrendId(), {
     variables: {
@@ -48,7 +48,7 @@ export const useGetTrend = (trendId, username) => {
           setDatasets({
             ...datasets,
             ...gt
-          }).then();
+          });
         }
       }
     );
@@ -60,14 +60,14 @@ export const useGetTrend = (trendId, username) => {
       trendLayoutQuery.refetch().then(() => {
           const queryLayout = getQueryLoadedWithValueArrayNotEmpty(trendLayoutQuery);
           if (queryLayout) {
-            setLayout(queryLayout[0]).then();
+            setLayout(queryLayout[0]);
           } else {
             const ll = {
               ...getDefaultTrendLayout(datasets),
               trendId,
               username
             };
-            setLayout(ll).then();
+            setLayout(ll);
           }
         }
       );

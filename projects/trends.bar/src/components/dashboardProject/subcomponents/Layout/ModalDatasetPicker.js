@@ -1,8 +1,6 @@
-import React, {Fragment, useGlobal} from "reactn";
+import React, {Fragment} from "reactn";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
-import {EditingLayoutDataSource} from "../../../../modules/trends/globals";
-import {useGlobalState} from "../../../../futuremodules/globalhelper/globalHelper";
 import {ScriptElementsContainer, ScriptKeyContainer, ScriptKeyContainerTitle} from "../DataSources/DataSources-styled";
 import {Col, Container, Row} from "react-bootstrap";
 import {
@@ -22,21 +20,14 @@ import {modalGraphTreeHeight} from "./ModalDatasetPicker-styled";
 import {ContentWidgetText} from "../ContentWidgets/ContentWidgetText";
 import {ContentWidgetMenuBar} from "./LayoutEditor.styled";
 import {ContentWidgetTable} from "../ContentWidgets/ContentWidgetTable";
-import {getFirstValue, getLastValue, globalLayoutState} from "../../../../modules/trends/layout";
+import {getFirstValue, getLastValue} from "../../../../modules/trends/layout";
 import {ContentWidgetTextSingle} from "../ContentWidgets/ContentWidgetTextSingle";
 import {ContentWidgetTextWithSubtitle} from "../ContentWidgets/ContentWidgetTextWithSubtitle";
 import {ContentWidgetGraphXY} from "../ContentWidgets/ContentWidgetGraphXY";
 
-export const ModalDatasetPixel = (props) => {
+export const ModalDatasetPixel = ({datasets, layout, setLayout, config, onClose}) => {
 
-  const datasets = useGlobalState(EditingLayoutDataSource);
-  const [layout, setLayout] = useGlobal(globalLayoutState);
-
-  if (!datasets || !layout) {
-    return <Fragment/>
-  }
-
-  const keys = layout.gridContent[props.cellIndex];
+  const keys = config;
 
   const setWidgetData = (groupKey, subGroupKey, valueNameKey, valueFunctionName) => {
     return {
@@ -51,7 +42,7 @@ export const ModalDatasetPixel = (props) => {
     setLayout({
       ...layout,
       gridContent: gc
-    }).then();
+    });
   };
 
   const setGroupKey = (groupKey) => {
@@ -60,8 +51,8 @@ export const ModalDatasetPixel = (props) => {
     const subGroupKey = Object.keys(datasets[groupKey])[0];
     const valueNameKey = Object.keys(datasets[groupKey][Object.keys(datasets[groupKey])[0]])[0];
 
-    gc[props.cellIndex] = {
-      ...gc[props.cellIndex],
+    gc[config.i] = {
+      ...gc[config.i],
       ...setWidgetData(groupKey, subGroupKey, valueNameKey, keys.valueFunctionName)
     };
 
@@ -71,8 +62,8 @@ export const ModalDatasetPixel = (props) => {
   const setSubGroupKey = (subGroupKey) => {
     let gc = layout.gridContent;
 
-    gc[props.cellIndex] = {
-      ...gc[props.cellIndex],
+    gc[config.i] = {
+      ...gc[config.i],
       ...setWidgetData(keys.groupKey, subGroupKey, keys.valueNameKey, keys.valueFunctionName)
     };
 
@@ -82,8 +73,8 @@ export const ModalDatasetPixel = (props) => {
   const setValueNameKey = (valueNameKey) => {
     let gc = layout.gridContent;
 
-    gc[props.cellIndex] = {
-      ...gc[props.cellIndex],
+    gc[config.i] = {
+      ...gc[config.i],
       ...setWidgetData(keys.groupKey, keys.subGroupKey, valueNameKey, keys.valueFunctionName)
     };
 
@@ -93,8 +84,8 @@ export const ModalDatasetPixel = (props) => {
   const setValueFunction = (valueFunctionName) => {
     let gc = layout.gridContent;
 
-    gc[props.cellIndex] = {
-      ...gc[props.cellIndex],
+    gc[config.i] = {
+      ...gc[config.i],
       ...setWidgetData(keys.groupKey, keys.subGroupKey, keys.valueNameKey, valueFunctionName)
     };
 
@@ -104,8 +95,8 @@ export const ModalDatasetPixel = (props) => {
   const setWidgetType = (widgetType) => {
     let gc = layout.gridContent;
 
-    gc[props.cellIndex] = {
-      ...gc[props.cellIndex],
+    gc[config.i] = {
+      ...gc[config.i],
       type: widgetType
     };
 
@@ -120,7 +111,7 @@ export const ModalDatasetPixel = (props) => {
           aria-labelledby="contained-modal-title-vcenter"
           centered
           show={true}
-          onHide={() => props.onClose()}
+          onHide={() => onClose()}
         >
           <Modal.Body>
             <ContentWidgetMenuBar>
@@ -156,7 +147,7 @@ export const ModalDatasetPixel = (props) => {
                 <ButtonDiv
                   color={"light"}
                   hoveredColor={"var(--info)"}
-                  onClick={() => props.onClose()}>
+                  onClick={() => onClose()}>
                   <i className={"fas fa-times"}/>
                 </ButtonDiv>
               </Flex>
@@ -274,7 +265,7 @@ export const ModalDatasetPixel = (props) => {
           </Modal.Body>
           <Modal.Footer>
             <Button variant="primary" onClick={() => {
-              props.onClose(false)
+              onClose(false)
             }}>
               Close
             </Button>

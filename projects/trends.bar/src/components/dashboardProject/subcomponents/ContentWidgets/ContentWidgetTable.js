@@ -1,15 +1,8 @@
-import "../Layout/react-grid-styles.css"
-import "../Layout/react-resizable-styles.css"
-
 import React, {Fragment} from "react";
 import Table from "react-bootstrap/Table";
 import {getLastValue} from "../../../../modules/trends/layout";
-import {useGlobalState} from "../../../../futuremodules/globalhelper/globalHelper";
-import {EditingLayoutDataSource} from "../../../../modules/trends/globals";
 
-export const ContentWidgetTable = ({config}) => {
-
-  const datasets = useGlobalState(EditingLayoutDataSource);
+export const ContentWidgetTable = ({datasets, config}) => {
 
   if (!datasets) {
     return <Fragment/>

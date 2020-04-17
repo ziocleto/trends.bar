@@ -11,6 +11,7 @@ import {useMutation} from "@apollo/react-hooks";
 import {useGetTrend, useTrendIdGetter} from "../../../../modules/trends/globals";
 import {ButtonDiv, DangerColorSpan} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {LayoutContentWidget} from "./LayoutContentWidget";
+import {SpinnerTopMiddle} from "../../../../futuremodules/spinner/Spinner";
 
 export const LayoutEditor = ({username}) => {
 
@@ -24,7 +25,7 @@ export const LayoutEditor = ({username}) => {
     setLayout({
       ...layout,
       gridLayout: gridLayout
-    }).then();
+    });
   };
 
   const onAddCell = () => {
@@ -77,7 +78,7 @@ export const LayoutEditor = ({username}) => {
   };
 
   if (!layout || !datasets) {
-    return <Fragment/>
+    return <SpinnerTopMiddle/>
   }
 
   return (
@@ -98,10 +99,12 @@ export const LayoutEditor = ({username}) => {
         {layout.gridLayout.map(elem => {
           return (
             <DivLayout key={elem.i}>
-              <LayoutContentWidget data={datasets}
+              <LayoutContentWidget datasets={datasets}
+                                   layout={layout}
+                                   setLayout={setLayout}
+                                   config={layout.gridContent[layout.gridLayout.findIndex(v => v.i === elem.i)]}
                                    showDatasetPicker={showDatasetPicker}
                                    setShowDatasetPicker={setShowDatasetPicker}
-                                   cellIndex={elem.i}
                                    onSave={onSaveCellContent}
               />
               <SpanRemoveLayoutCell title="Remove element">
