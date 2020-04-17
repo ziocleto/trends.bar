@@ -4,11 +4,6 @@ import "./react-resizable-styles.css"
 import React, {Fragment, useState} from "reactn";
 import GridLayout from 'react-grid-layout';
 import {DivLayout, SpanEditLayoutCell, SpanRemoveLayoutCell} from "./LayoutEditor.styled";
-import {Button, ButtonGroup, ButtonToolbar} from "react-bootstrap";
-import {getDefaultCellContent} from "../../../../modules/trends/layout";
-import {upsertTrendLayout} from "../../../../modules/trends/mutations";
-import {useMutation} from "@apollo/react-hooks";
-import {useGetTrend, useTrendIdGetter} from "../../../../modules/trends/globals";
 import {ButtonDiv, DangerColorSpan} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {LayoutContentWidget} from "./LayoutContentWidget";
 import {SpinnerTopMiddle} from "../../../../futuremodules/spinner/Spinner";

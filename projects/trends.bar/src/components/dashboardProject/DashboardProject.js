@@ -2,11 +2,11 @@ import React, {useGlobal, withGlobal} from "reactn";
 import {getAuthUserName, getAuthWithGlobal} from "../../futuremodules/auth/authAccessors";
 import {Redirect} from "react-router-dom";
 import {DataSources} from "./subcomponents/DataSources/DataSources";
-import {Button, ButtonGroup, ButtonToolbar, Tab, Tabs} from "react-bootstrap";
-import {ProjectClose, ProjectContent, ProjectTabs} from "./DashboardProject.styled";
+import {Button, ButtonGroup, ButtonToolbar} from "react-bootstrap";
+import {ProjectContent} from "./DashboardProject.styled";
 import {Fragment, useState} from "react";
 import {LayoutEditor} from "./subcomponents/Layout/LayoutEditor";
-import {ButtonDiv, FlexToolbar, FlexWithBorder} from "../../futuremodules/reactComponentStyles/reactCommon.styled";
+import {FlexToolbar} from "../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {EditingUserTrend, useGetTrend, useTrendIdGetter} from "../../modules/trends/globals";
 import {getDefaultCellContent} from "../../modules/trends/layout";
 import {RocketTitle} from "../../futuremodules/reactComponentStyles/reactCommon";
@@ -15,7 +15,8 @@ import {upsertTrendLayout} from "../../modules/trends/mutations";
 
 const DashboardProject = (props) => {
 
-  const [activeTab, setActiveTab] = useState("Layout");
+  const dataSourcesId = "DataSources";
+  const [activeTab, setActiveTab] = useState(null);
   const [currEditingTrend, setEditingUserTrend] = useGlobal(EditingUserTrend);
   const username = getAuthUserName(props.auth);
   const trendId = useTrendIdGetter();
@@ -62,38 +63,35 @@ const DashboardProject = (props) => {
 
   return (
     <Fragment>
-      <FlexToolbar margin={"10px"}>
-      <ButtonToolbar className="justify-content-between" aria-label="Toolbar with Button groups">
-        <ButtonGroup aria-label="First group">
-          <Button onClick={onAddCell}>Add Cell</Button>{' '}
-        </ButtonGroup>
-        <ButtonGroup>
+      <FlexToolbar margin={"12px"}>
+        <div>
+          <ButtonToolbar>
+            <ButtonGroup className="mr-2">
+              <Button variant={"outline-secondary"} onClick={() => setEditingUserTrend(null)}><b><i
+                className="fas fa-times"/></b></Button>
+            </ButtonGroup>
+            <ButtonGroup className="mr-2">
+              <Button onClick={() => setActiveTab(dataSourcesId)}>Sources</Button>{' '}
+            </ButtonGroup>
+            <ButtonGroup className="mr-2">
+              <Button onClick={onAddCell}>Add Cell</Button>{' '}
+            </ButtonGroup>
+          </ButtonToolbar>
+        </div>
+        <div>
           <Button variant={"outline-success"} onClick={onSaveLayout}><RocketTitle text={"Publish"}/></Button>
-        </ButtonGroup>
-      </ButtonToolbar>
+        </div>
       </FlexToolbar>
-
-      <ProjectClose>
-        <ButtonDiv onClick={ () => setEditingUserTrend(null)}>
-          <b><i className="fas fa-times"/></b>
-        </ButtonDiv>
-      </ProjectClose>
       <ProjectContent>
-        <Tabs id={"ptabid"} activeKey={activeTab} onSelect={k => {
-          setActiveTab(k)
-        }}>
-          <Tab eventKey="Layout" title="Layout">
-            <LayoutEditor
-              username={username}
-              layout={layout}
-              setLayout={setLayout}
-              datasets={datasets}
-            />
-          </Tab>
-          <Tab eventKey="DataSources" title="DataSources">
-            <DataSources username={username}/>
-          </Tab>
-        </Tabs>
+        {!activeTab &&
+        <LayoutEditor
+          username={username}
+          layout={layout}
+          setLayout={setLayout}
+          datasets={datasets}
+        />
+        }
+        {activeTab && activeTab === dataSourcesId && <DataSources username={username}/>}
       </ProjectContent>
     </Fragment>
   );
