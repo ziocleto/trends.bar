@@ -15,18 +15,6 @@ export const DivLayoutStatic = styled.div` {
   overflow:scroll;
 }`;
 
-export const DivFixedCenter = styled.div` {
-  position:fixed;
-  top:50%;
-  left:50%;
-}`;
-
-export const DivFixedCenterTopMiddle = styled.div` {
-  position:fixed;
-  top:25%;
-  left:50%;
-}`;
-
 export const SpanRemoveLayoutCell = styled.span` {
     position:absolute;
     padding: 4px 7px;
