@@ -40,7 +40,7 @@ export const LayoutEditor = ({layout, setLayout, datasets, username}) => {
     });
   };
 
-  if (!layout || !datasets) {
+  if (!layout) {
     return <SpinnerTopMiddle/>
   }
 

@@ -180,7 +180,7 @@ export const ModalDatasetPixel = ({datasets, layout, setLayout, config, onClose}
                       justifyContent={"start"}
                       height={modalGraphTreeHeight}
                     >
-                      {Object.keys(datasets).map(elem =>
+                      {datasets && Object.keys(datasets).map(elem =>
                         (<ScriptKeyContainer key={elem}
                                              selected={elem === keys.groupKey}
                                              onClick={e => setGroupKey(elem)}>
@@ -200,7 +200,7 @@ export const ModalDatasetPixel = ({datasets, layout, setLayout, config, onClose}
                       justifyContent={"start"}
                       height={modalGraphTreeHeight}
                     >
-                      {keys.groupKey && Object.keys(datasets[keys.groupKey]).map(elem =>
+                      {datasets && keys.groupKey && Object.keys(datasets[keys.groupKey]).map(elem =>
                         (<ScriptKeyContainer key={elem}
                                              selected={elem === keys.subGroupKey}
                                              onClick={(e) => setSubGroupKey(elem)}
@@ -221,7 +221,7 @@ export const ModalDatasetPixel = ({datasets, layout, setLayout, config, onClose}
                       justifyContent={"start"}
                       height={modalGraphTreeHeight}
                     >
-                      {keys.subGroupKey && Object.keys(datasets[keys.groupKey][keys.subGroupKey]).map(elem =>
+                      {datasets && keys.subGroupKey && Object.keys(datasets[keys.groupKey][keys.subGroupKey]).map(elem =>
                         (<ScriptKeyContainer key={keys.groupKey + keys.subGroupKey + elem}
                                              selected={elem === keys.valueNameKey}
                                              onClick={() => setValueNameKey(elem)}
@@ -242,7 +242,7 @@ export const ModalDatasetPixel = ({datasets, layout, setLayout, config, onClose}
                       justifyContent={"start"}
                       height={modalGraphTreeHeight}
                     >
-                      {keys.valueNameKey &&
+                      {datasets &&  keys.valueNameKey &&
                       <Fragment>
                         <ScriptKeyContainer key={keys.groupKey + keys.subGroupKey + keys.valueNameKey + "last"}
                                             selected={keys.valueFunctionName === getLastValue.name}
