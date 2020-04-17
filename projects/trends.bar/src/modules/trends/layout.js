@@ -48,7 +48,7 @@ export const getDefaultTrendLayout = (datasets) => {
 
 export const getDefaultCellContent = (i, datasets) => {
   return getDefaultWidgetContent("text", i, datasets);
-}
+};
 
 export const getDefaultWidgetContent = (type, i, datasets) => {
   switch (type) {
@@ -93,7 +93,7 @@ const getDefaultWidgetGraphXYContent = (i) => {
       getDefaultWidgetGraphXYSerieContent()
     ]
   }
-}
+};
 
 export const getDefaultWidgetGraphXYSerieContent = () => {
   return {
@@ -108,7 +108,7 @@ export const getDefaultWidgetGraphXYSerieContent = () => {
     lineWidth: "1",
     lineStyle: "1"
   }
-}
+};
 
 const getDefaultWidgetTextContent = (i, datasets) => {
   const ds = startupState(datasets);
@@ -131,7 +131,7 @@ const getDefaultWidgetTableContent = (i) => {
       getDefaultWidgetTableColumnContent()
     ]
   };
-}
+};
 
 export const getDefaultWidgetTableColumnContent = () => {
   return {
@@ -140,4 +140,4 @@ export const getDefaultWidgetTableColumnContent = () => {
     field: "y",
     transform: ""
   }
-}
+};

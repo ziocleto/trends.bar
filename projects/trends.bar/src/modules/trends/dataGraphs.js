@@ -1,40 +1,4 @@
-import gql from "graphql-tag";
 import {arrayExistsNotEmpty} from "../../futuremodules/utils/utils";
-
-export const getTrendGraphs = () => {
-
-  return gql`query trendGraphs($name:String!, $trendId:String!) {
-      user (name:$name) {
-          name
-          trend(trendId:$trendId) {
-              trendId
-              username
-              trendGraphs {
-                  title
-                  label
-                  yValueGroup
-                  values{
-                      x
-                      y
-                  }
-                  valuesDx{
-                      x
-                      y
-                  }
-                  valuesDxPerc{
-                      x
-                      y
-                  }
-                  valuesDx2{
-                      x
-                      y
-                  }
-              }
-          }
-      }
-  }
-  `;
-}
 
 export const hasGraphData = data => {
   return data !== undefined && data.length !== 0;
