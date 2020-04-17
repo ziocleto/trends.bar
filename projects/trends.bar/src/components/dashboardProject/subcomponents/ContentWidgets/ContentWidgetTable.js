@@ -23,7 +23,7 @@ export const ContentWidgetTable = ({config}) => {
       <tr>
         <th>{config.groupKey}</th>
         {Object.keys(datasets[config.groupKey][vn]).map(elem =>
-          <th>
+          <th key={elem}>
             {elem}
           </th>
         )}
@@ -31,12 +31,12 @@ export const ContentWidgetTable = ({config}) => {
       </thead>
       <tbody>
       {Object.keys(datasets[config.groupKey]).map(gk =>
-        <tr>
+        <tr key={gk}>
           <td>
             {gk}
           </td>
           {Object.keys(datasets[config.groupKey][vn]).map(elem =>
-            <td>
+            <td key={config.groupKey+ gk+ elem}>
               {getLastValue(config.groupKey, gk, elem, datasets)}
             </td>
           )}

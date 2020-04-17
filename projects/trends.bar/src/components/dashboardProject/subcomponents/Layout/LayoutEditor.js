@@ -1,71 +1,30 @@
 import "./react-grid-styles.css"
 import "./react-resizable-styles.css"
 
-import React, {Fragment, useEffect, useGlobal, useState} from "reactn";
+import React, {Fragment, useState} from "reactn";
 import GridLayout from 'react-grid-layout';
 import {DivLayout, SpanEditLayoutCell, SpanRemoveLayoutCell} from "./LayoutEditor.styled";
 import {Button, ButtonGroup, ButtonToolbar} from "react-bootstrap";
-import {getDefaultCellContent, getDefaultTrendLayout, globalLayoutState} from "../../../../modules/trends/layout";
+import {getDefaultCellContent} from "../../../../modules/trends/layout";
 import {upsertTrendLayout} from "../../../../modules/trends/mutations";
-import {useMutation, useQuery} from "@apollo/react-hooks";
-import {getTrendLayouts} from "../../../../modules/trends/queries";
-import {EditingLayoutDataSource, useTrendIdGetter} from "../../../../modules/trends/globals";
-import {getQueryLoadedWithValueArrayNotEmpty} from "../../../../futuremodules/graphqlclient/query";
-import {
-  ButtonDiv,
-  DangerColorSpan,
-  Logo1TextSpan
-} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
-import {useGlobalState} from "../../../../futuremodules/globalhelper/globalHelper";
+import {useMutation} from "@apollo/react-hooks";
+import {useGetTrend, useTrendIdGetter} from "../../../../modules/trends/globals";
+import {ButtonDiv, DangerColorSpan} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {LayoutContentWidget} from "./LayoutContentWidget";
 
 export const LayoutEditor = ({username}) => {
 
   const trendId = useTrendIdGetter();
-  const datasets = useGlobalState(EditingLayoutDataSource);
-  const [showDatasetPicker, setShowDatasetPicker] = useState({});
+  const { layout, setLayout, datasets } = useGetTrend(trendId, username);
 
   const [trendLayoutMutation] = useMutation(upsertTrendLayout);
-  const trendLayoutQuery = useQuery(getTrendLayouts(), {variables: {name: username, trendId: trendId}});
-
-  const [layout, setLayout] = useGlobal(globalLayoutState);
-
-  // useEffect(() => {
-  //   if (!layout && datasets) {
-  //     const ll = {
-  //       ...getDefaultTrendLayout(datasets),
-  //       trendId,
-  //       username
-  //     };
-  //     setLayout(ll).then();
-  //   }
-  // }, [layout, setLayout, datasets, trendId, username]);
-
-  useEffect(() => {
-    if ( datasets ) {
-      trendLayoutQuery.refetch().then(() => {
-          const queryLayout = getQueryLoadedWithValueArrayNotEmpty(trendLayoutQuery);
-          if (queryLayout) {
-            setLayout(queryLayout[0]).then();
-          } else {
-            console.log("ohoh");
-            const ll = {
-              ...getDefaultTrendLayout(datasets),
-              trendId,
-              username
-            };
-            setLayout(ll).then();
-          }
-        }
-      );
-    }
-  }, [trendLayoutQuery, setLayout, datasets]);
+  const [showDatasetPicker, setShowDatasetPicker] = useState({});
 
   const onGridLayoutChange = (gridLayout) => {
     setLayout({
       ...layout,
       gridLayout: gridLayout
-    });
+    }).then();
   };
 
   const onAddCell = () => {

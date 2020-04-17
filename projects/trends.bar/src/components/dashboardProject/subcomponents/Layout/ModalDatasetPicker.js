@@ -8,11 +8,10 @@ import {Col, Container, Row} from "react-bootstrap";
 import {
   ButtonBgDiv,
   ButtonDiv,
-  DangerColorSpan,
   Div,
   Flex,
   FlexVertical,
-  Mx05, RoundButtonDiv
+  Mx05
 } from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {
   RowSeparator,
@@ -23,7 +22,7 @@ import {modalGraphTreeHeight} from "./ModalDatasetPicker-styled";
 import {ContentWidgetText} from "../ContentWidgets/ContentWidgetText";
 import {ContentWidgetMenuBar} from "./LayoutEditor.styled";
 import {ContentWidgetTable} from "../ContentWidgets/ContentWidgetTable";
-import {getLastValue, globalLayoutState, getFirstValue} from "../../../../modules/trends/layout";
+import {getFirstValue, getLastValue, globalLayoutState} from "../../../../modules/trends/layout";
 import {ContentWidgetTextSingle} from "../ContentWidgets/ContentWidgetTextSingle";
 import {ContentWidgetTextWithSubtitle} from "../ContentWidgets/ContentWidgetTextWithSubtitle";
 import {ContentWidgetGraphXY} from "../ContentWidgets/ContentWidgetGraphXY";
