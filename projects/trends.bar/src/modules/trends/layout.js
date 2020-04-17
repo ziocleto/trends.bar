@@ -9,6 +9,10 @@ export const getLastValue = (groupKey, subGroupKey, valueNameKey, datasets) => {
   return ds[ds.length - 1].y;
 };
 
+export const getEmptyDefaultValue = (groupKey, subGroupKey, valueNameKey, datasets) => {
+  return "Fill me with ideas";
+};
+
 export const resolveFunction = (valueFunctionName, groupKey, subGroupKey, valueNameKey, datasets) => {
   switch (valueFunctionName) {
     case "getLastValue":
@@ -69,9 +73,9 @@ export const getDefaultWidgetContent = (type, i, datasets) => {
 
 const startupState = (datasets) => {
   const groupKey = Object.keys(datasets)[0];
-  const subGroupKey = Object.keys(datasets[Object.keys(datasets)[0]])[0];
-  const valueNameKey = Object.keys(datasets[Object.keys(datasets)[0]][Object.keys(datasets[Object.keys(datasets)[0]])[0]])[0];
-  const valueFunction = getLastValue;
+  const subGroupKey = groupKey && Object.keys(datasets[Object.keys(datasets)[0]])[0];
+  const valueNameKey = subGroupKey && Object.keys(datasets[Object.keys(datasets)[0]][Object.keys(datasets[Object.keys(datasets)[0]])[0]])[0];
+  const valueFunction = valueNameKey ? getLastValue : getEmptyDefaultValue;
   return {
     groupKey,
     subGroupKey,

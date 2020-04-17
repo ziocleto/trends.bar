@@ -4,7 +4,10 @@ import {useLocation} from "react-router-dom";
 import {useQuery} from "@apollo/react-hooks";
 import {getTrendGraphsByUserTrendId, getTrendLayouts} from "./queries";
 import {getDefaultTrendLayout} from "./layout";
-import {getQueryLoadedWithValueArrayNotEmpty} from "../../futuremodules/graphqlclient/query";
+import {
+  checkQueryHasLoadedWithData,
+  getQueryLoadedWithValueArrayNotEmpty
+} from "../../futuremodules/graphqlclient/query";
 import {graphArrayToGraphTree2} from "./dataGraphs";
 import {useState} from "react";
 
@@ -42,13 +45,17 @@ export const useGetTrend = (trendId, username) => {
 
   useEffect(() => {
     trendDataQuery.refetch().then(() => {
-        const queryData = getQueryLoadedWithValueArrayNotEmpty(trendDataQuery);
-        if (queryData) {
-          const gt = graphArrayToGraphTree2(queryData, "yValueGroup", "yValueSubGroup", "yValueName", "values");
-          setDatasets({
-            ...datasets,
-            ...gt
-          });
+        if ( checkQueryHasLoadedWithData(trendDataQuery) ) {
+          const queryData = getQueryLoadedWithValueArrayNotEmpty(trendDataQuery);
+          if (queryData) {
+            const gt = graphArrayToGraphTree2(queryData, "yValueGroup", "yValueSubGroup", "yValueName", "values");
+            setDatasets({
+              ...datasets,
+              ...gt
+            });
+          } else {
+            setDatasets({});
+          }
         }
       }
     );
