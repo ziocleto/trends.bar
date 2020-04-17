@@ -78,8 +78,15 @@ export const getTrendLayouts = () => {
               gridContent {
                   type
                   i
+                  
+                  overtitle
                   title
                   subtitle
+
+                  groupKey
+                  subGroupKey
+                  valueNameKey
+                  valueFunctionName
 
                   tableKeyTitle
                   tableKeyQuery

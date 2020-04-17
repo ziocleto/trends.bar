@@ -23,7 +23,7 @@ import {modalGraphTreeHeight} from "./ModalDatasetPicker-styled";
 import {ContentWidgetText} from "../ContentWidgets/ContentWidgetText";
 import {ContentWidgetMenuBar} from "./LayoutEditor.styled";
 import {ContentWidgetTable} from "../ContentWidgets/ContentWidgetTable";
-import {getLastValue, globalLayoutState, setFirstValue} from "../../../../modules/trends/layout";
+import {getLastValue, globalLayoutState, getFirstValue} from "../../../../modules/trends/layout";
 import {ContentWidgetTextSingle} from "../ContentWidgets/ContentWidgetTextSingle";
 import {ContentWidgetTextWithSubtitle} from "../ContentWidgets/ContentWidgetTextWithSubtitle";
 import {ContentWidgetGraphXY} from "../ContentWidgets/ContentWidgetGraphXY";
@@ -37,33 +37,14 @@ export const ModalDatasetPixel = (props) => {
     return <Fragment/>
   }
 
-  // useEffect(() => {
-  //   if ( datasets ) {
-  //     if ( !keys ) {
-  //       setKeys(startupState());
-  //     } else {
-  //       const value = keys.valueFunction(keys);
-  //       props.updater({
-  //         title: value,
-  //         subtitle: keys.valueNameKey,
-  //         groupKey: keys.groupKey,
-  //         subGroupKey: keys.subGroupKey,
-  //         valueNameKey: keys.valueNameKey,
-  //         valueFunction: keys.valueFunction
-  //       });
-  //     }
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [keys, datasets]);
-
   const keys = layout.gridContent[props.cellIndex];
 
-  const setWidgetData = (groupKey, subGroupKey, valueNameKey, valueFunction) => {
+  const setWidgetData = (groupKey, subGroupKey, valueNameKey, valueFunctionName) => {
     return {
       groupKey,
       subGroupKey,
       valueNameKey,
-      valueFunction,
+      valueFunctionName,
     }
   };
 
@@ -82,7 +63,7 @@ export const ModalDatasetPixel = (props) => {
 
     gc[props.cellIndex] = {
       ...gc[props.cellIndex],
-      ...setWidgetData(groupKey, subGroupKey, valueNameKey, keys.valueFunction)
+      ...setWidgetData(groupKey, subGroupKey, valueNameKey, keys.valueFunctionName)
     };
 
     setGridContent(gc);
@@ -93,7 +74,7 @@ export const ModalDatasetPixel = (props) => {
 
     gc[props.cellIndex] = {
       ...gc[props.cellIndex],
-      ...setWidgetData(keys.groupKey, subGroupKey, keys.valueNameKey, keys.valueFunction)
+      ...setWidgetData(keys.groupKey, subGroupKey, keys.valueNameKey, keys.valueFunctionName)
     };
 
     setGridContent(gc);
@@ -104,18 +85,18 @@ export const ModalDatasetPixel = (props) => {
 
     gc[props.cellIndex] = {
       ...gc[props.cellIndex],
-      ...setWidgetData(keys.groupKey, keys.subGroupKey, valueNameKey, keys.valueFunction)
+      ...setWidgetData(keys.groupKey, keys.subGroupKey, valueNameKey, keys.valueFunctionName)
     };
 
     setGridContent(gc);
   };
 
-  const setValueFunction = (valueFunction) => {
+  const setValueFunction = (valueFunctionName) => {
     let gc = layout.gridContent;
 
     gc[props.cellIndex] = {
       ...gc[props.cellIndex],
-      ...setWidgetData(keys.groupKey, keys.subGroupKey, keys.valueNameKey, valueFunction)
+      ...setWidgetData(keys.groupKey, keys.subGroupKey, keys.valueNameKey, valueFunctionName)
     };
 
     setGridContent(gc);
@@ -274,13 +255,13 @@ export const ModalDatasetPixel = (props) => {
                       {keys.valueNameKey &&
                       <Fragment>
                         <ScriptKeyContainer key={keys.groupKey + keys.subGroupKey + keys.valueNameKey + "last"}
-                                            selected={keys.valueFunction.toString() === getLastValue.toString()}
-                                            onClick={() => setValueFunction(getLastValue)}>
+                                            selected={keys.valueFunctionName === getLastValue.name}
+                                            onClick={() => setValueFunction(getLastValue.name)}>
                           Last
                         </ScriptKeyContainer>
                         <ScriptKeyContainer key={keys.groupKey + keys.subGroupKey + keys.valueNameKey + "first"}
-                                            selected={keys.valueFunction.toString() === setFirstValue.toString()}
-                                            onClick={() => setValueFunction(setFirstValue)}>
+                                            selected={keys.valueFunctionName === getFirstValue.name}
+                                            onClick={() => setValueFunction(getFirstValue.name)}>
                           First
                         </ScriptKeyContainer>
                       </Fragment>

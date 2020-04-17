@@ -29,30 +29,37 @@ export const LayoutEditor = ({username}) => {
   const trendLayoutQuery = useQuery(getTrendLayouts(), {variables: {name: username, trendId: trendId}});
 
   const [layout, setLayout] = useGlobal(globalLayoutState);
-  const [absoluteIndex, setAbsoluteIndex] = useState(0);
+
+  // useEffect(() => {
+  //   if (!layout && datasets) {
+  //     const ll = {
+  //       ...getDefaultTrendLayout(datasets),
+  //       trendId,
+  //       username
+  //     };
+  //     setLayout(ll).then();
+  //   }
+  // }, [layout, setLayout, datasets, trendId, username]);
 
   useEffect(() => {
-    if (!layout && datasets) {
-      const ll = {
-        ...getDefaultTrendLayout(datasets),
-        trendId,
-        username
-      };
-      setAbsoluteIndex(Math.max(...(ll.gridLayout.map((v) => Number(v.i)))) + 1);
-      setLayout(ll).then();
-    }
-  }, [layout, setLayout, datasets, trendId, username]);
-
-  useEffect(() => {
-    trendLayoutQuery.refetch().then(() => {
-        const queryLayout = getQueryLoadedWithValueArrayNotEmpty(trendLayoutQuery);
-        if (queryLayout) {
-          setLayout(queryLayout[0]);
-          setAbsoluteIndex(Math.max(...(queryLayout[0].gridLayout.map((v) => Number(v.i)))) + 1);
+    if ( datasets ) {
+      trendLayoutQuery.refetch().then(() => {
+          const queryLayout = getQueryLoadedWithValueArrayNotEmpty(trendLayoutQuery);
+          if (queryLayout) {
+            setLayout(queryLayout[0]).then();
+          } else {
+            console.log("ohoh");
+            const ll = {
+              ...getDefaultTrendLayout(datasets),
+              trendId,
+              username
+            };
+            setLayout(ll).then();
+          }
         }
-      }
-    );
-  }, [trendLayoutQuery, setLayout]);
+      );
+    }
+  }, [trendLayoutQuery, setLayout, datasets]);
 
   const onGridLayoutChange = (gridLayout) => {
     setLayout({
@@ -64,9 +71,7 @@ export const LayoutEditor = ({username}) => {
   const onAddCell = () => {
     const newGridLayout = [...layout.gridLayout];
     const newGridContent = [...layout.gridContent];
-    const newIndex = absoluteIndex;
-    console.log("NI" + newIndex);
-    setAbsoluteIndex(newIndex + 1);
+    const newIndex = Math.max(...(layout.gridLayout.map((v) => Number(v.i)))) + 1;
     newGridLayout.push({
       i: newIndex.toString(),
       x: 0,

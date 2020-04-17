@@ -1,6 +1,6 @@
 export const globalLayoutState = "globalLayoutState";
 
-export const setFirstValue = (groupKey, subGroupKey, valueNameKey, datasets) => {
+export const getFirstValue = (groupKey, subGroupKey, valueNameKey, datasets) => {
   return datasets[groupKey][subGroupKey][valueNameKey][0].y;
 };
 
@@ -8,6 +8,18 @@ export const getLastValue = (groupKey, subGroupKey, valueNameKey, datasets) => {
   const ds = datasets[groupKey][subGroupKey][valueNameKey];
   return ds[ds.length - 1].y;
 };
+
+export const resolveFunction = (valueFunctionName, groupKey, subGroupKey, valueNameKey, datasets) => {
+  switch (valueFunctionName) {
+    case "getLastValue":
+      return getLastValue(groupKey, subGroupKey, valueNameKey, datasets);
+    case "getFirstValue":
+      return getFirstValue(groupKey, subGroupKey, valueNameKey, datasets);
+    default:
+      return null;
+  }
+};
+
 
 export const getDefaultTrendLayout = (datasets) => {
 
@@ -60,16 +72,14 @@ const startupState = (datasets) => {
   const subGroupKey = Object.keys(datasets[Object.keys(datasets)[0]])[0];
   const valueNameKey = Object.keys(datasets[Object.keys(datasets)[0]][Object.keys(datasets[Object.keys(datasets)[0]])[0]])[0];
   const valueFunction = getLastValue;
-  const title = valueFunction(groupKey, subGroupKey, valueNameKey, datasets);
-  const subtitle = valueNameKey;
   return {
     groupKey,
     subGroupKey,
     valueNameKey,
-    valueFunction,
-    overtitle: subGroupKey,
-    title,
-    subtitle
+    valueFunctionName: valueFunction.name,
+    overtitle: "subGroupKey",
+    title: "valueFunction",
+    subtitle: "valueNameKey",
   }
 };
 

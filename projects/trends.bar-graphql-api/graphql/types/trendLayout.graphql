@@ -49,6 +49,11 @@ type ContentWidget {
     title: String
     subtitle: String
 
+    groupKey: String
+    subGroupKey: String
+    valueNameKey: String
+    valueFunctionName: String
+
     tableKeyTitle: String
     tableKeyQuery: String
     tableKeyField: String
@@ -87,6 +92,11 @@ input ContentWidgetInput {
     overtitle: String
     title: String
     subtitle: String
+
+    groupKey: String
+    subGroupKey: String
+    valueNameKey: String
+    valueFunctionName: String
 
     tableKeyTitle: String
     tableKeyQuery: String
