@@ -21,14 +21,14 @@ import {
 import {arrayExistsNotEmptyOnObject, arrayObjectExistsNotEmpty} from "../../../../futuremodules/utils/utils";
 import {GraphXY} from "../../../../futuremodules/graphs/GraphXY";
 import {alertSuccess, useAlert} from "../../../../futuremodules/alerts/alerts";
-import {graphArrayToGraphTree} from "../../../../modules/trends/dataGraphs";
+import {graphArrayToGraphTree2} from "../../../../modules/trends/dataGraphs";
 import {LabelWithRename} from "../../../../futuremodules/labelWithRename/LabelWithRename";
 import {useGlobalState, useGlobalUpdater} from "../../../../futuremodules/globalhelper/globalHelper";
 import {EditingUserTrendDataSource} from "../../../../modules/trends/globals";
 import {RowSeparator, RowSeparatorDouble} from "../../../../futuremodules/reactComponentStyles/reactCommon";
 import {isStatusCodeSuccessful} from "../../../../futuremodules/api/apiStatus";
 
-export const ScriptEditor = () => {
+export const ScriptEditor = ({datasets, setDatasets}) => {
 
   const [graphTree, setGraphTree] = useState(null);
   const setEditingDataSource = useGlobalUpdater(EditingUserTrendDataSource);
@@ -42,7 +42,8 @@ export const ScriptEditor = () => {
       (fetchResult.api === "script" && fetchResult.method === "post") ||
       (fetchResult.api === "script" && fetchResult.method === "patch"))) {
       const res = fetchResult.ret;
-      const gt = graphArrayToGraphTree(res.graphQueries, "yValueGroup", "yValueSubGroup");
+      const gt = graphArrayToGraphTree2(res.graphQueries, "yValueGroup", "yValueSubGroup", "yValueName", "values");
+      console.log(gt);
       const groupTabKey = Object.keys(gt)[0];
       const subGroupTabKey = Object.keys(gt[groupTabKey])[0];
       setGraphTree({
@@ -111,7 +112,7 @@ export const ScriptEditor = () => {
   const onDeleteEntity = (e, elem) => {
     e.stopPropagation();
     let tmp = graphTree;
-    tmp.tree[graphTree.groupTabKey][graphTree.subGroupTabKey] = tmp.tree[graphTree.groupTabKey][graphTree.subGroupTabKey].filter(e => e.yValueName !== elem);
+    delete tmp.tree[graphTree.groupTabKey][graphTree.subGroupTabKey][elem];
     if (Object.keys(tmp.tree[graphTree.groupTabKey][graphTree.subGroupTabKey]).length === 0) {
       delete tmp.tree[graphTree.groupTabKey][graphTree.subGroupTabKey];
       setFirstSubGroupKey(tmp);
@@ -157,16 +158,11 @@ export const ScriptEditor = () => {
 
   const renameYValueName = (oldName, newName) => {
     let tmp = graphTree;
-    tmp.tree[graphTree.groupTabKey][graphTree.subGroupTabKey].map(elem => {
-      if (elem.yValueName === oldName) {
-        elem.yValueName = newName;
-      }
-      return elem;
-    });
-    tmp.script.keys.y = tmp.script.keys.y.map(eg => {
-      if (eg.key === oldName) eg.key = newName;
-      return eg;
-    });
+
+    const values = tmp.tree[graphTree.groupTabKey][graphTree.subGroupTabKey][oldName];
+    delete tmp.tree[graphTree.groupTabKey][graphTree.subGroupTabKey][oldName];
+    tmp.tree[graphTree.groupTabKey][graphTree.subGroupTabKey][newName] = values;
+
     setGraphTree({...tmp});
   };
 
@@ -198,13 +194,13 @@ export const ScriptEditor = () => {
 
   const collectGraphData = (data) => {
     let graphData = [];
-    for (const dataset of data) {
+    for (const key in data) {
       const graph = [];
-      for (const v of dataset.values) {
+      for (const v of data[key]) {
         graph.push({x: new Date(v.x), y: v.y});
       }
       graphData.push({
-        name: dataset.yValueName,
+        name: key,
         data: graph
       });
     }
@@ -214,6 +210,10 @@ export const ScriptEditor = () => {
   const publishGraphs = () => {
     api(fetchApi, putScript, graphTree.script).then((r) => {
       if (isStatusCodeSuccessful(r.status.code)) {
+        setDatasets({
+          ...datasets,
+          ...graphTree.tree
+        });
         alertSuccess(alertStore, "All set and done!", () => setEditingDataSource(false));
       }
     });
@@ -364,18 +364,18 @@ export const ScriptEditor = () => {
                 </ScriptKeyContainerTitle>
                 <ScriptElementsContainer>
                   <FlexVertical>
-                    {graphTree.tree[graphTree.groupTabKey][graphTree.subGroupTabKey].map(elem =>
-                      (<ScriptKeyContainer key={elem.yValueName} variant={"light"}>
+                    {Object.keys(graphTree.tree[graphTree.groupTabKey][graphTree.subGroupTabKey]).map(elem =>
+                      (<ScriptKeyContainer key={elem} variant={"light"}>
                         <Flex>
                           <div>
                             <b>
                               <LabelWithRename
-                                defaultValue={elem.yValueName}
-                                updater={(newValue) => renameYValueName(elem.yValueName, newValue)}
+                                defaultValue={elem}
+                                updater={(newValue) => renameYValueName(elem, newValue)}
                               />
                             </b>
                           </div>
-                          <DeleteItem elem={elem.yValueName} callback={onDeleteEntity}/>
+                          <DeleteItem elem={elem} callback={onDeleteEntity}/>
                         </Flex>
                       </ScriptKeyContainer>)
                     )}

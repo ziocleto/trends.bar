@@ -8,8 +8,4 @@ export const trendGraphModel = mongoose.model("trend_graphs", new mongoose.Schem
   yValueGroup: {type: String},
   type: {type: String},
   values: [],
-  valuesDx: [],
-  valuesDx2: [],
-  valuesDxPerc: [],
-  dataset: {type: mongoose.Schema.Types.ObjectId, ref: 'datasets'},
 }, {strict: false}));

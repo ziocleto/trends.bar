@@ -21,7 +21,7 @@ const DashboardProject = (props) => {
   const [currEditingTrend, setEditingUserTrend] = useGlobal(EditingUserTrend);
   const username = getAuthUserName(props.auth);
   const trendId = useTrendIdGetter();
-  const {layout, setLayout, datasets} = useGetTrend(trendId, username);
+  const {layout, setLayout, datasets, setDatasets} = useGetTrend(trendId, username);
   const [trendLayoutMutation] = useMutation(upsertTrendLayout);
 
   if (props.auth === null) {
@@ -100,7 +100,7 @@ const DashboardProject = (props) => {
           datasets={datasets}
         />
         }
-        {activeTab && activeTab === dataSourcesId && <DataSources username={username}/>}
+        {activeTab && activeTab === dataSourcesId && <DataSources datasets={datasets} setDatasets={setDatasets}/>}
       </ProjectContent>
     </Fragment>
   );

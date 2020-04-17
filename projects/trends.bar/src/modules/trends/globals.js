@@ -41,22 +41,6 @@ export const useGetTrend = (trendId, username) => {
       trendQueryCall({
         variables: {name: username, trendId: trendId}
       });
-
-      // trendDataQuery.refetch().then(() => {
-      //     if ( checkQueryHasLoadedWithData(trendDataQuery) ) {
-      //       const queryData = getQueryLoadedWithValueArrayNotEmpty(trendDataQuery);
-      //       if (queryData) {
-      //         const gt = graphArrayToGraphTree2(queryData, "yValueGroup", "yValueSubGroup", "yValueName", "values");
-      //         setDatasets({
-      //           ...datasets,
-      //           ...gt
-      //         });
-      //       } else {
-      //         setDatasets({});
-      //       }
-      //     }
-      //   }
-      // );
     }
   }, [trendQueryCall, username, trendId]);
 

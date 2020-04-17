@@ -82,10 +82,10 @@ const getCSVKeys = (resjson) => {
   return keys;
 };
 
-const createDefaultScript = ( url, trendId, username) => {
+const createDefaultScript = (url, trendId, username) => {
   return {
     name: lastPathElement(url),
-    sourceDocument:url,
+    sourceDocument: url,
     trendId,
     username,
   };
@@ -93,7 +93,7 @@ const createDefaultScript = ( url, trendId, username) => {
 
 const runScript = async (script) => {
   const resjson = await fetchCSV(script.sourceDocument);
-  if ( !script.keys ) {
+  if (!script.keys) {
     script.keys = getCSVKeys(resjson);
   }
   const cruncher = new Cruncher(script.trendId, script.username, resjson, graphAssistant.xyDateInt(), "embedded");
@@ -101,14 +101,21 @@ const runScript = async (script) => {
   return {script, crawledText: resjson, graphQueries, error: null};
 };
 
+const findAllToArray = (retO) => {
+  let ret = [];
+  for (let elem of retO) {
+    ret.push(elem.toObject());
+  }
+  return ret;
+};
+
 router.get("/scripts/:trendId", async (req, res, next) => {
   try {
-    let retO = await crawlingScriptModel.find( { trendId: req.params.trendId, username: req.user.name} ).collation({locale: "en", strength: 2});
-    let ret = [];
-    for ( let elem of retO ) {
-      ret.push(elem.toObject());
-    }
-    res.send( {
+    const ret = findAllToArray(await crawlingScriptModel.find({
+      trendId: req.params.trendId,
+      username: req.user.name
+    }).collation({locale: "en", strength: 2}));
+    res.send({
       api: lastPathElement(req.url),
       ret
     });
@@ -122,7 +129,7 @@ router.post("/script", async (req, res, next) => {
   try {
     const defaultScript = createDefaultScript(req.body.url, req.body.trendId, req.user.name);
     const ret = await runScript(defaultScript);
-    res.send( {
+    res.send({
       api: lastPathElement(req.url),
       method: "post",
       ret
@@ -143,12 +150,16 @@ router.put("/script", async (req, res, next) => {
     const script = await crawlingScriptModel.findOne(query);
     const ret = await runScript(script.toObject());
     for (const graph of ret.graphQueries) {
-      await db.upsertUniqueXValue( trendGraphModel, graph);
+      await db.upsertUniqueXValue(trendGraphModel, graph);
     }
-    res.send( {
+    const userTrendGraphs = findAllToArray(await trendGraphModel.find({
+      username: req.body.username,
+      trendId: req.body.trendId
+    }));
+    res.send({
       api: lastPathElement(req.url),
       method: "put",
-      ret: req.body
+      ret: userTrendGraphs
     });
   } catch (ex) {
     const err = `Error putting: ${JSON.stringify(req.body)} because ${ex}`
@@ -162,7 +173,7 @@ router.patch("/script", async (req, res, next) => {
     const query = {username: req.user.name, trendId: req.body.trendId, name: req.body.name};
     const script = await crawlingScriptModel.findOne(query);
     const ret = await runScript(script.toObject());
-    res.send( {
+    res.send({
       api: lastPathElement(req.url),
       method: "patch",
       ret
@@ -179,13 +190,16 @@ router.delete("/script", async (req, res, next) => {
     const query = {username: req.user.name, trendId: req.body.trendId, name: req.body.name};
     await crawlingScriptModel.deleteOne(query);
 
-    let retO = await crawlingScriptModel.find( { trendId: req.body.trendId, username: req.user.name} ).collation({locale: "en", strength: 2});
+    let retO = await crawlingScriptModel.find({
+      trendId: req.body.trendId,
+      username: req.user.name
+    }).collation({locale: "en", strength: 2});
     let ret = [];
-    for ( let elem of retO ) {
+    for (let elem of retO) {
       ret.push(elem.toObject());
     }
 
-    res.send( {
+    res.send({
       api: lastPathElement(req.url),
       method: "delete",
       ret

@@ -179,21 +179,6 @@ export const float100ToPerc = (value) => {
   return Number(value).toFixed(2)+"%";
 };
 
-export const graphArrayToGraphTree = ( sourceArray, key1, key2 ) => {
-  const ret = {};
-  const groupsSet = new Set();
-  sourceArray.map(elem => groupsSet.add(elem[key1]));
-  for ( const group of groupsSet.values() ) {
-    ret[group] = {};
-    for ( const elem of sourceArray) {
-      if ( elem[key1] === group ) {
-        ret[group][elem[key2]] ? ret[group][elem[key2]].push(elem) : ret[group][elem[key2]]=[elem];
-      }
-    }
-  }
-  return ret;
-};
-
 export const graphArrayToGraphTree2 = ( sourceArray, key1, key2, key3, key4 ) => {
   let ret = {};
   const groupsSet = new Set();

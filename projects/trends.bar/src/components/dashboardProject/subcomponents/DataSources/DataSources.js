@@ -11,7 +11,7 @@ import {checkBoolDefinedAndTrue} from "../../../../futuremodules/utils/utils";
 import {useGlobalState} from "../../../../futuremodules/globalhelper/globalHelper";
 import {Fragment} from "react";
 
-export const DataSources = () => {
+export const DataSources = ({datasets, setDatasets}) => {
 
   const isEditingDataSource = checkBoolDefinedAndTrue(useGlobalState(EditingUserTrendDataSource));
 
@@ -26,7 +26,7 @@ export const DataSources = () => {
         </Container>
         }
       </DataSourcesContainer>
-      <ScriptEditor/>
+      <ScriptEditor datasets={datasets} setDatasets={setDatasets}/>
     </Fragment>
   );
 };
