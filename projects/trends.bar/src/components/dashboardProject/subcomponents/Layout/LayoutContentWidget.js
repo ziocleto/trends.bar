@@ -14,7 +14,7 @@ export const LayoutContentWidget = ({cellIndex, showDatasetPicker, setShowDatase
     return <Fragment/>
   }
 
-  const config = layout && layout.gridContent[layout.gridLayout.findIndex(v => v.i === cellIndex)];
+  const config = layout.gridContent[layout.gridLayout.findIndex(v => v.i === cellIndex)];
 
   return (
     <Fragment>

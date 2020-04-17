@@ -59,8 +59,6 @@ export const LayoutEditor = ({username}) => {
   };
 
   const onSaveLayout = () => {
-    //console.log(trendId);
-    //console.log(username);
     console.log("SAVING:", layout);
     trendLayoutMutation({
       variables: {
@@ -70,7 +68,6 @@ export const LayoutEditor = ({username}) => {
   };
 
   const onSaveCellContent = (content) => {
-    // console.log("SAVE", JSON.stringify((content)));
     const newGridContent = [...layout.gridContent];
     newGridContent[newGridContent.findIndex(c => c.i === content.i)] = {...content};
     setLayout({
@@ -79,7 +76,7 @@ export const LayoutEditor = ({username}) => {
     });
   };
 
-  if (!layout) {
+  if (!layout || !datasets) {
     return <Fragment/>
   }
 

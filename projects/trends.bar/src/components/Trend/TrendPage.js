@@ -2,10 +2,10 @@ import React from "react";
 import {sanitizePathRoot} from "../../futuremodules/utils/utils";
 import {useLocation} from "react-router-dom";
 import GridLayout from "react-grid-layout";
-import {DivFixedCenterTopMiddle, DivLayoutStatic} from "../dashboardProject/subcomponents/Layout/LayoutEditor.styled";
+import {DivLayoutStatic} from "../dashboardProject/subcomponents/Layout/LayoutEditor.styled";
 import {ContentWidget} from "../dashboardProject/subcomponents/ContentWidgets/ContentWidget";
 import {useGetTrend} from "../../modules/trends/globals";
-import {Spinner} from "react-bootstrap";
+import {SpinnerTopMiddle} from "../../futuremodules/spinner/Spinner";
 
 const makeLayoutStatic = layout => {
   let ret = layout;
@@ -19,10 +19,7 @@ const TrendPage = () => {
   const [username, trendId] = sanitizePathRoot(useLocation().pathname).split("/");
   const {layout, datasets} = useGetTrend(trendId, username);
 
-  if (!layout || !datasets) return (
-    <DivFixedCenterTopMiddle>
-    <Spinner animation="grow" variant="warning"/>
-    </DivFixedCenterTopMiddle>);
+  if (!layout || !datasets) return (<SpinnerTopMiddle/>);
 
   const layoutStatic = makeLayoutStatic(layout);
 
