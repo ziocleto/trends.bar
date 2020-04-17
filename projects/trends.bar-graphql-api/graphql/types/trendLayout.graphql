@@ -18,6 +18,8 @@ type TrendLayout {
     width: Int
     gridLayout: [TrendGridLayout]
     gridContent: [ContentWidget]
+
+    datasets: [TrendGraph]
 }
 
 type ContentWidgetTableColumn {

@@ -66,6 +66,19 @@ export const getTrendLayouts = () => {
               cols
               granularity
               width
+
+              datasets {
+                  trendId
+                  username
+                  yValueName
+                  yValueSubGroup
+                  yValueGroup
+                  values {
+                      x
+                      y
+                  }
+              }
+              
               gridLayout {
                   i
                   x
@@ -75,6 +88,7 @@ export const getTrendLayouts = () => {
                   moved
                   static
               }
+              
               gridContent {
                   type
                   i
@@ -112,34 +126,3 @@ export const getTrendLayouts = () => {
           }
       }`;
 };
-
-export const getTrendGraphsByUserTrendId = () => {
-    return gql`
-        query getTrends($trendId:String!, $name:String!) {
-            trendGraphs(trendId:$trendId, username:$name) {
-                trendId
-                username
-                yValueName
-                yValueSubGroup
-                yValueGroup
-                values {
-                    x
-                    y
-                }
-            }
-        }`;
-};
-
-export const getTrendGraphsByUserTrendIdNoValues = () => {
-    return gql`
-        query getTrends($trendId:String!, $name:String!) {
-            trendGraphs(trendId:$trendId, username:$name) {
-                trendId
-                username
-                yValueName
-                yValueSubGroup
-                yValueGroup
-            }
-        }`;
-}
-

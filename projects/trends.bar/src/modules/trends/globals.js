@@ -1,25 +1,25 @@
 import {useEffect, useGlobal} from "reactn";
 import {getFileNameOnlyNoExt, sanitizeURLParams} from "../../futuremodules/utils/utils";
 import {useLocation} from "react-router-dom";
-import {useQuery} from "@apollo/react-hooks";
-import {getTrendGraphsByUserTrendId, getTrendLayouts} from "./queries";
+import {useLazyQuery} from "@apollo/react-hooks";
+import {getTrendLayouts} from "./queries";
 import {getDefaultTrendLayout} from "./layout";
 import {
   checkQueryHasLoadedWithData,
   getQueryLoadedWithValueArrayNotEmpty
 } from "../../futuremodules/graphqlclient/query";
-import {graphArrayToGraphTree2} from "./dataGraphs";
 import {useState} from "react";
+import {graphArrayToGraphTree2} from "./dataGraphs";
 
 const uniqueNamesGenerator = require('project-name-generator');
 
-export const EditingUserTrend            = 'editingUserTrend';
-export const EditingUserTrendDataSource  = 'editingUserTrendDataSource';
-export const currentUserTrends           = 'currentUserTrends';
+export const EditingUserTrend = 'editingUserTrend';
+export const EditingUserTrendDataSource = 'editingUserTrendDataSource';
+export const currentUserTrends = 'currentUserTrends';
 
 export const generateUniqueNameWithArrayCheck = (arrayToCheck) => {
   let defaultFileName = uniqueNamesGenerator().dashed;
-  while ( arrayToCheck && arrayToCheck.includes(defaultFileName)) {
+  while (arrayToCheck && arrayToCheck.includes(defaultFileName)) {
     defaultFileName = uniqueNamesGenerator().dashed;
   }
   return defaultFileName;
@@ -32,63 +32,56 @@ export const useTrendIdGetter = () => {
 };
 
 export const useGetTrend = (trendId, username) => {
-  const [datasets, setDatasets] = useState();
-  const [layout, setLayout] = useState();
-  const trendLayoutQuery = useQuery(getTrendLayouts(), {variables: {name: username, trendId: trendId}});
-
-  const trendDataQuery = useQuery(getTrendGraphsByUserTrendId(), {
-    variables: {
-      name: username,
-      trendId: trendId
-    }
-  });
+  const [datasets, setDatasets] = useState(null);
+  const [layout, setLayout] = useState(null);
+  const [trendQueryCall, trendQueryResult] = useLazyQuery(getTrendLayouts());
 
   useEffect(() => {
-    if ( username && trendId ) {
-      trendDataQuery.refetch().then(() => {
-          if ( checkQueryHasLoadedWithData(trendDataQuery) ) {
-            const queryData = getQueryLoadedWithValueArrayNotEmpty(trendDataQuery);
-            if (queryData) {
-              const gt = graphArrayToGraphTree2(queryData, "yValueGroup", "yValueSubGroup", "yValueName", "values");
-              setDatasets({
-                ...datasets,
-                ...gt
-              });
-            } else {
-              setDatasets({});
-            }
-          }
-        }
-      );
+    if (username && trendId) {
+      trendQueryCall({
+        variables: {name: username, trendId: trendId}
+      });
+
+      // trendDataQuery.refetch().then(() => {
+      //     if ( checkQueryHasLoadedWithData(trendDataQuery) ) {
+      //       const queryData = getQueryLoadedWithValueArrayNotEmpty(trendDataQuery);
+      //       if (queryData) {
+      //         const gt = graphArrayToGraphTree2(queryData, "yValueGroup", "yValueSubGroup", "yValueName", "values");
+      //         setDatasets({
+      //           ...datasets,
+      //           ...gt
+      //         });
+      //       } else {
+      //         setDatasets({});
+      //       }
+      //     }
+      //   }
+      // );
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [trendDataQuery, username, trendId]);
+  }, [trendQueryCall, username, trendId]);
 
   useEffect(() => {
-    if ( datasets ) {
-      trendLayoutQuery.refetch().then(() => {
-          const queryLayout = getQueryLoadedWithValueArrayNotEmpty(trendLayoutQuery);
-          if (queryLayout) {
-            setLayout(queryLayout[0]);
-          } else {
-            const ll = {
-              ...getDefaultTrendLayout(datasets),
-              trendId,
-              username
-            };
-            setLayout(ll);
-          }
-        }
-      );
+    if ( checkQueryHasLoadedWithData(trendQueryResult)) {
+      const queryLayout = getQueryLoadedWithValueArrayNotEmpty(trendQueryResult);
+      if (queryLayout) {
+        setLayout(queryLayout[0]);
+        const gt = graphArrayToGraphTree2(queryLayout[0].datasets, "yValueGroup", "yValueSubGroup", "yValueName", "values");
+        setDatasets(() => gt);
+      } else {
+        const ll = {
+          ...getDefaultTrendLayout(null),
+          trendId,
+          username
+        };
+        setLayout(ll);
+      }
     }
-  }, [trendLayoutQuery, setLayout, datasets, trendId, username]);
+  }, [trendQueryResult, trendId, username]);
 
   return {
     layout,
     setLayout,
     datasets,
-    setDatasets,
-    trendLayoutQuery,
-    trendDataQuery
+    setDatasets
   }
 };

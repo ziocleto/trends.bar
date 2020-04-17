@@ -41,11 +41,11 @@ const DashboardProject = (props) => {
     newGridLayout.push({
       i: newIndex.toString(),
       x: 0,
-      y: Infinity,
-      w: 1,
-      h: 1
+      y: 0,
+      w: 3,
+      h: 3
     });
-    newGridContent.push(getDefaultCellContent(newIndex));
+    newGridContent.push(getDefaultCellContent(newIndex, datasets));
     setLayout({
       ...layout,
       gridLayout: newGridLayout,
@@ -66,16 +66,15 @@ const DashboardProject = (props) => {
       <FlexToolbar margin={"12px"}>
         <div>
           <ButtonToolbar>
-              <Button
-                className="mr-4"
-                variant={"outline-light"}
-                onClick={() => setEditingUserTrend(null)}>
-                <i className="fas fa-times"/></Button>
+            <Button
+              className="mr-4"
+              variant={"outline-light"}
+              onClick={() => setEditingUserTrend(null)}>
+              <i className="fas fa-times"/></Button>
             <ButtonGroup>
               <SplitButton as={ButtonGroup} title={<CustomTitle text={"Trend"} icon={"poll"}/>}
-                           active={true}
-                              variant={activeTab && activeTab === trendTabId ? "info" : "primary"}
-                              onClick={() => setActiveTab(trendTabId)}>
+                           variant={activeTab && activeTab === trendTabId ? "info" : "primary"}
+                           onClick={() => setActiveTab(trendTabId)}>
                 <Dropdown.Item onClick={onAddCell}>
                   <CustomTitle text={"Add Trend Box"} icon={"plus"}/>
                 </Dropdown.Item>
