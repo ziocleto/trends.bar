@@ -25,8 +25,9 @@ import {ContentWidgetTextSingle} from "../ContentWidgets/ContentWidgetTextSingle
 import {ContentWidgetTextWithSubtitle} from "../ContentWidgets/ContentWidgetTextWithSubtitle";
 import {ContentWidgetGraphXY} from "../ContentWidgets/ContentWidgetGraphXY";
 
-export const ModalDatasetPixel = ({datasets, layout, setLayout, config, onClose}) => {
+export const ModalDatasetPixel = ({layout, setLayout, config, onClose}) => {
 
+  const datasets = layout.datasets;
   const keys = config;
 
   const setWidgetData = (groupKey, subGroupKey, valueNameKey, valueFunctionName) => {

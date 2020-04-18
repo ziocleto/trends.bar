@@ -67,7 +67,7 @@ export const getTrendLayouts = () => {
               granularity
               width
 
-              datasets {
+              trendGraphs {
                   yValueName
                   yValueSubGroup
                   yValueGroup

@@ -7,9 +7,10 @@ import {DivLayout, SpanEditLayoutCell, SpanRemoveLayoutCell} from "./LayoutEdito
 import {ButtonDiv, DangerColorSpan} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {LayoutContentWidget} from "./LayoutContentWidget";
 
-export const LayoutEditor = ({layout, setLayout, datasets, username}) => {
+export const LayoutEditor = ({layout, setLayout, username}) => {
 
   const [showDatasetPicker, setShowDatasetPicker] = useState({});
+  const datasets = layout.datasets;
 
   const onGridLayoutChange = (gridLayout) => {
     setLayout({

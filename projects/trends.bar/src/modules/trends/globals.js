@@ -29,7 +29,6 @@ export const useTrendIdGetter = () => {
 };
 
 export const useGetTrend = (trendId, username) => {
-  const [datasets, setDatasets] = useState(null);
   const [layout, setLayout] = useState(null);
   const trendQueryResult = useQuery(getTrendLayouts(), {
     variables: {name: username, trendId: trendId}
@@ -40,10 +39,10 @@ export const useGetTrend = (trendId, username) => {
       if (checkQueryHasLoadedWithData(trendQueryResult)) {
         const queryLayout = getQueryLoadedWithValue(trendQueryResult);
         if (queryLayout) {
-          setDatasets(() => graphArrayToGraphTree2(queryLayout.datasets));
-          let queryWithRemovedDatasets = {...queryLayout};
-          delete queryWithRemovedDatasets.datasets;
-          setLayout(queryWithRemovedDatasets);
+          setLayout( {
+            ...queryLayout,
+            datasets: graphArrayToGraphTree2(queryLayout.trendGraphs)
+          });
         } else {
           setLayout({
             wizard: true
@@ -56,7 +55,5 @@ export const useGetTrend = (trendId, username) => {
   return {
     layout,
     setLayout,
-    datasets,
-    setDatasets
   }
 };

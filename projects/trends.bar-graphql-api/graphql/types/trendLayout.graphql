@@ -19,7 +19,7 @@ type TrendLayout {
     gridLayout: [TrendGridLayout]
     gridContent: [ContentWidget]
 
-    datasets: [TrendGraph]
+    trendGraphs: [TrendGraph]
 }
 
 type ContentWidgetTableColumn {

@@ -16,7 +16,7 @@ export default {
   },
 
   TrendLayout: {
-    datasets: (trendLayout, _, {dataSources}) => dataSources.trendGraphs.find({
+    trendGraphs: (trendLayout, _, {dataSources}) => dataSources.trendGraphs.find({
       trendId: trendLayout.trendId,
       username: trendLayout.username
     })

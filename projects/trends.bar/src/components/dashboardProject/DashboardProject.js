@@ -13,8 +13,8 @@ import {upsertTrendLayout} from "../../modules/trends/mutations";
 import {SpinnerTopMiddle} from "../../futuremodules/spinner/Spinner";
 import {MakeDefaultLayoutWizard} from "./subcomponents/Layout/MakeDefaultLayoutWizard";
 
-const needsWizard = (layout, datasets) => {
-  return (!datasets && layout && layout.wizard);
+const needsWizard = (layout) => {
+  return (layout && layout.wizard);
 };
 
 const DashboardProject = ({username, trendId}) => {
@@ -23,20 +23,18 @@ const DashboardProject = ({username, trendId}) => {
   const trendTabId = "Trend";
   const [activeTab, setActiveTab] = useState(trendTabId);
   const [, setEditingUserTrend] = useGlobal(EditingUserTrend);
-  const {layout, setLayout, datasets, setDatasets} = useGetTrend(trendId, username);
+  const {layout, setLayout} = useGetTrend(trendId, username);
   const [trendLayoutMutation] = useMutation(upsertTrendLayout);
 
-  const needWizard = needsWizard(layout, datasets);
+  const needWizard = needsWizard(layout);
   if (needWizard) {
     return <MakeDefaultLayoutWizard
       layout={layout}
       setLayout={setLayout}
-      datasets={datasets}
-      setDatasets={setDatasets}
     />;
   }
 
-  if (!needWizard && (!layout || !datasets)) {
+  if (!layout) {
     return <SpinnerTopMiddle/>
   }
 
@@ -51,7 +49,7 @@ const DashboardProject = ({username, trendId}) => {
       w: 3,
       h: 3
     });
-    newGridContent.push(getDefaultCellContent(newIndex, datasets));
+    newGridContent.push(getDefaultCellContent(newIndex, layout.datasets));
     setLayout({
       ...layout,
       gridLayout: newGridLayout,
@@ -108,10 +106,9 @@ const DashboardProject = ({username, trendId}) => {
           username={username}
           layout={layout}
           setLayout={setLayout}
-          datasets={datasets}
         />
         }
-        {activeTab && activeTab === dataSourcesId && <DataSources datasets={datasets} setDatasets={setDatasets}/>}
+        {activeTab && activeTab === dataSourcesId && <DataSources layout={layout} setLayout={setLayout}/>}
       </ProjectContent>
     </Fragment>
   );
