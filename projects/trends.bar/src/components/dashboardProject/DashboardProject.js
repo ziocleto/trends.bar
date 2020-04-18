@@ -96,7 +96,7 @@ const DashboardProject = ({username, trendId}) => {
           <Button
             variant={"outline-light"}
             onClick={() => setEditingUserTrend(null)}>
-            <i className="fas fa-times"/>
+            <i className="fas fa-arrow-left"/>
           </Button>
         </DivWR>
       </FlexToolbar>
