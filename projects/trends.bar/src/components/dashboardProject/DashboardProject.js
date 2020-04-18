@@ -12,6 +12,7 @@ import {useMutation} from "@apollo/react-hooks";
 import {upsertTrendLayout} from "../../modules/trends/mutations";
 import {SpinnerTopMiddle} from "../../futuremodules/spinner/Spinner";
 import {MakeDefaultLayoutWizard} from "./subcomponents/Layout/MakeDefaultLayoutWizard";
+import {alertSuccess, useAlertSuccess} from "../../futuremodules/alerts/alerts";
 
 const needsWizard = (layout) => {
   return (layout && layout.wizard);
@@ -25,6 +26,7 @@ const DashboardProject = ({username, trendId}) => {
   const [, setEditingUserTrend] = useGlobal(EditingUserTrend);
   const {layout, setLayout} = useGetTrend(trendId, username);
   const [trendLayoutMutation] = useMutation(upsertTrendLayout);
+  const alertSuccess = useAlertSuccess();
 
   const needWizard = needsWizard(layout);
   const [showWizard, setShowWizard] = useState(false);
@@ -59,11 +61,16 @@ const DashboardProject = ({username, trendId}) => {
   };
 
   const onSaveLayout = () => {
+    // Remove datasets from query
+    let layoutNoDatasets = {...layout};
+    layoutNoDatasets.trendId = trendId;
+    layoutNoDatasets.username = username;
+    delete layoutNoDatasets.datasets;
     trendLayoutMutation({
       variables: {
-        trendLayout: layout
+        trendLayout: layoutNoDatasets
       }
-    }).then();
+    }).then( () => alertSuccess("Yeah, you're live!"));
   };
 
   console.log(layout);
