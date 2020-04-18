@@ -210,7 +210,7 @@ export const ScriptEditor = ({layout, setLayout}) => {
   const publishGraphs = () => {
     api(fetchApi, putScript, graphTree.script).then((r) => {
       if (isStatusCodeSuccessful(r.status.code)) {
-        updateTrendDatasets( setLayout, graphTree.tree );
+        updateTrendDatasets( layout, setLayout, graphTree.tree );
         alertSuccess(alertStore, "All set and done!", () => setEditingDataSource(false));
       }
     });

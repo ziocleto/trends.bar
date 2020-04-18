@@ -11,8 +11,8 @@ import {graphArrayToGraphTree2} from "../../../../modules/trends/dataGraphs";
 import {getQueryLoadedWithValueArrayNotEmpty} from "../../../../futuremodules/graphqlclient/query";
 import {updateTrendDatasets} from "../../../../modules/trends/globals";
 
-const SearchResults = ({trendIdPartial, setLayout}) => {
-  const {data, loading} = useQuery(getSimilarTrends(trendIdPartial));
+const SearchResults = ({trendIdPartial, layout, setLayout}) => {
+  const similarTrendQuery = useQuery(getSimilarTrends(trendIdPartial));
   const [datasetQueryCall, datasetQueryResult] = useLazyQuery(getDatasets());
 
   const [results, setResults] = useState([]);
@@ -20,17 +20,18 @@ const SearchResults = ({trendIdPartial, setLayout}) => {
   useEffect(() => {
       const queryRes = getQueryLoadedWithValueArrayNotEmpty(datasetQueryResult);
       if (queryRes) {
-        console.log("Setting layout", queryRes);
-        updateTrendDatasets( setLayout, graphArrayToGraphTree2(queryRes) );
+        updateTrendDatasets(layout, setLayout, graphArrayToGraphTree2(queryRes));
       }
-    }
-    , [datasetQueryResult, setLayout]);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [datasetQueryResult, setLayout]);
 
-  if (data && data.trend_similar && loading === false) {
-    if (results !== data.trend_similar) {
-      setResults(data.trend_similar);
+  useEffect(() => {
+    const res = getQueryLoadedWithValueArrayNotEmpty(similarTrendQuery);
+    if (res) {
+      setResults(res);
     }
-  }
+  }, [similarTrendQuery]);
 
   return (
     <Fragment>
@@ -46,7 +47,8 @@ const SearchResults = ({trendIdPartial, setLayout}) => {
                     trendId: e.trendId
                   }
                 }
-              )
+              );
+              setResults([]);
             }}
           >
             <SearchBarResultTrendId>
@@ -64,7 +66,7 @@ const SearchResults = ({trendIdPartial, setLayout}) => {
 
 };
 
-export const ImportDataSources = ({setLayout}) => {
+export const ImportDataSources = ({layout, setLayout}) => {
 
   const [trendIdPartial, setTrendIdPartial] = useState(null);
 
@@ -84,7 +86,7 @@ export const ImportDataSources = ({setLayout}) => {
           onChange={e => setTrendIdPartial(e.target.value)}
         >
         </NiceSearchBar>
-        <SearchResults trendIdPartial={trendIdPartial} setLayout={setLayout}/>
+        <SearchResults trendIdPartial={trendIdPartial} layout={layout} setLayout={setLayout}/>
       </Row>
     </Fragment>
   )

@@ -28,7 +28,6 @@ const DashboardProject = ({username, trendId}) => {
 
   const needWizard = needsWizard(layout);
   const [showWizard, setShowWizard] = useState(false);
-  console.log("Needs a wizard? ", needWizard);
   if (needWizard || showWizard) {
     return <MakeDefaultLayoutWizard
       setLayout={setLayout}

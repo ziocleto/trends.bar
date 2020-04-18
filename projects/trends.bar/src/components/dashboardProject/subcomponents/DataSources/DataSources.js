@@ -23,7 +23,7 @@ export const DataSources = ({layout, setLayout}) => {
         <Container fluid>
           <UserDataSources/>
           <RowSeparatorDouble/>
-          <ImportDataSources setLayout={setLayout}/>
+          <ImportDataSources layout={layout} setLayout={setLayout}/>
           <RowSeparator/>
           <RowSeparatorDouble/>
           <DataSourcesCreator/>

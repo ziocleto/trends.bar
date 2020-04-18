@@ -49,7 +49,7 @@ export const UserDataSources = () => {
     <Fragment>
       <RowSeparator/>
       <Row>
-        <RocketTitle text={"Using:"}/>
+        <RocketTitle text={"Curating:"}/>
       </Row>
       <RowSeparator/>
       <Container fluid>

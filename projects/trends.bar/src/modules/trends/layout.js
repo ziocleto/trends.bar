@@ -71,7 +71,7 @@ export const getDefaultWidgetContent = (type, i, datasets) => {
   }
 };
 
-const startupState = (datasets) => {
+export const startupState = (datasets) => {
   const groupKey = datasets && Object.keys(datasets)[0];
   const subGroupKey = groupKey && Object.keys(datasets[Object.keys(datasets)[0]])[0];
   const valueNameKey = subGroupKey && Object.keys(datasets[Object.keys(datasets)[0]][Object.keys(datasets[Object.keys(datasets)[0]])[0]])[0];

@@ -165,7 +165,7 @@ export const ModalDatasetPixel = ({layout, setLayout, config, onClose}) => {
                 {keys.type === "text" &&
                 <ContentWidgetText datasets={datasets} config={keys}/>}
                 {keys.type === "table" &&
-                <ContentWidgetTable config={keys}/>}
+                <ContentWidgetTable datasets={datasets} config={keys}/>}
                 {keys.type === "graphxy" &&
                 <ContentWidgetGraphXY datasets={datasets} config={keys}/>}
               </Div>

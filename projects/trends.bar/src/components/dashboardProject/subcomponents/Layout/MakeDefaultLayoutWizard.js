@@ -44,7 +44,7 @@ const createLayoutBlog2 = () => {
 };
 
 const createLayoutCovid = () => {
-  const top = 1;
+  const top = 2;
   const t3 = lsc / 3;
   const middle = lsc / 4;
   return [
@@ -57,7 +57,7 @@ const createLayoutCovid = () => {
 };
 
 const createLayoutCovid2 = () => {
-  const top = 1;
+  const top = 2;
   const t3 = lsc / 3;
   const middle = lsc / 4;
   const h1 = (lsc - (top + middle)) / 2;
@@ -85,6 +85,7 @@ const saveLayout = (layout, setLayout, setStep ) => {
 
   for (let i = 0; i < layout.length; i++) {
     gridContent.push(getDefaultCellContent(i, null));
+    layout[i].static = false;
   }
   setLayout( {
     gridLayout: layout,
@@ -156,7 +157,7 @@ export const MakeDefaultLayoutWizard = ({setLayout, onClose}) => {
                 </Col>
               )}
             </Row>
-            {step === 2 && <ImportDataSources setLayout={setWizardLayout}/>}
+            {step === 2 && <ImportDataSources layout={wizardLayout} setLayout={setWizardLayout}/>}
           </Container>
         </Modal.Body>
         <Modal.Footer>
