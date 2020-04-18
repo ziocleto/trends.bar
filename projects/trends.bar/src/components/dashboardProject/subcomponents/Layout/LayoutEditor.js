@@ -6,7 +6,6 @@ import GridLayout from 'react-grid-layout';
 import {DivLayout, SpanEditLayoutCell, SpanRemoveLayoutCell} from "./LayoutEditor.styled";
 import {ButtonDiv, DangerColorSpan} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {LayoutContentWidget} from "./LayoutContentWidget";
-import {SpinnerTopMiddle} from "../../../../futuremodules/spinner/Spinner";
 
 export const LayoutEditor = ({layout, setLayout, datasets, username}) => {
 
@@ -39,10 +38,6 @@ export const LayoutEditor = ({layout, setLayout, datasets, username}) => {
       gridContent: newGridContent
     });
   };
-
-  if (!layout) {
-    return <SpinnerTopMiddle/>
-  }
 
   return (
     <Fragment>

@@ -1,37 +1,28 @@
-import React, {useGlobal, withGlobal} from "reactn";
-import {getAuthUserName, getAuthWithGlobal} from "../../futuremodules/auth/authAccessors";
-import {Redirect} from "react-router-dom";
+import React, {useGlobal} from "reactn";
 import {DataSources} from "./subcomponents/DataSources/DataSources";
 import {Button, ButtonGroup, ButtonToolbar, Dropdown, SplitButton} from "react-bootstrap";
 import {ProjectContent} from "./DashboardProject.styled";
 import {Fragment, useState} from "react";
 import {LayoutEditor} from "./subcomponents/Layout/LayoutEditor";
 import {DivWL, DivWR, FlexToolbar} from "../../futuremodules/reactComponentStyles/reactCommon.styled";
-import {EditingUserTrend, useGetTrend, useTrendIdGetter} from "../../modules/trends/globals";
+import {EditingUserTrend, useGetTrend} from "../../modules/trends/globals";
 import {getDefaultCellContent} from "../../modules/trends/layout";
 import {CustomTitle, RocketTitle} from "../../futuremodules/reactComponentStyles/reactCommon";
 import {useMutation} from "@apollo/react-hooks";
 import {upsertTrendLayout} from "../../modules/trends/mutations";
+import {SpinnerTopMiddle} from "../../futuremodules/spinner/Spinner";
 
-const DashboardProject = (props) => {
+const DashboardProject = ({username, trendId}) => {
 
   const dataSourcesId = "DataSources";
   const trendTabId = "Trend";
   const [activeTab, setActiveTab] = useState(trendTabId);
-  const [currEditingTrend, setEditingUserTrend] = useGlobal(EditingUserTrend);
-  const username = getAuthUserName(props.auth);
-  const trendId = useTrendIdGetter();
+  const [,setEditingUserTrend] = useGlobal(EditingUserTrend);
   const {layout, setLayout, datasets, setDatasets} = useGetTrend(trendId, username);
   const [trendLayoutMutation] = useMutation(upsertTrendLayout);
 
-  if (props.auth === null) {
-    return (<Redirect to={"/"}/>);
-  }
-  if (props.auth === undefined) {
-    return (<Fragment/>)
-  }
-  if (currEditingTrend === null) {
-    return (<Redirect to={"/dashboarduser"}/>);
+  if (!layout || !datasets) {
+    return <SpinnerTopMiddle/>
   }
 
   const onAddCell = () => {
@@ -109,6 +100,4 @@ const DashboardProject = (props) => {
   );
 };
 
-export default withGlobal(
-  global => getAuthWithGlobal(global)
-)(DashboardProject);
+export default DashboardProject;

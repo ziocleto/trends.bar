@@ -2,7 +2,6 @@ import React, {Fragment, useGlobal, withGlobal} from "reactn";
 import {DashboardUserInnerMargins} from "../DashboardUser.styled";
 import {useQuery} from "@apollo/react-hooks";
 import {getUserTrends} from "../../../modules/trends/queries";
-import {LinkContainer} from "react-router-bootstrap";
 import {Dropdown, SplitButton} from "react-bootstrap";
 import {getAuthUserName, getAuthWithGlobal} from "../../../futuremodules/auth/authAccessors";
 import {currentUserTrends, EditingUserTrend} from "../../../modules/trends/globals";
@@ -42,23 +41,21 @@ const UserAssets = (props) => {
         <Flex justifyContent={"start"}>
           {trends.map(elem => {
               const trendId = elem.trendId;
-              const projectLink = "/dashboardproject/" + trendId;
               return (
                 <div key={`fragment-${trendId}`}>
-                  <LinkContainer to={projectLink} onClick={() => setEditingUserTrend(trendId)}>
                     <SplitButton
                       title={<b>{trendId}</b>}
                       variant="primary"
+                      onClick={() => setEditingUserTrend(trendId)}
                       key={trendId}>
-                      <LinkContainer to={projectLink}>
-                        <Dropdown.Item>Open</Dropdown.Item>
-                      </LinkContainer>
+                        <Dropdown.Item
+                          onClick={() => setEditingUserTrend(trendId)}
+                        >Open</Dropdown.Item>
                       <Dropdown.Divider/>
                       <Dropdown.Item onClick={() => removeTrendMutation(trendId, name)}>
                         <DangerColorSpan>Delete</DangerColorSpan>
                       </Dropdown.Item>
                     </SplitButton>
-                  </LinkContainer>
                   <Mx1/>
                 </div>
               )

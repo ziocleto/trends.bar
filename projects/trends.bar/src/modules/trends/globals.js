@@ -1,7 +1,7 @@
 import {useEffect, useGlobal} from "reactn";
 import {getFileNameOnlyNoExt, sanitizeURLParams} from "../../futuremodules/utils/utils";
 import {useLocation} from "react-router-dom";
-import {useLazyQuery} from "@apollo/react-hooks";
+import {useQuery} from "@apollo/react-hooks";
 import {getTrendLayouts} from "./queries";
 import {getDefaultTrendLayout} from "./layout";
 import {
@@ -34,32 +34,28 @@ export const useTrendIdGetter = () => {
 export const useGetTrend = (trendId, username) => {
   const [datasets, setDatasets] = useState(null);
   const [layout, setLayout] = useState(null);
-  const [trendQueryCall, trendQueryResult] = useLazyQuery(getTrendLayouts());
+  const trendQueryResult = useQuery(getTrendLayouts(), {
+    variables: {name: username, trendId: trendId}
+  });
 
   useEffect(() => {
-    if (username && trendId) {
-      trendQueryCall({
-        variables: {name: username, trendId: trendId}
-      });
-    }
-  }, [trendQueryCall, username, trendId]);
-
-  useEffect(() => {
-    if ( checkQueryHasLoadedWithData(trendQueryResult)) {
-      const queryLayout = getQueryLoadedWithValueArrayNotEmpty(trendQueryResult);
-      if (queryLayout) {
-        setLayout(queryLayout[0]);
-        const gt = graphArrayToGraphTree2(queryLayout[0].datasets, "yValueGroup", "yValueSubGroup", "yValueName", "values");
-        setDatasets(() => gt);
-      } else {
-        const ll = {
-          ...getDefaultTrendLayout(null),
-          trendId,
-          username
-        };
-        setLayout(ll);
+    trendQueryResult.refetch().then(() => {
+      if (checkQueryHasLoadedWithData(trendQueryResult)) {
+        const queryLayout = getQueryLoadedWithValueArrayNotEmpty(trendQueryResult);
+        if (queryLayout) {
+          setLayout(queryLayout[0]);
+          const gt = graphArrayToGraphTree2(queryLayout[0].datasets, "yValueGroup", "yValueSubGroup", "yValueName", "values");
+          setDatasets(previousValue => gt);
+        } else {
+          const ll = {
+            ...getDefaultTrendLayout(null),
+            trendId,
+            username
+          };
+          setLayout(ll);
+        }
       }
-    }
+    });
   }, [trendQueryResult, trendId, username]);
 
   return {
