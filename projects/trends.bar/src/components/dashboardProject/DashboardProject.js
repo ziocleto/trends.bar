@@ -6,7 +6,7 @@ import {Button, ButtonGroup, ButtonToolbar, Dropdown, SplitButton} from "react-b
 import {ProjectContent} from "./DashboardProject.styled";
 import {Fragment, useState} from "react";
 import {LayoutEditor} from "./subcomponents/Layout/LayoutEditor";
-import {FlexToolbar} from "../../futuremodules/reactComponentStyles/reactCommon.styled";
+import {DivWL, DivWR, FlexToolbar} from "../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {EditingUserTrend, useGetTrend, useTrendIdGetter} from "../../modules/trends/globals";
 import {getDefaultCellContent} from "../../modules/trends/layout";
 import {CustomTitle, RocketTitle} from "../../futuremodules/reactComponentStyles/reactCommon";
@@ -64,13 +64,12 @@ const DashboardProject = (props) => {
   return (
     <Fragment>
       <FlexToolbar margin={"12px"}>
+        <DivWL width={"200px"}>
+          <Button variant={"outline-success"} className="mr-4" onClick={onSaveLayout}><RocketTitle
+            text={"Publish"}/></Button>
+        </DivWL>
         <div>
           <ButtonToolbar>
-            <Button
-              className="mr-4"
-              variant={"outline-light"}
-              onClick={() => setEditingUserTrend(null)}>
-              <i className="fas fa-times"/></Button>
             <ButtonGroup>
               <SplitButton as={ButtonGroup} title={<CustomTitle text={"Trend"} icon={"poll"}/>}
                            variant={activeTab && activeTab === trendTabId ? "info" : "primary"}
@@ -87,9 +86,13 @@ const DashboardProject = (props) => {
             </ButtonGroup>
           </ButtonToolbar>
         </div>
-        <div>
-          <Button variant={"outline-success"} onClick={onSaveLayout}><RocketTitle text={"Publish"}/></Button>
-        </div>
+        <DivWR width={"200px"}>
+          <Button
+            variant={"outline-light"}
+            onClick={() => setEditingUserTrend(null)}>
+            <i className="fas fa-times"/>
+          </Button>
+        </DivWR>
       </FlexToolbar>
       <ProjectContent>
         {activeTab && activeTab === trendTabId &&

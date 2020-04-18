@@ -78,7 +78,7 @@ export const getTrendLayouts = () => {
                       y
                   }
               }
-              
+
               gridLayout {
                   i
                   x
@@ -88,11 +88,11 @@ export const getTrendLayouts = () => {
                   moved
                   static
               }
-              
+
               gridContent {
                   type
                   i
-                  
+
                   overtitle
                   title
                   subtitle
@@ -112,7 +112,7 @@ export const getTrendLayouts = () => {
                       field
                       transform
                   }
-                  
+
                   graphXYTitle
                   graphXYSeries {
                       title
@@ -122,6 +122,23 @@ export const getTrendLayouts = () => {
                       fieldY
                       transformY
                   }
+              }
+          }
+      }`;
+};
+
+export const getDatasets = () => {
+  return gql`
+      query getTrendGraphs($trendId:String!, $name:String!) {
+          trendGraphs(trendId:$trendId, username:$name) {
+              trendId
+              username
+              yValueName
+              yValueSubGroup
+              yValueGroup
+              values {
+                  x
+                  y
               }
           }
       }`;

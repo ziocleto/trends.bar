@@ -3,13 +3,14 @@ import {DataSourcesContainer} from "./DataSources-styled";
 import "./DataSources.css"
 import {ScriptEditor} from "./ScriptEditor";
 import {Container} from "react-bootstrap";
-import {RowSeparatorDouble} from "../../../../futuremodules/reactComponentStyles/reactCommon";
+import {RowSeparator, RowSeparatorDouble} from "../../../../futuremodules/reactComponentStyles/reactCommon";
 import {UserDataSources} from "./UserDataSources";
 import {DataSourcesCreator} from "./DataSourcesCreator";
 import {EditingUserTrendDataSource} from "../../../../modules/trends/globals";
 import {checkBoolDefinedAndTrue} from "../../../../futuremodules/utils/utils";
 import {useGlobalState} from "../../../../futuremodules/globalhelper/globalHelper";
 import {Fragment} from "react";
+import {ImportDataSources} from "./ImportDataSources";
 
 export const DataSources = ({datasets, setDatasets}) => {
 
@@ -21,6 +22,9 @@ export const DataSources = ({datasets, setDatasets}) => {
         {!isEditingDataSource &&
         <Container fluid>
           <UserDataSources/>
+          <RowSeparatorDouble/>
+          <ImportDataSources datasets={datasets} setDatasets={setDatasets}/>
+          <RowSeparator/>
           <RowSeparatorDouble/>
           <DataSourcesCreator/>
         </Container>

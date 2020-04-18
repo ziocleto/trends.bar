@@ -49,7 +49,7 @@ export const UserDataSources = () => {
     <Fragment>
       <RowSeparator/>
       <Row>
-        <RocketTitle text={"Your own Data Sources:"}/>
+        <RocketTitle text={"Using:"}/>
       </Row>
       <RowSeparator/>
       <Container fluid>
@@ -84,7 +84,7 @@ export const UserDataSources = () => {
         )}
       </Container>
       {!arrayExistsNotEmpty(userScripts) && (
-        <InfoTextSpan>It feels quite lonely in here!</InfoTextSpan>
+        <InfoTextSpan>Nothing yet! Grab or create a new one.</InfoTextSpan>
       )}
     </Fragment>
   )
