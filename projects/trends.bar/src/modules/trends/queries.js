@@ -59,7 +59,7 @@ export const getScripts = () => {
 export const getTrendLayouts = () => {
   return gql`
       query getTrendLayouts($trendId:String!, $name:String!) {
-          trendLayouts(trendId:$trendId, username:$name) {
+          trendLayout(trendId:$trendId, username:$name) {
               name
               username
               trendId
@@ -68,8 +68,6 @@ export const getTrendLayouts = () => {
               width
 
               datasets {
-                  trendId
-                  username
                   yValueName
                   yValueSubGroup
                   yValueGroup

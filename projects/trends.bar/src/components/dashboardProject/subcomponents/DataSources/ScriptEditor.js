@@ -42,7 +42,7 @@ export const ScriptEditor = ({datasets, setDatasets}) => {
       (fetchResult.api === "script" && fetchResult.method === "post") ||
       (fetchResult.api === "script" && fetchResult.method === "patch"))) {
       const res = fetchResult.ret;
-      const gt = graphArrayToGraphTree2(res.graphQueries, "yValueGroup", "yValueSubGroup", "yValueName", "values");
+      const gt = graphArrayToGraphTree2(res.graphQueries);
       console.log(gt);
       const groupTabKey = Object.keys(gt)[0];
       const subGroupTabKey = Object.keys(gt[groupTabKey])[0];

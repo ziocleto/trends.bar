@@ -9,27 +9,27 @@ import WelcomeToTheJungle from "../../futuremodules/auth/components/WelcomeToThe
 import {Logoff} from "../../futuremodules/auth/components/Logoff";
 import {EditingUserTrend} from "../../modules/trends/globals";
 import DashboardProject from "../dashboardProject/DashboardProject";
+import {SpinnerTopMiddle} from "../../futuremodules/spinner/Spinner";
 
-const DashboardUser = (props) => {
+const DashboardUser = ({auth}) => {
 
   const [editingTrend] = useGlobal(EditingUserTrend);
 
-  if (props.auth === null) {
+  if (auth === null) {
     return (<Redirect to={"/"}/>);
   }
-  if (props.auth === undefined) {
-    return (<Fragment/>)
+  if (auth === undefined) {
+    return (<SpinnerTopMiddle/>)
   }
 
   return (
     <Fragment>
-      {editingTrend && <DashboardProject username={getAuthUserName(props.auth)} trendId={editingTrend}/>}
-      {!(editingTrend) &&
+      {editingTrend && <DashboardProject username={getAuthUserName(auth)} trendId={editingTrend}/>}
+      {!editingTrend &&
       <DashboardUserFragment>
         <WelcomeToTheJungle/>
         <UserAssets/>
         <AssetCreator/>
-        {/*<AssetInvitations auth={auth}/>*/}
         <Logoff/>
       </DashboardUserFragment>
       }

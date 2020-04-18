@@ -133,8 +133,7 @@ input TrendLayoutInput {
 }
 
 type Query {
-    trendLayouts(trendId: String!, username:String!): [TrendLayout]
-    trendLayout(layoutName: String!, trendId: String!, username:String!): TrendLayout
+    trendLayout(trendId: String!, username:String!): TrendLayout
 }
 
 type Mutation {

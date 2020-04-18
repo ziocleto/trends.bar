@@ -11,17 +11,32 @@ import {CustomTitle, RocketTitle} from "../../futuremodules/reactComponentStyles
 import {useMutation} from "@apollo/react-hooks";
 import {upsertTrendLayout} from "../../modules/trends/mutations";
 import {SpinnerTopMiddle} from "../../futuremodules/spinner/Spinner";
+import {MakeDefaultLayoutWizard} from "./subcomponents/Layout/MakeDefaultLayoutWizard";
+
+const needsWizard = (layout, datasets) => {
+  return (!datasets && layout && layout.wizard);
+};
 
 const DashboardProject = ({username, trendId}) => {
 
   const dataSourcesId = "DataSources";
   const trendTabId = "Trend";
   const [activeTab, setActiveTab] = useState(trendTabId);
-  const [,setEditingUserTrend] = useGlobal(EditingUserTrend);
+  const [, setEditingUserTrend] = useGlobal(EditingUserTrend);
   const {layout, setLayout, datasets, setDatasets} = useGetTrend(trendId, username);
   const [trendLayoutMutation] = useMutation(upsertTrendLayout);
 
-  if (!layout || !datasets) {
+  const needWizard = needsWizard(layout, datasets);
+  if (needWizard) {
+    return <MakeDefaultLayoutWizard
+      layout={layout}
+      setLayout={setLayout}
+      datasets={datasets}
+      setDatasets={setDatasets}
+    />;
+  }
+
+  if (!needWizard && (!layout || !datasets)) {
     return <SpinnerTopMiddle/>
   }
 
@@ -51,6 +66,8 @@ const DashboardProject = ({username, trendId}) => {
       }
     }).then();
   };
+
+  console.log(layout);
 
   return (
     <Fragment>

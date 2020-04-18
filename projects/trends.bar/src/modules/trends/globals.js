@@ -3,11 +3,7 @@ import {getFileNameOnlyNoExt, sanitizeURLParams} from "../../futuremodules/utils
 import {useLocation} from "react-router-dom";
 import {useQuery} from "@apollo/react-hooks";
 import {getTrendLayouts} from "./queries";
-import {getDefaultTrendLayout} from "./layout";
-import {
-  checkQueryHasLoadedWithData,
-  getQueryLoadedWithValueArrayNotEmpty
-} from "../../futuremodules/graphqlclient/query";
+import {checkQueryHasLoadedWithData, getQueryLoadedWithValue} from "../../futuremodules/graphqlclient/query";
 import {useState} from "react";
 import {graphArrayToGraphTree2} from "./dataGraphs";
 
@@ -41,22 +37,20 @@ export const useGetTrend = (trendId, username) => {
   useEffect(() => {
     trendQueryResult.refetch().then(() => {
       if (checkQueryHasLoadedWithData(trendQueryResult)) {
-        const queryLayout = getQueryLoadedWithValueArrayNotEmpty(trendQueryResult);
+        const queryLayout = getQueryLoadedWithValue(trendQueryResult);
         if (queryLayout) {
-          setLayout(queryLayout[0]);
-          const gt = graphArrayToGraphTree2(queryLayout[0].datasets, "yValueGroup", "yValueSubGroup", "yValueName", "values");
-          setDatasets(previousValue => gt);
+          setDatasets(() => graphArrayToGraphTree2(queryLayout.datasets));
+          let queryWithRemovedDatasets = {...queryLayout};
+          delete queryWithRemovedDatasets.datasets;
+          setLayout(queryWithRemovedDatasets);
         } else {
-          const ll = {
-            ...getDefaultTrendLayout(null),
-            trendId,
-            username
-          };
-          setLayout(ll);
+          setLayout({
+            wizard: true
+          });
         }
       }
     });
-  }, [trendQueryResult, trendId, username]);
+  }, [trendQueryResult]);
 
   return {
     layout,

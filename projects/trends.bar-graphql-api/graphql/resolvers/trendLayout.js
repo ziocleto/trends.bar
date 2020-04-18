@@ -1,7 +1,6 @@
 
 export default {
   Query: {
-    trendLayouts: (_, args, {dataSources}) => dataSources.trendLayouts.find(args),
     trendLayout: (_, args, {dataSources}) => dataSources.trendLayouts.findOne(args),
   },
 
