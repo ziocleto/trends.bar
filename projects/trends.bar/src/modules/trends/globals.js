@@ -12,6 +12,7 @@ const uniqueNamesGenerator = require('project-name-generator');
 export const EditingUserTrend = 'editingUserTrend';
 export const EditingUserTrendDataSource = 'editingUserTrendDataSource';
 export const currentUserTrends = 'currentUserTrends';
+export const layoutStandardCols = 12;
 
 export const generateUniqueNameWithArrayCheck = (arrayToCheck) => {
   let defaultFileName = uniqueNamesGenerator().dashed;

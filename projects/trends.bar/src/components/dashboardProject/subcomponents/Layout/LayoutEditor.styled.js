@@ -15,6 +15,13 @@ export const DivLayoutStatic = styled.div` {
   overflow:scroll;
 }`;
 
+export const DivLayoutTemplate = styled.div` {
+  border: 1px solid var(--light);
+  border-radius: 5px;
+  background-color: var(--light);
+  overflow:scroll;
+}`;
+
 export const SpanRemoveLayoutCell = styled.span` {
     position:absolute;
     padding: 4px 7px;
