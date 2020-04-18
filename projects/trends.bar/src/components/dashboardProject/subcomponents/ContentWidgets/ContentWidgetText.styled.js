@@ -13,7 +13,7 @@ export const Container = styled.div` {
 
 export const Overtitle = styled.div` {
     font-size: 1.3rem;
-    color: var(--primary-color-light);
+    color: var(--logo-color-2);
 }`;
 
 export const Title = styled.div` {

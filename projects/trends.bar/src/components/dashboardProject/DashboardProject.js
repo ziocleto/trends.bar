@@ -27,10 +27,12 @@ const DashboardProject = ({username, trendId}) => {
   const [trendLayoutMutation] = useMutation(upsertTrendLayout);
 
   const needWizard = needsWizard(layout);
-  if (needWizard) {
+  const [showWizard, setShowWizard] = useState(false);
+  console.log("Needs a wizard? ", needWizard);
+  if (needWizard || showWizard) {
     return <MakeDefaultLayoutWizard
-      layout={layout}
       setLayout={setLayout}
+      onClose={() => setShowWizard(false)}
     />;
   }
 

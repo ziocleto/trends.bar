@@ -9,8 +9,9 @@ import {getDatasets, getSimilarTrends} from "../../../../modules/trends/queries"
 import {SearchBarResultContainer, SearchBarResultTrendId, SearchBarResultUser} from "../../../Landing/Landing.styled";
 import {graphArrayToGraphTree2} from "../../../../modules/trends/dataGraphs";
 import {getQueryLoadedWithValueArrayNotEmpty} from "../../../../futuremodules/graphqlclient/query";
+import {updateTrendDatasets} from "../../../../modules/trends/globals";
 
-const SearchResults = ({trendIdPartial, datasets, setDatasets}) => {
+const SearchResults = ({trendIdPartial, setLayout}) => {
   const {data, loading} = useQuery(getSimilarTrends(trendIdPartial));
   const [datasetQueryCall, datasetQueryResult] = useLazyQuery(getDatasets());
 
@@ -19,13 +20,11 @@ const SearchResults = ({trendIdPartial, datasets, setDatasets}) => {
   useEffect(() => {
       const queryRes = getQueryLoadedWithValueArrayNotEmpty(datasetQueryResult);
       if (queryRes) {
-        const gt = graphArrayToGraphTree2(queryRes);
-        setDatasets(prevState => {
-          return {...prevState, ...gt};
-        });
+        console.log("Setting layout", queryRes);
+        updateTrendDatasets( setLayout, graphArrayToGraphTree2(queryRes) );
       }
     }
-    , [datasetQueryResult, setDatasets]);
+    , [datasetQueryResult, setLayout]);
 
   if (data && data.trend_similar && loading === false) {
     if (results !== data.trend_similar) {
@@ -41,7 +40,6 @@ const SearchResults = ({trendIdPartial, datasets, setDatasets}) => {
           <SearchBarResultContainer
             key={key}
             onClick={() => {
-              console.log("Who ya gonna call?");
               datasetQueryCall({
                   variables: {
                     name: e.user.name,
@@ -66,7 +64,7 @@ const SearchResults = ({trendIdPartial, datasets, setDatasets}) => {
 
 };
 
-export const ImportDataSources = ({datasets, setDatasets}) => {
+export const ImportDataSources = ({setLayout}) => {
 
   const [trendIdPartial, setTrendIdPartial] = useState(null);
 
@@ -74,7 +72,7 @@ export const ImportDataSources = ({datasets, setDatasets}) => {
     <Fragment>
       <RowSeparator/>
       <Row>
-        <CustomTitle text={"Grab Sources from somebody else:"} icon={"poll"}/>
+        <CustomTitle text={"Grab Sources within Trends.Bar"} icon={"poll"}/>
       </Row>
       <RowSeparator/>
       <Row>
@@ -86,7 +84,7 @@ export const ImportDataSources = ({datasets, setDatasets}) => {
           onChange={e => setTrendIdPartial(e.target.value)}
         >
         </NiceSearchBar>
-        <SearchResults trendIdPartial={trendIdPartial} datasets={datasets} setDatasets={setDatasets}/>
+        <SearchResults trendIdPartial={trendIdPartial} setLayout={setLayout}/>
       </Row>
     </Fragment>
   )

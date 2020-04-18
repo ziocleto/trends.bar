@@ -12,7 +12,7 @@ import {useGlobalState} from "../../../../futuremodules/globalhelper/globalHelpe
 import {Fragment} from "react";
 import {ImportDataSources} from "./ImportDataSources";
 
-export const DataSources = ({datasets, setDatasets}) => {
+export const DataSources = ({layout, setLayout}) => {
 
   const isEditingDataSource = checkBoolDefinedAndTrue(useGlobalState(EditingUserTrendDataSource));
 
@@ -23,14 +23,14 @@ export const DataSources = ({datasets, setDatasets}) => {
         <Container fluid>
           <UserDataSources/>
           <RowSeparatorDouble/>
-          <ImportDataSources datasets={datasets} setDatasets={setDatasets}/>
+          <ImportDataSources setLayout={setLayout}/>
           <RowSeparator/>
           <RowSeparatorDouble/>
           <DataSourcesCreator/>
         </Container>
         }
       </DataSourcesContainer>
-      <ScriptEditor datasets={datasets} setDatasets={setDatasets}/>
+      <ScriptEditor layout={layout} setLayout={setLayout}/>
     </Fragment>
   );
 };

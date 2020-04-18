@@ -14,6 +14,7 @@ import {layoutStandardCols} from "../../../../modules/trends/globals";
 import {RowSeparatorDoubleHR} from "../../../../futuremodules/reactComponentStyles/reactCommon";
 import {useState} from "react";
 import {ImportDataSources} from "../DataSources/ImportDataSources";
+import {getDefaultCellContent} from "../../../../modules/trends/layout";
 
 const lsc = layoutStandardCols;
 
@@ -70,7 +71,7 @@ const createLayoutCovid2 = () => {
   ];
 };
 
-const createDefaultLayouts = seed => {
+const createDefaultLayouts = () => {
   return [
     createLayoutBlog(),
     createLayoutBlog2(),
@@ -80,16 +81,22 @@ const createDefaultLayouts = seed => {
 };
 
 const saveLayout = (layout, setLayout, setStep ) => {
-  // setLayout( {
-  //   gridLayout: layout,
-  //   gridContent: []
-  // });
+  let gridContent = [];
+
+  for (let i = 0; i < layout.length; i++) {
+    gridContent.push(getDefaultCellContent(i, null));
+  }
+  setLayout( {
+    gridLayout: layout,
+    gridContent
+  });
   setStep(step => step + 1);
 };
 
-export const MakeDefaultLayoutWizard = ({datasets, setLayout, setDatasets}) => {
+export const MakeDefaultLayoutWizard = ({setLayout, onClose}) => {
 
   const [step, setStep] = useState(1);
+  const [wizardLayout, setWizardLayout] = useState(null);
   const layouts = createDefaultLayouts();
 
   return (
@@ -98,7 +105,7 @@ export const MakeDefaultLayoutWizard = ({datasets, setLayout, setDatasets}) => {
         size="lg"
         aria-labelledby="contained-modal-title-vcenter"
         centered
-        show={true}
+        show
         // onHide={() => onClose()}
       >
         <Modal.Body>
@@ -126,12 +133,12 @@ export const MakeDefaultLayoutWizard = ({datasets, setLayout, setDatasets}) => {
             <RowSeparatorDoubleHR/>
             <Row>
               {step === 1 && layouts.map(layout =>
-                <Col>
+                <Col key={JSON.stringify(layout)}>
                   <ButtonBgDiv
                     borderColor={"var(--info)"}
                     backgroundColor={"var(--dark)"}
                     padding={"10px"}
-                    onClick={() => saveLayout(layout, setLayout, setStep)}
+                    onClick={() => saveLayout(layout, setWizardLayout, setStep)}
                   >
                     <GridLayout layout={layout}
                                 cols={lsc}
@@ -149,12 +156,14 @@ export const MakeDefaultLayoutWizard = ({datasets, setLayout, setDatasets}) => {
                 </Col>
               )}
             </Row>
-            {step === 2 && <ImportDataSources datasets={datasets} setDatasets={setDatasets}/>}
+            {step === 2 && <ImportDataSources setLayout={setWizardLayout}/>}
           </Container>
         </Modal.Body>
         <Modal.Footer>
           {step === 1 && <InfoTextSpan>Step {step} of 2</InfoTextSpan>}
-          {step === 2 && <Button variant={"success"}>Done!</Button>}
+          {step === 2 && <Button variant={"success"} onClick={() => {
+            setLayout(wizardLayout);
+          }}>Done!</Button>}
         </Modal.Footer>
       </Modal>
     </Fragment>

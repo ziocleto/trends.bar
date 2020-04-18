@@ -24,11 +24,11 @@ import {alertSuccess, useAlert} from "../../../../futuremodules/alerts/alerts";
 import {graphArrayToGraphTree2} from "../../../../modules/trends/dataGraphs";
 import {LabelWithRename} from "../../../../futuremodules/labelWithRename/LabelWithRename";
 import {useGlobalState, useGlobalUpdater} from "../../../../futuremodules/globalhelper/globalHelper";
-import {EditingUserTrendDataSource} from "../../../../modules/trends/globals";
+import {EditingUserTrendDataSource, updateTrendDatasets} from "../../../../modules/trends/globals";
 import {RowSeparator, RowSeparatorDouble} from "../../../../futuremodules/reactComponentStyles/reactCommon";
 import {isStatusCodeSuccessful} from "../../../../futuremodules/api/apiStatus";
 
-export const ScriptEditor = ({datasets, setDatasets}) => {
+export const ScriptEditor = ({layout, setLayout}) => {
 
   const [graphTree, setGraphTree] = useState(null);
   const setEditingDataSource = useGlobalUpdater(EditingUserTrendDataSource);
@@ -210,10 +210,7 @@ export const ScriptEditor = ({datasets, setDatasets}) => {
   const publishGraphs = () => {
     api(fetchApi, putScript, graphTree.script).then((r) => {
       if (isStatusCodeSuccessful(r.status.code)) {
-        setDatasets({
-          ...datasets,
-          ...graphTree.tree
-        });
+        updateTrendDatasets( setLayout, graphTree.tree );
         alertSuccess(alertStore, "All set and done!", () => setEditingDataSource(false));
       }
     });

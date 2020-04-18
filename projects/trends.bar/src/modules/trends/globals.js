@@ -28,6 +28,18 @@ export const useTrendIdGetter = () => {
   return userTrendId ? userTrendId : urlTrendId;
 };
 
+export const updateTrendDatasets = (updater, dataset) => {
+  updater(prevState => {
+    return {
+      ...prevState,
+      datasets: {
+        ...prevState.datasets,
+        ...dataset
+      }
+    };
+  });
+};
+
 export const useGetTrend = (trendId, username) => {
   const [layout, setLayout] = useState(null);
   const trendQueryResult = useQuery(getTrendLayouts(), {
