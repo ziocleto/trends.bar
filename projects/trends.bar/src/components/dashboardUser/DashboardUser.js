@@ -8,7 +8,7 @@ import {Fragment} from "react";
 import WelcomeToTheJungle from "../../futuremodules/auth/components/WelcomeToTheJungle";
 import {Logoff} from "../../futuremodules/auth/components/Logoff";
 import {EditingUserTrend} from "../../modules/trends/globals";
-import DashboardProject from "../dashboardProject/DashboardProject";
+import {DashboardProject} from "../dashboardProject/DashboardProject";
 import {SpinnerTopMiddle} from "../../futuremodules/spinner/Spinner";
 
 const DashboardUser = ({auth}) => {

@@ -9,16 +9,12 @@ import {EditingUserTrend, useGetTrend} from "../../modules/trends/globals";
 import {CustomTitle, RocketTitle} from "../../futuremodules/reactComponentStyles/reactCommon";
 import {SpinnerTopMiddle} from "../../futuremodules/spinner/Spinner";
 import {MakeDefaultLayoutWizard} from "./subcomponents/Layout/MakeDefaultLayoutWizard";
-import {addCell, useSaveLayout} from "./DashBoardProjectLogic";
-
-const needsWizard = (layout) => {
-  return (layout && layout.wizard);
-};
+import {addCell, needsWizard, useSaveLayout} from "./DashBoardProjectLogic";
 
 const dataSourcesId = "DataSources";
 const trendTabId = "Trend";
 
-const DashboardProject = ({username, trendId}) => {
+export const DashboardProject = ({username, trendId}) => {
 
   const [activeTab, setActiveTab] = useState(trendTabId);
   const [, setEditingUserTrend] = useGlobal(EditingUserTrend);
@@ -91,4 +87,4 @@ const DashboardProject = ({username, trendId}) => {
   );
 };
 
-export default DashboardProject;
+// export default DashboardProject;

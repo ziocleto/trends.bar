@@ -3,6 +3,10 @@ import {useMutation} from "@apollo/react-hooks";
 import {upsertTrendLayout} from "../../modules/trends/mutations";
 import {useAlertSuccess} from "../../futuremodules/alerts/alerts";
 
+export const needsWizard = (layout) => {
+  return (layout && layout.wizard);
+};
+
 export const addCell = (layout, setLayout) => {
   const newGridLayout = [...layout.gridLayout];
   const newGridContent = [...layout.gridContent];
