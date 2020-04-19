@@ -1,21 +1,15 @@
 import React, {Fragment} from "react";
-import {useLocation} from "react-router-dom";
 import {ProgressBar} from "../../futuremodules/progressbar/ProgressBar";
 import {NavbarTitle} from "./Navbar.styled";
-import {
-  getFileNameOnlyNoExt,
-  isReservedWordSanitized,
-  sanitizeAvoidReservedWords
-} from "../../futuremodules/utils/utils";
 import {NavbarComponent} from "../../futuremodules/reactComponentStyles/reactCommon.styled";
 import NavbarUser from "../../futuremodules/navbar/components/NavbarUser";
 import {NavbarLogoAndTitle} from "./NavbarLogoAndTitle";
 import {NavbarLeftHandSizeComponent} from "../../futuremodules/navbar/components/navbar-styled";
+import {useGetNavbarTitle} from "./NavbarLogic";
 
-const Navbar = (props) => {
+const Navbar = () => {
 
-  const isLocationReserved = isReservedWordSanitized(useLocation().pathname);
-  const propTrendId = !isLocationReserved && getFileNameOnlyNoExt(sanitizeAvoidReservedWords(props.trendId));
+  const getNavbarTitle = useGetNavbarTitle();
 
   return (
     <Fragment>
@@ -24,7 +18,7 @@ const Navbar = (props) => {
         <NavbarLeftHandSizeComponent>
         <NavbarLogoAndTitle/>
         </NavbarLeftHandSizeComponent>
-        <NavbarTitle>{propTrendId}</NavbarTitle>
+        <NavbarTitle>{getNavbarTitle()}</NavbarTitle>
         <NavbarUser/>
       </NavbarComponent>
     </Fragment>

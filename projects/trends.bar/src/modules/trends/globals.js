@@ -1,4 +1,4 @@
-import {useEffect, useGlobal} from "reactn";
+import {useEffect} from "reactn";
 import {getFileNameOnlyNoExt, sanitizeURLParams} from "../../futuremodules/utils/utils";
 import {useLocation} from "react-router-dom";
 import {useQuery} from "@apollo/react-hooks";
@@ -24,9 +24,7 @@ export const generateUniqueNameWithArrayCheck = (arrayToCheck) => {
 };
 
 export const useTrendIdGetter = () => {
-  const [userTrendId] = useGlobal(EditingUserTrend);
-  const urlTrendId = sanitizeURLParams(getFileNameOnlyNoExt(useLocation().pathname));
-  return userTrendId ? userTrendId : urlTrendId;
+  return sanitizeURLParams(getFileNameOnlyNoExt(useLocation().pathname));
 };
 
 export const updateTrendDatasets = (prevState, updater, dataset) => {

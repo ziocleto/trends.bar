@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import App from "./App";
+import {App} from "./App";
 
 import {ApolloProvider} from 'react-apollo'
 import {ApolloLink, split} from 'apollo-link';
@@ -13,9 +13,11 @@ import {WebSocketLink} from 'apollo-link-ws';
 import {getMainDefinition} from "apollo-utilities";
 import addReactNDevTools from 'reactn-devtools';
 import {createAntiForgeryTokenHeaders} from './futuremodules/auth/authApiCalls';
+import {initEH} from "./init";
 const omitDeep = require("omit-deep-lodash");
 
 addReactNDevTools();
+initEH();
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors)
