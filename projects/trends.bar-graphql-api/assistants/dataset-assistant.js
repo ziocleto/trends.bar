@@ -1,4 +1,4 @@
-import {datasetModel} from "../models/dataset";
+import {datasetModel} from "../models/dataSource";
 const dbi = require("eh_db");
 
 module.exports = {

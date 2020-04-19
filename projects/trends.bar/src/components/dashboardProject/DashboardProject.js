@@ -65,7 +65,9 @@ const DashboardProject = ({username, trendId}) => {
     let layoutNoDatasets = {...layout};
     layoutNoDatasets.trendId = trendId;
     layoutNoDatasets.username = username;
+    delete layoutNoDatasets.name;
     delete layoutNoDatasets.datasets;
+    delete layoutNoDatasets.trendGraphs;
     trendLayoutMutation({
       variables: {
         trendLayout: layoutNoDatasets

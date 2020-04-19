@@ -10,9 +10,10 @@ import {getSimilarTrends} from "../../modules/trends/queries";
 import {useQuery} from "@apollo/react-hooks";
 import {Redirect} from "react-router-dom";
 import {Logo1TextSpan, Logo2TextSpan, NiceSearchBar} from "../../futuremodules/reactComponentStyles/reactCommon.styled";
+import {getQueryLoadedWithValueArrayNotEmpty} from "../../futuremodules/graphqlclient/query";
 
 const SearchResults = ({trendIdPartial}) => {
-  const {data, loading} = useQuery(getSimilarTrends(trendIdPartial));
+  const similarDatasetsQuery = useQuery(getSimilarTrends(trendIdPartial));
   const [results, setResults] = useState([]);
   const [finalized, setfinalized] = useState({
     clicked: false,
@@ -20,11 +21,14 @@ const SearchResults = ({trendIdPartial}) => {
     trendId: ""
   });
 
-  if (data && data.trend_similar && loading === false) {
-    if (results !== data.trend_similar) {
-      setResults(data.trend_similar);
-    }
-  }
+  useEffect(() => {
+      const queryRes = getQueryLoadedWithValueArrayNotEmpty(similarDatasetsQuery);
+      if (queryRes) {
+        console.log(queryRes);
+        setResults(queryRes)
+      }
+    },
+    [similarDatasetsQuery, setResults]);
 
   if ( finalized.clicked ) {
     return <Redirect push={true} to={`/${finalized.username}/${finalized.trendId}`}/>

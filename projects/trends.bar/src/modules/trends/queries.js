@@ -60,7 +60,6 @@ export const getTrendLayouts = () => {
   return gql`
       query getTrendLayouts($trendId:String!, $name:String!) {
           trendLayout(trendId:$trendId, username:$name) {
-              name
               username
               trendId
               cols

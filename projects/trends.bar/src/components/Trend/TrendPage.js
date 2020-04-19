@@ -17,9 +17,11 @@ const makeLayoutStatic = layout => {
 
 const TrendPage = () => {
   const [username, trendId] = sanitizePathRoot(useLocation().pathname).split("/");
-  const {layout, datasets} = useGetTrend(trendId, username);
+  const {layout} = useGetTrend(trendId, username);
 
-  if (!layout || !datasets) return (<SpinnerTopMiddle/>);
+  if (!layout) return (<SpinnerTopMiddle/>);
+
+  console.log(layout);
 
   const layoutStatic = makeLayoutStatic(layout);
 
@@ -31,7 +33,7 @@ const TrendPage = () => {
       {layoutStatic.gridLayout.map(elem => {
         return (
           <DivLayoutStatic key={elem.i}>
-            <ContentWidget datasets={datasets}
+            <ContentWidget datasets={layout.datasets}
                            config={layoutStatic.gridContent[layoutStatic.gridLayout.findIndex(v => v.i === elem.i)]}
             />
           </DivLayoutStatic>

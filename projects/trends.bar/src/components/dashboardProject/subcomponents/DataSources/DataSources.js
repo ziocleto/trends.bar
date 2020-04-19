@@ -21,6 +21,7 @@ export const DataSources = ({layout, setLayout}) => {
       <Container fluid>
         <RowSeparatorDouble/>
         <UserDataSources/>
+        <RowSeparator/>
         <DataSourcesCreator/>
         <RowSeparatorDouble/>
         <ImportDataSources layout={layout} setLayout={setLayout}/>
@@ -28,7 +29,7 @@ export const DataSources = ({layout, setLayout}) => {
         <RowSeparatorDouble/>
       </Container>
       }
-      {isEditingDataSource && <ScriptEditor layout={layout} setLayout={setLayout}/>}
+      <ScriptEditor layout={layout} setLayout={setLayout}/>
     </Fragment>
   );
 };
