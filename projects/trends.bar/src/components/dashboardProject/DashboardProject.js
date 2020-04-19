@@ -6,82 +6,38 @@ import {Fragment, useState} from "react";
 import {LayoutEditor} from "./subcomponents/Layout/LayoutEditor";
 import {DivWL, DivWR, FlexToolbar} from "../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {EditingUserTrend, useGetTrend} from "../../modules/trends/globals";
-import {getDefaultCellContent} from "../../modules/trends/layout";
 import {CustomTitle, RocketTitle} from "../../futuremodules/reactComponentStyles/reactCommon";
-import {useMutation} from "@apollo/react-hooks";
-import {upsertTrendLayout} from "../../modules/trends/mutations";
 import {SpinnerTopMiddle} from "../../futuremodules/spinner/Spinner";
 import {MakeDefaultLayoutWizard} from "./subcomponents/Layout/MakeDefaultLayoutWizard";
-import {useAlertSuccess} from "../../futuremodules/alerts/alerts";
+import {addCell, useSaveLayout} from "./DashBoardProjectLogic";
 
 const needsWizard = (layout) => {
   return (layout && layout.wizard);
 };
 
+const dataSourcesId = "DataSources";
+const trendTabId = "Trend";
+
 const DashboardProject = ({username, trendId}) => {
 
-  const dataSourcesId = "DataSources";
-  const trendTabId = "Trend";
   const [activeTab, setActiveTab] = useState(trendTabId);
   const [, setEditingUserTrend] = useGlobal(EditingUserTrend);
   const {layout, setLayout} = useGetTrend(trendId, username);
-  const [trendLayoutMutation] = useMutation(upsertTrendLayout);
-  const alertSuccess = useAlertSuccess();
+  const saveLayout = useSaveLayout(trendId, username);
 
-  const needWizard = needsWizard(layout);
-  const [showWizard, setShowWizard] = useState(false);
-  if (needWizard || showWizard) {
-    return <MakeDefaultLayoutWizard
-      setLayout={setLayout}
-      onClose={() => setShowWizard(false)}
-    />;
+  if (needsWizard(layout)) {
+    return <MakeDefaultLayoutWizard setLayout={setLayout}/>;
   }
 
   if (!layout) {
     return <SpinnerTopMiddle/>
   }
-
-  const onAddCell = () => {
-    const newGridLayout = [...layout.gridLayout];
-    const newGridContent = [...layout.gridContent];
-    const newIndex = Math.max(...(layout.gridLayout.map((v) => Number(v.i)))) + 1;
-    newGridLayout.push({
-      i: newIndex.toString(),
-      x: 0,
-      y: 0,
-      w: 3,
-      h: 3
-    });
-    newGridContent.push(getDefaultCellContent(newIndex, layout.datasets));
-    setLayout({
-      ...layout,
-      gridLayout: newGridLayout,
-      gridContent: newGridContent
-    });
-  };
-
-  const onSaveLayout = () => {
-    // Remove datasets from query
-    let layoutNoDatasets = {...layout};
-    layoutNoDatasets.trendId = trendId;
-    layoutNoDatasets.username = username;
-    delete layoutNoDatasets.name;
-    delete layoutNoDatasets.datasets;
-    delete layoutNoDatasets.trendGraphs;
-    trendLayoutMutation({
-      variables: {
-        trendLayout: layoutNoDatasets
-      }
-    }).then( () => alertSuccess("Yeah, you're live!"));
-  };
-
-  console.log(layout);
-
+  
   return (
     <Fragment>
       <FlexToolbar margin={"12px"}>
         <DivWL width={"200px"}>
-          <Button variant={"outline-success"} className="mr-4" onClick={onSaveLayout}><RocketTitle
+          <Button variant={"outline-success"} className="mr-4" onClick={() => saveLayout(layout)}><RocketTitle
             text={"Publish"}/></Button>
         </DivWL>
         <div>
@@ -90,7 +46,7 @@ const DashboardProject = ({username, trendId}) => {
               <SplitButton as={ButtonGroup} title={<CustomTitle text={"Trend"} icon={"poll"}/>}
                            variant={activeTab && activeTab === trendTabId ? "info" : "primary"}
                            onClick={() => setActiveTab(trendTabId)}>
-                <Dropdown.Item onClick={onAddCell}>
+                <Dropdown.Item onClick={() => addCell(layout, setLayout)}>
                   <CustomTitle text={"Add Trend Box"} icon={"plus"}/>
                 </Dropdown.Item>
               </SplitButton>

@@ -3,11 +3,10 @@ import "./DataSources.css"
 import {Fragment, useState} from "react";
 import {api, useApi} from "../../../../futuremodules/api/apiEntryPoint";
 import {addNewScript} from "../../../../futuremodules/fetch/fetchApiCalls";
-import {EditingUserTrendDataSource, useTrendIdGetter} from "../../../../modules/trends/globals";
+import {useTrendIdGetter} from "../../../../modules/trends/globals";
 import {checkURLValid, objectExistOnWithCallback} from "../../../../futuremodules/utils/utils";
 import {Button, Col, Form, InputGroup, Row} from "react-bootstrap";
 import {PlusTitle, RowSeparator} from "../../../../futuremodules/reactComponentStyles/reactCommon";
-import {useGlobalUpdater} from "../../../../futuremodules/globalhelper/globalHelper";
 
 export const DataSourcesCreator = () => {
 
