@@ -74,7 +74,7 @@ export const ScriptResultContainer = styled.div` {
 }`;
 
 export const ScriptElementsContainer = styled.div`{
-  max-height: 400px;
+  height: 400px;
   overflow-y: scroll;
 }`;
 

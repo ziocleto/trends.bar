@@ -1,18 +1,18 @@
 import React from "reactn";
 import "./DataSources.css"
 import {Fragment, useEffect, useState} from "react";
-import {NiceSearchBar} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
+import {InfoTextSpanBold, NiceSearchBar} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {Row} from "react-bootstrap";
 import {CustomTitle, RowSeparator} from "../../../../futuremodules/reactComponentStyles/reactCommon";
 import {useLazyQuery, useQuery} from "@apollo/react-hooks";
-import {getDatasets, getSimilarTrends} from "../../../../modules/trends/queries";
+import {getDatasets, getDatasetsBySimilarTrendId} from "../../../../modules/trends/queries";
 import {SearchBarResultContainer, SearchBarResultTrendId, SearchBarResultUser} from "../../../Landing/Landing.styled";
-import {graphArrayToGraphTree2} from "../../../../modules/trends/dataGraphs";
+import {arrayOfTrendIdAndUsernameToSet, graphArrayToGraphTree2} from "../../../../modules/trends/dataGraphs";
 import {getQueryLoadedWithValueArrayNotEmpty} from "../../../../futuremodules/graphqlclient/query";
 import {updateTrendDatasets} from "../../../../modules/trends/globals";
 
 const SearchResults = ({trendIdPartial, layout, setLayout}) => {
-  const similarTrendQuery = useQuery(getSimilarTrends(trendIdPartial));
+  const similarDatasetsQuery = useQuery(getDatasetsBySimilarTrendId(trendIdPartial));
   const [datasetQueryCall, datasetQueryResult] = useLazyQuery(getDatasets());
 
   const [results, setResults] = useState([]);
@@ -27,23 +27,23 @@ const SearchResults = ({trendIdPartial, layout, setLayout}) => {
     [datasetQueryResult, setLayout]);
 
   useEffect(() => {
-    const res = getQueryLoadedWithValueArrayNotEmpty(similarTrendQuery);
+    const res = getQueryLoadedWithValueArrayNotEmpty(similarDatasetsQuery);
     if (res) {
-      setResults(res);
+      setResults(arrayOfTrendIdAndUsernameToSet(res));
     }
-  }, [similarTrendQuery]);
+  }, [similarDatasetsQuery]);
 
   return (
     <Fragment>
       {results.map(e => {
-        const key = e.trendId + e.user.name;
+        const key = e.trendId + e.username;
         return (
           <SearchBarResultContainer
             key={key}
             onClick={() => {
               datasetQueryCall({
                   variables: {
-                    name: e.user.name,
+                    name: e.username,
                     trendId: e.trendId
                   }
                 }
@@ -54,8 +54,11 @@ const SearchResults = ({trendIdPartial, layout, setLayout}) => {
             <SearchBarResultTrendId>
               {e.trendId}
             </SearchBarResultTrendId>
+            <InfoTextSpanBold>
+              {e.count}
+            </InfoTextSpanBold>
             <SearchBarResultUser>
-              <i className="fas fa-user"/>{" "}{e.user.name}
+              <i className="fas fa-user"/>{" "}{e.username}
             </SearchBarResultUser>
           </SearchBarResultContainer>
         )

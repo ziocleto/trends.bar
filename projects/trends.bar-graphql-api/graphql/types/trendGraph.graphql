@@ -29,6 +29,12 @@ type TrendGraph {
     valuesDxPerc: [ DateFloat ]
 }
 
+type TrendGraphSimilarSeach {
+    count: BigInt
+    trendId: [String!]
+    username:[String!]
+}
+
 type GraphQuery {
     trendId: String!
     username: String!
@@ -53,6 +59,7 @@ input GraphQueryInput {
 type Query {
     trendGraph(username:String!,trendId:String!,yValueSubGroup:String!,yValueName:String!): TrendGraph
     trendGraphs(username:String,trendId:String,yValueSubGroup:String,yValueName:String): [TrendGraph]
+    trendGraphsSimilar(trendId:String): [TrendGraphSimilarSeach]
     yValueGroups(yValueGroup:String): [TrendGraph]
 }
 

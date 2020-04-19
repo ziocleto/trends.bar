@@ -1,4 +1,5 @@
 import {MongoDataSource} from "apollo-datasource-mongodb";
+
 const dbi = require("eh_db");
 
 export class MongoDataSourceExtended extends MongoDataSource {
@@ -27,6 +28,32 @@ export class MongoDataSourceExtended extends MongoDataSource {
     return await this.model.find({trendId: {"$regex": query.trendId, "$options": "i"}});
   }
 
+  async findSimilarAndDistinct(query) {
+    const res = await this.model.aggregate([
+      {$project: {"values": 0}},
+      {
+        $match: {
+          trendId: {"$regex": query.trendId, "$options": "i"},
+        }
+      },
+      {
+        $group: {
+          _id: "$trendId",
+          count: { $sum: 1 },
+          trendId: {
+            $addToSet: "$trendId"
+          },
+          username: {
+            $addToSet: "$username"
+          }
+        }
+      },
+      {$project: {"_id": 0}},
+    ]);
+
+    return res;
+  }
+
   async findOne(query) {
     return await this.model.findOne(query).collation({locale: "en", strength: 2});
   }
@@ -43,7 +70,7 @@ export class MongoDataSourceExtended extends MongoDataSource {
   async save(query) {
     try {
       const found = await this.model.findOne(query);
-      if ( found ) {
+      if (found) {
         return null;
       }
       const newElem = new this.model(query);

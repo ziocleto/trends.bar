@@ -12,7 +12,7 @@ import {useMutation} from "@apollo/react-hooks";
 import {upsertTrendLayout} from "../../modules/trends/mutations";
 import {SpinnerTopMiddle} from "../../futuremodules/spinner/Spinner";
 import {MakeDefaultLayoutWizard} from "./subcomponents/Layout/MakeDefaultLayoutWizard";
-import {alertSuccess, useAlertSuccess} from "../../futuremodules/alerts/alerts";
+import {useAlertSuccess} from "../../futuremodules/alerts/alerts";
 
 const needsWizard = (layout) => {
   return (layout && layout.wizard);

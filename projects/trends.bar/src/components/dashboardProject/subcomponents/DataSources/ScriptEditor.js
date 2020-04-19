@@ -235,8 +235,8 @@ export const ScriptEditor = ({layout, setLayout}) => {
                   {getLabelTransformOfGroup(e)}
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
-                  <Dropdown.Item onClick={() => setLabelTransformOfGroup(e, "None")}>Not specified</Dropdown.Item>
-                  <Dropdown.Item onClick={() => setLabelTransformOfGroup(e, "Country")}>Country</Dropdown.Item>
+                  <Dropdown.Item key={"a"} onClick={() => setLabelTransformOfGroup(e, "None")}>Not specified</Dropdown.Item>
+                  <Dropdown.Item key={"b"} onClick={() => setLabelTransformOfGroup(e, "Country")}>Country</Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
             </div>

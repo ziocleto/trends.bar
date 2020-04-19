@@ -179,6 +179,40 @@ export const float100ToPerc = (value) => {
   return Number(value).toFixed(2)+"%";
 };
 
+export const arrayOfObjectsToSet = sourceArray => {
+  let sets = [];
+
+  const keys = new Set();
+  for ( const elem of Object.keys(sourceArray[0]) ) {
+    keys.add(elem);
+  }
+
+  for ( const key of keys ) {
+    let kset = new Set();
+    for ( const elem of sourceArray ) {
+      kset.add(elem[key])
+    }
+    sets.push(kset);
+  }
+
+  return sets;
+};
+
+export const arrayOfTrendIdAndUsernameToSet = (sourceArray) => {
+
+  let ret = [];
+  for (const elem of sourceArray) {
+    for ( const username of elem.username ) {
+      ret.push({
+        count: elem.count,
+        trendId: elem.trendId[0],
+        username
+      });
+    }
+  }
+  return ret;
+};
+
 export const graphArrayToGraphTree2 = ( sourceArray ) => {
   let ret = {};
   const key1="yValueGroup";

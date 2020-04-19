@@ -6,6 +6,7 @@ export default {
   Query: {
     trendGraph: (_, args, {dataSources}) => dataSources.trendGraphs.findOne(args),
     trendGraphs: (_, args, {dataSources}) => dataSources.trendGraphs.find(args),
+    trendGraphsSimilar: (_, args, {dataSources}) => dataSources.trendGraphs.findSimilarAndDistinct(args),
   },
 
   Trend: {

@@ -141,3 +141,13 @@ export const getDatasets = () => {
           }
       }`;
 };
+
+export const getDatasetsBySimilarTrendId = (trendId) => {
+  return gql`{
+      trendGraphsSimilar(trendId:"${trendId}") {
+          count
+          trendId
+          username
+      }
+  }`;
+};
