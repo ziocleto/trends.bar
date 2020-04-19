@@ -4,7 +4,7 @@ import {Button, ButtonGroup, ButtonToolbar, Dropdown, SplitButton} from "react-b
 import {ProjectContent} from "./DashboardProject.styled";
 import {Fragment, useState} from "react";
 import {LayoutEditor} from "./subcomponents/Layout/LayoutEditor";
-import {DivWL, DivWR, FlexToolbar} from "../../futuremodules/reactComponentStyles/reactCommon.styled";
+import {Div, DivWL, DivWR, Flex, FlexToolbar, Text} from "../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {EditingUserTrend, useGetTrend} from "../../modules/trends/globals";
 import {CustomTitle, RocketTitle} from "../../futuremodules/reactComponentStyles/reactCommon";
 import {SpinnerTopMiddle} from "../../futuremodules/spinner/Spinner";
@@ -32,13 +32,24 @@ const DashboardProject = ({username, trendId}) => {
   if (!layout) {
     return <SpinnerTopMiddle/>
   }
-  
+
   return (
     <Fragment>
-      <FlexToolbar margin={"12px"}>
+      <Flex justifyContent={"center"}>
+        <Div
+          margin={"10px 0 0 0"}>
+          <Text
+            bold
+            fontSize={"var(--font-size-lead)"}
+          >
+            {trendId}
+          </Text>
+        </Div>
+      </Flex>
+      <FlexToolbar margin={"5px"}>
         <DivWL width={"200px"}>
-          <Button variant={"outline-success"} className="mr-4" onClick={() => saveLayout(layout)}><RocketTitle
-            text={"Publish"}/></Button>
+          <Button variant={"outline-success"} onClick={() => saveLayout(layout)}>
+            <RocketTitle text={"Publish"}/></Button>
         </DivWL>
         <div>
           <ButtonToolbar>
