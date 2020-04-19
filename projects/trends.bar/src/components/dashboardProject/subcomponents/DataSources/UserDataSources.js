@@ -11,7 +11,7 @@ import {
   SecondaryAltColorTextSpanBold
 } from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {arrayExistsNotEmpty} from "../../../../futuremodules/utils/utils";
-import {Container, Dropdown, Row, SplitButton} from "react-bootstrap";
+import {Col, Container, Dropdown, Row, SplitButton} from "react-bootstrap";
 import {RocketTitle, RowSeparator} from "../../../../futuremodules/reactComponentStyles/reactCommon";
 
 export const UserDataSources = () => {
@@ -47,9 +47,10 @@ export const UserDataSources = () => {
 
   return (
     <Fragment>
-      <RowSeparator/>
       <Row>
-        <RocketTitle text={"Curating:"}/>
+        <Col>
+          <RocketTitle text={"Curating:"}/>
+        </Col>
       </Row>
       <RowSeparator/>
       <Container fluid>

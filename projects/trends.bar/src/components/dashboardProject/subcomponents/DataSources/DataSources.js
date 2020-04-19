@@ -1,5 +1,4 @@
 import React from "reactn";
-import {DataSourcesContainer} from "./DataSources-styled";
 import "./DataSources.css"
 import {ScriptEditor} from "./ScriptEditor";
 import {Container} from "react-bootstrap";
@@ -18,19 +17,18 @@ export const DataSources = ({layout, setLayout}) => {
 
   return (
     <Fragment>
-      <DataSourcesContainer>
-        {!isEditingDataSource &&
-        <Container fluid>
-          <UserDataSources/>
-          <RowSeparatorDouble/>
-          <ImportDataSources layout={layout} setLayout={setLayout}/>
-          <RowSeparator/>
-          <RowSeparatorDouble/>
-          <DataSourcesCreator/>
-        </Container>
-        }
-      </DataSourcesContainer>
-      <ScriptEditor layout={layout} setLayout={setLayout}/>
+      {!isEditingDataSource &&
+      <Container fluid>
+        <RowSeparatorDouble/>
+        <UserDataSources/>
+        <DataSourcesCreator/>
+        <RowSeparatorDouble/>
+        <ImportDataSources layout={layout} setLayout={setLayout}/>
+        <RowSeparator/>
+        <RowSeparatorDouble/>
+      </Container>
+      }
+      {isEditingDataSource && <ScriptEditor layout={layout} setLayout={setLayout}/>}
     </Fragment>
   );
 };

@@ -5,7 +5,7 @@ import {api, useApi} from "../../../../futuremodules/api/apiEntryPoint";
 import {addNewScript} from "../../../../futuremodules/fetch/fetchApiCalls";
 import {useTrendIdGetter} from "../../../../modules/trends/globals";
 import {checkURLValid, objectExistOnWithCallback} from "../../../../futuremodules/utils/utils";
-import {Button, Form, InputGroup, Row} from "react-bootstrap";
+import {Button, Col, Form, InputGroup, Row} from "react-bootstrap";
 import {PlusTitle, RowSeparator} from "../../../../futuremodules/reactComponentStyles/reactCommon";
 
 export const DataSourcesCreator = () => {
@@ -41,11 +41,15 @@ export const DataSourcesCreator = () => {
   return (
     <Fragment>
       <Row>
+        <Col>
         <PlusTitle text={"Crate new Data Source"}/>
+        </Col>
       </Row>
       <RowSeparator/>
       <Row>
+        <Col>
         {formLabelInputSubmitEntry(gatherSource, "sourceDocument", "Url of your source here", true)}
+        </Col>
       </Row>
     </Fragment>
   );

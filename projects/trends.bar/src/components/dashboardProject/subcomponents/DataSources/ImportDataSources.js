@@ -2,7 +2,7 @@ import React from "reactn";
 import "./DataSources.css"
 import {Fragment, useEffect, useState} from "react";
 import {InfoTextSpanBold, NiceSearchBar} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
-import {Row} from "react-bootstrap";
+import {Col, Row} from "react-bootstrap";
 import {CustomTitle, RowSeparator} from "../../../../futuremodules/reactComponentStyles/reactCommon";
 import {useLazyQuery, useQuery} from "@apollo/react-hooks";
 import {getDatasets, getDatasetsBySimilarTrendId} from "../../../../modules/trends/queries";
@@ -77,10 +77,13 @@ export const ImportDataSources = ({layout, setLayout}) => {
     <Fragment>
       <RowSeparator/>
       <Row>
+        <Col>
         <CustomTitle text={"Grab Sources within Trends.Bar"} icon={"poll"}/>
+        </Col>
       </Row>
       <RowSeparator/>
       <Row>
+        <Col>
         <NiceSearchBar
           width={"100%"}
           type="text"
@@ -90,6 +93,7 @@ export const ImportDataSources = ({layout, setLayout}) => {
         >
         </NiceSearchBar>
         <SearchResults trendIdPartial={trendIdPartial} layout={layout} setLayout={setLayout}/>
+        </Col>
       </Row>
     </Fragment>
   )
