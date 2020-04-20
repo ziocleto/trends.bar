@@ -81,7 +81,7 @@ export const DashboardProject = ({username, trendId}) => {
           setLayout={setLayout}
         />
         }
-        {activeTab && activeTab === dataSourcesId && <DataSources layout={layout} setLayout={setLayout}/>}
+        {activeTab && activeTab === dataSourcesId && <DataSources trendId={trendId} layout={layout} setLayout={setLayout}/>}
       </ProjectContent>
     </Fragment>
   );

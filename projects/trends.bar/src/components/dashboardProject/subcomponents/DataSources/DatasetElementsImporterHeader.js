@@ -10,8 +10,12 @@ import {RowSeparator} from "../../../../futuremodules/reactComponentStyles/react
 import {LabelWithRename} from "../../../../futuremodules/labelWithRename/LabelWithRename";
 import React from "reactn";
 import {publishGraphs, renameScript} from "./DatasetElementsImporterHeaderLogic";
+import {useApi} from "../../../../futuremodules/api/apiEntryPoint";
 
 export const DatasetElementsImporterHeader = ({isEditingDataSource, setEditingDataSource, graphTree, setGraphTree, layout, setLayout}) => {
+
+  const fetchApi = useApi('fetch');
+
   return (
     <Fragment>
       <Row>
@@ -19,7 +23,7 @@ export const DatasetElementsImporterHeader = ({isEditingDataSource, setEditingDa
           <Flex>
             <div>
               <Button variant={"success"}
-                      onClick={() => publishGraphs()}>
+                      onClick={() => publishGraphs(fetchApi, graphTree, layout, setLayout)}>
                 Import
               </Button>
             </div>

@@ -2,7 +2,7 @@ import React, {useGlobal, withGlobal} from "reactn";
 import {DashboardUserFragment} from "./DashboardUser.styled";
 import {getAuthUserName, getAuthWithGlobal} from "../../futuremodules/auth/authAccessors";
 import UserAssets from "./subcomponents/UserAssets";
-import AssetCreator from "./subcomponents/AssetCreator";
+import {AssetCreator} from "./subcomponents/AssetCreator";
 import {Redirect} from "react-router-dom";
 import {Fragment} from "react";
 import WelcomeToTheJungle from "../../futuremodules/auth/components/WelcomeToTheJungle";
@@ -29,7 +29,7 @@ const DashboardUser = ({auth}) => {
       <DashboardUserFragment>
         <WelcomeToTheJungle/>
         <UserAssets/>
-        <AssetCreator/>
+        <AssetCreator username={getAuthUserName(auth)}/>
         <Logoff/>
       </DashboardUserFragment>
       }

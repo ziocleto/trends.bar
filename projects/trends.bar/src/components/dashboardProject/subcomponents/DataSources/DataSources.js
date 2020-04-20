@@ -11,7 +11,7 @@ import {useGlobalState} from "../../../../futuremodules/globalhelper/globalHelpe
 import {Fragment} from "react";
 import {ImportDataSources} from "./ImportDataSources";
 
-export const DataSources = ({layout, setLayout}) => {
+export const DataSources = ({trendId, layout, setLayout}) => {
 
   const isEditingDataSource = checkBoolDefinedAndTrue(useGlobalState(EditingUserTrendDataSource));
 
@@ -20,9 +20,9 @@ export const DataSources = ({layout, setLayout}) => {
       {!isEditingDataSource &&
       <Container fluid>
         <RowSeparatorDouble/>
-        <UserDataSources/>
+        <UserDataSources trendId={trendId}/>
         <RowSeparator/>
-        <DataSourcesCreator/>
+        <DataSourcesCreator trendId={trendId}/>
         <RowSeparatorDouble/>
         <ImportDataSources layout={layout} setLayout={setLayout}/>
         <RowSeparator/>

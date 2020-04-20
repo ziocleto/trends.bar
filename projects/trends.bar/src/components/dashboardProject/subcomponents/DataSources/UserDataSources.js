@@ -3,7 +3,6 @@ import "./DataSources.css"
 import {Fragment, useEffect, useState} from "react";
 import {api, useApi} from "../../../../futuremodules/api/apiEntryPoint";
 import {deleteScript, getScripts, patchScript} from "../../../../futuremodules/fetch/fetchApiCalls";
-import {useTrendIdGetter} from "../../../../modules/trends/globals";
 import {
   DangerColorSpan,
   FlexWithBorder,
@@ -14,12 +13,11 @@ import {arrayExistsNotEmpty} from "../../../../futuremodules/utils/utils";
 import {Col, Container, Dropdown, Row, SplitButton} from "react-bootstrap";
 import {RocketTitle, RowSeparator} from "../../../../futuremodules/reactComponentStyles/reactCommon";
 
-export const UserDataSources = () => {
+export const UserDataSources = ({trendId}) => {
 
   const fetchApi = useApi('fetch');
   const [fetchResult] = fetchApi;
   const [userScripts, setUserScripts] = useState([]);
-  const trendId = useTrendIdGetter();
 
   useEffect(() => {
     if (fetchResult &&
