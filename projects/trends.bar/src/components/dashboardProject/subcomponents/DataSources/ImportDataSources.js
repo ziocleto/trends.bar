@@ -10,6 +10,8 @@ import {SearchBarResultContainer, SearchBarResultTrendId, SearchBarResultUser} f
 import {arrayOfTrendIdAndUsernameToSet, graphArrayToGraphTree2} from "../../../../modules/trends/dataGraphs";
 import {getQueryLoadedWithValueArrayNotEmpty} from "../../../../futuremodules/graphqlclient/query";
 import {updateTrendDatasets} from "../../../../modules/trends/globals";
+import {DatasetElements} from "./DatasetElements";
+import {startupState} from "../../../../modules/trends/layout";
 
 const SearchResults = ({trendIdPartial, layout, setLayout}) => {
   const similarDatasetsQuery = useQuery(getDatasetsBySimilarTrendId(trendIdPartial));
@@ -75,6 +77,15 @@ export const ImportDataSources = ({layout, setLayout}) => {
 
   return (
     <Fragment>
+      <RowSeparator/>
+      <Row>
+      <DatasetElements datasets={layout.datasets}
+                       keys={startupState(layout.datasets)}
+                       setGroupKey={null}
+                       setSubGroupKey={null}
+                       setValueNameKey={null}
+                       setValueFunction={null}/>
+      </Row>
       <RowSeparator/>
       <Row>
         <Col>

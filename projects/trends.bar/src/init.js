@@ -5,4 +5,4 @@ import {initDB} from "react-indexed-db";
 export const initEH = () => {
   initHostEnv();
   initDB(DBConfig);
-}
+};

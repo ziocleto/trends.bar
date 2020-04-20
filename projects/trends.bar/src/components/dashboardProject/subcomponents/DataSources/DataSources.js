@@ -1,6 +1,6 @@
 import React from "reactn";
 import "./DataSources.css"
-import {ScriptEditor} from "./ScriptEditor";
+import {DataSourceEditor} from "./DataSourceEditor";
 import {Container} from "react-bootstrap";
 import {RowSeparator, RowSeparatorDouble} from "../../../../futuremodules/reactComponentStyles/reactCommon";
 import {UserDataSources} from "./UserDataSources";
@@ -29,7 +29,7 @@ export const DataSources = ({layout, setLayout}) => {
         <RowSeparatorDouble/>
       </Container>
       }
-      <ScriptEditor layout={layout} setLayout={setLayout}/>
+      <DataSourceEditor layout={layout} setLayout={setLayout}/>
     </Fragment>
   );
 };

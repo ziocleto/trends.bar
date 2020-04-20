@@ -25,7 +25,6 @@ export const MakeDefaultLayoutWizard = ({setLayout}) => {
     <Fragment>
       <Modal
         size="xl"
-        aria-labelledby="contained-modal-title-vcenter"
         centered
         show
       >

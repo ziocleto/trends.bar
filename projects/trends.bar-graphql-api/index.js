@@ -13,14 +13,14 @@ const init = () => {
   initServer();
   authController.initializeAuthentication();
   initApollo();
-}
+};
 
 const use = () => {
   app.use("/", tokenRoute);
   app.use("/user", usersRoute);
   app.use(authController.authenticate);
   app.use("/fetch", fetchRoute);
-}
+};
 
 init();
 use();
