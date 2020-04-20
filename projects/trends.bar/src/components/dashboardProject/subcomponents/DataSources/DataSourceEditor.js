@@ -42,7 +42,6 @@ export const DataSourceEditor = ({layout, setLayout}) => {
   const [fetchResult] = fetchApi;
 
   useEffect(() => {
-    console.log("Fetch result:", fetchResult);
     if (fetchResult && (
       (fetchResult.api === "scripts" && fetchResult.method === "get") ||
       (fetchResult.api === "script" && fetchResult.method === "post") ||

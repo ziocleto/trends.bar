@@ -70,7 +70,7 @@ const cleanTypenameLink = new ApolloLink((operation, forward) => {
     operation.variables = omitDeep(operation.variables, keysToOmit)
   }
   return forward ? forward(operation) : null
-})
+});
 
 const client = new ApolloClient({
   link: ApolloLink.from([cleanTypenameLink, authLink, errorLink, link]),

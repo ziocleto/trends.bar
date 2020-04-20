@@ -15,7 +15,6 @@ const SearchResults = ({trendId}) => {
   const [results, setResults] = useState([]);
 
   useEffect(() => {
-    console.log("SR", fetchResult);
     if (fetchResult && (fetchResult.api.startsWith("similar/") && fetchResult.method === "get")) {
       setResults(fetchResult.ret);
     }

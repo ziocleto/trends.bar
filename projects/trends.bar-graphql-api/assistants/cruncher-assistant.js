@@ -1,10 +1,9 @@
 import moment from "moment";
-import {parseIntWithSpaces, sanitizeExtraSpaces, sanitizeNewLines} from "./parser-assistant";
 import * as countryAssistant from "./country-assistant";
+import {sanitizeExtraSpaces, sanitizeNewLines} from "eh_helpers/dataSanitizers";
 
 const graphAssistant = require("./graph-assistant");
 const crawler = require('crawler-request');
-const csv = require('csvtojson')
 const hash = require('object-hash');
 
 const findParseURLForTrendId = (timestamp, timestampURL) => {

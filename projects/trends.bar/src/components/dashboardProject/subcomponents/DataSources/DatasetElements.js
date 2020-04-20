@@ -21,7 +21,7 @@ export const DatasetElements = ({datasets, keys, setGroupKey, setSubGroupKey, se
             {datasets && Object.keys(datasets).map(elem =>
               (<ScriptKeyContainer key={elem}
                                    selected={setGroupKey && elem === keys.groupKey}
-                                   onClick={e => setGroupKey(elem)}>
+                                   onClick={e => setGroupKey && setGroupKey(elem)}>
                 {elem}
               </ScriptKeyContainer>)
             )}
@@ -41,7 +41,7 @@ export const DatasetElements = ({datasets, keys, setGroupKey, setSubGroupKey, se
             {datasets && keys.groupKey && Object.keys(datasets[keys.groupKey]).map(elem =>
               (<ScriptKeyContainer key={elem}
                                    selected={setSubGroupKey && elem === keys.subGroupKey}
-                                   onClick={(e) => setSubGroupKey(elem)}
+                                   onClick={(e) => setSubGroupKey && setSubGroupKey(elem)}
               >
                 {elem}
               </ScriptKeyContainer>)
@@ -62,7 +62,7 @@ export const DatasetElements = ({datasets, keys, setGroupKey, setSubGroupKey, se
             {datasets && keys.subGroupKey && Object.keys(datasets[keys.groupKey][keys.subGroupKey]).map(elem =>
               (<ScriptKeyContainer key={keys.groupKey + keys.subGroupKey + elem}
                                    selected={setValueNameKey && elem === keys.valueNameKey}
-                                   onClick={() => setValueNameKey(elem)}
+                                   onClick={() => setValueNameKey && setValueNameKey(elem)}
               >
                 {elem}
               </ScriptKeyContainer>)
