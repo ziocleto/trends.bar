@@ -15,7 +15,7 @@ export const DataSourcesCreator = ({trendId}) => {
     <Fragment>
       <Row>
         <Col>
-          <PlusTitle text={"Crate new Data Source"}/>
+          <PlusTitle text={"Create new Source"}/>
         </Col>
       </Row>
       <RowSeparator/>

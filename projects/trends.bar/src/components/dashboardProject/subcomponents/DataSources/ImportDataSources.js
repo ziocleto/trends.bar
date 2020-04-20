@@ -1,64 +1,41 @@
 import React from "reactn";
 import "./DataSources.css"
 import {Fragment, useEffect, useState} from "react";
-import {InfoTextSpanBold, NiceSearchBar} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
+import {NiceSearchBar} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {Col, Row} from "react-bootstrap";
 import {CustomTitle, RowSeparator} from "../../../../futuremodules/reactComponentStyles/reactCommon";
-import {useLazyQuery, useQuery} from "@apollo/react-hooks";
-import {getDatasets, getDatasetsBySimilarTrendId} from "../../../../modules/trends/queries";
 import {SearchBarResultContainer, SearchBarResultTrendId, SearchBarResultUser} from "../../../Landing/Landing.styled";
-import {arrayOfTrendIdAndUsernameToSet, graphArrayToGraphTree2} from "../../../../modules/trends/dataGraphs";
-import {getQueryLoadedWithValueArrayNotEmpty} from "../../../../futuremodules/graphqlclient/query";
-import {updateTrendDatasets} from "../../../../modules/trends/globals";
-import {DatasetElements} from "./DatasetElements";
-import {startupState} from "../../../../modules/trends/layout";
+import {useGatherSource, useGetSimilarSources} from "./DataSourcesCreatorLogic";
+import {useApi} from "../../../../futuremodules/api/apiEntryPoint";
 
-const SearchResults = ({trendIdPartial, layout, setLayout}) => {
-  const similarDatasetsQuery = useQuery(getDatasetsBySimilarTrendId(trendIdPartial));
-  const [datasetQueryCall, datasetQueryResult] = useLazyQuery(getDatasets());
-
+const SearchResults = ({trendId}) => {
+  const fetchApi = useApi('fetch');
+  const [fetchResult] = fetchApi;
+  const gatherSource = useGatherSource(trendId);
   const [results, setResults] = useState([]);
 
   useEffect(() => {
-      const queryRes = getQueryLoadedWithValueArrayNotEmpty(datasetQueryResult);
-      if (queryRes) {
-        updateTrendDatasets(layout, setLayout, graphArrayToGraphTree2(queryRes));
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [datasetQueryResult, setLayout]);
-
-  useEffect(() => {
-    const res = getQueryLoadedWithValueArrayNotEmpty(similarDatasetsQuery);
-    if (res) {
-      setResults(arrayOfTrendIdAndUsernameToSet(res));
+    console.log("SR", fetchResult);
+    if (fetchResult && (fetchResult.api.startsWith("similar/") && fetchResult.method === "get")) {
+      setResults(fetchResult.ret);
     }
-  }, [similarDatasetsQuery]);
+  }, [fetchResult]);
 
   return (
     <Fragment>
       {results.map(e => {
-        const key = e.trendId + e.username;
+        const key = e._id;
         return (
           <SearchBarResultContainer
             key={key}
-            onClick={() => {
-              datasetQueryCall({
-                  variables: {
-                    name: e.username,
-                    trendId: e.trendId
-                  }
-                }
-              );
-              setResults([]);
-            }}
+            onClick={() => gatherSource(e.sourceDocument)}
           >
             <SearchBarResultTrendId>
               {e.trendId}
             </SearchBarResultTrendId>
-            <InfoTextSpanBold>
-              {e.count}
-            </InfoTextSpanBold>
+            {/*<InfoTextSpanBold>*/}
+            {/*  {e.count}*/}
+            {/*</InfoTextSpanBold>*/}
             <SearchBarResultUser>
               <i className="fas fa-user"/>{" "}{e.username}
             </SearchBarResultUser>
@@ -71,25 +48,15 @@ const SearchResults = ({trendIdPartial, layout, setLayout}) => {
 
 };
 
-export const ImportDataSources = ({layout, setLayout}) => {
+export const ImportDataSources = ({trendId}) => {
 
-  const [trendIdPartial, setTrendIdPartial] = useState(null);
+  const similarSources = useGetSimilarSources();
 
   return (
     <Fragment>
-      <RowSeparator/>
-      <Row>
-      <DatasetElements datasets={layout.datasets}
-                       keys={startupState(layout.datasets)}
-                       setGroupKey={null}
-                       setSubGroupKey={null}
-                       setValueNameKey={null}
-                       setValueFunction={null}/>
-      </Row>
-      <RowSeparator/>
       <Row>
         <Col>
-        <CustomTitle text={"Grab Sources within Trends.Bar"} icon={"poll"}/>
+        <CustomTitle text={"Cheekily grab an existing one..."} icon={"poll"}/>
         </Col>
       </Row>
       <RowSeparator/>
@@ -100,10 +67,11 @@ export const ImportDataSources = ({layout, setLayout}) => {
           type="text"
           className="search-bar"
           id={"grabsearchbar"}
-          onChange={e => setTrendIdPartial(e.target.value)}
+          autoComplete={"off"}
+          onChange={e => similarSources(e.target.value)}
         >
         </NiceSearchBar>
-        <SearchResults trendIdPartial={trendIdPartial} layout={layout} setLayout={setLayout}/>
+        <SearchResults trendId={trendId}/>
         </Col>
       </Row>
     </Fragment>

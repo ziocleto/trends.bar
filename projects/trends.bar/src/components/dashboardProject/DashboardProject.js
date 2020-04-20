@@ -22,7 +22,7 @@ export const DashboardProject = ({username, trendId}) => {
   const saveLayout = useSaveLayout(trendId, username);
 
   if (needsWizard(layout)) {
-    return <MakeDefaultLayoutWizard setLayout={setLayout}/>;
+    return <MakeDefaultLayoutWizard trendId={trendId} setLayout={setLayout}/>;
   }
 
   if (!layout) {

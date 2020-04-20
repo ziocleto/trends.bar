@@ -28,10 +28,7 @@ export const UserDataSources = ({trendId}) => {
   }, [fetchResult, trendId]);
 
   useEffect(() => {
-    if (trendId) {
-      api(fetchApi, getScripts, trendId).then(() => {
-      });
-    }
+    api(fetchApi, getScripts, trendId).then();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [trendId]);
 
@@ -73,9 +70,6 @@ export const UserDataSources = ({trendId}) => {
                       </Dropdown.Item>
                     </SplitButton>
                   </div>
-                  {/*<div>*/}
-                  {/*  <Button variant={"info"} onClick={ ()=> updateScript(elem.name)}>Update</Button>*/}
-                  {/*</div>*/}
                 </FlexWithBorder>
               </Row>
             )

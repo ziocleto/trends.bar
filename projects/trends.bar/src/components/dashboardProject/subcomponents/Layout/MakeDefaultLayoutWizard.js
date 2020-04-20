@@ -16,7 +16,7 @@ import {ImportDataSources} from "../DataSources/ImportDataSources";
 import {createDefaultLayouts, saveLayout} from "./MakeDefaultLayoutWizardLogic";
 import {layoutStandardCols} from "../../../../modules/trends/globals";
 
-export const MakeDefaultLayoutWizard = ({setLayout}) => {
+export const MakeDefaultLayoutWizard = ({trendId, setLayout}) => {
 
   const [step, setStep] = useState(1);
   const [wizardLayout, setWizardLayout] = useState(null);

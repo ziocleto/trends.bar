@@ -88,7 +88,7 @@ export const ScriptKeyContainer = styled.div` {
   padding: 5px;
   width: calc(100% - (var(--margin) * 2));
   border-radius: 3px;
-  border: 1px solid var(--gray);
+  border: 1px solid var(--primary);
   background-color: ${props => checkBoolDefinedAndTrue(props.selected) ? "var(--primary)" : "none"};
   cursor: pointer;
   
@@ -103,6 +103,6 @@ export const ScriptKeyContainer = styled.div` {
 
 export const ScriptKeyContainerTitle = styled.h4` {
   --margin: 0 10px;
-  color: var(--info);
+  color: var(--secondary-alt-color);
   font-weight: bold;  
 }`;

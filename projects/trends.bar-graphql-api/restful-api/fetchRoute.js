@@ -109,6 +109,11 @@ const findAllToArray = (retO) => {
   return ret;
 };
 
+const secondToLastPathElement = (url) => {
+  return url.substring(url.lastIndexOf('/',url.lastIndexOf('/')-1) + 1);
+};
+
+
 router.get("/scripts/:trendId", async (req, res, next) => {
   try {
     const ret = findAllToArray(await crawlingScriptModel.find({
@@ -117,11 +122,26 @@ router.get("/scripts/:trendId", async (req, res, next) => {
     }).collation({locale: "en", strength: 2}));
     res.send({
       api: lastPathElement(req.url),
+      method: "get",
       ret
     });
   } catch (ex) {
     logger.error(ex);
-    res.status(400).send(ex);
+    res.status(400).send(JSON.stringify(ex));
+  }
+});
+
+router.get("/similar/:trendId", async (req, res, next) => {
+  try {
+    const ret = findAllToArray(await crawlingScriptModel.find({trendId: {"$regex": req.params.trendId, "$options": "i"}}));
+    res.send({
+      api: secondToLastPathElement(req.url),
+      method: "get",
+      ret
+    });
+  } catch (ex) {
+    logger.error(ex);
+    res.status(400).send(JSON.stringify(ex));
   }
 });
 

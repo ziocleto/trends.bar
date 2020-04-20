@@ -20,7 +20,7 @@ export const DatasetElements = ({datasets, keys, setGroupKey, setSubGroupKey, se
           >
             {datasets && Object.keys(datasets).map(elem =>
               (<ScriptKeyContainer key={elem}
-                                   selected={elem === keys.groupKey}
+                                   selected={setGroupKey && elem === keys.groupKey}
                                    onClick={e => setGroupKey(elem)}>
                 {elem}
               </ScriptKeyContainer>)
@@ -40,7 +40,7 @@ export const DatasetElements = ({datasets, keys, setGroupKey, setSubGroupKey, se
           >
             {datasets && keys.groupKey && Object.keys(datasets[keys.groupKey]).map(elem =>
               (<ScriptKeyContainer key={elem}
-                                   selected={elem === keys.subGroupKey}
+                                   selected={setSubGroupKey && elem === keys.subGroupKey}
                                    onClick={(e) => setSubGroupKey(elem)}
               >
                 {elem}
@@ -61,7 +61,7 @@ export const DatasetElements = ({datasets, keys, setGroupKey, setSubGroupKey, se
           >
             {datasets && keys.subGroupKey && Object.keys(datasets[keys.groupKey][keys.subGroupKey]).map(elem =>
               (<ScriptKeyContainer key={keys.groupKey + keys.subGroupKey + elem}
-                                   selected={elem === keys.valueNameKey}
+                                   selected={setValueNameKey && elem === keys.valueNameKey}
                                    onClick={() => setValueNameKey(elem)}
               >
                 {elem}
@@ -71,6 +71,7 @@ export const DatasetElements = ({datasets, keys, setGroupKey, setSubGroupKey, se
         </ScriptElementsContainer>
       </Col>
 
+      {setValueFunction &&
       <Col>
         <ScriptKeyContainerTitle>
           Values
@@ -97,6 +98,7 @@ export const DatasetElements = ({datasets, keys, setGroupKey, setSubGroupKey, se
           </FlexVertical>
         </ScriptElementsContainer>
       </Col>
+      }
     </Fragment>
   )
 };
