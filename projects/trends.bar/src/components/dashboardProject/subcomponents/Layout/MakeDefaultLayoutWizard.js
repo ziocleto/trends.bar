@@ -15,6 +15,7 @@ import {useState} from "react";
 import {ImportDataSources} from "../DataSources/ImportDataSources";
 import {createDefaultLayouts, saveLayout} from "./MakeDefaultLayoutWizardLogic";
 import {layoutStandardCols} from "../../../../modules/trends/globals";
+import {DataSourceEditor} from "../DataSources/DataSourceEditor";
 
 export const MakeDefaultLayoutWizard = ({trendId, setLayout}) => {
 
@@ -76,6 +77,7 @@ export const MakeDefaultLayoutWizard = ({trendId, setLayout}) => {
                 </Col>
               )}
             </Row>
+            {step === 2 && <DataSourceEditor layout={wizardLayout} setLayout={setWizardLayout}/>}
             {step === 2 && <ImportDataSources layout={wizardLayout} setLayout={setWizardLayout}/>}
           </Container>
         </Modal.Body>
