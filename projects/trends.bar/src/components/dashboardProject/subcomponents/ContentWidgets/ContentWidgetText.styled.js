@@ -1,16 +1,5 @@
 import styled from "styled-components";
 
-export const Container = styled.div` {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    align-content: center;
-    height: 100%;
-    overflow:scroll;
-}`;
-
 export const Overtitle = styled.div` {
     font-size: 1.3rem;
     color: var(--logo-color-2);
