@@ -1,42 +1,41 @@
-import React, {useGlobal, withGlobal} from "reactn";
+import React from "reactn";
 import {DashboardUserFragment} from "./DashboardUser.styled";
-import {getAuthUserName, getAuthWithGlobal} from "../../futuremodules/auth/authAccessors";
-import UserAssets from "./subcomponents/UserAssets";
+import {UserAssets} from "./subcomponents/UserAssets";
 import {AssetCreator} from "./subcomponents/AssetCreator";
-import {Redirect} from "react-router-dom";
-import {Fragment} from "react";
-import WelcomeToTheJungle from "../../futuremodules/auth/components/WelcomeToTheJungle";
+import {Fragment, useReducer} from "react";
+import {WelcomeToTheJungle} from "../../futuremodules/auth/components/WelcomeToTheJungle";
 import {Logoff} from "../../futuremodules/auth/components/Logoff";
-import {EditingUserTrend} from "../../modules/trends/globals";
 import {DashboardProject} from "../dashboardProject/DashboardProject";
+import {
+  dashBoardManager,
+  dashBoardManagerInitialState,
+  dispatchSetEditingUserTrend,
+  useDispatchUserName
+} from "./DashboardUserLogic";
 import {SpinnerTopMiddle} from "../../futuremodules/spinner/Spinner";
 
-const DashboardUser = ({auth}) => {
+export const DashboardUser = () => {
 
-  const [editingTrend] = useGlobal(EditingUserTrend);
+  const [state, dispatch] = useReducer(dashBoardManager, dashBoardManagerInitialState);
+  useDispatchUserName(dispatch);
+  const setEditingUserTrend = dispatchSetEditingUserTrend(dispatch);
 
-  if (auth === null) {
-    return (<Redirect to={"/"}/>);
-  }
-  if (auth === undefined) {
-    return (<SpinnerTopMiddle/>)
+  if (!state.username) {
+    return <SpinnerTopMiddle/>;
   }
 
   return (
     <Fragment>
-      {editingTrend && <DashboardProject username={getAuthUserName(auth)} trendId={editingTrend}/>}
-      {!editingTrend &&
+      {state.editingTrend &&
+      <DashboardProject username={state.username} trendId={state.editingTrend} setEditingUserTrend={setEditingUserTrend}/>}
+      {!state.editingTrend &&
       <DashboardUserFragment>
-        <WelcomeToTheJungle/>
-        <UserAssets/>
-        <AssetCreator username={getAuthUserName(auth)}/>
-        <Logoff/>
+        <WelcomeToTheJungle username={state.username}/>
+        <UserAssets state={state} dispatch={dispatch}/>
+        <AssetCreator state={state} dispatch={dispatch}/>
+        <Logoff tagline={"Great Scott, let me out of here!"}/>
       </DashboardUserFragment>
       }
     </Fragment>
   );
 };
-
-export default withGlobal(
-  global => getAuthWithGlobal(global)
-)(DashboardUser);

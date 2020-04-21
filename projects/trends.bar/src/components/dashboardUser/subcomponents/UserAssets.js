@@ -1,36 +1,39 @@
-import React, {Fragment, useGlobal, withGlobal} from "reactn";
+import React, {Fragment} from "reactn";
 import {DashboardUserInnerMargins} from "../DashboardUser.styled";
 import {useQuery} from "@apollo/react-hooks";
 import {getUserTrends} from "../../../modules/trends/queries";
 import {Dropdown, SplitButton} from "react-bootstrap";
-import {getAuthUserName, getAuthWithGlobal} from "../../../futuremodules/auth/authAccessors";
-import {currentUserTrends, EditingUserTrend} from "../../../modules/trends/globals";
 import {DangerColorSpan, Flex, InfoTextSpan, Mx1} from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {useEffect} from "react";
 import {checkQueryHasLoadedWithData, getQueryLoadedWithValue} from "../../../futuremodules/graphqlclient/query";
 import {arrayExistsNotEmpty} from "../../../futuremodules/utils/utils";
-import {useRemoveTrend} from "../../../modules/trends/mutations";
 import {PlusTitle} from "../../../futuremodules/reactComponentStyles/reactCommon";
+import {
+  dispatchSetCurrentUserTrends,
+  dispatchSetEditingUserTrend,
+  useRemoveTrend,
+  userTrendsDispatchId
+} from "../DashboardUserLogic";
 
-const UserAssets = (props) => {
+export const UserAssets = ({state, dispatch}) => {
 
-  const name = getAuthUserName(props.auth);
-  const [, setEditingUserTrend] = useGlobal(EditingUserTrend);
-  const userTrendsQuery = useQuery(getUserTrends(), {variables: {name}});
-  const [trends, setUserTrends] = useGlobal(currentUserTrends);
-  const removeTrendMutation = useRemoveTrend();
+  const {username, currentUserTrends} = state;
+  const userTrendsQuery = useQuery(getUserTrends(), {variables: {name:username}});
+  const removeTrendMutation = useRemoveTrend(dispatchSetCurrentUserTrends(dispatch));
+  const setEditingUserTrend = dispatchSetEditingUserTrend(dispatch);
 
   useEffect(() => {
     userTrendsQuery.refetch().then(() => {
       if (checkQueryHasLoadedWithData(userTrendsQuery)) {
-        setUserTrends(getQueryLoadedWithValue(userTrendsQuery).trends).then();
+        dispatch({type: userTrendsDispatchId, value:getQueryLoadedWithValue(userTrendsQuery).trends});
+        // setCurrentUserTrends(getQueryLoadedWithValue(userTrendsQuery).trends);
       }
     });
-  }, [userTrendsQuery, setUserTrends]);
+  }, [userTrendsQuery, dispatch]);
 
   // I like the && double declaration approach now more then the ternary operator ? :, you'll see what I mean
   // in the return function ;)
-  const hasTrends = arrayExistsNotEmpty(trends);
+  const hasTrends = arrayExistsNotEmpty(currentUserTrends);
 
   return (
     <Fragment>
@@ -39,7 +42,7 @@ const UserAssets = (props) => {
       </DashboardUserInnerMargins>
       {hasTrends && (
         <Flex justifyContent={"start"}>
-          {trends.map(elem => {
+          {currentUserTrends.map(elem => {
               const trendId = elem.trendId;
               return (
                 <div key={`fragment-${trendId}`}>
@@ -52,7 +55,7 @@ const UserAssets = (props) => {
                           onClick={() => setEditingUserTrend(trendId)}
                         >Open</Dropdown.Item>
                       <Dropdown.Divider/>
-                      <Dropdown.Item onClick={() => removeTrendMutation(trendId, name)}>
+                      <Dropdown.Item onClick={() => removeTrendMutation(trendId, username)}>
                         <DangerColorSpan>Delete</DangerColorSpan>
                       </Dropdown.Item>
                     </SplitButton>
@@ -69,7 +72,3 @@ const UserAssets = (props) => {
     </Fragment>
   )
 };
-
-export default withGlobal(
-  global => getAuthWithGlobal(global)
-)(UserAssets);

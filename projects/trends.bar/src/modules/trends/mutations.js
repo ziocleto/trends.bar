@@ -1,9 +1,4 @@
 import gql from "graphql-tag";
-import {getQueryLoadedWithValue, getQueryLoadedWithValueArrayNotEmpty} from "../../futuremodules/graphqlclient/query";
-import {useGlobal} from "reactn";
-import {currentUserTrends, EditingUserTrend} from "./globals";
-import {useMutation} from "@apollo/react-hooks";
-import {alertWarning, NotificationAlert, useConfirmAlertWithWriteCheckShort} from "../../futuremodules/alerts/alerts";
 
 export const CREATE_TREND = gql`
     mutation CreateTrend($trendId: String!, $username: String!) {
@@ -85,56 +80,3 @@ export const upsertTrendLayout = gql`
             _id
         }
     }`;
-
-
-const removeTrend = async (trendId, username, removeTrendMutation, setUserTrends) => {
-  await removeTrendMutation({
-    variables: {
-      trendId,
-      username
-    }
-  }).then(r => {
-      const res = getQueryLoadedWithValueArrayNotEmpty(r);
-      setUserTrends(res);
-    }
-  );
-};
-
-export const useCreateTrend = () => {
-
-  const [, alertStore] = useGlobal(NotificationAlert);
-  const [createTrendM] = useMutation(CREATE_TREND);
-  const [userTrends, setUserTrends] = useGlobal(currentUserTrends);
-  const [, setEditingUserTrend] = useGlobal(EditingUserTrend);
-
-  const updater = (trendId, username) => {
-    createTrendM({
-      variables: {
-        trendId: trendId,
-        username: username
-      }
-    }).then(r => {
-        const newValue = getQueryLoadedWithValue(r);
-        setUserTrends([newValue, ...userTrends]).then(
-          () => setEditingUserTrend(newValue.trendId)
-        );
-      }
-    ).catch((e) => {
-      alertWarning(alertStore, e.message.slice("GraqhQL error: ".length));
-    });
-  }
-
-  return updater;
-};
-
-export const useRemoveTrend = () => {
-  const [, setUserTrends] = useGlobal(currentUserTrends);
-  const [removeTrendMutation] = useMutation(REMOVE_TREND);
-  const confirmDeleteAlert = useConfirmAlertWithWriteCheckShort();
-
-  const updater = (trendId, username) => {
-    confirmDeleteAlert(trendId, () => removeTrend(trendId, username, removeTrendMutation, setUserTrends)).then();
-  };
-
-  return updater;
-};

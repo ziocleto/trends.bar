@@ -1,16 +1,17 @@
 import React, {useState} from "reactn";
 import {useAlertWarning} from "../../../futuremodules/alerts/alerts";
-import {useCreateTrend} from "../../../modules/trends/mutations";
 import {DashboardUserInnerMargins} from "../DashboardUser.styled";
 import {Button, Form, InputGroup} from "react-bootstrap";
 import {Div50} from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {RocketTitle} from "../../../futuremodules/reactComponentStyles/reactCommon";
+import {useCreateTrend} from "../DashboardUserLogic";
 
-export const AssetCreator = ({username}) => {
+export const AssetCreator = ({state, dispatch}) => {
 
+  const {username} = state;
   const alert = useAlertWarning();
   const [newTrendFormInput, setNewTrendFormInput] = useState();
-  const createTrend = useCreateTrend();
+  const createTrend = useCreateTrend(dispatch);
 
   const onCreateProject = e => {
     e.preventDefault();

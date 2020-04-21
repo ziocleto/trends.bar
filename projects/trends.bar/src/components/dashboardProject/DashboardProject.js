@@ -1,11 +1,11 @@
-import React, {useGlobal} from "reactn";
+import React from "reactn";
 import {DataSources} from "./subcomponents/DataSources/DataSources";
 import {Button, ButtonGroup, ButtonToolbar, Dropdown, SplitButton} from "react-bootstrap";
 import {ProjectContent} from "./DashboardProject.styled";
 import {Fragment, useState} from "react";
 import {LayoutEditor} from "./subcomponents/Layout/LayoutEditor";
 import {Div, DivWL, DivWR, Flex, FlexToolbar, Text} from "../../futuremodules/reactComponentStyles/reactCommon.styled";
-import {EditingUserTrend, useGetTrend} from "../../modules/trends/globals";
+import {useGetTrend} from "../../modules/trends/globals";
 import {CustomTitle, RocketTitle} from "../../futuremodules/reactComponentStyles/reactCommon";
 import {SpinnerTopMiddle} from "../../futuremodules/spinner/Spinner";
 import {MakeDefaultLayoutWizard} from "./subcomponents/Layout/MakeDefaultLayoutWizard";
@@ -14,10 +14,9 @@ import {addCell, needsWizard, useSaveLayout} from "./DashBoardProjectLogic";
 const dataSourcesId = "DataSources";
 const trendTabId = "Trend";
 
-export const DashboardProject = ({username, trendId}) => {
+export const DashboardProject = ({username, trendId, setEditingUserTrend}) => {
 
   const [activeTab, setActiveTab] = useState(trendTabId);
-  const [, setEditingUserTrend] = useGlobal(EditingUserTrend);
   const {layout, setLayout} = useGetTrend(trendId, username);
   const saveLayout = useSaveLayout(trendId, username);
 

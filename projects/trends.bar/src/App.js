@@ -6,7 +6,7 @@ import Navbar from "./components/Navbar/Navbar";
 import TrendPage from "./components/Trend/TrendPage";
 import Register from "./futuremodules/auth/components/Register";
 import Login from "./futuremodules/auth/components/Login";
-import DashboardUser from "./components/dashboardUser/DashboardUser";
+import {DashboardUser} from "./components/dashboardUser/DashboardUser";
 import {EHAlert} from "./futuremodules/alerts/alerts";
 import {Body, FakeNavBar} from "./futuremodules/reactComponentStyles/reactCommon.styled";
 import {useAuth} from "./AppLogic";

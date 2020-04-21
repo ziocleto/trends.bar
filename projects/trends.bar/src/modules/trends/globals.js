@@ -1,6 +1,4 @@
 import {useEffect} from "reactn";
-import {getFileNameOnlyNoExt, sanitizeURLParams} from "../../futuremodules/utils/utils";
-import {useLocation} from "react-router-dom";
 import {useQuery} from "@apollo/react-hooks";
 import {getTrendLayouts} from "./queries";
 import {checkQueryHasLoadedWithData, getQueryLoadedWithValue} from "../../futuremodules/graphqlclient/query";
@@ -10,9 +8,7 @@ import {getEmptyDefaultValue, startupState} from "./layout";
 
 const uniqueNamesGenerator = require('project-name-generator');
 
-export const EditingUserTrend = 'editingUserTrend';
 export const EditingUserTrendDataSource = 'editingUserTrendDataSource';
-export const currentUserTrends = 'currentUserTrends';
 export const layoutStandardCols = 12;
 
 export const generateUniqueNameWithArrayCheck = (arrayToCheck) => {
@@ -21,10 +17,6 @@ export const generateUniqueNameWithArrayCheck = (arrayToCheck) => {
     defaultFileName = uniqueNamesGenerator().dashed;
   }
   return defaultFileName;
-};
-
-export const useTrendIdGetter = () => {
-  return sanitizeURLParams(getFileNameOnlyNoExt(useLocation().pathname));
 };
 
 export const updateTrendDatasets = (prevState, updater, dataset) => {

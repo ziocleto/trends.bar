@@ -1,10 +1,14 @@
-import {useTrendIdGetter} from "../../modules/trends/globals";
 import {
   getFileNameOnlyNoExt,
   isReservedWordSanitized,
-  sanitizeAvoidReservedWords
+  sanitizeAvoidReservedWords,
+  sanitizeURLParams
 } from "../../futuremodules/utils/utils";
 import {useLocation} from "react-router-dom";
+
+const useTrendIdGetter = () => {
+  return sanitizeURLParams(getFileNameOnlyNoExt(useLocation().pathname));
+};
 
 export const useGetNavbarTitle = () => {
   const trendId = useTrendIdGetter();
