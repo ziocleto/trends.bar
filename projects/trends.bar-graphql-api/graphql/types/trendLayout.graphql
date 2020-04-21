@@ -1,9 +1,9 @@
 type TrendGridLayout {
     i: String
-    x: Int
-    y: Int
-    w: Int
-    h: Int
+    x: Float
+    y: Float
+    w: Float
+    h: Float
     moved: Boolean
     static: Boolean
 }
@@ -112,10 +112,10 @@ input ContentWidgetInput {
 
 input TrendGridLayoutInput {
     i: String
-    x: Int
-    y: Int
-    w: Int
-    h: Int
+    x: Float
+    y: Float
+    w: Float
+    h: Float
     moved: Boolean
     static: Boolean
 }
