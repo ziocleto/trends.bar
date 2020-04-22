@@ -66,21 +66,7 @@ export const DataSourceEditor = ({layout, setLayout, editingDataSourceState}) =>
                                          setLayout={setLayout}
           />
           <RowSeparatorDouble/>
-          {hasData &&
-          <Fragment>
-            <Row>
-              {/*<DatasetElementsImporter graphTree={graphTree} setGraphTree={setGraphTree}/>*/}
-              <DatasetElementsImporter datasetState={datasetState}/>
-            </Row>
-            {/*<Row>*/}
-            {/*  <Col>*/}
-            {/*    <GraphXY graphData={collectGraphData(graphTree.tree[graphTree.groupTabKey][graphTree.subGroupTabKey])}*/}
-            {/*             config={getGraphTitle()}*/}
-            {/*    />*/}
-            {/*  </Col>*/}
-            {/*</Row>*/}
-          </Fragment>
-          }
+          {hasData && <DatasetElementsImporter datasetState={datasetState}/>}
         </Container>
       </ScriptResultContainer>
       }

@@ -55,7 +55,6 @@ export const setSubGroupKey = (e, sgk, graphTree, setGraphTree) => {
 
 export const onDeleteHeader = (e, elem, setDatasetI) => {
   e.stopPropagation();
-  console.log(elem);
   setDatasetI(prevValue => {
     console.log("Values to remove", prevValue);
     return {
@@ -100,14 +99,19 @@ export const renameSubGroup = (oldName, newName, graphTree, setGraphTree) => {
   setGraphTree({...tmp});
 };
 
-export const renameHeader = (oldName, newName, graphTree, setGraphTree) => {
-  let tmp = graphTree;
+export const renameHeader = (oldName, newName, setDatasetI) => {
 
-  const values = tmp.tree[graphTree.groupTabKey][graphTree.subGroupTabKey][oldName];
-  delete tmp.tree[graphTree.groupTabKey][graphTree.subGroupTabKey][oldName];
-  tmp.tree[graphTree.groupTabKey][graphTree.subGroupTabKey][newName] = values;
-
-  setGraphTree({...tmp});
+  setDatasetI(prevValue => {
+    return {
+      ...prevValue,
+      headers: prevValue.headers.map(val => {
+        if ( val.displayName === oldName ) {
+          val.displayName = newName;
+        }
+        return val;
+      })
+    }
+  });
 };
 
 export const getLabelTransformOfGroup = (groupName, graphTree) => {

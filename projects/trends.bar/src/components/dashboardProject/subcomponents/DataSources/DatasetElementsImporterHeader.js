@@ -58,6 +58,5 @@ export const DatasetElementsImporterHeader = ({isEditingDataSource, setEditingDa
         </Col>
       </Row>
     </Fragment>
-
   )
 };
