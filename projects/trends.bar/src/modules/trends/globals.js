@@ -18,29 +18,6 @@ export const generateUniqueNameWithArrayCheck = (arrayToCheck) => {
   return defaultFileName;
 };
 
-export const updateTrendDatasets = (prevState, updater, dataset) => {
-
-  // Check if it needs to update gridContent if the former is empty, a random act of kindness goes a long way!
-  const newGridContent = prevState.gridContent.map( elem => {
-    if (elem.valueFunctionName === getEmptyDefaultValue.name) {
-      elem = {
-        ...elem,
-        ...startupState(dataset)
-      };
-    }
-    return elem;
-  });
-
-  updater({
-    ...prevState,
-    gridContent: newGridContent,
-    datasets: {
-      ...prevState.datasets,
-      ...dataset
-    }
-  });
-};
-
 export const useGetTrend = (trendId, username) => {
   const [layout, setLayout] = useState(null);
   const trendQueryResult = useQuery(getTrendLayouts(), {

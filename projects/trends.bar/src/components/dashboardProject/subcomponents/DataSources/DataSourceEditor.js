@@ -1,6 +1,6 @@
 import React from "reactn";
 import {Fragment, useEffect, useState} from "react";
-import {Container, Row} from "react-bootstrap";
+import {Container} from "react-bootstrap";
 import {ScriptResultContainer} from "./DataSources-styled";
 import {useApi} from "../../../../futuremodules/api/apiEntryPoint";
 import {arrayExistsNotEmptyOnObject} from "../../../../futuremodules/utils/utils";
@@ -45,7 +45,6 @@ export const DataSourceEditor = ({layout, setLayout, editingDataSourceState}) =>
       (fetchResult.api === "script" && fetchResult.method === "patch") )) {
       const res = fetchResult.ret;
       console.log(fetchResult);
-      // const gt = graphArrayToGraphTree2(res.graphQueries);
       setDatasetI(res);
       setEditingDataSource(true);
     }

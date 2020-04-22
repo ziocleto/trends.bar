@@ -1,4 +1,4 @@
-import {DangerColorSpan, Div, LightTextSpan} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
+import {DangerColorSpan, LightTextSpan} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {LabelWithRename} from "../../../../futuremodules/labelWithRename/LabelWithRename";
 import React from "reactn";
 import {Fragment} from "react";

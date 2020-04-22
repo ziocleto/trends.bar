@@ -13,7 +13,7 @@ import {renameScript, useImportDataSource} from "./DatasetElementsImporterHeader
 
 export const DatasetElementsImporterHeader = ({isEditingDataSource, setEditingDataSource, datasetI, setDatasetI, layout, setLayout}) => {
 
-  const importDataSource = useImportDataSource(datasetI, layout, setLayout, setEditingDataSource);
+  const importDataSource = useImportDataSource(datasetI, setLayout, setEditingDataSource);
 
   return (
     <Fragment>

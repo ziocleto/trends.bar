@@ -169,20 +169,21 @@ router.put("/script", async (req, res, next) => {
     const query = {username: req.body.username, trendId: req.body.trendId, sourceDocument: req.body.sourceDocument};
     let data = req.body;
     delete data._id;
-    await db.upsert(dataSourceModel, query, data);
-    const script = await dataSourceModel.findOne(query);
-    const ret = await runScript(script.toObject());
-    for (const graph of ret.graphQueries) {
-      await db.upsertUniqueXValue(trendGraphModel, graph);
-    }
-    const userTrendGraphs = findAllToArray(await trendGraphModel.find({
-      username: req.body.username,
-      trendId: req.body.trendId
-    }));
+    const ret = await db.upsert(dataSourceModel, query, data);
+
+    // const script = await dataSourceModel.findOne(query);
+    // const ret = await runScript(script.toObject());
+    // for (const graph of ret.graphQueries) {
+    //   await db.upsertUniqueXValue(trendGraphModel, graph);
+    // }
+    // const userTrendGraphs = findAllToArray(await trendGraphModel.find({
+    //   username: req.body.username,
+    //   trendId: req.body.trendId
+    // }));
     res.send({
       api: lastPathElement(req.url),
       method: "put",
-      ret: userTrendGraphs
+      ret
     });
   } catch (ex) {
     const err = `Error putting: ${JSON.stringify(req.body)} because ${ex}`
