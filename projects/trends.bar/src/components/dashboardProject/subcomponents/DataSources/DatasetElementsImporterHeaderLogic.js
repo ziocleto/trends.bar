@@ -1,21 +1,30 @@
-import {api, useApi} from "../../../../futuremodules/api/apiEntryPoint";
-import {putScript} from "../../../../futuremodules/fetch/fetchApiCalls";
-import {isStatusCodeSuccessful} from "../../../../futuremodules/api/apiStatus";
-import {useAlertSuccess} from "../../../../futuremodules/alerts/alerts";
-import {editingDataSourceD, upsertTrend} from "../../../dashboardUser/DashboardUserLogic";
+import {useAlertSuccess, useAlertWarning} from "../../../../futuremodules/alerts/alerts";
+import {editingDataSourceD} from "../../../dashboardUser/DashboardUserLogic";
+import {useMutation} from "@apollo/react-hooks";
+import {upsertTrendDataSource} from "../../../../modules/trends/mutations";
 
 export const useImportDataSource = () => {
 
-  const fetchApi = useApi('fetch');
+  const [upsertTrendMutation] = useMutation(upsertTrendDataSource);
   const alertSuccess = useAlertSuccess();
+  const alertWarning = useAlertWarning();
 
-  const updater = (datasetI, layout, setLayout, dispatch) => {
-    api(fetchApi, putScript, datasetI).then((r) => {
-      if (isStatusCodeSuccessful(r.status.code)) {
-        upsertTrend(layout, setLayout, datasetI);
-        alertSuccess("All systems go", () => dispatch([editingDataSourceD, false]));
+  const updater = (layout, setLayout, state, dispatch) => {
+    upsertTrendMutation({
+      variables: {
+        trendId: layout.trendId,
+        username: layout.username,
+        dataSource: state.editingDataSource
       }
-    });
+    }).then((res) => {
+      setLayout( prevState => {
+        return {
+          ...prevState,
+          dataSources: [...prevState.dataSources, state.editingDataSource]
+        }
+      });
+      alertSuccess("All systems go", () => dispatch([editingDataSourceD, null]))
+    }).catch( (e) => alertWarning( e.message.slice("GraqhQL error: ".length)) );
   };
 
   return updater;

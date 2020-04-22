@@ -11,21 +11,19 @@ import {Col, Row} from "react-bootstrap";
 
 const DeleteHeader = (props) => {
   return (
-    <DangerColorSpan onClick={(e) => props.callback(e, props.elem, props.setDatasetI)}>
+    <DangerColorSpan onClick={(e) => props.callback(e, props.elem, props.dispatch)}>
       <FAIcon icon={"minus-circle"}/>
     </DangerColorSpan>
   )
 };
 
-export const DatasetElementsImporter = ({datasetState}) => {
-
-  const [datasetI, setDatasetI] = datasetState;
+export const DatasetElementsImporter = ({state, dispatch}) => {
 
   return (
     <Fragment>
       <Row>
         <Col md={{span: 8, offset: 2}}>
-          {arrayExistsNotEmpty(datasetI.sourceData) &&
+          {arrayExistsNotEmpty(state.editingDataSource.sourceData) &&
           <TableWidgetContainer>
             <Table hover>
               <thead>
@@ -37,10 +35,10 @@ export const DatasetElementsImporter = ({datasetState}) => {
               </tr>
               </thead>
               <tbody>
-              {datasetI.headers.map(elem =>
+              {state.editingDataSource.headers.map(elem =>
                 <tr key={elem.name}>
                   <td>
-                    <DeleteHeader elem={elem} setDatasetI={setDatasetI} callback={onDeleteHeader}/>
+                    <DeleteHeader elem={elem} dispatch={dispatch} callback={onDeleteHeader}/>
                   </td>
                   <td>
                     <LightTextSpan>
@@ -54,7 +52,7 @@ export const DatasetElementsImporter = ({datasetState}) => {
                     <strong>
                       <LabelWithRename
                         defaultValue={elem.displayName}
-                        updater={(newValue) => renameHeader(elem.name, newValue, setDatasetI)}
+                        updater={(newValue) => renameHeader(elem.name, newValue, dispatch)}
                       />
                     </strong>
                   </td>

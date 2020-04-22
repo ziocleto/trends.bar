@@ -9,5 +9,17 @@ const schemaWithIndex = (schemaDef, index) => {
 export const trendModel = mongoose.model("trends",schemaWithIndex({
   trendId: {type: String},
   username: {type: String, ref: 'users.name'},
+  draft: {type: Boolean},
   aliases: [{type: String}],
+  gridLayout: [{
+    i: {type:String},
+    x: {type:Number},
+    y: {type:Number},
+    w: {type:Number},
+    h: {type:Number},
+    moved: {type:Boolean},
+    static: {type:Boolean}
+  }],
+  gridContent: [],
+  dataSources: [],
 }, { trendId: 'text' }));

@@ -3,19 +3,31 @@ type Trend {
     trendId: String!
     username: String
     user: User
-    aliases: [ String! ]
-    trendGraphs: [TrendGraph]
+    aliases: [String!]
+    gridLayout: [TrendGridLayout]
+    gridContent: [ContentWidget]
+    dataSources: [DataSource]
 }
 
+input TrendInput {
+    trendId: String!
+    username: String
+    aliases: [String!]
+    gridLayout: [TrendGridLayoutInput]
+    gridContent: [ContentWidgetInput]
+    dataSources: [DataSourceInput]
+}
 
 type Query {
     trends: [Trend]
-    trend(trendId: String!): [Trend]
+    trend(trendId: String!, username: String!): Trend
     trend_similar(trendId: String!): [Trend]
 }
 
 type Mutation {
     createTrend(trendId: String!, username: String!): Trend!
+    upsertTrendDataSource(trendId: String!, username: String!, dataSource: DataSourceInput!): Trend!
+    removeTrendDataSource(trendId: String!, username: String!, dataSourceName: String!): Trend!
     removeTrend(trendId: String!, username: String!): [Trend]
 }
 

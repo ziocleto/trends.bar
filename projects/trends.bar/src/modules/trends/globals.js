@@ -1,6 +1,6 @@
 import {useEffect} from "reactn";
 import {useQuery} from "@apollo/react-hooks";
-import {getTrendLayouts} from "./queries";
+import {getTrend} from "./queries";
 import {checkQueryHasLoadedWithData, getQueryLoadedWithValue} from "../../futuremodules/graphqlclient/query";
 import {useState} from "react";
 
@@ -18,9 +18,7 @@ export const generateUniqueNameWithArrayCheck = (arrayToCheck) => {
 
 export const useGetTrend = (trendId, username) => {
   const [layout, setLayout] = useState(null);
-  const trendQueryResult = useQuery(getTrendLayouts(), {
-    variables: {name: username, trendId: trendId}
-  });
+  const trendQueryResult = useQuery(getTrend(trendId, username));
 
   useEffect(() => {
     // trendQueryResult.refetch().then(() => {

@@ -74,3 +74,10 @@ export const upsertTrendLayout = gql`
             _id
         }
     }`;
+
+export const upsertTrendDataSource = gql`
+    mutation upsertTrendDataSource($trendId: String!, $username: String!, $dataSource: DataSourceInput!) {
+        upsertTrendDataSource(trendId: $trendId, username: $username, dataSource: $dataSource) {
+            _id
+        }
+    }`;

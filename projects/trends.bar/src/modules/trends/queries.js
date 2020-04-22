@@ -56,14 +56,14 @@ export const getScripts = () => {
       }`;
 };
 
-export const getTrendLayouts = () => {
+export const getTrend = (trendId, username) => {
   return gql`
-      query getTrendLayouts($trendId:String!, $name:String!) {
-          trendLayout(trendId:$trendId, username:$name) {
+      {
+          trend(trendId:"${trendId}", username:"${username}") {
               username
               trendId
 
-              datasets {
+              dataSources {
                   name
                   headers {
                       name
@@ -73,7 +73,7 @@ export const getTrendLayouts = () => {
                   }
                   sourceData
               }
-              
+
               gridLayout {
                   i
                   x
@@ -120,31 +120,4 @@ export const getTrendLayouts = () => {
               }
           }
       }`;
-};
-
-export const getDatasets = () => {
-  return gql`
-      query getTrendGraphs($trendId:String!, $name:String!) {
-          trendGraphs(trendId:$trendId, username:$name) {
-              trendId
-              username
-              yValueName
-              yValueSubGroup
-              yValueGroup
-              values {
-                  x
-                  y
-              }
-          }
-      }`;
-};
-
-export const getDatasetsBySimilarTrendId = (trendId) => {
-  return gql`{
-      trendGraphsSimilar(trendId:"${trendId}") {
-          count
-          trendId
-          username
-      }
-  }`;
 };

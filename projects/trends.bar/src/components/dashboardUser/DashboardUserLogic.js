@@ -14,7 +14,7 @@ export const userTrendsD = 'currentUserTrends';
 
 export const dashBoardManagerInitialState = {
   editingTrend: null,
-  editingDataSource: false,
+  editingDataSource: null,
   currentUserTrends: null,
   username: null
 };

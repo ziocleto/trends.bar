@@ -13,32 +13,7 @@ import {arrayExistsNotEmpty} from "../../../../futuremodules/utils/utils";
 import {Col, Container, Dropdown, Row, SplitButton} from "react-bootstrap";
 import {RocketTitle, RowSeparator} from "../../../../futuremodules/reactComponentStyles/reactCommon";
 
-export const UserDataSources = ({editingTrend}) => {
-
-  const fetchApi = useApi('fetch');
-  const [fetchResult] = fetchApi;
-  const [userScripts, setUserScripts] = useState([]);
-
-  useEffect(() => {
-    if (fetchResult &&
-      ((fetchResult.api === editingTrend) ||
-        (fetchResult.api === "script" && fetchResult.method === "delete"))) {
-      setUserScripts(fetchResult.ret);
-    }
-  }, [fetchResult, editingTrend]);
-
-  useEffect(() => {
-    api(fetchApi, getScripts, editingTrend).then();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editingTrend]);
-
-  const updateScript = name => {
-    api(fetchApi, patchScript, editingTrend, name).then();
-  };
-
-  const removeScript = name => {
-    api(fetchApi, deleteScript, editingTrend, name).then();
-  };
+export const UserDataSources = ({layout}) => {
 
   return (
     <Fragment>
@@ -49,7 +24,7 @@ export const UserDataSources = ({editingTrend}) => {
       </Row>
       <RowSeparator/>
       <Container fluid>
-        {userScripts.map(elem => {
+        {arrayExistsNotEmpty(layout.dataSources) && layout.dataSources.map(elem => {
             return (
               <Row key={elem.name}>
                 <FlexWithBorder width={"50%"}>
@@ -62,10 +37,10 @@ export const UserDataSources = ({editingTrend}) => {
                     <SplitButton
                       title={<b>Update</b>}
                       variant="info"
-                      onClick={() => updateScript(elem.name)}>
+                      onClick={() => console.log("updateScript(elem.name)")}>
                       <Dropdown.Item>Set to repeat</Dropdown.Item>
                       <Dropdown.Divider/>
-                      <Dropdown.Item onClick={() => removeScript(elem.name)}>
+                      <Dropdown.Item onClick={() => {} }>
                         <DangerColorSpan>Delete</DangerColorSpan>
                       </Dropdown.Item>
                     </SplitButton>
@@ -76,7 +51,7 @@ export const UserDataSources = ({editingTrend}) => {
           }
         )}
       </Container>
-      {!arrayExistsNotEmpty(userScripts) && (
+      {!arrayExistsNotEmpty(layout.dataSources) && (
         <InfoTextSpan>Nothing yet! Grab or create a new one.</InfoTextSpan>
       )}
     </Fragment>

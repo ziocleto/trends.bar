@@ -14,9 +14,9 @@ export const DataSources = ({state, dispatch, layout, setLayout}) => {
       {!state.editingDataSource &&
       <Container fluid>
         <RowSeparatorDouble/>
-        <UserDataSources editingTrend={state.editingTrend}/>
+        <UserDataSources layout={layout}/>
         <RowSeparator/>
-        <DataSourcesCreator editingTrend={state.editingTrend}/>
+        <DataSourcesCreator layout={layout} setLayout={setLayout} dispatch={dispatch}/>
         <RowSeparator/>
         <ImportDataSources editingTrend={state.editingTrend}/>
       </Container>

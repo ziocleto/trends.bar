@@ -12,7 +12,7 @@ import React from "reactn";
 import {renameScript, useImportDataSource} from "./DatasetElementsImporterHeaderLogic";
 import {editingDataSourceD} from "../../../dashboardUser/DashboardUserLogic";
 
-export const DatasetElementsImporterHeader = ({state, dispatch, datasetI, setDatasetI, layout, setLayout}) => {
+export const DatasetElementsImporterHeader = ({state, dispatch, layout, setLayout}) => {
 
   const importDataSource = useImportDataSource();
 
@@ -23,12 +23,12 @@ export const DatasetElementsImporterHeader = ({state, dispatch, datasetI, setDat
           <Flex>
             <div>
               <Button variant={"success"}
-                      onClick={() => importDataSource(datasetI, layout, setLayout, dispatch)}>
+                      onClick={() => importDataSource(layout, setLayout, state, dispatch)}>
                 Use
               </Button>
             </div>
             <div>
-              <ButtonDiv onClick={() => dispatch([editingDataSourceD, false])}>
+              <ButtonDiv onClick={() => dispatch([editingDataSourceD, null])}>
                 <b><i className="fas fa-times"/></b>
               </ButtonDiv>
             </div>
@@ -42,8 +42,8 @@ export const DatasetElementsImporterHeader = ({state, dispatch, datasetI, setDat
         </Col>
         <Col sm={10}>
           <LabelWithRename
-            defaultValue={state.editingDataSource && datasetI.name}
-            updater={(newValue) => renameScript(newValue, datasetI, setDatasetI)}
+            defaultValue={state.editingDataSource.name}
+            updater={(newValue) => renameScript(newValue, state.editingDataSource, setLayout)}
           />
         </Col>
       </Row>
@@ -54,7 +54,7 @@ export const DatasetElementsImporterHeader = ({state, dispatch, datasetI, setDat
         </Col>
         <Col sm={10}>
           <LightTextSpan>
-            {state.editingDataSource && datasetI.sourceDocument}
+            {state.editingDataSource.sourceDocument}
           </LightTextSpan>
         </Col>
       </Row>
