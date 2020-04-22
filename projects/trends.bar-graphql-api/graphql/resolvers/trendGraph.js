@@ -16,13 +16,6 @@ export default {
     })
   },
 
-  TrendLayout: {
-    trendGraphs: (trendLayout, _, {dataSources}) => dataSources.trendGraphs.find({
-      trendId: trendLayout.trendId,
-      username: trendLayout.username
-    })
-  },
-
   Mutation: {
     async deleteTrendGraphs(parent, args, {dataSources}) {
       const res = await dataSources.trendGraphs.deleteTrendGraphs(args.trendId, args.username);

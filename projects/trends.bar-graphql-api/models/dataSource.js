@@ -5,5 +5,6 @@ export const dataSourceModel = mongoose.model("data_sources", new mongoose.Schem
   sourceDocument: {type: String},
   trendId: {type: String},
   username: {type: String},
-  keys: {}
+  headers: [],
+  sourceData: [[]]
 }, {strict: false}));

@@ -62,20 +62,18 @@ export const getTrendLayouts = () => {
           trendLayout(trendId:$trendId, username:$name) {
               username
               trendId
-              cols
-              granularity
-              width
 
-              trendGraphs {
-                  yValueName
-                  yValueSubGroup
-                  yValueGroup
-                  values {
-                      x
-                      y
+              datasets {
+                  name
+                  headers {
+                      name
+                      displayName
+                      key
+                      type
                   }
+                  sourceData
               }
-
+              
               gridLayout {
                   i
                   x

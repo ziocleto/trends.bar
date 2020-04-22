@@ -1,9 +1,6 @@
 'use strict';
 
-import {Cruncher} from "../assistants/cruncher-assistant";
-import * as graphAssistant from "../assistants/graph-assistant";
 import {dataSourceModel} from "../models/dataSource";
-import {trendGraphModel} from "../models/trendGraph";
 import {lastPathElement, secondToLastPathElement} from "eh_helpers";
 
 const express = require("express");
@@ -86,6 +83,10 @@ const getCSVKeys = (resjson) => {
   return headers;
 };
 
+const getDataArraysFromCSVData = resjson => {
+  return resjson.map(elem => Object.values(elem));
+};
+
 const createDefaultScript = (url, trendId, username) => {
   return {
     name: lastPathElement(url),
@@ -96,12 +97,13 @@ const createDefaultScript = (url, trendId, username) => {
 };
 
 const runScript = async (script) => {
-  script.sourceData = await fetchCSV(script.sourceDocument);
+  const sourceCSVData = await fetchCSV(script.sourceDocument);
   // if (!script.keys) {
-    script = {
-      ...script,
-      headers:getCSVKeys(script.sourceData)
-    }
+  script = {
+    ...script,
+    sourceData: getDataArraysFromCSVData(sourceCSVData),
+    headers: getCSVKeys(sourceCSVData)
+  }
   // }
   return script;
   // const cruncher = new Cruncher(script.trendId, script.username, resjson, graphAssistant.xyDateInt(), "embedded");

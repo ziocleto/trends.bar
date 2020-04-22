@@ -12,13 +12,10 @@ type TrendLayout {
     _id: ID!
     trendId: String
     username: String
-    granularity: Int
     cols: Int
-    width: Int
     gridLayout: [TrendGridLayout]
     gridContent: [ContentWidget]
-
-    trendGraphs: [TrendGraph]
+    datasets:[DataSource]
 }
 
 type ContentWidgetTableColumn {
@@ -123,11 +120,10 @@ input TrendGridLayoutInput {
 input TrendLayoutInput {
     trendId: String
     username: String
-    granularity: Int
     cols: Int
-    width: Int
     gridLayout: [TrendGridLayoutInput!]
     gridContent: [ContentWidgetInput!]
+    dataSources:[DataSourceInputRef]
 }
 
 type Query {

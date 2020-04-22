@@ -22,6 +22,7 @@ export const DashboardProject = ({state, dispatch}) => {
   const {layout, setLayout} = useGetTrend(editingTrend, username);
   const saveLayout = useSaveLayout(editingTrend, username);
 
+  console.log("Layout", layout);
   if (needsWizard(layout)) {
     return <MakeDefaultLayoutWizard layout={layout} setLayout={setLayout} state={state} dispatch={dispatch}/>;
   }

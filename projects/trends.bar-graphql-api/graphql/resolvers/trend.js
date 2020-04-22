@@ -25,7 +25,6 @@ export default {
       const query = {trendId: args.trendId, username: args.username};
       const retQuery = {username: args.username};
       await dataSources.trendLayouts.remove(query);
-      await dataSources.trendGraphs.remove(query);
       await dataSources.dataSources.remove(query);
       return await dataSources.trends.removeWithFinalAllReturn(query, retQuery);
     },

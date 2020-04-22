@@ -3,7 +3,6 @@ import {useQuery} from "@apollo/react-hooks";
 import {getTrendLayouts} from "./queries";
 import {checkQueryHasLoadedWithData, getQueryLoadedWithValue} from "../../futuremodules/graphqlclient/query";
 import {useState} from "react";
-import {graphArrayToGraphTree2} from "./dataGraphs";
 
 const uniqueNamesGenerator = require('project-name-generator');
 
@@ -24,21 +23,18 @@ export const useGetTrend = (trendId, username) => {
   });
 
   useEffect(() => {
-    trendQueryResult.refetch().then(() => {
+    // trendQueryResult.refetch().then(() => {
       if (checkQueryHasLoadedWithData(trendQueryResult)) {
         const queryLayout = getQueryLoadedWithValue(trendQueryResult);
         if (queryLayout) {
-          setLayout({
-            ...queryLayout,
-            datasets: graphArrayToGraphTree2(queryLayout.trendGraphs)
-          });
+          setLayout(queryLayout);
         } else {
           setLayout({
             wizard: true
           });
         }
       }
-    });
+    // });
   }, [trendQueryResult]);
 
   return {

@@ -36,6 +36,14 @@ export const useSaveLayout = (trendId, username) => {
     layoutNoDatasets.trendId = trendId;
     layoutNoDatasets.username = username;
     delete layoutNoDatasets.name;
+    layoutNoDatasets.dataSources = layoutNoDatasets.datasets.map(elem => {
+      return {
+        username: elem.username,
+        trendId: elem.trendId,
+        name: elem.name,
+      }
+    });
+    delete layoutNoDatasets.name;
     delete layoutNoDatasets.datasets;
     delete layoutNoDatasets.trendGraphs;
     trendLayoutMutation({

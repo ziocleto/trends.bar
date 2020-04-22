@@ -21,12 +21,12 @@ export const UserAssets = ({state, dispatch}) => {
   const removeTrendMutation = useRemoveTrend(dispatch);
 
   useEffect(() => {
-    userTrendsQuery.refetch().then(() => {
+    // userTrendsQuery.refetch().then(() => {
       if (checkQueryHasLoadedWithData(userTrendsQuery)) {
         dispatch([userTrendsD, getQueryLoadedWithValue(userTrendsQuery).trends]);
         // setCurrentUserTrends(getQueryLoadedWithValue(userTrendsQuery).trends);
       }
-    });
+    // });
   }, [userTrendsQuery, dispatch]);
 
   // I like the && double declaration approach now more then the ternary operator ? :, you'll see what I mean

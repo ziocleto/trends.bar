@@ -1,0 +1,47 @@
+type DataSourceRef {
+    trendId: String
+    username: String
+    name: String
+}
+type DataSourceHeader {
+    name: String
+    displayName: String
+    key: String
+    type: String
+}
+
+type DataSource {
+    trendId: String
+    username: String
+    name: String
+    sourceDocument: String
+    headers: [DataSourceHeader]
+    sourceData: [[String]]
+}
+
+input DataSourceHeaderInput {
+    name: String
+    displayName: String
+    key: String
+    type: String
+}
+
+input DataSourceInput {
+    trendId: String
+    username: String
+    name: String
+    sourceDocument: String
+    headers: [DataSourceHeaderInput]
+    sourceData: [[String]]
+}
+
+input DataSourceInputRef {
+    trendId: String
+    username: String
+    name: String
+}
+
+type Query {
+    dataSources: [DataSource]
+    dataSource(trendId: String!, usernaem:String! name: String!): DataSource
+}
