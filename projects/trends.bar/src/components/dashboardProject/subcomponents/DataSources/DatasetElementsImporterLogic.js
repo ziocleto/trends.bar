@@ -56,7 +56,6 @@ export const setSubGroupKey = (e, sgk, graphTree, setGraphTree) => {
 export const onDeleteHeader = (e, elem, setDatasetI) => {
   e.stopPropagation();
   setDatasetI(prevValue => {
-    console.log("Values to remove", prevValue);
     return {
       ...prevValue,
       headers: prevValue.headers.filter(val => val.name !== elem.name)

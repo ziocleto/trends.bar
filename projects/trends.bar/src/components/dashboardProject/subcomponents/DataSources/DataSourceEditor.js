@@ -7,6 +7,7 @@ import {arrayExistsNotEmptyOnObject} from "../../../../futuremodules/utils/utils
 import {RowSeparatorDouble} from "../../../../futuremodules/reactComponentStyles/reactCommon";
 import {DatasetElementsImporter} from "./DatasetElementsImporter";
 import {DatasetElementsImporterHeader} from "./DatasetElementsImporterHeader";
+import {editingDataSourceD} from "../../../dashboardUser/DashboardUserLogic";
 
 // export const collectGraphData = (data) => {
 //   let graphData = [];
@@ -29,11 +30,10 @@ import {DatasetElementsImporterHeader} from "./DatasetElementsImporterHeader";
 //   }
 // };
 
-export const DataSourceEditor = ({layout, setLayout, editingDataSourceState}) => {
+export const DataSourceEditor = ({layout, setLayout, state, dispatch}) => {
 
   const datasetState = useState(null);
   const [datasetI, setDatasetI] = datasetState;
-  const [isEditingDataSource, setEditingDataSource] = editingDataSourceState;
 
   const fetchApi = useApi('fetch');
   const [fetchResult] = fetchApi;
@@ -46,19 +46,19 @@ export const DataSourceEditor = ({layout, setLayout, editingDataSourceState}) =>
       const res = fetchResult.ret;
       console.log(fetchResult);
       setDatasetI(res);
-      setEditingDataSource(true);
+      dispatch([editingDataSourceD, true]);
     }
-  }, [fetchResult, setEditingDataSource, setDatasetI]);
+  }, [fetchResult, dispatch, setDatasetI]);
 
-  const hasData = arrayExistsNotEmptyOnObject(datasetI, "sourceData") && isEditingDataSource;
+  const hasData = arrayExistsNotEmptyOnObject(datasetI, "sourceData") && state.editingDataSource;
 
   return (
     <Fragment>
-      {isEditingDataSource &&
+      {state.editingDataSource &&
       <ScriptResultContainer>
         <Container fluid>
-          <DatasetElementsImporterHeader isEditingDataSource={isEditingDataSource}
-                                         setEditingDataSource={setEditingDataSource}
+          <DatasetElementsImporterHeader state={state}
+                                         dispatch={dispatch}
                                          datasetI={datasetI}
                                          setDatasetI={setDatasetI}
                                          layout={layout}

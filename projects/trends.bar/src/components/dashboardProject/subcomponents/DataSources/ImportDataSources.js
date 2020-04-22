@@ -8,10 +8,10 @@ import {SearchBarResultContainer, SearchBarResultTrendId, SearchBarResultUser} f
 import {useGatherSource, useGetSimilarSources} from "./DataSourcesCreatorLogic";
 import {useApi} from "../../../../futuremodules/api/apiEntryPoint";
 
-const SearchResults = ({trendId}) => {
+const SearchResults = ({editingTrend}) => {
   const fetchApi = useApi('fetch');
   const [fetchResult] = fetchApi;
-  const gatherSource = useGatherSource(trendId);
+  const gatherSource = useGatherSource(editingTrend);
   const [results, setResults] = useState([]);
 
   useEffect(() => {
@@ -47,7 +47,7 @@ const SearchResults = ({trendId}) => {
 
 };
 
-export const ImportDataSources = ({trendId}) => {
+export const ImportDataSources = ({editingTrend}) => {
 
   const similarSources = useGetSimilarSources();
 
@@ -70,7 +70,7 @@ export const ImportDataSources = ({trendId}) => {
           onChange={e => similarSources(e.target.value)}
         >
         </NiceSearchBar>
-        <SearchResults trendId={trendId}/>
+        <SearchResults editingTrend={editingTrend}/>
         </Col>
       </Row>
     </Fragment>

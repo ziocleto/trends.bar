@@ -6,37 +6,45 @@ import {alertWarning, NotificationAlert, useConfirmAlertWithWriteCheckShort} fro
 import {useMutation} from "@apollo/react-hooks";
 import {CREATE_TREND, REMOVE_TREND} from "../../modules/trends/mutations";
 
-const editingTrend = "editingTrend";
-const addUserTrendsDispatchId = "addUserTrends";
-export const userTrendsDispatchId = 'currentUserTrends';
+export const editingTrendD = "editingTrend";
+export const editingDataSourceD = "editingDataSource";
+export const addUserTrendsD = "addUserTrends";
+export const userTrendsD = 'currentUserTrends';
 
 export const dashBoardManagerInitialState = {
   editingTrend: null,
+  editingDataSource: false,
   currentUserTrends: null,
   username: null
 };
 
 export const dashBoardManager = (state, action) => {
-  switch (action.type) {
+  switch (action[0]) {
     case 'username':
       return {
         ...state,
-        username: action.value
+        username: action[1]
       };
-    case editingTrend:
+    case editingTrendD:
       return {
         ...state,
-        editingTrend: action.value
+        editingTrend: action[1]
       };
-    case userTrendsDispatchId:
+    case editingDataSourceD:
       return {
         ...state,
-        currentUserTrends: action.value
+        editingDataSource: action[1]
       };
-    case addUserTrendsDispatchId:
+    case userTrendsD:
       return {
         ...state,
-        currentUserTrends: state.currentUserTrends ? [...state.currentUserTrends, action.value] : [action.value]
+        currentUserTrends: action[1]
+      };
+    case addUserTrendsD:
+      return {
+        ...state,
+        currentUserTrends: state.currentUserTrends ? [...state.currentUserTrends, action[1]] : [action[1]],
+        editingTrend: action[1]
       };
     default:
       throw new Error("dashBoardManager reducer is handling an invalid action: " + JSON.stringify(action));
@@ -48,18 +56,10 @@ export const useDispatchUserName = (dispatch) => {
 
   useEffect(() => {
     if (auth && auth.user) {
-      dispatch({type: "username", value: auth.user.name})
+      dispatch(["username",auth.user.name]);
     }
   }, [auth, dispatch]);
 
-};
-
-export const dispatchSetEditingUserTrend = (dispatch) => {
-  return (value) => dispatch({type: editingTrend, value: value});
-};
-
-export const dispatchSetCurrentUserTrends = (dispatch) => {
-  return (value) => dispatch({type: userTrendsDispatchId, value: value});
 };
 
 export const useCreateTrend = (dispatch) => {
@@ -75,9 +75,7 @@ export const useCreateTrend = (dispatch) => {
       }
     }).then(r => {
         const newValue = getQueryLoadedWithValue(r).trendId;
-        console.log("New value: ", newValue);
-        dispatch({type: addUserTrendsDispatchId, value: newValue});
-        dispatch({type: editingTrend, value: newValue});
+        dispatch([addUserTrendsD,newValue]);
       }
     ).catch((e) => {
       alertWarning(alertStore, e.message.slice("GraqhQL error: ".length));

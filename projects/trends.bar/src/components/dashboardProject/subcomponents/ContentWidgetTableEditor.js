@@ -8,7 +8,6 @@ import {getDefaultWidgetTableColumnContent} from "../../../modules/trends/layout
 
 export const ContentWidgetTableEditor = ({config,onUpdate}) => {
 
-    console.log(config);
     const [content,setContent] = useState(config);
     const [currentColumnIndex,setCurrentColumnIndex] = useState(config.tableColumns.length>0?0:-1);
 

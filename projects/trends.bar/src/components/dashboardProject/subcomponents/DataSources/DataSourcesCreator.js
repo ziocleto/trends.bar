@@ -6,10 +6,10 @@ import {Button, Col, Form, InputGroup, Row} from "react-bootstrap";
 import {PlusTitle, RowSeparator} from "../../../../futuremodules/reactComponentStyles/reactCommon";
 import {useGatherSource} from "./DataSourcesCreatorLogic";
 
-export const DataSourcesCreator = ({trendId}) => {
+export const DataSourcesCreator = ({editingTrend}) => {
 
   const [sourceDocument, setSourceDocument] = useState(null);
-  const gatherSource = useGatherSource(trendId);
+  const gatherSource = useGatherSource(editingTrend);
 
   return (
     <Fragment>

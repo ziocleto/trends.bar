@@ -24,7 +24,6 @@ const SearchResults = ({trendIdPartial}) => {
   useEffect(() => {
       const queryRes = getQueryLoadedWithValueArrayNotEmpty(similarDatasetsQuery);
       if (queryRes) {
-        console.log(queryRes);
         setResults(queryRes)
       }
     },

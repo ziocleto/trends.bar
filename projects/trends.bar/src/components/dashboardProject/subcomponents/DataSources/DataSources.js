@@ -5,26 +5,23 @@ import {Container} from "react-bootstrap";
 import {RowSeparator, RowSeparatorDouble} from "../../../../futuremodules/reactComponentStyles/reactCommon";
 import {UserDataSources} from "./UserDataSources";
 import {DataSourcesCreator} from "./DataSourcesCreator";
-import {useState} from "react";
 import {ImportDataSources} from "./ImportDataSources";
 
-export const DataSources = ({trendId, layout, setLayout}) => {
-
-  const editingDataSourceState = useState(false);
+export const DataSources = ({state, dispatch, layout, setLayout}) => {
 
   return (
     <>
-      {!editingDataSourceState[0] &&
+      {!state.editingDataSource &&
       <Container fluid>
         <RowSeparatorDouble/>
-        <UserDataSources trendId={trendId}/>
+        <UserDataSources editingTrend={state.editingTrend}/>
         <RowSeparator/>
-        <DataSourcesCreator trendId={trendId}/>
+        <DataSourcesCreator editingTrend={state.editingTrend}/>
         <RowSeparator/>
-        <ImportDataSources trendId={trendId}/>
+        <ImportDataSources editingTrend={state.editingTrend}/>
       </Container>
       }
-      <DataSourceEditor layout={layout} setLayout={setLayout} editingDataSourceState={editingDataSourceState}/>
+      <DataSourceEditor layout={layout} setLayout={setLayout} state={state} dispatch={dispatch}/>
     </>
   );
 };

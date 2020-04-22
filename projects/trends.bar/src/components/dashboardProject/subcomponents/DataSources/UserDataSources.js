@@ -13,7 +13,7 @@ import {arrayExistsNotEmpty} from "../../../../futuremodules/utils/utils";
 import {Col, Container, Dropdown, Row, SplitButton} from "react-bootstrap";
 import {RocketTitle, RowSeparator} from "../../../../futuremodules/reactComponentStyles/reactCommon";
 
-export const UserDataSources = ({trendId}) => {
+export const UserDataSources = ({editingTrend}) => {
 
   const fetchApi = useApi('fetch');
   const [fetchResult] = fetchApi;
@@ -21,23 +21,23 @@ export const UserDataSources = ({trendId}) => {
 
   useEffect(() => {
     if (fetchResult &&
-      ((fetchResult.api === trendId) ||
+      ((fetchResult.api === editingTrend) ||
         (fetchResult.api === "script" && fetchResult.method === "delete"))) {
       setUserScripts(fetchResult.ret);
     }
-  }, [fetchResult, trendId]);
+  }, [fetchResult, editingTrend]);
 
   useEffect(() => {
-    api(fetchApi, getScripts, trendId).then();
+    api(fetchApi, getScripts, editingTrend).then();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [trendId]);
+  }, [editingTrend]);
 
   const updateScript = name => {
-    api(fetchApi, patchScript, trendId, name).then();
+    api(fetchApi, patchScript, editingTrend, name).then();
   };
 
   const removeScript = name => {
-    api(fetchApi, deleteScript, trendId, name).then();
+    api(fetchApi, deleteScript, editingTrend, name).then();
   };
 
   return (

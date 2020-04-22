@@ -8,7 +8,6 @@ import {getDefaultWidgetGraphXYSerieContent} from "../../../modules/trends/layou
 
 export const ContentWidgetGraphXYEditor = ({config,onUpdate}) => {
 
-    console.log(config);
     const [content,setContent] = useState(config);
     const [currentSerieIndex,setCurrentSerieIndex] = useState(config.graphXYSeries.length>0?0:-1);
 

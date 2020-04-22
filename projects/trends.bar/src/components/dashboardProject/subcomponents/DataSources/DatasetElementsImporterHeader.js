@@ -10,10 +10,11 @@ import {RowSeparator} from "../../../../futuremodules/reactComponentStyles/react
 import {LabelWithRename} from "../../../../futuremodules/labelWithRename/LabelWithRename";
 import React from "reactn";
 import {renameScript, useImportDataSource} from "./DatasetElementsImporterHeaderLogic";
+import {editingDataSourceD} from "../../../dashboardUser/DashboardUserLogic";
 
-export const DatasetElementsImporterHeader = ({isEditingDataSource, setEditingDataSource, datasetI, setDatasetI, layout, setLayout}) => {
+export const DatasetElementsImporterHeader = ({state, dispatch, datasetI, setDatasetI, setLayout}) => {
 
-  const importDataSource = useImportDataSource(datasetI, setLayout, setEditingDataSource);
+  const importDataSource = useImportDataSource(datasetI, setLayout, dispatch);
 
   return (
     <Fragment>
@@ -27,7 +28,7 @@ export const DatasetElementsImporterHeader = ({isEditingDataSource, setEditingDa
               </Button>
             </div>
             <div>
-              <ButtonDiv onClick={() => setEditingDataSource(false)}>
+              <ButtonDiv onClick={() => dispatch([editingDataSourceD, false])}>
                 <b><i className="fas fa-times"/></b>
               </ButtonDiv>
             </div>
@@ -41,7 +42,7 @@ export const DatasetElementsImporterHeader = ({isEditingDataSource, setEditingDa
         </Col>
         <Col sm={10}>
           <LabelWithRename
-            defaultValue={isEditingDataSource && datasetI.name}
+            defaultValue={state.editingDataSource && datasetI.name}
             updater={(newValue) => renameScript(newValue, datasetI, setDatasetI)}
           />
         </Col>
@@ -53,7 +54,7 @@ export const DatasetElementsImporterHeader = ({isEditingDataSource, setEditingDa
         </Col>
         <Col sm={10}>
           <LightTextSpan>
-            {isEditingDataSource && datasetI.sourceDocument}
+            {state.editingDataSource && datasetI.sourceDocument}
           </LightTextSpan>
         </Col>
       </Row>

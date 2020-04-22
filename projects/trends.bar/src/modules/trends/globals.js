@@ -4,7 +4,6 @@ import {getTrendLayouts} from "./queries";
 import {checkQueryHasLoadedWithData, getQueryLoadedWithValue} from "../../futuremodules/graphqlclient/query";
 import {useState} from "react";
 import {graphArrayToGraphTree2} from "./dataGraphs";
-import {getEmptyDefaultValue, startupState} from "./layout";
 
 const uniqueNamesGenerator = require('project-name-generator');
 

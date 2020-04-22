@@ -10,18 +10,20 @@ import {CustomTitle, RocketTitle} from "../../futuremodules/reactComponentStyles
 import {SpinnerTopMiddle} from "../../futuremodules/spinner/Spinner";
 import {MakeDefaultLayoutWizard} from "./subcomponents/Layout/MakeDefaultLayoutWizard";
 import {addCell, needsWizard, useSaveLayout} from "./DashBoardProjectLogic";
+import {editingTrendD} from "../dashboardUser/DashboardUserLogic";
 
 const dataSourcesId = "DataSources";
 const trendTabId = "Trend";
 
-export const DashboardProject = ({username, trendId, setEditingUserTrend}) => {
+export const DashboardProject = ({state, dispatch}) => {
 
+  const {username, editingTrend} = state;
   const [activeTab, setActiveTab] = useState(trendTabId);
-  const {layout, setLayout} = useGetTrend(trendId, username);
-  const saveLayout = useSaveLayout(trendId, username);
+  const {layout, setLayout} = useGetTrend(editingTrend, username);
+  const saveLayout = useSaveLayout(editingTrend, username);
 
   if (needsWizard(layout)) {
-    return <MakeDefaultLayoutWizard trendId={trendId} setLayout={setLayout}/>;
+    return <MakeDefaultLayoutWizard setLayout={setLayout} state={state} dispatch={dispatch}/>;
   }
 
   if (!layout) {
@@ -37,7 +39,7 @@ export const DashboardProject = ({username, trendId, setEditingUserTrend}) => {
             bold
             fontSize={"var(--font-size-lead)"}
           >
-            {trendId}
+            {editingTrend}
           </Text>
         </Div>
       </Flex>
@@ -67,7 +69,7 @@ export const DashboardProject = ({username, trendId, setEditingUserTrend}) => {
         <DivWR width={"200px"}>
           <Button
             variant={"outline-light"}
-            onClick={() => setEditingUserTrend(null)}>
+            onClick={() => dispatch([editingTrendD, null])}>
             <i className="fas fa-arrow-left"/>
           </Button>
         </DivWR>
@@ -80,7 +82,7 @@ export const DashboardProject = ({username, trendId, setEditingUserTrend}) => {
           setLayout={setLayout}
         />
         }
-        {activeTab && activeTab === dataSourcesId && <DataSources trendId={trendId} layout={layout} setLayout={setLayout}/>}
+        {activeTab && activeTab === dataSourcesId && <DataSources state={state} dispatch={dispatch} layout={layout} setLayout={setLayout}/>}
       </ProjectContent>
     </Fragment>
   );

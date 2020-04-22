@@ -9,23 +9,21 @@ import {checkQueryHasLoadedWithData, getQueryLoadedWithValue} from "../../../fut
 import {arrayExistsNotEmpty} from "../../../futuremodules/utils/utils";
 import {PlusTitle} from "../../../futuremodules/reactComponentStyles/reactCommon";
 import {
-  dispatchSetCurrentUserTrends,
-  dispatchSetEditingUserTrend,
+  editingTrendD,
   useRemoveTrend,
-  userTrendsDispatchId
+  userTrendsD
 } from "../DashboardUserLogic";
 
 export const UserAssets = ({state, dispatch}) => {
 
   const {username, currentUserTrends} = state;
   const userTrendsQuery = useQuery(getUserTrends(), {variables: {name:username}});
-  const removeTrendMutation = useRemoveTrend(dispatchSetCurrentUserTrends(dispatch));
-  const setEditingUserTrend = dispatchSetEditingUserTrend(dispatch);
+  const removeTrendMutation = useRemoveTrend(dispatch);
 
   useEffect(() => {
     userTrendsQuery.refetch().then(() => {
       if (checkQueryHasLoadedWithData(userTrendsQuery)) {
-        dispatch({type: userTrendsDispatchId, value:getQueryLoadedWithValue(userTrendsQuery).trends});
+        dispatch([userTrendsD, getQueryLoadedWithValue(userTrendsQuery).trends]);
         // setCurrentUserTrends(getQueryLoadedWithValue(userTrendsQuery).trends);
       }
     });
@@ -49,10 +47,10 @@ export const UserAssets = ({state, dispatch}) => {
                     <SplitButton
                       title={<b>{trendId}</b>}
                       variant="primary"
-                      onClick={() => setEditingUserTrend(trendId)}
+                      onClick={() => dispatch([editingTrendD, trendId])}
                       key={trendId}>
                         <Dropdown.Item
-                          onClick={() => setEditingUserTrend(trendId)}
+                          onClick={() => dispatch([editingTrendD, trendId])}
                         >Open</Dropdown.Item>
                       <Dropdown.Divider/>
                       <Dropdown.Item onClick={() => removeTrendMutation(trendId, username)}>

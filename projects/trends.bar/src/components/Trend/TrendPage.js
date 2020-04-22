@@ -21,8 +21,6 @@ const TrendPage = () => {
 
   if (!layout) return (<SpinnerTopMiddle/>);
 
-  console.log(layout);
-
   const layoutStatic = makeLayoutStatic(layout);
 
   return (
