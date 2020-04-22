@@ -4,9 +4,6 @@ import {Container, Row} from "react-bootstrap";
 import {ScriptResultContainer} from "./DataSources-styled";
 import {useApi} from "../../../../futuremodules/api/apiEntryPoint";
 import {arrayExistsNotEmptyOnObject} from "../../../../futuremodules/utils/utils";
-import {graphArrayToGraphTree2} from "../../../../modules/trends/dataGraphs";
-import {useGlobalState, useGlobalUpdater} from "../../../../futuremodules/globalhelper/globalHelper";
-import {EditingUserTrendDataSource} from "../../../../modules/trends/globals";
 import {RowSeparatorDouble} from "../../../../futuremodules/reactComponentStyles/reactCommon";
 import {DatasetElementsImporter} from "./DatasetElementsImporter";
 import {DatasetElementsImporterHeader} from "./DatasetElementsImporterHeader";
@@ -32,11 +29,11 @@ import {DatasetElementsImporterHeader} from "./DatasetElementsImporterHeader";
 //   }
 // };
 
-export const DataSourceEditor = ({layout, setLayout}) => {
+export const DataSourceEditor = ({layout, setLayout, editingDataSourceState}) => {
 
-  const [graphTree, setGraphTree] = useState(null);
-  const setEditingDataSource = useGlobalUpdater(EditingUserTrendDataSource);
-  const isEditingDataSource = useGlobalState(EditingUserTrendDataSource);
+  const datasetState = useState(null);
+  const [datasetI, setDatasetI] = datasetState;
+  const [isEditingDataSource, setEditingDataSource] = editingDataSourceState;
 
   const fetchApi = useApi('fetch');
   const [fetchResult] = fetchApi;
@@ -47,19 +44,14 @@ export const DataSourceEditor = ({layout, setLayout}) => {
       (fetchResult.api === "script" && fetchResult.method === "post") ||
       (fetchResult.api === "script" && fetchResult.method === "patch") )) {
       const res = fetchResult.ret;
-      const gt = graphArrayToGraphTree2(res.graphQueries);
-      console.log(gt);
-      setGraphTree({
-        script: res.script,
-        tree: gt,
-        groupTabKey: Object.keys(gt)[0],
-        subGroupTabKey: Object.keys(gt[Object.keys(gt)[0]])[0]
-      });
-      setEditingDataSource(true).then();
+      console.log(fetchResult);
+      // const gt = graphArrayToGraphTree2(res.graphQueries);
+      setDatasetI(res);
+      setEditingDataSource(true);
     }
-  }, [fetchResult, setEditingDataSource]);
+  }, [fetchResult, setEditingDataSource, setDatasetI]);
 
-  const hasData = arrayExistsNotEmptyOnObject(graphTree, "tree") && isEditingDataSource;
+  const hasData = arrayExistsNotEmptyOnObject(datasetI, "sourceData") && isEditingDataSource;
 
   return (
     <Fragment>
@@ -68,8 +60,8 @@ export const DataSourceEditor = ({layout, setLayout}) => {
         <Container fluid>
           <DatasetElementsImporterHeader isEditingDataSource={isEditingDataSource}
                                          setEditingDataSource={setEditingDataSource}
-                                         graphTree={graphTree}
-                                         setGraphTree={setGraphTree}
+                                         datasetI={datasetI}
+                                         setDatasetI={setDatasetI}
                                          layout={layout}
                                          setLayout={setLayout}
           />
@@ -77,7 +69,8 @@ export const DataSourceEditor = ({layout, setLayout}) => {
           {hasData &&
           <Fragment>
             <Row>
-              <DatasetElementsImporter graphTree={graphTree} setGraphTree={setGraphTree}/>
+              {/*<DatasetElementsImporter graphTree={graphTree} setGraphTree={setGraphTree}/>*/}
+              <DatasetElementsImporter datasetState={datasetState}/>
             </Row>
             {/*<Row>*/}
             {/*  <Col>*/}

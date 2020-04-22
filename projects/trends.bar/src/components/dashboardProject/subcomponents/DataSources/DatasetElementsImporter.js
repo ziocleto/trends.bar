@@ -1,132 +1,62 @@
-import {Col, Dropdown} from "react-bootstrap";
-import {ScriptElementsContainer, ScriptKeyContainer, ScriptKeyContainerTitle} from "./DataSources-styled";
-import {
-  DangerColorSpan,
-  Flex,
-  FlexVertical,
-  Mx1
-} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
+import {DangerColorSpan, Flex, Mx1} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {LabelWithRename} from "../../../../futuremodules/labelWithRename/LabelWithRename";
 import React from "reactn";
 import {Fragment} from "react";
-import {
-  getLabelTransformOfGroup,
-  onDeleteEntity,
-  onDeleteGroup,
-  onDeleteSubGroup,
-  renameGroup,
-  renameSubGroup,
-  renameYValueName,
-  setGroupKey,
-  setLabelTransformOfGroup,
-  setSubGroupKey
-} from "./DatasetElementsImporterLogic";
+import {onDeleteHeader, renameHeader} from "./DatasetElementsImporterLogic";
+import {TableWidgetContainer} from "../ContentWidgets/ContentWidgetTable.styled";
+import Table from "react-bootstrap/Table";
+import {arrayExistsNotEmpty} from "../../../../futuremodules/utils/utils";
 
-const DeleteItem = (props) => {
+const DeleteHeader = (props) => {
   return (
-    <DangerColorSpan onClick={(e) => props.callback(e, props.elem, props.graphTree, props.setGraphTree)}>
+    <DangerColorSpan onClick={(e) => props.callback(e, props.elem, props.setDatasetI)}>
       <i className="fas fa-minus-circle"/>
     </DangerColorSpan>
   )
 };
 
-export const DatasetElementsImporter = ({graphTree, setGraphTree}) => {
+export const DatasetElementsImporter = ({datasetState}) => {
+
+  console.log("DatasetElementsImporter", datasetState[0]);
+  const [datasetI, setDatasetI] = datasetState;
 
   return (
     <Fragment>
-      <Col>
-        <ScriptKeyContainerTitle>
-          Groups
-        </ScriptKeyContainerTitle>
-        <ScriptElementsContainer>
-          <FlexVertical>
-            {Object.keys(graphTree.tree).map(elem =>
-              (<ScriptKeyContainer key={elem}
-                                   selected={elem === graphTree.groupTabKey}
-                                   onClick={e => setGroupKey(e, elem, graphTree, setGraphTree)}>
+      {arrayExistsNotEmpty(datasetI.sourceData) &&
+      <TableWidgetContainer>
+        <Table hover>
+          <thead>
+          <tr>
+            <th>Element</th>
+            <th>Type</th>
+          </tr>
+          </thead>
+          <tbody>
+          {datasetI.headers.map(elem =>
+            <tr key={elem.name}>
+              <td>
                 <Flex>
-                  <div>
-                    <Flex>
-                      <div>
-                        <Dropdown>
-                          <Dropdown.Toggle variant="success" size={"sm"}>
-                            {getLabelTransformOfGroup(elem, graphTree)}
-                          </Dropdown.Toggle>
-                          <Dropdown.Menu>
-                            <Dropdown.Item key={"a"} onClick={() => setLabelTransformOfGroup(elem, "None", graphTree, setGraphTree)}>Not
-                              specified</Dropdown.Item>
-                            <Dropdown.Item key={"b"} onClick={() => setLabelTransformOfGroup(elem, "Country", graphTree, setGraphTree)}>Country</Dropdown.Item>
-                          </Dropdown.Menu>
-                        </Dropdown>
-                      </div>
-                      <Mx1/>
-                      <div><b>
-                        <LabelWithRename
-                          defaultValue={elem}
-                          updater={(newValue) => renameGroup(elem, newValue, graphTree, setGraphTree)}
-                        /></b>
-                      </div>
-                    </Flex>
-                  </div>
-                  <div>
-                    <DeleteItem elem={elem} graphTree={graphTree} setGraphTree={setGraphTree} callback={onDeleteGroup}/>
-                  </div>
-                </Flex>
-              </ScriptKeyContainer>)
-            )}
-          </FlexVertical>
-        </ScriptElementsContainer>
-      </Col>
-      <Col>
-        <ScriptKeyContainerTitle>
-          Sub Groups
-        </ScriptKeyContainerTitle>
-        <ScriptElementsContainer>
-          <FlexVertical>
-            {Object.keys(graphTree.tree[graphTree.groupTabKey]).map(elem =>
-              (<ScriptKeyContainer key={elem}
-                                   selected={elem === graphTree.subGroupTabKey}
-                                   onClick={(e) => setSubGroupKey(e, elem, graphTree, setGraphTree)}>
-                <Flex>
+                  <DeleteHeader elem={elem} setDatasetI={setDatasetI} callback={onDeleteHeader}/>
+                  <Mx1/>
                   <div>
                     <b>
                       <LabelWithRename
-                        defaultValue={elem}
-                        updater={(newValue) => renameSubGroup(elem, newValue)}
+                        defaultValue={elem.name}
+                        updater={(newValue) => renameHeader(elem, newValue)}
                       />
                     </b>
                   </div>
-                  <DeleteItem elem={elem} graphTree={graphTree} setGraphTree={setGraphTree} callback={onDeleteSubGroup}/>
                 </Flex>
-              </ScriptKeyContainer>)
-            )}
-          </FlexVertical>
-        </ScriptElementsContainer>
-      </Col>
-      <Col>
-        <ScriptKeyContainerTitle>
-          Elements
-        </ScriptKeyContainerTitle>
-        <ScriptElementsContainer>
-          <FlexVertical>
-            {Object.keys(graphTree.tree[graphTree.groupTabKey][graphTree.subGroupTabKey]).map(elem =>
-              (<ScriptKeyContainer key={elem} variant={"light"}>
-                <Flex>
-                  <div>
-                    <b>
-                      <LabelWithRename
-                        defaultValue={elem}
-                        updater={(newValue) => renameYValueName(elem, newValue)}
-                      />
-                    </b>
-                  </div>
-                  <DeleteItem elem={elem} graphTree={graphTree} setGraphTree={setGraphTree} callback={onDeleteEntity}/>
-                </Flex>
-              </ScriptKeyContainer>)
-            )}
-          </FlexVertical>
-        </ScriptElementsContainer>
-      </Col>
+              </td>
+              <td>
+                {elem.type}
+              </td>
+            </tr>
+          )}
+          </tbody>
+        </Table>
+      </TableWidgetContainer>
+      }
     </Fragment>
   )
 };

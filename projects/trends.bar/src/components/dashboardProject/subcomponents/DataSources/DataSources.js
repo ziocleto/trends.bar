@@ -5,21 +5,18 @@ import {Container, Row} from "react-bootstrap";
 import {RowSeparator, RowSeparatorDouble} from "../../../../futuremodules/reactComponentStyles/reactCommon";
 import {UserDataSources} from "./UserDataSources";
 import {DataSourcesCreator} from "./DataSourcesCreator";
-import {EditingUserTrendDataSource} from "../../../../modules/trends/globals";
-import {checkBoolDefinedAndTrue} from "../../../../futuremodules/utils/utils";
-import {useGlobalState} from "../../../../futuremodules/globalhelper/globalHelper";
-import {Fragment} from "react";
+import {Fragment, useState} from "react";
 import {ImportDataSources} from "./ImportDataSources";
 import {DatasetElements} from "./DatasetElements";
 import {startupState} from "../../../../modules/trends/layout";
 
 export const DataSources = ({trendId, layout, setLayout}) => {
 
-  const isEditingDataSource = checkBoolDefinedAndTrue(useGlobalState(EditingUserTrendDataSource));
+  const editingDataSourceState = useState(false);
 
   return (
     <Fragment>
-      {!isEditingDataSource &&
+      {!editingDataSourceState[0] &&
       <Container fluid>
         <RowSeparator/>
         <Row>
@@ -38,7 +35,7 @@ export const DataSources = ({trendId, layout, setLayout}) => {
         <ImportDataSources trendId={trendId}/>
       </Container>
       }
-      <DataSourceEditor layout={layout} setLayout={setLayout}/>
+      <DataSourceEditor layout={layout} setLayout={setLayout} editingDataSourceState={editingDataSourceState}/>
     </Fragment>
   );
 };

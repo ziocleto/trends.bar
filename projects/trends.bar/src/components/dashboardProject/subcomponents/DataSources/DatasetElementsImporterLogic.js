@@ -53,16 +53,16 @@ export const setSubGroupKey = (e, sgk, graphTree, setGraphTree) => {
   });
 };
 
-export const onDeleteEntity = (e, elem, graphTree, setGraphTree) => {
+export const onDeleteHeader = (e, elem, setDatasetI) => {
   e.stopPropagation();
-  let tmp = graphTree;
-  delete tmp.tree[graphTree.groupTabKey][graphTree.subGroupTabKey][elem];
-  if (Object.keys(tmp.tree[graphTree.groupTabKey][graphTree.subGroupTabKey]).length === 0) {
-    delete tmp.tree[graphTree.groupTabKey][graphTree.subGroupTabKey];
-    setFirstSubGroupKey(tmp);
-  }
-  tmp.script.keys.y = tmp.script.keys.y.filter(eg => eg.key !== elem);
-  setGraphTree({...tmp});
+  console.log(elem);
+  setDatasetI(prevValue => {
+    console.log("Values to remove", prevValue);
+    return {
+      ...prevValue,
+      headers: prevValue.headers.filter(val => val.name !== elem.name)
+    }
+  });
 };
 
 export const onDeleteSubGroup = (e, elem, graphTree, setGraphTree) => {
@@ -100,7 +100,7 @@ export const renameSubGroup = (oldName, newName, graphTree, setGraphTree) => {
   setGraphTree({...tmp});
 };
 
-export const renameYValueName = (oldName, newName, graphTree, setGraphTree) => {
+export const renameHeader = (oldName, newName, graphTree, setGraphTree) => {
   let tmp = graphTree;
 
   const values = tmp.tree[graphTree.groupTabKey][graphTree.subGroupTabKey][oldName];

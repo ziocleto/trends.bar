@@ -11,9 +11,9 @@ import {LabelWithRename} from "../../../../futuremodules/labelWithRename/LabelWi
 import React from "reactn";
 import {renameScript, useImportDataSource} from "./DatasetElementsImporterHeaderLogic";
 
-export const DatasetElementsImporterHeader = ({isEditingDataSource, setEditingDataSource, graphTree, setGraphTree, layout, setLayout}) => {
+export const DatasetElementsImporterHeader = ({isEditingDataSource, setEditingDataSource, datasetI, setDatasetI, layout, setLayout}) => {
 
-  const importDataSource = useImportDataSource(graphTree, layout, setLayout, setEditingDataSource);
+  const importDataSource = useImportDataSource(datasetI, layout, setLayout, setEditingDataSource);
 
   return (
     <Fragment>
@@ -27,7 +27,7 @@ export const DatasetElementsImporterHeader = ({isEditingDataSource, setEditingDa
               </Button>
             </div>
             <div>
-              <ButtonDiv onClick={() => setEditingDataSource(false).then()}>
+              <ButtonDiv onClick={() => setEditingDataSource(false)}>
                 <b><i className="fas fa-times"/></b>
               </ButtonDiv>
             </div>
@@ -41,8 +41,8 @@ export const DatasetElementsImporterHeader = ({isEditingDataSource, setEditingDa
         </Col>
         <Col sm={10}>
           <LabelWithRename
-            defaultValue={isEditingDataSource && graphTree.script.name}
-            updater={(newValue) => renameScript(newValue, graphTree, setGraphTree)}
+            defaultValue={isEditingDataSource && datasetI.name}
+            updater={(newValue) => renameScript(newValue, datasetI, setDatasetI)}
           />
         </Col>
       </Row>
@@ -53,7 +53,7 @@ export const DatasetElementsImporterHeader = ({isEditingDataSource, setEditingDa
         </Col>
         <Col sm={10}>
           <LightTextSpan>
-            {isEditingDataSource && graphTree.script.sourceDocument}
+            {isEditingDataSource && datasetI.sourceDocument}
           </LightTextSpan>
         </Col>
       </Row>

@@ -34,12 +34,6 @@ export const CRAWL_TREND_GRAPH = gql`
                     y
                 }
             }
-            error
-            dataset {
-                source
-                sourceDocument
-                sourceName
-            }
         }
     }`;
 

@@ -8,7 +8,6 @@ import {getEmptyDefaultValue, startupState} from "./layout";
 
 const uniqueNamesGenerator = require('project-name-generator');
 
-export const EditingUserTrendDataSource = 'editingUserTrendDataSource';
 export const layoutStandardCols = 12;
 
 export const generateUniqueNameWithArrayCheck = (arrayToCheck) => {

@@ -14,11 +14,18 @@ const db = require('eh_db');
 
 const router = express.Router();
 
+const csvElementTypes = {
+  generic: 'Generic',
+  number: 'Number',
+  date: 'Date',
+  country: 'Country'
+};
+
 const getDefaultLabelTransformOf = (group) => {
-  if (group.toLowerCase().includes("country")) {
-    return "Country";
+  if (group.toLowerCase().includes(csvElementTypes.country)) {
+    return csvElementTypes.country;
   }
-  return "None";
+  return csvElementTypes.generic;
 };
 
 const checkIfNumberSequence = (resjson, vk) => {
@@ -57,29 +64,26 @@ const fetchCSV = async (url) => {
 };
 
 const getCSVKeys = (resjson) => {
-  let keys = {};
-  const valueKeys = Object.keys(resjson[0]);
-  for (const vk of valueKeys) {
+  let headers = [];
+  const headersL = Object.keys(resjson[0]);
+  for (const vk of headersL) {
+    let elem = {
+      name: vk,
+      displayName: vk
+    };
     if (checkIfNumberSequence(resjson, vk)) {
-      const vkd = {
-        key: vk,
-        y: vk
-      };
-      keys["y"] ? keys["y"].push(vkd) : keys['y'] = [vkd];
+      elem.key = "y";
+      elem.type = csvElementTypes.number;
     } else if (checkIfDateSequence(resjson, vk)) {
-      const vkd = {
-        x: vk
-      };
-      keys["x"] ? keys["x"].push(vkd) : keys['x'] = [vkd];
+      elem.key = "x";
+      elem.type = csvElementTypes.date;
     } else {
-      const vkd = {
-        yValueGroup: vk,
-        labelTransform: getDefaultLabelTransformOf(vk)
-      };
-      keys["group"] ? keys["group"].push(vkd) : keys['group'] = [vkd];
+      elem.key = "z";
+      elem.type = getDefaultLabelTransformOf(vk);
     }
+    headers.push(elem);
   }
-  return keys;
+  return headers;
 };
 
 const createDefaultScript = (url, trendId, username) => {
@@ -92,13 +96,17 @@ const createDefaultScript = (url, trendId, username) => {
 };
 
 const runScript = async (script) => {
-  const resjson = await fetchCSV(script.sourceDocument);
-  if (!script.keys) {
-    script.keys = getCSVKeys(resjson);
-  }
-  const cruncher = new Cruncher(script.trendId, script.username, resjson, graphAssistant.xyDateInt(), "embedded");
-  const graphQueries = await cruncher.crunch(script);
-  return {script, crawledText: resjson, graphQueries, error: null};
+  script.sourceData = await fetchCSV(script.sourceDocument);
+  // if (!script.keys) {
+    script = {
+      ...script,
+      headers:getCSVKeys(script.sourceData)
+    }
+  // }
+  return script;
+  // const cruncher = new Cruncher(script.trendId, script.username, resjson, graphAssistant.xyDateInt(), "embedded");
+  // const graphQueries = null;//await cruncher.crunch(script);
+  // return {script, crawledText: resjson, graphQueries, error: null};
 };
 
 const findAllToArray = (retO) => {
