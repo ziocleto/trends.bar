@@ -12,9 +12,9 @@ import React from "reactn";
 import {renameScript, useImportDataSource} from "./DatasetElementsImporterHeaderLogic";
 import {editingDataSourceD} from "../../../dashboardUser/DashboardUserLogic";
 
-export const DatasetElementsImporterHeader = ({state, dispatch, datasetI, setDatasetI, setLayout}) => {
+export const DatasetElementsImporterHeader = ({state, dispatch, datasetI, setDatasetI, layout, setLayout}) => {
 
-  const importDataSource = useImportDataSource(datasetI, setLayout, dispatch);
+  const importDataSource = useImportDataSource();
 
   return (
     <Fragment>
@@ -23,8 +23,8 @@ export const DatasetElementsImporterHeader = ({state, dispatch, datasetI, setDat
           <Flex>
             <div>
               <Button variant={"success"}
-                      onClick={() => importDataSource()}>
-                Import
+                      onClick={() => importDataSource(datasetI, layout, setLayout, dispatch)}>
+                Use
               </Button>
             </div>
             <div>

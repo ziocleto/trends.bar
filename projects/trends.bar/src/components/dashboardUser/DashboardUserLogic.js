@@ -5,6 +5,7 @@ import {getQueryLoadedWithValue, getQueryLoadedWithValueArrayNotEmpty} from "../
 import {alertWarning, NotificationAlert, useConfirmAlertWithWriteCheckShort} from "../../futuremodules/alerts/alerts";
 import {useMutation} from "@apollo/react-hooks";
 import {CREATE_TREND, REMOVE_TREND} from "../../modules/trends/mutations";
+import {getEmptyDefaultValue, startupState} from "../../modules/trends/layout";
 
 export const editingTrendD = "editingTrend";
 export const editingDataSourceD = "editingDataSource";
@@ -85,11 +86,11 @@ export const useCreateTrend = (dispatch) => {
   return updater;
 };
 
-export const useRemoveTrend = (setUserTrends) => {
+export const useRemoveTrend = (dispatch) => {
   const [removeTrendMutation] = useMutation(REMOVE_TREND);
   const confirmDeleteAlert = useConfirmAlertWithWriteCheckShort();
 
-  const removeTrend = async (trendId, username, removeTrendMutation, setUserTrends) => {
+  const removeTrend = async (trendId, username, removeTrendMutation, dispatch) => {
     await removeTrendMutation({
       variables: {
         trendId,
@@ -97,14 +98,32 @@ export const useRemoveTrend = (setUserTrends) => {
       }
     }).then(r => {
         const res = getQueryLoadedWithValueArrayNotEmpty(r);
-        setUserTrends(res);
+        dispatch([userTrendsD, res]);
       }
     );
   };
 
   const updater = (trendId, username) => {
-    confirmDeleteAlert(trendId, () => removeTrend(trendId, username, removeTrendMutation, setUserTrends)).then();
+    confirmDeleteAlert(trendId, () => removeTrend(trendId, username, removeTrendMutation, dispatch)).then();
   };
 
   return updater;
+};
+
+export const upsertTrend = (prevState, updater, dataset) => {
+
+  updater( {
+      ...prevState,
+      // Check if it needs to update gridContent if the former is empty, a random act of kindness goes a long way!
+      gridContent: prevState.gridContent.map( elem => {
+        if (elem.valueFunctionName === getEmptyDefaultValue.name) {
+          elem = {
+            ...elem,
+            ...startupState(null) // will be dataset
+          };
+        }
+        return elem;
+      }),
+      datasets: prevState.datasets ? [...prevState.datasets, dataset] : [dataset]
+  });
 };

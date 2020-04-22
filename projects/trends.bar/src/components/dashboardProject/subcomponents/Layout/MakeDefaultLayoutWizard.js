@@ -16,11 +16,12 @@ import {ImportDataSources} from "../DataSources/ImportDataSources";
 import {createDefaultLayouts, saveLayout} from "./MakeDefaultLayoutWizardLogic";
 import {layoutStandardCols} from "../../../../modules/trends/globals";
 import {DataSourceEditor} from "../DataSources/DataSourceEditor";
+import {useImportDataSource} from "../DataSources/DatasetElementsImporterHeaderLogic";
 
-export const MakeDefaultLayoutWizard = ({setLayout, state, dispatch}) => {
+export const MakeDefaultLayoutWizard = ({layout, setLayout, state, dispatch}) => {
 
   const [step, setStep] = useState(1);
-  const [wizardLayout, setWizardLayout] = useState(null);
+  const importDataSource = useImportDataSource();
 
   return (
     <Fragment>
@@ -53,20 +54,21 @@ export const MakeDefaultLayoutWizard = ({setLayout, state, dispatch}) => {
             </Row>
             <RowSeparatorDoubleHR/>
             <Row>
-              {step === 1 && createDefaultLayouts().map(layout =>
-                <Col key={JSON.stringify(layout)}>
+              {step === 1 && createDefaultLayouts().map(layoutI =>
+                <Col key={JSON.stringify(layoutI)}>
                   <ButtonBgDiv
                     borderColor={"var(--info)"}
                     backgroundColor={"var(--dark)"}
                     padding={"10px"}
-                    onClick={() => saveLayout(layout, setWizardLayout, setStep)}
+                    onClick={() => saveLayout(layoutI, setLayout, setStep)}
+                    // onClick={() => importDataSource(null, saveLayoutInPlace(layoutI), setLayout, dispatch)}
                   >
-                    <GridLayout layout={layout}
+                    <GridLayout layout={layoutI}
                                 cols={layoutStandardCols}
                                 rowHeight={10}
                                 width={200}
                     >
-                      {layout.map(elem => {
+                      {layoutI.map(elem => {
                         return (
                           <DivLayoutTemplate key={elem.i}>
                           </DivLayoutTemplate>
@@ -77,14 +79,14 @@ export const MakeDefaultLayoutWizard = ({setLayout, state, dispatch}) => {
                 </Col>
               )}
             </Row>
-            {step === 2 && <DataSourceEditor layout={wizardLayout} setLayout={setWizardLayout} state={state} dispatch={dispatch}/>}
+            {step === 2 && <DataSourceEditor layout={setLayout} setLayout={setLayout} state={state} dispatch={dispatch}/>}
             {step === 2 && <ImportDataSources editingTrend={state.editingTrend}/>}
           </Container>
         </Modal.Body>
         <Modal.Footer>
           {step === 1 && <InfoTextSpan>Step {step} of 2</InfoTextSpan>}
           {step === 2 && <Button variant={"success"} onClick={() => {
-            setLayout(wizardLayout);
+            importDataSource(null, setLayout, dispatch);
           }}>Done!</Button>}
         </Modal.Footer>
       </Modal>

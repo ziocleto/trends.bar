@@ -78,3 +78,16 @@ export const saveLayout = (layout, setLayout, setStep ) => {
   });
   setStep(step => step + 1);
 };
+
+export const saveLayoutInPlace = (layout) => {
+  let gridContent = [];
+
+  for (let i = 0; i < layout.length; i++) {
+    gridContent.push(getDefaultCellContent(i, null));
+    layout[i].static = false;
+  }
+  return( {
+    gridLayout: layout,
+    gridContent
+  });
+};
