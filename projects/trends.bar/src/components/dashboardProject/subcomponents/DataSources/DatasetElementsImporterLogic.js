@@ -1,4 +1,5 @@
 import {arrayObjectExistsNotEmpty} from "../../../../futuremodules/utils/utils";
+import {removeDataSourceFieldD} from "../../../dashboardUser/DashboardUserLogic";
 
 const setFirstGroupKey = (gt) => {
   let hasOne = true;
@@ -53,14 +54,9 @@ export const setSubGroupKey = (e, sgk, graphTree, setGraphTree) => {
   });
 };
 
-export const onDeleteHeader = (e, elem, setDatasetI) => {
+export const onDeleteHeader = (e, elem, dispatch) => {
   e.stopPropagation();
-  setDatasetI(prevValue => {
-    return {
-      ...prevValue,
-      headers: prevValue.headers.filter(val => val.name !== elem.name)
-    }
-  });
+  dispatch([removeDataSourceFieldD, elem.name]);
 };
 
 export const onDeleteSubGroup = (e, elem, graphTree, setGraphTree) => {

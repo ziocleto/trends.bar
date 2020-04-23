@@ -65,6 +65,7 @@ export const getTrend = (trendId, username) => {
 
               dataSources {
                   name
+                  sourceDocument
                   headers {
                       name
                       displayName

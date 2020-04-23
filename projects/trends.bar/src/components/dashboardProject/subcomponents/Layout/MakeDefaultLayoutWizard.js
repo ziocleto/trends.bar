@@ -16,12 +16,12 @@ import {ImportDataSources} from "../DataSources/ImportDataSources";
 import {createDefaultLayouts, saveLayout} from "./MakeDefaultLayoutWizardLogic";
 import {layoutStandardCols} from "../../../../modules/trends/globals";
 import {DataSourceEditor} from "../DataSources/DataSourceEditor";
-import {useImportDataSource} from "../DataSources/DatasetElementsImporterHeaderLogic";
+import {useUpsertDataSource} from "../../DashBoardProjectLogic";
 
 export const MakeDefaultLayoutWizard = ({layout, setLayout, state, dispatch}) => {
 
   const [step, setStep] = useState(1);
-  const importDataSource = useImportDataSource();
+  const importDataSource = useUpsertDataSource();
 
   return (
     <Fragment>

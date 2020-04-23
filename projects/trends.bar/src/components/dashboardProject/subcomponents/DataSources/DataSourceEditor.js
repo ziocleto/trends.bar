@@ -1,13 +1,11 @@
 import React from "reactn";
-import {Fragment, useEffect, useState} from "react";
+import {Fragment} from "react";
 import {Container} from "react-bootstrap";
 import {ScriptResultContainer} from "./DataSources-styled";
-import {useApi} from "../../../../futuremodules/api/apiEntryPoint";
-import {arrayExistsNotEmpty, arrayExistsNotEmptyOnObject} from "../../../../futuremodules/utils/utils";
+import {arrayExistsNotEmpty} from "../../../../futuremodules/utils/utils";
 import {RowSeparatorDouble} from "../../../../futuremodules/reactComponentStyles/reactCommon";
 import {DatasetElementsImporter} from "./DatasetElementsImporter";
 import {DatasetElementsImporterHeader} from "./DatasetElementsImporterHeader";
-import {editingDataSourceD} from "../../../dashboardUser/DashboardUserLogic";
 
 // export const collectGraphData = (data) => {
 //   let graphData = [];
@@ -31,28 +29,6 @@ import {editingDataSourceD} from "../../../dashboardUser/DashboardUserLogic";
 // };
 
 export const DataSourceEditor = ({layout, setLayout, state, dispatch}) => {
-
-  // const datasetState = useState(null);
-  // const [datasetI, setDatasetI] = datasetState;
-  //
-  // const fetchApi = useApi('fetch');
-  // const [fetchResult] = fetchApi;
-  //
-  // useEffect(() => {
-  //   if (fetchResult && (
-  //     (fetchResult.api === "scripts" && fetchResult.method === "get") ||
-  //     (fetchResult.api === "script" && fetchResult.method === "post") ||
-  //     (fetchResult.api === "script" && fetchResult.method === "patch") )) {
-  //     const res = fetchResult.ret;
-  //     setLayout( prevState => {
-  //       return {
-  //         ...prevState,
-  //         dataSources: [...prevState.dataSources, res]
-  //       }
-  //     });
-  //     dispatch([editingDataSourceD, true]);
-  //   }
-  // }, [fetchResult, dispatch, setLayout]);
 
   const hasData = state.editingDataSource && arrayExistsNotEmpty(state.editingDataSource.sourceData);
 

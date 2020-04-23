@@ -4,11 +4,28 @@ import {useEffect} from "react";
 import {getQueryLoadedWithValue, getQueryLoadedWithValueArrayNotEmpty} from "../../futuremodules/graphqlclient/query";
 import {alertWarning, NotificationAlert, useConfirmAlertWithWriteCheckShort} from "../../futuremodules/alerts/alerts";
 import {useMutation} from "@apollo/react-hooks";
-import {CREATE_TREND, REMOVE_TREND} from "../../modules/trends/mutations";
 import {getEmptyDefaultValue, startupState} from "../../modules/trends/layout";
+import gql from "graphql-tag";
+
+const createTrend = gql`
+    mutation CreateTrend($trendId: String!, $username: String!) {
+        createTrend(trendId: $trendId, username: $username) {
+            trendId
+            username
+        }
+    }`;
+
+const removeTrend = gql`
+    mutation RemoveTrend($trendId: String!, $username: String!) {
+        removeTrend(trendId: $trendId, username: $username) {
+            trendId
+            username
+        }
+    }`;
 
 export const editingTrendD = "editingTrend";
 export const editingDataSourceD = "editingDataSource";
+export const removeDataSourceFieldD = "removeDataSourceField";
 export const addUserTrendsD = "addUserTrends";
 export const userTrendsD = 'currentUserTrends';
 
@@ -35,6 +52,14 @@ export const dashBoardManager = (state, action) => {
       return {
         ...state,
         editingDataSource: action[1]
+      };
+    case removeDataSourceFieldD:
+      return {
+        ...state,
+        editingDataSource: {
+          ...state.editingDataSource,
+          headers: state.editingDataSource.headers.filter( elem => elem.name !== action[1])
+        }
       };
     case userTrendsD:
       return {
@@ -66,7 +91,7 @@ export const useDispatchUserName = (dispatch) => {
 export const useCreateTrend = (dispatch) => {
 
   const [, alertStore] = useGlobal(NotificationAlert);
-  const [createTrendM] = useMutation(CREATE_TREND);
+  const [createTrendM] = useMutation(createTrend);
 
   const updater = (trendId, username) => {
     createTrendM({
@@ -87,10 +112,10 @@ export const useCreateTrend = (dispatch) => {
 };
 
 export const useRemoveTrend = (dispatch) => {
-  const [removeTrendMutation] = useMutation(REMOVE_TREND);
+  const [removeTrendMutation] = useMutation(removeTrend);
   const confirmDeleteAlert = useConfirmAlertWithWriteCheckShort();
 
-  const removeTrend = async (trendId, username, removeTrendMutation, dispatch) => {
+  const removeTrendCallback = async (trendId, username, removeTrendMutation, dispatch) => {
     await removeTrendMutation({
       variables: {
         trendId,
@@ -99,12 +124,13 @@ export const useRemoveTrend = (dispatch) => {
     }).then(r => {
         const res = getQueryLoadedWithValueArrayNotEmpty(r);
         dispatch([userTrendsD, res]);
+        dispatch([editingTrendD, null]);
       }
     );
   };
 
   const updater = (trendId, username) => {
-    confirmDeleteAlert(trendId, () => removeTrend(trendId, username, removeTrendMutation, dispatch)).then();
+    confirmDeleteAlert(trendId, () => removeTrendCallback(trendId, username, removeTrendMutation, dispatch)).then();
   };
 
   return updater;

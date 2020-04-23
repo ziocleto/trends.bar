@@ -9,7 +9,7 @@ import {useGetTrend} from "../../modules/trends/globals";
 import {CustomTitle, RocketTitle} from "../../futuremodules/reactComponentStyles/reactCommon";
 import {SpinnerTopMiddle} from "../../futuremodules/spinner/Spinner";
 import {MakeDefaultLayoutWizard} from "./subcomponents/Layout/MakeDefaultLayoutWizard";
-import {addCell, needsWizard, useSaveLayout} from "./DashBoardProjectLogic";
+import {addCell, needsWizard, usePublishTrend} from "./DashBoardProjectLogic";
 import {editingTrendD} from "../dashboardUser/DashboardUserLogic";
 
 const dataSourcesId = "DataSources";
@@ -20,7 +20,7 @@ export const DashboardProject = ({state, dispatch}) => {
   const {username, editingTrend} = state;
   const [activeTab, setActiveTab] = useState(trendTabId);
   const {layout, setLayout} = useGetTrend(editingTrend, username);
-  const saveLayout = useSaveLayout(editingTrend, username);
+  const publish = usePublishTrend(editingTrend, username);
 
   console.log("Layout", layout);
   if (needsWizard(layout)) {
@@ -46,7 +46,7 @@ export const DashboardProject = ({state, dispatch}) => {
       </Flex>
       <FlexToolbar margin={"5px"}>
         <DivWL width={"200px"}>
-          <Button variant={"outline-success"} onClick={() => saveLayout(layout)}>
+          <Button variant={"outline-success"} onClick={() => publish()}>
             <RocketTitle text={"Publish"}/></Button>
         </DivWL>
         <div>
@@ -70,7 +70,10 @@ export const DashboardProject = ({state, dispatch}) => {
         <DivWR width={"200px"}>
           <Button
             variant={"outline-light"}
-            onClick={() => dispatch([editingTrendD, null])}>
+            onClick={() => {
+              dispatch([editingTrendD, null]);
+              setLayout(null);
+            }}>
             <i className="fas fa-arrow-left"/>
           </Button>
         </DivWR>

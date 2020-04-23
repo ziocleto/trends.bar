@@ -6,13 +6,16 @@ import {editingDataSourceD} from "../../../dashboardUser/DashboardUserLogic";
 export const useGatherSource = (layout, setLayout, dispatch) => {
   const fetchApi = useApi('fetch');
   const fetchResult = fetchApi[0];
+  const fetchDispatch = fetchApi[1];
 
   useEffect(() => {
       if ( fetchResult && fetchResult.ret ) {
+        console.log("Redraw useGatherSource", fetchResult.ret);
         dispatch([editingDataSourceD, fetchResult.ret]);
+        fetchDispatch(null);
       }
     },
-    [fetchResult, setLayout]
+    [fetchResult, fetchDispatch, dispatch]
   );
 
   const updater = (sourceDocument) => {

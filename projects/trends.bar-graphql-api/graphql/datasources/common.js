@@ -1,5 +1,7 @@
 import {MongoDataSource} from "apollo-datasource-mongodb";
 
+const logger = require("eh_logger");
+
 const dbi = require("eh_db");
 
 export class MongoDataSourceExtended extends MongoDataSource {
@@ -39,7 +41,7 @@ export class MongoDataSourceExtended extends MongoDataSource {
       {
         $group: {
           _id: "$trendId",
-          count: { $sum: 1 },
+          count: {$sum: 1},
           trendId: {
             $addToSet: "$trendId"
           },
@@ -54,8 +56,73 @@ export class MongoDataSourceExtended extends MongoDataSource {
     return res;
   }
 
+  async upsertDataSource(query, dataSource) {
+    const now = Date.now();
+    try {
+      const res0 = await this.model.findOne(
+        {
+          ...query,
+          "dataSources.name": dataSource.name
+        }
+      );
+      if (res0) {
+        await this.model.updateOne(
+          query,
+          {$set: {"dataSources.$[element]": dataSource, lastUpdate: now}},
+          {
+            arrayFilters: [{"element.name": {$eq: dataSource.name}}]
+          }
+        );
+
+      } else {
+        await this.model.updateOne(
+          query,
+          {
+            $push: {"dataSources": dataSource},
+            $set: {lastUpdate: now}
+          }
+        );
+      }
+
+      return "ok";
+    } catch (e) {
+      logger.error(e);
+      return null;
+    }
+  }
+
+  async renameDataSource(query, oldName, newName) {
+    const now = Date.now();
+    try {
+      return await this.model.updateOne(
+        query,
+        {
+          $set: {
+            "dataSources.$[element].name": newName,
+            lastUpdate: now
+          }
+        },
+        {
+          arrayFilters: [{"element.name": {$eq: oldName}}]
+        }
+      );
+    } catch (e) {
+      logger.error(e);
+      return null;
+    }
+  }
+
   async findOne(query) {
     return await this.model.findOne(query).collation({locale: "en", strength: 2});
+  }
+
+  async findOneLastUpdate(query) {
+    const timeStamp = query.lastUpdate;
+    const finalQuery = {
+      ...query,
+      lastUpdate: timeStamp ? { $lt: timeStamp } : { $ne: timeStamp}
+    }
+    return await this.model.findOne(finalQuery).collation({locale: "en", strength: 2});
   }
 
   async updateOne(query, data) {

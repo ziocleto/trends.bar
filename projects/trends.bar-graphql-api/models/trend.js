@@ -22,4 +22,6 @@ export const trendModel = mongoose.model("trends",schemaWithIndex({
   }],
   gridContent: [],
   dataSources: [],
+  created: {type:Date},
+  lastUpdate: {type:Date}
 }, { trendId: 'text' }));

@@ -9,12 +9,14 @@ import {
 import {RowSeparator} from "../../../../futuremodules/reactComponentStyles/reactCommon";
 import {LabelWithRename} from "../../../../futuremodules/labelWithRename/LabelWithRename";
 import React from "reactn";
-import {renameScript, useImportDataSource} from "./DatasetElementsImporterHeaderLogic";
 import {editingDataSourceD} from "../../../dashboardUser/DashboardUserLogic";
+import {useMutation} from "@apollo/react-hooks";
+import {renameDataSource, renameTrendDataSource, useUpsertDataSource} from "../../DashBoardProjectLogic";
 
 export const DatasetElementsImporterHeader = ({state, dispatch, layout, setLayout}) => {
 
-  const importDataSource = useImportDataSource();
+  const importDataSource = useUpsertDataSource();
+  const [renameDataSourceMutation] = useMutation(renameTrendDataSource);
 
   return (
     <Fragment>
@@ -43,7 +45,7 @@ export const DatasetElementsImporterHeader = ({state, dispatch, layout, setLayou
         <Col sm={10}>
           <LabelWithRename
             defaultValue={state.editingDataSource.name}
-            updater={(newValue) => renameScript(newValue, state.editingDataSource, setLayout)}
+            updater={(newValue) => renameDataSource(state.editingDataSource.name, newValue, state, dispatch, renameDataSourceMutation)}
           />
         </Col>
       </Row>

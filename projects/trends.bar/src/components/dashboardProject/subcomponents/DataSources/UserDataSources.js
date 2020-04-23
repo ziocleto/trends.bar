@@ -1,8 +1,6 @@
 import React from "reactn";
 import "./DataSources.css"
-import {Fragment, useEffect, useState} from "react";
-import {api, useApi} from "../../../../futuremodules/api/apiEntryPoint";
-import {deleteScript, getScripts, patchScript} from "../../../../futuremodules/fetch/fetchApiCalls";
+import {Fragment} from "react";
 import {
   DangerColorSpan,
   FlexWithBorder,
@@ -12,8 +10,9 @@ import {
 import {arrayExistsNotEmpty} from "../../../../futuremodules/utils/utils";
 import {Col, Container, Dropdown, Row, SplitButton} from "react-bootstrap";
 import {RocketTitle, RowSeparator} from "../../../../futuremodules/reactComponentStyles/reactCommon";
+import {editingDataSourceD} from "../../../dashboardUser/DashboardUserLogic";
 
-export const UserDataSources = ({layout}) => {
+export const UserDataSources = ({layout, dispatch}) => {
 
   return (
     <Fragment>
@@ -37,7 +36,7 @@ export const UserDataSources = ({layout}) => {
                     <SplitButton
                       title={<b>Update</b>}
                       variant="info"
-                      onClick={() => console.log("updateScript(elem.name)")}>
+                      onClick={() => dispatch([editingDataSourceD, elem])}>
                       <Dropdown.Item>Set to repeat</Dropdown.Item>
                       <Dropdown.Divider/>
                       <Dropdown.Item onClick={() => {} }>

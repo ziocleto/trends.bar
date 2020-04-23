@@ -21,7 +21,7 @@ export const useGetTrend = (trendId, username) => {
   const trendQueryResult = useQuery(getTrend(trendId, username));
 
   useEffect(() => {
-    // trendQueryResult.refetch().then(() => {
+    trendQueryResult.refetch().then(() => {
       if (checkQueryHasLoadedWithData(trendQueryResult)) {
         const queryLayout = getQueryLoadedWithValue(trendQueryResult);
         if (queryLayout) {
@@ -32,7 +32,7 @@ export const useGetTrend = (trendId, username) => {
           });
         }
       }
-    // });
+    });
   }, [trendQueryResult]);
 
   return {
