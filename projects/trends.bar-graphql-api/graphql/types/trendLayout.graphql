@@ -130,6 +130,3 @@ type Query {
     trendLayout(trendId: String!, username:String!): TrendLayout
 }
 
-type Mutation {
-    upsertTrendLayout(trendLayout: TrendLayoutInput): TrendLayout
-}

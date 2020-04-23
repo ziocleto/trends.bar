@@ -4,8 +4,8 @@ import {useLocation} from "react-router-dom";
 import GridLayout from "react-grid-layout";
 import {DivLayoutStatic} from "../dashboardProject/subcomponents/Layout/LayoutEditor.styled";
 import {ContentWidget} from "../dashboardProject/subcomponents/ContentWidgets/ContentWidget";
-import {useGetTrend} from "../../modules/trends/globals";
 import {SpinnerTopMiddle} from "../../futuremodules/spinner/Spinner";
+import {useGetTrend} from "../dashboardProject/DashBoardProjectLogic";
 
 const makeLayoutStatic = layout => {
   let ret = layout;

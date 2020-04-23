@@ -28,8 +28,9 @@ type Query {
 
 type Mutation {
     createTrend(trendId: String!, username: String!): Trend!
-    upsertTrendDataSource(trendId: String!, username: String!, dataSource: DataSourceInput!): Trend!
-    renameTrendDataSource(trendId: String!, username: String!, oldName: String!, newName: String): Trend!
+    upsertTrendDataSource(trendId: String!, username: String!, dataSource: DataSourceInput!): String!
+    upsertTrendLayout(trendId: String!, username: String!, gridLayout: [TrendGridLayoutInput!], gridContent: [ContentWidgetInput!]): String!
+    renameTrendDataSource(trendId: String!, username: String!, oldName: String!, newName: String): String!
     removeTrendDataSource(trendId: String!, username: String!, dataSourceName: String!): String!
     removeTrend(trendId: String!, username: String!): [Trend]
     publishTrend(trendId: String!, username: String!): Trend

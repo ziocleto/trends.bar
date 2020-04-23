@@ -91,6 +91,16 @@ export class MongoDataSourceExtended extends MongoDataSource {
     }
   }
 
+  async upsertLayout(query, gridLayout, gridContent) {
+    const now = Date.now();
+    const data = {
+      gridLayout,
+      gridContent,
+      lastUpdate: now
+    }
+    return await this.model.updateOne(query, data);
+  }
+
   async renameDataSource(query, oldName, newName) {
     const now = Date.now();
     try {
@@ -114,7 +124,7 @@ export class MongoDataSourceExtended extends MongoDataSource {
 
   async findOne(query) {
     const ret = await this.model.findOne(query).collation({locale: "en", strength: 2});
-    if ( !ret ) return ret;
+    if (!ret) return ret;
     return ret.toObject();
   }
 
@@ -122,7 +132,7 @@ export class MongoDataSourceExtended extends MongoDataSource {
     const timeStamp = query.lastUpdate;
     const finalQuery = {
       ...query,
-      lastUpdate: timeStamp ? { $lt: timeStamp } : { $ne: timeStamp}
+      lastUpdate: timeStamp ? {$lt: timeStamp} : {$ne: timeStamp}
     }
     return await this.model.findOne(finalQuery).collation({locale: "en", strength: 2});
   }

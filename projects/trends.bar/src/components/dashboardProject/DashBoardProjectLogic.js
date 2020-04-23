@@ -1,19 +1,21 @@
 import {getDefaultCellContent} from "../../modules/trends/layout";
-import {useMutation} from "@apollo/react-hooks";
+import {useMutation, useQuery} from "@apollo/react-hooks";
 import {useAlertSuccess, useAlertWarning, useConfirmAlert} from "../../futuremodules/alerts/alerts";
 import {editingDataSourceD} from "../dashboardUser/DashboardUserLogic";
 import gql from "graphql-tag";
-import {getQueryLoadedWithValue} from "../../futuremodules/graphqlclient/query";
+import {checkQueryHasLoadedWithData, getQueryLoadedWithValue} from "../../futuremodules/graphqlclient/query";
+import {useState} from "react";
+import {getTrend} from "../../modules/trends/queries";
+import {useEffect} from "reactn";
+import {arrayExistsNotEmpty} from "../../futuremodules/utils/utils";
 
 // ------------------------------
 // Hooks
 // ------------------------------
 
 export const upsertTrendLayout = gql`
-    mutation UpsertTrendLayout($trendLayout: TrendLayoutInput) {
-        upsertTrendLayout(trendLayout: $trendLayout) {
-            _id
-        }
+    mutation upsertTrendLayout($trendId: String!, $username: String!, $gridLayout: [TrendGridLayoutInput!], $gridContent: [ContentWidgetInput!]) {
+        upsertTrendLayout(trendId: $trendId, username: $username, gridLayout: $gridLayout, gridContent: $gridContent)
     }`;
 
 export const publishTrend = gql`
@@ -25,16 +27,12 @@ export const publishTrend = gql`
 
 export const upsertTrendDataSource = gql`
     mutation upsertTrendDataSource($trendId: String!, $username: String!, $dataSource: DataSourceInput!) {
-        upsertTrendDataSource(trendId: $trendId, username: $username, dataSource: $dataSource) {
-            username
-        }
+        upsertTrendDataSource(trendId: $trendId, username: $username, dataSource: $dataSource)
     }`;
 
 export const renameTrendDataSource = gql`
     mutation renameTrendDataSource($trendId: String!, $username: String!, $oldName: String!, $newName: String) {
-        renameTrendDataSource(trendId: $trendId, username: $username, oldName: $oldName, newName: $newName) {
-            username
-        }
+        renameTrendDataSource(trendId: $trendId, username: $username, oldName: $oldName, newName: $newName)
     }`;
 
 export const removeTrendDataSource = gql`
@@ -46,6 +44,24 @@ export const removeTrendDataSource = gql`
 // ------------------------------
 // Hooks
 // ------------------------------
+
+export const useGetTrend = (trendId, username) => {
+  const [layout, setLayout] = useState(null);
+  const trendQueryResult = useQuery(getTrend(trendId, username));
+
+  useEffect(() => {
+    trendQueryResult.refetch().then(() => {
+      if (checkQueryHasLoadedWithData(trendQueryResult)) {
+        setLayout(getQueryLoadedWithValue(trendQueryResult));
+      }
+    });
+  }, [trendQueryResult]);
+
+  return {
+    layout,
+    setLayout,
+  }
+};
 
 export const useUpsertDataSource = () => {
 
@@ -70,6 +86,26 @@ export const useUpsertDataSource = () => {
       });
       alertSuccess("All systems go", () => dispatch([editingDataSourceD, null]));
     }).catch((e) => alertWarning(e.message.slice("GraqhQL error: ".length)));
+  };
+
+  return updater;
+};
+
+export const useUpsertLayout = () => {
+
+  const [upsertTrendMutation] = useMutation(upsertTrendLayout);
+  const alertWarning = useAlertWarning();
+
+  const updater = ( trendId, username, gridLayout, gridContent ) => {
+    upsertTrendMutation({
+      variables: {
+        trendId,
+        username,
+        gridLayout,
+        gridContent
+      }
+    }).then((res) => {})
+      .catch((e) => alertWarning(e.message.slice("GraqhQL error: ".length)));
   };
 
   return updater;
@@ -139,7 +175,7 @@ export const renameDataSource = (oldName, newName, state, dispatch, renameDataSo
 };
 
 export const needsWizard = (layout) => {
-  return (layout && layout.wizard);
+  return (layout && !arrayExistsNotEmpty(layout.gridLayout));
 };
 
 export const addCell = (layout, setLayout) => {

@@ -1,6 +1,6 @@
-import {layoutStandardCols} from "../../../../modules/trends/globals";
 import {getDefaultCellContent} from "../../../../modules/trends/layout";
 
+export const layoutStandardCols = 12;
 const lsc = layoutStandardCols;
 
 const createLayoutBlog = () => {
@@ -65,17 +65,25 @@ export const createDefaultLayouts = () => {
   ]
 };
 
-export const saveLayout = (layout, setLayout, setStep ) => {
+export const saveLayout = (trendId, username, layout, setLayout, upsertLayout, setStep ) => {
   let gridContent = [];
 
   for (let i = 0; i < layout.length; i++) {
     gridContent.push(getDefaultCellContent(i, null));
     layout[i].static = false;
   }
-  setLayout( {
-    gridLayout: layout,
-    gridContent
+
+  setLayout( prevState => {
+    return {
+      ...prevState,
+      gridLayout: layout,
+      gridContent
+    }
   });
+
+  console.log("Layout to be saved: ", layout);
+  upsertLayout(trendId, username, layout, gridContent);
+
   setStep(step => step + 1);
 };
 

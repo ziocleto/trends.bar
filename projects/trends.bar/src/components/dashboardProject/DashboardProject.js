@@ -5,11 +5,10 @@ import {ProjectContent} from "./DashboardProject.styled";
 import {Fragment, useState} from "react";
 import {LayoutEditor} from "./subcomponents/Layout/LayoutEditor";
 import {Div, DivWL, DivWR, Flex, FlexToolbar, Text} from "../../futuremodules/reactComponentStyles/reactCommon.styled";
-import {useGetTrend} from "../../modules/trends/globals";
 import {CustomTitle, RocketTitle} from "../../futuremodules/reactComponentStyles/reactCommon";
 import {SpinnerTopMiddle} from "../../futuremodules/spinner/Spinner";
 import {MakeDefaultLayoutWizard} from "./subcomponents/Layout/MakeDefaultLayoutWizard";
-import {addCell, needsWizard, usePublishTrend} from "./DashBoardProjectLogic";
+import {addCell, needsWizard, useGetTrend, usePublishTrend} from "./DashBoardProjectLogic";
 import {editingTrendD} from "../dashboardUser/DashboardUserLogic";
 
 const dataSourcesId = "DataSources";

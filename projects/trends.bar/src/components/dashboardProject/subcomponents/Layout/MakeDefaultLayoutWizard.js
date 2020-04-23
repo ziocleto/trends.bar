@@ -13,15 +13,15 @@ import {DivLayoutTemplate} from "./LayoutEditor.styled";
 import {RowSeparatorDoubleHR} from "../../../../futuremodules/reactComponentStyles/reactCommon";
 import {useState} from "react";
 import {ImportDataSources} from "../DataSources/ImportDataSources";
-import {createDefaultLayouts, saveLayout} from "./MakeDefaultLayoutWizardLogic";
-import {layoutStandardCols} from "../../../../modules/trends/globals";
+import {createDefaultLayouts, layoutStandardCols, saveLayout} from "./MakeDefaultLayoutWizardLogic";
 import {DataSourceEditor} from "../DataSources/DataSourceEditor";
-import {useUpsertDataSource} from "../../DashBoardProjectLogic";
+import {useUpsertDataSource, useUpsertLayout} from "../../DashBoardProjectLogic";
 
 export const MakeDefaultLayoutWizard = ({layout, setLayout, state, dispatch}) => {
 
   const [step, setStep] = useState(1);
   const importDataSource = useUpsertDataSource();
+  const upsertLayout = useUpsertLayout();
 
   return (
     <Fragment>
@@ -60,7 +60,7 @@ export const MakeDefaultLayoutWizard = ({layout, setLayout, state, dispatch}) =>
                     borderColor={"var(--info)"}
                     backgroundColor={"var(--dark)"}
                     padding={"10px"}
-                    onClick={() => saveLayout(layoutI, setLayout, setStep)}
+                    onClick={() => saveLayout(layout.trendId, layout.username, layoutI, setLayout, upsertLayout, setStep)}
                     // onClick={() => importDataSource(null, saveLayoutInPlace(layoutI), setLayout, dispatch)}
                   >
                     <GridLayout layout={layoutI}

@@ -36,8 +36,15 @@ export default {
     async upsertTrendDataSource(parent, args, {dataSources}) {
       const query = {username: args.username, trendId: args.trendId};
       const upret = await dataSources.trends.upsertDataSource(query, args.dataSource);
+      if (!upret) {
+        throw new ApolloError("Trend is seriously broken :/ Call Dado on +44 7779 9384856");
+      }
+      return "ok";
+    },
 
-      // const upret = await dataSources.trends.updateOne(query, {$push: {dataSources: args.dataSource}});
+    async upsertTrendLayout(parent, args, {dataSources}) {
+      const query = {username: args.username, trendId: args.trendId};
+      const upret = await dataSources.trends.upsertLayout(query, args.gridLayout, args.gridContent);
       if (!upret) {
         throw new ApolloError("Trend is seriously broken :/ Call Dado on +44 7779 9384856");
       }
