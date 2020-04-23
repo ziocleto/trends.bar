@@ -1,8 +1,9 @@
 import {getDefaultCellContent} from "../../modules/trends/layout";
 import {useMutation} from "@apollo/react-hooks";
-import {useAlertSuccess, useAlertWarning} from "../../futuremodules/alerts/alerts";
+import {useAlertSuccess, useAlertWarning, useConfirmAlert} from "../../futuremodules/alerts/alerts";
 import {editingDataSourceD} from "../dashboardUser/DashboardUserLogic";
 import gql from "graphql-tag";
+import {getQueryLoadedWithValue} from "../../futuremodules/graphqlclient/query";
 
 // ------------------------------
 // Hooks
@@ -38,9 +39,7 @@ export const renameTrendDataSource = gql`
 
 export const removeTrendDataSource = gql`
     mutation removeTrendDataSource($trendId: String!, $username: String!, $dataSourceName: String!) {
-        upsertTrendDataSource(trendId: $trendId, username: $username, dataSourceName: $dataSourceName) {
-            username
-        }
+        removeTrendDataSource(trendId: $trendId, username: $username, dataSourceName: $dataSourceName)
     }`;
 
 
@@ -62,15 +61,15 @@ export const useUpsertDataSource = () => {
         dataSource: state.editingDataSource
       }
     }).then((res) => {
-      const ds = layout.dataSources.filter( elem => elem.name !==  state.editingDataSource.name );
-      setLayout( prevState => {
+      const ds = layout.dataSources.filter(elem => elem.name !== state.editingDataSource.name);
+      setLayout(prevState => {
         return {
           ...prevState,
           dataSources: [...ds, state.editingDataSource]
         }
       });
       alertSuccess("All systems go", () => dispatch([editingDataSourceD, null]));
-    }).catch( (e) => alertWarning( e.message.slice("GraqhQL error: ".length)) );
+    }).catch((e) => alertWarning(e.message.slice("GraqhQL error: ".length)));
   };
 
   return updater;
@@ -92,29 +91,40 @@ export const usePublishTrend = (trendId, username) => {
   return updater;
 };
 
-// ------------------------------
-// Functions
-// ------------------------------
-
-export const useRemoveDataSource = (trendId, username, dataSourceName) => {
+export const useRemoveDataSource = (layout, setLayout) => {
   const [removeTrendDataSourceMutation] = useMutation(removeTrendDataSource);
-  const alertSuccess = useAlertSuccess();
+  const confirmRemoveDataSourceAlert = useConfirmAlert();
 
-  const updater = () => {
+  const updaterCallback = (dataSourceName) => {
     removeTrendDataSourceMutation({
       variables: {
-        trendId,
-        username,
+        trendId: layout.trendId,
+        username: layout.username,
         dataSourceName
       }
-    }).then(() => alertSuccess("Yeah, you're live!"));
+    }).then((res) => setLayout(prevState => {
+      const itemToRemove =getQueryLoadedWithValue(res);
+      return {
+        ...prevState,
+        dataSources: prevState.dataSources.filter(elem => elem.name !== itemToRemove)
+      }
+    }));
   };
+
+  const updater = (dataSourceName) => {
+    confirmRemoveDataSourceAlert(dataSourceName, () => updaterCallback(dataSourceName)).then();
+  }
 
   return updater;
 };
 
+// ------------------------------
+// Functions
+// ------------------------------
+
+
 export const renameDataSource = (oldName, newName, state, dispatch, renameDataSourceMutation) => {
-  renameDataSourceMutation( {
+  renameDataSourceMutation({
     variables: {
       trendId: state.editingTrend,
       username: state.username,

@@ -11,8 +11,11 @@ import {arrayExistsNotEmpty} from "../../../../futuremodules/utils/utils";
 import {Col, Container, Dropdown, Row, SplitButton} from "react-bootstrap";
 import {RocketTitle, RowSeparator} from "../../../../futuremodules/reactComponentStyles/reactCommon";
 import {editingDataSourceD} from "../../../dashboardUser/DashboardUserLogic";
+import {useRemoveDataSource} from "../../DashBoardProjectLogic";
 
-export const UserDataSources = ({layout, dispatch}) => {
+export const UserDataSources = ({layout, setLayout, dispatch}) => {
+
+  const removeDataSource = useRemoveDataSource(layout, setLayout);
 
   return (
     <Fragment>
@@ -39,7 +42,7 @@ export const UserDataSources = ({layout, dispatch}) => {
                       onClick={() => dispatch([editingDataSourceD, elem])}>
                       <Dropdown.Item>Set to repeat</Dropdown.Item>
                       <Dropdown.Divider/>
-                      <Dropdown.Item onClick={() => {} }>
+                      <Dropdown.Item onClick={() => {removeDataSource(elem.name)} }>
                         <DangerColorSpan>Delete</DangerColorSpan>
                       </Dropdown.Item>
                     </SplitButton>

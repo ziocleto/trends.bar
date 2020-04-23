@@ -58,16 +58,17 @@ export default {
     async removeTrendDataSource(parent, args, {dataSources}) {
       const now = Date.now();
       const query = {username: args.username, trendId: args.trendId};
-      const trend = await dataSources.trends.find(query);
+      const trend = await dataSources.trends.findOne(query);
       const elaborated = {
         ...trend,
-        dataSources: trend.dataSources.filter(elem => elem.name !== args.dataSourceName)
+        dataSources: trend.dataSources.filter(elem => elem.name !== args.dataSourceName),
+        lastUpdate:now
       }
-      const ret = await dataSources.trends.upsert(query, {...elaborated, lastUpdate:now});
+      const ret = await dataSources.trends.upsert(query, elaborated);
       if (!ret) {
         throw new ApolloError("Trend is seriously broken :/ Call Dado on +44 7779 9384856");
       }
-      return ret;
+      return args.dataSourceName;
     },
 
     async removeTrend(parent, args, {dataSources}) {

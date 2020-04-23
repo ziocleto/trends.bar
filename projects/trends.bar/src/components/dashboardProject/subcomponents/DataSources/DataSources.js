@@ -14,7 +14,7 @@ export const DataSources = ({state, dispatch, layout, setLayout}) => {
       {!state.editingDataSource &&
       <Container fluid>
         <RowSeparatorDouble/>
-        <UserDataSources layout={layout} dispatch={dispatch}/>
+        <UserDataSources layout={layout} setLayout={setLayout} dispatch={dispatch}/>
         <RowSeparator/>
         <DataSourcesCreator layout={layout} setLayout={setLayout} dispatch={dispatch}/>
         <RowSeparator/>

@@ -113,7 +113,9 @@ export class MongoDataSourceExtended extends MongoDataSource {
   }
 
   async findOne(query) {
-    return await this.model.findOne(query).collation({locale: "en", strength: 2});
+    const ret = await this.model.findOne(query).collation({locale: "en", strength: 2});
+    if ( !ret ) return ret;
+    return ret.toObject();
   }
 
   async findOneLastUpdate(query) {

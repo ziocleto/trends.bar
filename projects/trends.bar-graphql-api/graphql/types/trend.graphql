@@ -30,7 +30,7 @@ type Mutation {
     createTrend(trendId: String!, username: String!): Trend!
     upsertTrendDataSource(trendId: String!, username: String!, dataSource: DataSourceInput!): Trend!
     renameTrendDataSource(trendId: String!, username: String!, oldName: String!, newName: String): Trend!
-    removeTrendDataSource(trendId: String!, username: String!, dataSourceName: String!): Trend!
+    removeTrendDataSource(trendId: String!, username: String!, dataSourceName: String!): String!
     removeTrend(trendId: String!, username: String!): [Trend]
     publishTrend(trendId: String!, username: String!): Trend
 }
