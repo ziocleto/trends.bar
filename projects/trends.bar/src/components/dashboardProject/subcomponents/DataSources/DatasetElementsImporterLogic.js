@@ -1,5 +1,5 @@
 import {arrayObjectExistsNotEmpty} from "../../../../futuremodules/utils/utils";
-import {removeDataSourceFieldD} from "../../../dashboardUser/DashboardUserLogic";
+import {removeDataSourceFieldD, renameDataSourceFieldD} from "../../../dashboardUser/DashboardUserLogic";
 
 const setFirstGroupKey = (gt) => {
   let hasOne = true;
@@ -94,19 +94,8 @@ export const renameSubGroup = (oldName, newName, graphTree, setGraphTree) => {
   setGraphTree({...tmp});
 };
 
-export const renameHeader = (oldName, newName, setDatasetI) => {
-
-  setDatasetI(prevValue => {
-    return {
-      ...prevValue,
-      headers: prevValue.headers.map(val => {
-        if ( val.displayName === oldName ) {
-          val.displayName = newName;
-        }
-        return val;
-      })
-    }
-  });
+export const renameHeader = (oldName, newName, dispatch) => {
+  dispatch([renameDataSourceFieldD, oldName, newName]);
 };
 
 export const getLabelTransformOfGroup = (groupName, graphTree) => {

@@ -26,6 +26,7 @@ const removeTrend = gql`
 export const editingTrendD = "editingTrend";
 export const editingDataSourceD = "editingDataSource";
 export const removeDataSourceFieldD = "removeDataSourceField";
+export const renameDataSourceFieldD = "renameDataSourceField";
 export const addUserTrendsD = "addUserTrends";
 export const userTrendsD = 'currentUserTrends';
 
@@ -54,11 +55,31 @@ export const dashBoardManager = (state, action) => {
         editingDataSource: action[1]
       };
     case removeDataSourceFieldD:
+      const index = state.editingDataSource.headers.findIndex( (elem) => elem.name === action[1] );
+      if ( index === -1 ) {
+        return state;
+      }
+      let newHeaders = state.editingDataSource.headers;
+      newHeaders.splice(index, 1);
       return {
         ...state,
         editingDataSource: {
           ...state.editingDataSource,
-          headers: state.editingDataSource.headers.filter( elem => elem.name !== action[1])
+          headers: newHeaders,
+          sourceData: state.editingDataSource.sourceData.map( elem => { let ne = elem; ne.splice(index,1); return ne} )
+        }
+      };
+    case renameDataSourceFieldD:
+      return {
+        ...state,
+        editingDataSource: {
+          ...state.editingDataSource,
+          headers: state.editingDataSource.headers.map(val => {
+            if ( val.displayName === action[1] ) {
+              val.displayName = action[2];
+            }
+            return val;
+          })
         }
       };
     case userTrendsD:
