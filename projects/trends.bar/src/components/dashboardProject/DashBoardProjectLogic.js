@@ -5,12 +5,108 @@ import {editingDataSourceD} from "../dashboardUser/DashboardUserLogic";
 import gql from "graphql-tag";
 import {checkQueryHasLoadedWithData, getQueryLoadedWithValue} from "../../futuremodules/graphqlclient/query";
 import {useState} from "react";
-import {getTrend} from "../../modules/trends/queries";
 import {useEffect} from "reactn";
 import {arrayExistsNotEmpty} from "../../futuremodules/utils/utils";
 
 // ------------------------------
-// Hooks
+// GraphQL Queries
+// ------------------------------
+
+export const getUserTrends = () => {
+  return gql`
+      query getUserTrends($name:String!) {
+          user(name:$name) {
+              name
+              trends {
+                  trendId
+                  username
+              }
+          }
+      }`;
+};
+
+export const getSimilarTrends = (trendId) => {
+  return gql`
+      {
+          trend_similar (trendId: "${trendId}") {
+              trendId
+              user {
+                  name
+              }
+          }
+      }`;
+};
+
+
+export const getTrend = (trendId, username) => {
+  return gql`
+      {
+          trend(trendId:"${trendId}", username:"${username}") {
+              username
+              trendId
+
+              dataSources {
+                  name
+                  sourceDocument
+                  headers {
+                      name
+                      displayName
+                      key
+                      type
+                  }
+                  sourceData
+              }
+
+              gridLayout {
+                  i
+                  x
+                  y
+                  w
+                  h
+                  moved
+                  static
+              }
+
+              gridContent {
+                  type
+                  i
+
+                  overtitle
+                  title
+                  subtitle
+
+                  groupKey
+                  subGroupKey
+                  valueNameKey
+                  valueFunctionName
+
+                  tableKeyTitle
+                  tableKeyQuery
+                  tableKeyField
+                  tableKeyTransform
+                  tableColumns {
+                      title
+                      query
+                      field
+                      transform
+                  }
+
+                  graphXYTitle
+                  graphXYSeries {
+                      title
+                      query
+                      fieldX
+                      transformX
+                      fieldY
+                      transformY
+                  }
+              }
+          }
+      }`;
+};
+
+// ------------------------------
+// GraphQL Mutations
 // ------------------------------
 
 export const upsertTrendLayout = gql`

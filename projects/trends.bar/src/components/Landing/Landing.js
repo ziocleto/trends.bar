@@ -6,11 +6,11 @@ import {
   SearchBarResultTrendId,
   SearchBarResultUser
 } from "./Landing.styled";
-import {getSimilarTrends} from "../../modules/trends/queries";
 import {useQuery} from "@apollo/react-hooks";
 import {Redirect} from "react-router-dom";
 import {Logo1TextSpan, Logo2TextSpan, NiceSearchBar} from "../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {getQueryLoadedWithValueArrayNotEmpty} from "../../futuremodules/graphqlclient/query";
+import {getSimilarTrends} from "../dashboardProject/DashBoardProjectLogic";
 
 const SearchResults = ({trendIdPartial}) => {
   const similarDatasetsQuery = useQuery(getSimilarTrends(trendIdPartial));

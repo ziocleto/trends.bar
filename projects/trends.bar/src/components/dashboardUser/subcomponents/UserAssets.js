@@ -1,7 +1,6 @@
 import React, {Fragment} from "reactn";
 import {DashboardUserInnerMargins} from "../DashboardUser.styled";
 import {useQuery} from "@apollo/react-hooks";
-import {getUserTrends} from "../../../modules/trends/queries";
 import {Dropdown, SplitButton} from "react-bootstrap";
 import {DangerColorSpan, Flex, InfoTextSpan, Mx1} from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {useEffect} from "react";
@@ -13,6 +12,7 @@ import {
   useRemoveTrend,
   userTrendsD
 } from "../DashboardUserLogic";
+import {getUserTrends} from "../../dashboardProject/DashBoardProjectLogic";
 
 export const UserAssets = ({state, dispatch}) => {
 

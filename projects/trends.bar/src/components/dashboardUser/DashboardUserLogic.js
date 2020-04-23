@@ -12,6 +12,10 @@ import {useMutation} from "@apollo/react-hooks";
 import {getEmptyDefaultValue, startupState} from "../../modules/trends/layout";
 import gql from "graphql-tag";
 
+// ------------------------------
+// GraphQL Mutations
+// ------------------------------
+
 const createTrend = gql`
     mutation CreateTrend($trendId: String!, $username: String!) {
         createTrend(trendId: $trendId, username: $username) {
@@ -27,6 +31,7 @@ const removeTrend = gql`
             username
         }
     }`;
+
 
 export const editingTrendD = "editingTrend";
 export const editingDataSourceD = "editingDataSource";
