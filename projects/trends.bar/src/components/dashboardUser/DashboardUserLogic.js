@@ -2,7 +2,12 @@ import {useGlobal} from "reactn";
 import {Auth} from "../../futuremodules/auth/authAccessors";
 import {useEffect} from "react";
 import {getQueryLoadedWithValue, getQueryLoadedWithValueArrayNotEmpty} from "../../futuremodules/graphqlclient/query";
-import {alertWarning, NotificationAlert, useConfirmAlertWithWriteCheckShort} from "../../futuremodules/alerts/alerts";
+import {
+  alertWarning,
+  NotificationAlert,
+  useAlertWarning,
+  useConfirmAlertWithWriteCheckShort
+} from "../../futuremodules/alerts/alerts";
 import {useMutation} from "@apollo/react-hooks";
 import {getEmptyDefaultValue, startupState} from "../../modules/trends/layout";
 import gql from "graphql-tag";
@@ -113,8 +118,19 @@ export const useCreateTrend = (dispatch) => {
 
   const [, alertStore] = useGlobal(NotificationAlert);
   const [createTrendM] = useMutation(createTrend);
+  const alert = useAlertWarning();
 
   const updater = (trendId, username) => {
+
+    if ( !trendId || trendId.length === 0 ) {
+      alert("I see no trend in here!");
+      return;
+    }
+    if ( trendId.length > 30 ) {
+      alert("Dude, that's way too long, nobody's going to remember it! (Max 30 letters please)");
+      return;
+    }
+
     createTrendM({
       variables: {
         trendId: trendId,
