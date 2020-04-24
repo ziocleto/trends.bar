@@ -6,39 +6,12 @@ import GridLayout from 'react-grid-layout';
 import {DivLayout, SpanEditLayoutCell, SpanRemoveLayoutCell} from "./LayoutEditor.styled";
 import {ButtonDiv, DangerColorSpan} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {LayoutContentWidget} from "./LayoutContentWidget";
+import {onGridLayoutChange, onRemoveCell} from "./LayoutEditorLogic";
 
-export const LayoutEditor = ({layout, setLayout, username}) => {
+export const LayoutEditor = ({layout, setLayout}) => {
 
   const [showDatasetPicker, setShowDatasetPicker] = useState({});
   const datasets = layout.datasets;
-
-  const onGridLayoutChange = (gridLayout) => {
-    setLayout({
-      ...layout,
-      gridLayout: gridLayout
-    });
-  };
-
-  const onRemoveCell = (cellCode) => {
-    const newGridLayout = [...layout.gridLayout];
-    const newGridContent = [...layout.gridContent];
-    newGridLayout.splice(newGridLayout.findIndex(c => c.i === cellCode), 1);
-    newGridContent.splice(newGridContent.findIndex(c => c.i === cellCode), 1);
-    setLayout({
-      ...layout,
-      gridLayout: newGridLayout,
-      gridContent: newGridContent
-    });
-  };
-
-  const onSaveCellContent = (content) => {
-    const newGridContent = [...layout.gridContent];
-    newGridContent[newGridContent.findIndex(c => c.i === content.i)] = {...content};
-    setLayout({
-      ...layout,
-      gridContent: newGridContent
-    });
-  };
 
   return (
     <Fragment>
@@ -46,7 +19,7 @@ export const LayoutEditor = ({layout, setLayout, username}) => {
                   cols={12}
                   rowHeight={50}
                   width={1024}
-                  onLayoutChange={onGridLayoutChange}>
+                  onLayoutChange={(l)=>onGridLayoutChange(l, setLayout)}>
         {layout.gridLayout.map(elem => {
           return (
             <DivLayout key={elem.i}>
@@ -56,10 +29,9 @@ export const LayoutEditor = ({layout, setLayout, username}) => {
                                    config={layout.gridContent[layout.gridLayout.findIndex(v => v.i === elem.i)]}
                                    showDatasetPicker={showDatasetPicker}
                                    setShowDatasetPicker={setShowDatasetPicker}
-                                   onSave={onSaveCellContent}
               />
               <SpanRemoveLayoutCell title="Remove element">
-                <ButtonDiv onClick={() => onRemoveCell(elem.i)}>
+                <ButtonDiv onClick={() => onRemoveCell(elem.i, layout, setLayout)}>
                   <DangerColorSpan><i className={"fas fa-times"}/></DangerColorSpan>
                 </ButtonDiv>
               </SpanRemoveLayoutCell>
