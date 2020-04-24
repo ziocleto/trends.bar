@@ -1,21 +1,15 @@
 import React, {Fragment} from "reactn";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
-import {Container, Row} from "react-bootstrap";
+import {ButtonGroup, ButtonToolbar, Container, Row} from "react-bootstrap";
+import {Div, Flex, HR, My1} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {
-  ButtonBgDiv,
-  ButtonDiv,
-  Div,
-  Flex,
-  Mx05
-} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
-import {
+  CustomTitle,
   RowSeparator,
   RowSeparatorDouble,
   RowSeparatorDoubleHR
 } from "../../../../futuremodules/reactComponentStyles/reactCommon";
 import {ContentWidgetText} from "../ContentWidgets/ContentWidgetText";
-import {ContentWidgetMenuBar} from "./LayoutEditor.styled";
 import {ContentWidgetTable} from "../ContentWidgets/ContentWidgetTable";
 import {ContentWidgetTextSingle} from "../ContentWidgets/ContentWidgetTextSingle";
 import {ContentWidgetTextWithSubtitle} from "../ContentWidgets/ContentWidgetTextWithSubtitle";
@@ -24,7 +18,7 @@ import {DatasetElements} from "../DataSources/DatasetElements";
 
 export const ModalDatasetPixel = ({layout, setLayout, config, onClose}) => {
 
-  const datasets = layout.datasets;
+  const datasets = layout.dataSources;
   const keys = config;
 
   const setWidgetData = (groupKey, subGroupKey, valueNameKey, valueFunctionName) => {
@@ -112,44 +106,46 @@ export const ModalDatasetPixel = ({layout, setLayout, config, onClose}) => {
           onHide={() => onClose()}
         >
           <Modal.Body>
-            <ContentWidgetMenuBar>
-              <Flex alignContent={"center"}
-                    height={"100%"}
-                    padding={"0 10px"}
-              >
-                <Flex alignContent={"center"}
-                      height={"100%"}
-                      fontSize={"1.0rem"}>
-                  <ButtonBgDiv
-                    padding={"10px"}
+            <Flex alignContent={"center"}>
+              <ButtonToolbar>
+                <ButtonGroup>
+                  <Button
+                    variant={"info"}
                     onClick={() => setWidgetType("text-single")}>
-                    <i className={"fas fa-minus"}/>
-                  </ButtonBgDiv>
-                  <Mx05/>
-                  <ButtonBgDiv padding={"10px"} onClick={() => setWidgetType("text-subtitle")}>
-                    <i className={"fas fa-equals"}/>
-                  </ButtonBgDiv>
-                  <Mx05/>
-                  <ButtonBgDiv padding={"10px"} active onClick={() => setWidgetType("text")}>
-                    <i className={"fas fa-bars"}/>
-                  </ButtonBgDiv>
-                  <Mx05/>
-                  <ButtonBgDiv padding={"10px"} onClick={() => setWidgetType("table")}>
-                    <i className={"fas fa-border-all"}/>
-                  </ButtonBgDiv>
-                  <Mx05/>
-                  <ButtonBgDiv padding={"10px"} onClick={() => setWidgetType("graphxy")}>
-                    <i className={"fas fa-chart-line"}/>
-                  </ButtonBgDiv>
-                </Flex>
-                <ButtonDiv
-                  color={"light"}
-                  hoveredColor={"var(--info)"}
-                  onClick={() => onClose()}>
-                  <i className={"fas fa-times"}/>
-                </ButtonDiv>
-              </Flex>
-            </ContentWidgetMenuBar>
+                    <CustomTitle text={"Text"} icon={"layer-group"}/>
+                  </Button>
+                  <Button onClick={() => setWidgetType("table")}>
+                    <CustomTitle text={"Table"} icon={"border-all"}/>
+                  </Button>
+                  <Button onClick={() => setWidgetType("graphxy")}>
+                    <CustomTitle text={"Graph"} icon={"chart-line"}/>
+                  </Button>
+                </ButtonGroup>
+              </ButtonToolbar>
+            </Flex>
+            <My1/>
+            <HR/>
+            {/*    <ButtonBgDiv*/}
+            {/*      padding={"10px"}*/}
+            {/*      onClick={() => setWidgetType("text-single")}>*/}
+            {/*      <i className={"fas fa-minus"}/>*/}
+            {/*    </ButtonBgDiv>*/}
+            {/*    <Mx05/>*/}
+            {/*    <ButtonBgDiv padding={"10px"} onClick={() => setWidgetType("text-subtitle")}>*/}
+            {/*      <i className={"fas fa-equals"}/>*/}
+            {/*    </ButtonBgDiv>*/}
+            {/*    <Mx05/>*/}
+            {/*    <ButtonBgDiv padding={"10px"} active onClick={() => setWidgetType("text")}>*/}
+            {/*      <i className={"fas fa-bars"}/>*/}
+            {/*    </ButtonBgDiv>*/}
+            {/*    <Mx05/>*/}
+
+            {/*  <ButtonDiv*/}
+            {/*    color={"light"}*/}
+            {/*    hoveredColor={"var(--info)"}*/}
+            {/*    onClick={() => onClose()}>*/}
+            {/*    <i className={"fas fa-times"}/>*/}
+            {/*  </ButtonDiv>*/}
             <Container fluid>
               <RowSeparatorDouble/>
               <RowSeparatorDouble/>

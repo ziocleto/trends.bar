@@ -11,7 +11,6 @@ import {onGridLayoutChange, onRemoveCell} from "./LayoutEditorLogic";
 export const LayoutEditor = ({layout, setLayout}) => {
 
   const [showDatasetPicker, setShowDatasetPicker] = useState({});
-  const datasets = layout.datasets;
 
   return (
     <Fragment>
@@ -23,7 +22,7 @@ export const LayoutEditor = ({layout, setLayout}) => {
         {layout.gridLayout.map(elem => {
           return (
             <DivLayout key={elem.i}>
-              <LayoutContentWidget datasets={datasets}
+              <LayoutContentWidget datasets={layout.dataSources}
                                    layout={layout}
                                    setLayout={setLayout}
                                    config={layout.gridContent[layout.gridLayout.findIndex(v => v.i === elem.i)]}

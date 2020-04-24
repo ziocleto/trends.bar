@@ -9,30 +9,27 @@ export const ContentWidgetTable = ({datasets, config}) => {
     return <Fragment/>
   }
 
-  const vn = Object.keys(datasets[config.groupKey])[0];
+  const dsIndex = 0;
+  const ds = datasets[dsIndex];
 
   return (
     <TableWidgetContainer>
       <Table striped bordered hover>
         <thead>
         <tr>
-          <th>{config.groupKey}</th>
-          {Object.keys(datasets[config.groupKey][vn]).map(elem =>
-            <th key={elem}>
-              {elem}
+          {ds.headers.map(elem =>
+            <th key={elem.name}>
+              {elem.name}
             </th>
           )}
         </tr>
         </thead>
         <tbody>
-        {Object.keys(datasets[config.groupKey]).map(gk =>
+        {ds.sourceData.map(gk =>
           <tr key={gk}>
-            <td>
-              {gk}
-            </td>
-            {Object.keys(datasets[config.groupKey][vn]).map(elem =>
-              <td key={config.groupKey + gk + elem}>
-                {getLastValue(config.groupKey, gk, elem, datasets)}
+            {gk.map(elem =>
+              <td>
+                {elem}
               </td>
             )}
           </tr>

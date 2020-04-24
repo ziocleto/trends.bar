@@ -1,4 +1,3 @@
-export const globalLayoutState = "globalLayoutState";
 
 export const getFirstValue = (groupKey, subGroupKey, valueNameKey, datasets) => {
   return datasets[groupKey][subGroupKey][valueNameKey][0].y;
@@ -20,33 +19,7 @@ export const resolveFunction = (valueFunctionName, groupKey, subGroupKey, valueN
     case "getFirstValue":
       return getFirstValue(groupKey, subGroupKey, valueNameKey, datasets);
     default:
-      return null;
-  }
-};
-
-
-export const getDefaultTrendLayout = (datasets) => {
-
-  const granularity = 4;
-  const name = "Grid3x3";
-
-  let gridLayout = [];
-  let gridContent = [];
-  let i = 0;
-  for (let y = 0; y < 3; y++) {
-    for (let x = 0; x < 3; x++) {
-      gridLayout.push({
-        i: i.toString(), x: x * granularity, y: y * granularity, w: granularity, h: granularity
-      });
-      gridContent.push(getDefaultCellContent(i, datasets));
-      i++;
-    }
-  }
-
-  return {
-    name,
-    gridLayout,
-    gridContent
+      return datasets ? datasets[0].headers[0].name : null;
   }
 };
 
