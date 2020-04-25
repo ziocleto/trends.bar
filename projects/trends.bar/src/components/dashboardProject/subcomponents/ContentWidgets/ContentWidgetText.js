@@ -8,9 +8,9 @@ export const ContentWidgetText = ({datasets, config}) => {
 
   return (
     <WidgetVertical>
-      <Overtitle>{config.subGroupKey}</Overtitle>
+      <Overtitle>{config.subGroupKey || "Your"}</Overtitle>
       <Title>{resolveFunction(config.valueFunctionName, config.groupKey, config.subGroupKey, config.valueNameKey, datasets)}</Title>
-      <Subtitle>{config.valueNameKey}</Subtitle>
+      <Subtitle>{config.valueNameKey || "Idea"}</Subtitle>
     </WidgetVertical>
   )
 };

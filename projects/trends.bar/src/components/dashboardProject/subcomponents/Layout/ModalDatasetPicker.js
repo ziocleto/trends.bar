@@ -1,26 +1,9 @@
 import React, {Fragment} from "reactn";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
-import {ButtonGroup, ButtonToolbar, Container, Dropdown, DropdownButton, Row, SplitButton} from "react-bootstrap";
-import {
-  Div,
-  Flex,
-  HR,
-  Logo1TextSpanBold,
-  Mx05,
-  My1
-} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
-import {
-  CustomTitle,
-  RowSeparator,
-  RowSeparatorDouble,
-  RowSeparatorDoubleHR
-} from "../../../../futuremodules/reactComponentStyles/reactCommon";
-import {ContentWidgetText} from "../ContentWidgets/ContentWidgetText";
-import {ContentWidgetTable} from "../ContentWidgets/ContentWidgetTable";
-import {ContentWidgetTextSingle} from "../ContentWidgets/ContentWidgetTextSingle";
-import {ContentWidgetTextWithSubtitle} from "../ContentWidgets/ContentWidgetTextWithSubtitle";
-import {ContentWidgetGraphXY} from "../ContentWidgets/ContentWidgetGraphXY";
+import {ButtonGroup, Container, Dropdown, DropdownButton, Row} from "react-bootstrap";
+import {Flex, HR, My1} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
+import {CustomTitle, RowSeparatorDoubleHR} from "../../../../futuremodules/reactComponentStyles/reactCommon";
 import {DatasetElements} from "../DataSources/DatasetElements";
 import {ContentWidget} from "../ContentWidgets/ContentWidget";
 

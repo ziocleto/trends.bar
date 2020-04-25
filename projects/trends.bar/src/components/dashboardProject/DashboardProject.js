@@ -1,10 +1,10 @@
 import React from "reactn";
 import {DataSources} from "./subcomponents/DataSources/DataSources";
-import {Button, ButtonGroup, ButtonToolbar, Dropdown, SplitButton} from "react-bootstrap";
+import {Badge, Button, ButtonGroup, ButtonToolbar, Dropdown, DropdownButton, SplitButton} from "react-bootstrap";
 import {ProjectContent} from "./DashboardProject.styled";
 import {Fragment, useState} from "react";
 import {LayoutEditor} from "./subcomponents/Layout/LayoutEditor";
-import {Div, DivWL, DivWR, Flex, FlexToolbar, Text} from "../../futuremodules/reactComponentStyles/reactCommon.styled";
+import {DivWL, DivWR, Flex, FlexToolbar, Mx1, My1} from "../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {CustomTitle, RocketTitle} from "../../futuremodules/reactComponentStyles/reactCommon";
 import {SpinnerTopMiddle} from "../../futuremodules/spinner/Spinner";
 import {MakeDefaultLayoutWizard} from "./subcomponents/Layout/MakeDefaultLayoutWizard";
@@ -32,37 +32,32 @@ export const DashboardProject = ({state, dispatch}) => {
 
   return (
     <Fragment>
-      <Flex justifyContent={"center"}>
-        <Div
-          margin={"10px 0 0 0"}>
-          <Text
-            bold
-            fontSize={"var(--font-size-lead)"}
-          >
-            {editingTrend}
-          </Text>
-        </Div>
-      </Flex>
-      <FlexToolbar margin={"5px"}>
+      <My1/>
+      <FlexToolbar alignItems={"center"} padding={"0px 10px"}>
         <DivWL width={"200px"}>
-          <Button variant={"outline-success"} onClick={() => publish()}>
-            <RocketTitle text={"Publish"}/></Button>
+          <Flex alignItems={"center"} justifyContent={"flex-start"}>
+            <h2><Badge variant="primary">{editingTrend}</Badge></h2>
+            <Mx1/>
+            <Button variant={"outline-success"} onClick={() => publish()}>
+              <RocketTitle text={"Publish"}/>
+            </Button>
+          </Flex>
         </DivWL>
         <div>
           <ButtonToolbar>
             <ButtonGroup>
-              <SplitButton as={ButtonGroup} title={<CustomTitle text={"Trend"} icon={"poll"}/>}
+              <DropdownButton as={ButtonGroup} title={<CustomTitle text={"Trend"} icon={"poll"}/>}
                            variant={activeTab && activeTab === trendTabId ? "info" : "primary"}
                            onClick={() => setActiveTab(trendTabId)}>
                 <Dropdown.Item onClick={() => addCell(layout, setLayout)}>
-                  <CustomTitle text={"Add Trend Box"} icon={"plus"}/>
+                  <CustomTitle text={"Add Box"} icon={"plus"}/>
                 </Dropdown.Item>
-              </SplitButton>
-              <Button
-                variant={activeTab && activeTab === dataSourcesId ? "info" : "primary"}
-                onClick={() => setActiveTab(dataSourcesId)}>
-                <CustomTitle text={"Sources"} icon={"layer-group"}/>
-              </Button>
+                <Dropdown.Item
+                  variant={activeTab && activeTab === dataSourcesId ? "info" : "primary"}
+                  onClick={() => setActiveTab(dataSourcesId)}>
+                  <CustomTitle text={"Sources"} icon={"layer-group"}/>
+                </Dropdown.Item>
+              </DropdownButton>
             </ButtonGroup>
           </ButtonToolbar>
         </div>
@@ -85,7 +80,8 @@ export const DashboardProject = ({state, dispatch}) => {
           setLayout={setLayout}
         />
         }
-        {activeTab && activeTab === dataSourcesId && <DataSources state={state} dispatch={dispatch} layout={layout} setLayout={setLayout}/>}
+        {activeTab && activeTab === dataSourcesId &&
+        <DataSources state={state} dispatch={dispatch} layout={layout} setLayout={setLayout}/>}
       </ProjectContent>
     </Fragment>
   );
