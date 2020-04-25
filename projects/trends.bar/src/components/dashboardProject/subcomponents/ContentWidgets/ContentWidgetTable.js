@@ -1,6 +1,5 @@
 import React, {Fragment} from "react";
 import Table from "react-bootstrap/Table";
-import {getLastValue} from "../../../../modules/trends/layout";
 import {TableWidgetContainer} from "./ContentWidgetTable.styled";
 
 export const ContentWidgetTable = ({datasets, config}) => {

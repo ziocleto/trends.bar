@@ -1,8 +1,15 @@
 import React, {Fragment} from "reactn";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
-import {ButtonGroup, ButtonToolbar, Container, Row} from "react-bootstrap";
-import {Div, Flex, HR, My1} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
+import {ButtonGroup, ButtonToolbar, Container, Dropdown, DropdownButton, Row, SplitButton} from "react-bootstrap";
+import {
+  Div,
+  Flex,
+  HR,
+  Logo1TextSpanBold,
+  Mx05,
+  My1
+} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {
   CustomTitle,
   RowSeparator,
@@ -15,6 +22,7 @@ import {ContentWidgetTextSingle} from "../ContentWidgets/ContentWidgetTextSingle
 import {ContentWidgetTextWithSubtitle} from "../ContentWidgets/ContentWidgetTextWithSubtitle";
 import {ContentWidgetGraphXY} from "../ContentWidgets/ContentWidgetGraphXY";
 import {DatasetElements} from "../DataSources/DatasetElements";
+import {ContentWidget} from "../ContentWidgets/ContentWidget";
 
 export const ModalDatasetPixel = ({layout, setLayout, config, onClose}) => {
 
@@ -107,13 +115,12 @@ export const ModalDatasetPixel = ({layout, setLayout, config, onClose}) => {
         >
           <Modal.Body>
             <Flex alignContent={"center"}>
-              <ButtonToolbar>
-                <ButtonGroup>
-                  <Button
-                    variant={"info"}
-                    onClick={() => setWidgetType("text-single")}>
-                    <CustomTitle text={"Text"} icon={"layer-group"}/>
-                  </Button>
+              <ButtonGroup>
+                  <DropdownButton as={ButtonGroup} title={<CustomTitle text={"Text "} icon={"layer-group"}/>}>
+                      <Dropdown.Item onClick={() => setWidgetType("text-single")}>Single</Dropdown.Item>
+                      <Dropdown.Item onClick={() => setWidgetType("text-subtitle")}>Double</Dropdown.Item>
+                      <Dropdown.Item onClick={() => setWidgetType("text")}>Triple</Dropdown.Item>
+                  </DropdownButton>
                   <Button onClick={() => setWidgetType("table")}>
                     <CustomTitle text={"Table"} icon={"border-all"}/>
                   </Button>
@@ -121,47 +128,11 @@ export const ModalDatasetPixel = ({layout, setLayout, config, onClose}) => {
                     <CustomTitle text={"Graph"} icon={"chart-line"}/>
                   </Button>
                 </ButtonGroup>
-              </ButtonToolbar>
             </Flex>
             <My1/>
             <HR/>
-            {/*    <ButtonBgDiv*/}
-            {/*      padding={"10px"}*/}
-            {/*      onClick={() => setWidgetType("text-single")}>*/}
-            {/*      <i className={"fas fa-minus"}/>*/}
-            {/*    </ButtonBgDiv>*/}
-            {/*    <Mx05/>*/}
-            {/*    <ButtonBgDiv padding={"10px"} onClick={() => setWidgetType("text-subtitle")}>*/}
-            {/*      <i className={"fas fa-equals"}/>*/}
-            {/*    </ButtonBgDiv>*/}
-            {/*    <Mx05/>*/}
-            {/*    <ButtonBgDiv padding={"10px"} active onClick={() => setWidgetType("text")}>*/}
-            {/*      <i className={"fas fa-bars"}/>*/}
-            {/*    </ButtonBgDiv>*/}
-            {/*    <Mx05/>*/}
-
-            {/*  <ButtonDiv*/}
-            {/*    color={"light"}*/}
-            {/*    hoveredColor={"var(--info)"}*/}
-            {/*    onClick={() => onClose()}>*/}
-            {/*    <i className={"fas fa-times"}/>*/}
-            {/*  </ButtonDiv>*/}
             <Container fluid>
-              <RowSeparatorDouble/>
-              <RowSeparatorDouble/>
-              <RowSeparator/>
-              <Div width={"100%"} height={"100%"} maxHeight={"300px"}>
-                {keys.type === "text-single" &&
-                <ContentWidgetTextSingle datasets={datasets} config={keys}/>}
-                {keys.type === "text-subtitle" &&
-                <ContentWidgetTextWithSubtitle datasets={datasets} config={keys}/>}
-                {keys.type === "text" &&
-                <ContentWidgetText datasets={datasets} config={keys}/>}
-                {keys.type === "table" &&
-                <ContentWidgetTable datasets={datasets} config={keys}/>}
-                {keys.type === "graphxy" &&
-                <ContentWidgetGraphXY datasets={datasets} config={keys}/>}
-              </Div>
+              <ContentWidget datasets={datasets} config={keys}/>
               <RowSeparatorDoubleHR/>
               <Row>
                 <DatasetElements datasets={datasets}
