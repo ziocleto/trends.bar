@@ -2,7 +2,7 @@ import React, {Fragment} from "reactn";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import {ButtonGroup, Container, Dropdown, DropdownButton, Row} from "react-bootstrap";
-import {Flex, HR, My1} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
+import {Div, Flex, HR, My1} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {CustomTitle, RowSeparatorDoubleHR} from "../../../../futuremodules/reactComponentStyles/reactCommon";
 import {DatasetElements} from "../DataSources/DatasetElements";
 import {ContentWidget} from "../ContentWidgets/ContentWidget";
@@ -112,9 +112,8 @@ export const ModalDatasetPixel = ({layout, setLayout, config, onClose}) => {
                   </Button>
                 </ButtonGroup>
             </Flex>
-            <My1/>
-            <HR/>
             <Container fluid>
+              <RowSeparatorDoubleHR/>
               <ContentWidget datasets={datasets} config={keys}/>
               <RowSeparatorDoubleHR/>
               <Row>

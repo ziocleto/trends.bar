@@ -1,6 +1,6 @@
 import {Navbareh, NavbarLogo, NavbarLogoAndTitleContainer} from "./Navbar.styled";
 import {Link} from "react-router-dom";
-import {Logo1TextSpan, Logo2TextSpan} from "../../futuremodules/reactComponentStyles/reactCommon.styled";
+import {Img100, Logo1TextSpan, Logo2TextSpan} from "../../futuremodules/reactComponentStyles/reactCommon.styled";
 import React from "react";
 
 export const NavbarLogoAndTitle = () => {
@@ -8,7 +8,7 @@ export const NavbarLogoAndTitle = () => {
       <NavbarLogoAndTitleContainer>
         <NavbarLogo>
           <Link to={"/"}>
-            <img src="/ehlogo.svg" alt=""/>
+            <Img100 src="/ehlogo.svg" alt=""/>
           </Link>
         </NavbarLogo>
         <Navbareh>

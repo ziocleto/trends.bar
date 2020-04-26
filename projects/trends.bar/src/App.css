@@ -32,6 +32,7 @@
   --scheme-color-2: #fccb7b;
   --scheme-color-3: #8ae9e9;
   --mainMargin: 2%;
+  --scrollbarBG: #30303030;
 }
 
 * {
@@ -48,6 +49,20 @@
 @font-face {
   font-family: Aileron-Thin;
   src: url(img/Aileron-Thin.ttf);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+
+}
+::-webkit-scrollbar-track {
+  background: var(--scrollbarBG);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--logo-color-1);
+  border-radius: 6px;
+  border: 3px solid var(--dark);
 }
 
 body {
@@ -67,6 +82,8 @@ body {
   user-select: none;
   overflow: -moz-scrollbars-none;
   -ms-overflow-style: none;
+  /*scrollbar-width: thin;*/
+  /*scrollbar-color: var(--info) var(--dark);*/
 }
 
 a, a:link, a:visited, a:focus, a:hover, a:active{
@@ -74,13 +91,3 @@ a, a:link, a:visited, a:focus, a:hover, a:active{
   text-decoration-color: inherit;
   color: inherit;
 }
-::-webkit-scrollbar {
-  width: 0 !important;
-}
-
-img {
-  width: 100%;
-  height: 100%;
-  border-radius: 4px;
-}
-

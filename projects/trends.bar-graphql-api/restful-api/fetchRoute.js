@@ -1,5 +1,3 @@
-'use strict';
-
 import {dataSourceModel} from "../models/dataSource";
 import {lastPathElement, secondToLastPathElement} from "eh_helpers";
 
