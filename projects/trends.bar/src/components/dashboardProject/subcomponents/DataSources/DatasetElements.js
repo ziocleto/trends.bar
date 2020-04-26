@@ -3,26 +3,37 @@ import {ScriptElementsContainer, ScriptKeyContainer, ScriptKeyContainerTitle} fr
 import {FlexVertical} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {modalGraphTreeHeight} from "../Layout/LayoutCellEditor-styled";
 import React, {Fragment} from "reactn";
-import {getFirstValue, getLastValue} from "../../../../modules/trends/layout";
+import {useState} from "react";
 
-export const DatasetElements = ({datasets, keys, setGroupKey, setSubGroupKey, setValueNameKey, setValueFunction}) => {
+export const DatasetElements = ({datasets, keys}) => {
+
+  const [datasetIndex, setDatasetIndex] = useState(-1);
+
+  const datasetIndexFromKeyName = (key) => {
+    for (let i = 0; i < datasets.length; i++) {
+      if (datasets[i].name === key ) {
+        return i;
+      }
+    }
+    return -1;
+  }
 
   return (
     <Fragment>
       <Col>
         <ScriptKeyContainerTitle>
-          Groups
+          Sources
         </ScriptKeyContainerTitle>
         <ScriptElementsContainer>
           <FlexVertical
             justifyContent={"start"}
             height={modalGraphTreeHeight}
           >
-            {datasets && Object.keys(datasets).map(elem =>
-              (<ScriptKeyContainer key={elem}
-                                   selected={setGroupKey && elem === keys.groupKey}
-                                   onClick={e => setGroupKey && setGroupKey(elem)}>
-                {elem}
+            {datasets.map(elem =>
+              (<ScriptKeyContainer key={elem.name}
+                                   // selected={datasetIndex === keys.groupKey}
+                                   onClick={() => setDatasetIndex(datasetIndexFromKeyName(elem.name))}>
+                {elem.name}
               </ScriptKeyContainer>)
             )}
           </FlexVertical>
@@ -38,12 +49,12 @@ export const DatasetElements = ({datasets, keys, setGroupKey, setSubGroupKey, se
             justifyContent={"start"}
             height={modalGraphTreeHeight}
           >
-            {datasets && keys.groupKey && Object.keys(datasets[keys.groupKey]).map(elem =>
-              (<ScriptKeyContainer key={elem}
-                                   selected={setSubGroupKey && elem === keys.subGroupKey}
-                                   onClick={(e) => setSubGroupKey && setSubGroupKey(elem)}
+            {datasetIndex >= 0 && datasets[datasetIndex].headers.map(elem =>
+              (<ScriptKeyContainer key={elem.name}
+                                   // selected={setSubGroupKey && elem === keys.subGroupKey}
+                                   // onClick={(e) => setSubGroupKey && setSubGroupKey(elem)}
               >
-                {elem}
+                {elem.name}
               </ScriptKeyContainer>)
             )}
           </FlexVertical>
@@ -61,8 +72,8 @@ export const DatasetElements = ({datasets, keys, setGroupKey, setSubGroupKey, se
           >
             {datasets && keys.subGroupKey && Object.keys(datasets[keys.groupKey][keys.subGroupKey]).map(elem =>
               (<ScriptKeyContainer key={keys.groupKey + keys.subGroupKey + elem}
-                                   selected={setValueNameKey && elem === keys.valueNameKey}
-                                   onClick={() => setValueNameKey && setValueNameKey(elem)}
+                                   // selected={setValueNameKey && elem === keys.valueNameKey}
+                                   // onClick={() => setValueNameKey && setValueNameKey(elem)}
               >
                 {elem}
               </ScriptKeyContainer>)
@@ -71,34 +82,34 @@ export const DatasetElements = ({datasets, keys, setGroupKey, setSubGroupKey, se
         </ScriptElementsContainer>
       </Col>
 
-      {setValueFunction &&
-      <Col>
-        <ScriptKeyContainerTitle>
-          Values
-        </ScriptKeyContainerTitle>
-        <ScriptElementsContainer>
-          <FlexVertical
-            justifyContent={"start"}
-            height={modalGraphTreeHeight}
-          >
-            {datasets && keys.valueNameKey &&
-            <Fragment>
-              <ScriptKeyContainer key={keys.groupKey + keys.subGroupKey + keys.valueNameKey + "last"}
-                                  selected={keys.valueFunctionName === getLastValue.name}
-                                  onClick={() => setValueFunction(getLastValue.name)}>
-                Last
-              </ScriptKeyContainer>
-              <ScriptKeyContainer key={keys.groupKey + keys.subGroupKey + keys.valueNameKey + "first"}
-                                  selected={keys.valueFunctionName === getFirstValue.name}
-                                  onClick={() => setValueFunction(getFirstValue.name)}>
-                First
-              </ScriptKeyContainer>
-            </Fragment>
-            }
-          </FlexVertical>
-        </ScriptElementsContainer>
-      </Col>
-      }
+      {/*{setValueFunction &&*/}
+      {/*<Col>*/}
+      {/*  <ScriptKeyContainerTitle>*/}
+      {/*    Values*/}
+      {/*  </ScriptKeyContainerTitle>*/}
+      {/*  <ScriptElementsContainer>*/}
+      {/*    <FlexVertical*/}
+      {/*      justifyContent={"start"}*/}
+      {/*      height={modalGraphTreeHeight}*/}
+      {/*    >*/}
+      {/*      {datasets && keys.valueNameKey &&*/}
+      {/*      <Fragment>*/}
+      {/*        <ScriptKeyContainer key={keys.groupKey + keys.subGroupKey + keys.valueNameKey + "last"}*/}
+      {/*                            selected={keys.valueFunctionName === getLastValue.name}*/}
+      {/*                            onClick={() => setValueFunction(getLastValue.name)}>*/}
+      {/*          Last*/}
+      {/*        </ScriptKeyContainer>*/}
+      {/*        <ScriptKeyContainer key={keys.groupKey + keys.subGroupKey + keys.valueNameKey + "first"}*/}
+      {/*                            selected={keys.valueFunctionName === getFirstValue.name}*/}
+      {/*                            onClick={() => setValueFunction(getFirstValue.name)}>*/}
+      {/*          First*/}
+      {/*        </ScriptKeyContainer>*/}
+      {/*      </Fragment>*/}
+      {/*      }*/}
+      {/*    </FlexVertical>*/}
+      {/*  </ScriptElementsContainer>*/}
+      {/*</Col>*/}
+      {/*}*/}
     </Fragment>
   )
 };

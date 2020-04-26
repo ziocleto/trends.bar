@@ -9,7 +9,7 @@ import {CustomTitle, RocketTitle} from "../../futuremodules/reactComponentStyles
 import {SpinnerTopMiddle} from "../../futuremodules/spinner/Spinner";
 import {MakeDefaultLayoutWizard} from "./subcomponents/Layout/MakeDefaultLayoutWizard";
 import {addCell, needsWizard, useGetTrend, usePublishTrend} from "./DashBoardProjectLogic";
-import {editingDataSourceD, editingTrendD} from "../dashboardUser/DashboardUserLogic";
+import {editingTrendD} from "../dashboardUser/DashboardUserLogic";
 
 const dataSourcesId = "DataSources";
 const trendTabId = "Trend";

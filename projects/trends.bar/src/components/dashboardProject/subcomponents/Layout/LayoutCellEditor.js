@@ -12,14 +12,14 @@ export const LayoutCellEditor = ({layout, setLayout, config, onClose}) => {
   const datasets = layout.dataSources;
   const keys = config;
 
-  const setWidgetData = (groupKey, subGroupKey, valueNameKey, valueFunctionName) => {
-    return {
-      groupKey,
-      subGroupKey,
-      valueNameKey,
-      valueFunctionName,
-    }
-  };
+  // const setWidgetData = (groupKey, subGroupKey, valueNameKey, valueFunctionName) => {
+  //   return {
+  //     groupKey,
+  //     subGroupKey,
+  //     valueNameKey,
+  //     valueFunctionName,
+  //   }
+  // };
 
   const setGridContent = (gc) => {
     setLayout({
@@ -28,52 +28,52 @@ export const LayoutCellEditor = ({layout, setLayout, config, onClose}) => {
     });
   };
 
-  const setGroupKey = (groupKey) => {
-    let gc = layout.gridContent;
-
-    const subGroupKey = Object.keys(datasets[groupKey])[0];
-    const valueNameKey = Object.keys(datasets[groupKey][Object.keys(datasets[groupKey])[0]])[0];
-
-    gc[config.i] = {
-      ...gc[config.i],
-      ...setWidgetData(groupKey, subGroupKey, valueNameKey, keys.valueFunctionName)
-    };
-
-    setGridContent(gc);
-  };
-
-  const setSubGroupKey = (subGroupKey) => {
-    let gc = layout.gridContent;
-
-    gc[config.i] = {
-      ...gc[config.i],
-      ...setWidgetData(keys.groupKey, subGroupKey, keys.valueNameKey, keys.valueFunctionName)
-    };
-
-    setGridContent(gc);
-  };
-
-  const setValueNameKey = (valueNameKey) => {
-    let gc = layout.gridContent;
-
-    gc[config.i] = {
-      ...gc[config.i],
-      ...setWidgetData(keys.groupKey, keys.subGroupKey, valueNameKey, keys.valueFunctionName)
-    };
-
-    setGridContent(gc);
-  };
-
-  const setValueFunction = (valueFunctionName) => {
-    let gc = layout.gridContent;
-
-    gc[config.i] = {
-      ...gc[config.i],
-      ...setWidgetData(keys.groupKey, keys.subGroupKey, keys.valueNameKey, valueFunctionName)
-    };
-
-    setGridContent(gc);
-  };
+  // const setGroupKey = (groupKey) => {
+  //   let gc = layout.gridContent;
+  //
+  //   const subGroupKey = Object.keys(datasets[groupKey])[0];
+  //   const valueNameKey = Object.keys(datasets[groupKey][Object.keys(datasets[groupKey])[0]])[0];
+  //
+  //   gc[config.i] = {
+  //     ...gc[config.i],
+  //     ...setWidgetData(groupKey, subGroupKey, valueNameKey, keys.valueFunctionName)
+  //   };
+  //
+  //   setGridContent(gc);
+  // };
+  //
+  // const setSubGroupKey = (subGroupKey) => {
+  //   let gc = layout.gridContent;
+  //
+  //   gc[config.i] = {
+  //     ...gc[config.i],
+  //     ...setWidgetData(keys.groupKey, subGroupKey, keys.valueNameKey, keys.valueFunctionName)
+  //   };
+  //
+  //   setGridContent(gc);
+  // };
+  //
+  // const setValueNameKey = (valueNameKey) => {
+  //   let gc = layout.gridContent;
+  //
+  //   gc[config.i] = {
+  //     ...gc[config.i],
+  //     ...setWidgetData(keys.groupKey, keys.subGroupKey, valueNameKey, keys.valueFunctionName)
+  //   };
+  //
+  //   setGridContent(gc);
+  // };
+  //
+  // const setValueFunction = (valueFunctionName) => {
+  //   let gc = layout.gridContent;
+  //
+  //   gc[config.i] = {
+  //     ...gc[config.i],
+  //     ...setWidgetData(keys.groupKey, keys.subGroupKey, keys.valueNameKey, valueFunctionName)
+  //   };
+  //
+  //   setGridContent(gc);
+  // };
 
   const setWidgetType = (widgetType) => {
     let gc = layout.gridContent;
@@ -110,11 +110,7 @@ export const LayoutCellEditor = ({layout, setLayout, config, onClose}) => {
           <RowSeparatorDoubleHR/>
           <Row>
             <DatasetElements datasets={datasets}
-                             keys={keys}
-                             setGroupKey={setGroupKey}
-                             setSubGroupKey={setSubGroupKey}
-                             setValueNameKey={setValueNameKey}
-                             setValueFunction={setValueFunction}/>
+                             keys={keys}/>
           </Row>
         </Container>
       </Modal.Body>
