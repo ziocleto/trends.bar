@@ -1,7 +1,7 @@
 import {Col} from "react-bootstrap";
 import {ScriptElementsContainer, ScriptKeyContainer, ScriptKeyContainerTitle} from "./DataSources-styled";
 import {FlexVertical} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
-import {modalGraphTreeHeight} from "../Layout/ModalDatasetPicker-styled";
+import {modalGraphTreeHeight} from "../Layout/LayoutCellEditor-styled";
 import React, {Fragment} from "reactn";
 import {getFirstValue, getLastValue} from "../../../../modules/trends/layout";
 

@@ -2,12 +2,12 @@ import React, {Fragment} from "reactn";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import {ButtonGroup, Container, Dropdown, DropdownButton, Row} from "react-bootstrap";
-import {Div, Flex, HR, My1} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
+import {Flex} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {CustomTitle, RowSeparatorDoubleHR} from "../../../../futuremodules/reactComponentStyles/reactCommon";
 import {DatasetElements} from "../DataSources/DatasetElements";
 import {ContentWidget} from "../ContentWidgets/ContentWidget";
 
-export const ModalDatasetPixel = ({layout, setLayout, config, onClose}) => {
+export const LayoutCellEditor = ({layout, setLayout, config, onClose}) => {
 
   const datasets = layout.dataSources;
   const keys = config;
@@ -88,53 +88,43 @@ export const ModalDatasetPixel = ({layout, setLayout, config, onClose}) => {
 
   return (
     <Fragment>
-      {layout && (
-        <Modal
-          size="lg"
-          aria-labelledby="contained-modal-title-vcenter"
-          centered
-          show={true}
-          onHide={() => onClose()}
-        >
-          <Modal.Body>
-            <Flex alignContent={"center"}>
-              <ButtonGroup>
-                  <DropdownButton as={ButtonGroup} title={<CustomTitle text={"Text "} icon={"layer-group"}/>}>
-                      <Dropdown.Item onClick={() => setWidgetType("text-single")}>Single</Dropdown.Item>
-                      <Dropdown.Item onClick={() => setWidgetType("text-subtitle")}>Double</Dropdown.Item>
-                      <Dropdown.Item onClick={() => setWidgetType("text")}>Triple</Dropdown.Item>
-                  </DropdownButton>
-                  <Button onClick={() => setWidgetType("table")}>
-                    <CustomTitle text={"Table"} icon={"border-all"}/>
-                  </Button>
-                  <Button onClick={() => setWidgetType("graphxy")}>
-                    <CustomTitle text={"Graph"} icon={"chart-line"}/>
-                  </Button>
-                </ButtonGroup>
-            </Flex>
-            <Container fluid>
-              <RowSeparatorDoubleHR/>
-              <ContentWidget datasets={datasets} config={keys}/>
-              <RowSeparatorDoubleHR/>
-              <Row>
-                <DatasetElements datasets={datasets}
-                                 keys={keys}
-                                 setGroupKey={setGroupKey}
-                                 setSubGroupKey={setSubGroupKey}
-                                 setValueNameKey={setValueNameKey}
-                                 setValueFunction={setValueFunction}/>
-              </Row>
-            </Container>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="primary" onClick={() => {
-              onClose(false)
-            }}>
-              Close
+      <Modal.Body>
+        <Flex alignContent={"center"}>
+          <ButtonGroup>
+            <DropdownButton as={ButtonGroup} title={<CustomTitle text={"Text "} icon={"layer-group"}/>}>
+              <Dropdown.Item onClick={() => setWidgetType("text-single")}>Single</Dropdown.Item>
+              <Dropdown.Item onClick={() => setWidgetType("text-subtitle")}>Double</Dropdown.Item>
+              <Dropdown.Item onClick={() => setWidgetType("text")}>Triple</Dropdown.Item>
+            </DropdownButton>
+            <Button onClick={() => setWidgetType("table")}>
+              <CustomTitle text={"Table"} icon={"border-all"}/>
             </Button>
-          </Modal.Footer>
-        </Modal>
-      )}
+            <Button onClick={() => setWidgetType("graphxy")}>
+              <CustomTitle text={"Graph"} icon={"chart-line"}/>
+            </Button>
+          </ButtonGroup>
+        </Flex>
+        <Container fluid>
+          <RowSeparatorDoubleHR/>
+          <ContentWidget datasets={datasets} config={keys}/>
+          <RowSeparatorDoubleHR/>
+          <Row>
+            <DatasetElements datasets={datasets}
+                             keys={keys}
+                             setGroupKey={setGroupKey}
+                             setSubGroupKey={setSubGroupKey}
+                             setValueNameKey={setValueNameKey}
+                             setValueFunction={setValueFunction}/>
+          </Row>
+        </Container>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="primary" onClick={() => {
+          onClose(false)
+        }}>
+          Close
+        </Button>
+      </Modal.Footer>
     </Fragment>
   )
 };
