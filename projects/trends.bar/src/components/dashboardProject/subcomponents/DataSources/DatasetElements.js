@@ -1,14 +1,15 @@
-import {Col} from "react-bootstrap";
 import {ScriptElementsContainer, ScriptKeyContainer, ScriptKeyContainerTitle} from "./DataSources-styled";
-import {FlexVertical} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
+import {Div, Flex, FlexVertical} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {modalGraphTreeHeight} from "../Layout/LayoutCellEditor-styled";
-import React, {Fragment} from "reactn";
+import React from "reactn";
 import {useState} from "react";
 
 export const DatasetElements = ({datasets, keys}) => {
 
   const [datasetIndex, setDatasetIndex] = useState(-1);
+  const [sourceDataIndex, setSourceDataIndex] = useState(-1);
 
+  console.log("sourceDataIndex ", sourceDataIndex);
   const datasetIndexFromKeyName = (key) => {
     for (let i = 0; i < datasets.length; i++) {
       if (datasets[i].name === key ) {
@@ -18,9 +19,23 @@ export const DatasetElements = ({datasets, keys}) => {
     return -1;
   }
 
+  const datasetSourceIndexFromKeyName = (key) => {
+    console.log("checkin key:", key);
+    for (let i = 0; i < datasets[datasetIndex].headers.length; i++) {
+      if (datasets[datasetIndex].headers[i].name === key ) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  // const datasetSourceValueOf = (datasetIndex, sourceDataIndex, row) => {
+  //   return datasets[datasetIndex].sourceData[row][sourceDataIndex];
+  // }
+
   return (
-    <Fragment>
-      <Col>
+    <Flex width={"100%"}>
+      <Div padding={"0 0 0 10px"} width={"33%"}>
         <ScriptKeyContainerTitle>
           Sources
         </ScriptKeyContainerTitle>
@@ -38,11 +53,11 @@ export const DatasetElements = ({datasets, keys}) => {
             )}
           </FlexVertical>
         </ScriptElementsContainer>
-      </Col>
+      </Div>
 
-      <Col>
+      <Div margin={"0 10px"} width={"34%"}>
         <ScriptKeyContainerTitle>
-          Sub Groups
+          Elements
         </ScriptKeyContainerTitle>
         <ScriptElementsContainer>
           <FlexVertical
@@ -52,64 +67,35 @@ export const DatasetElements = ({datasets, keys}) => {
             {datasetIndex >= 0 && datasets[datasetIndex].headers.map(elem =>
               (<ScriptKeyContainer key={elem.name}
                                    // selected={setSubGroupKey && elem === keys.subGroupKey}
-                                   // onClick={(e) => setSubGroupKey && setSubGroupKey(elem)}
+                                   onClick={(e) => setSourceDataIndex(datasetSourceIndexFromKeyName(elem.name))}
               >
                 {elem.name}
               </ScriptKeyContainer>)
             )}
           </FlexVertical>
         </ScriptElementsContainer>
-      </Col>
+      </Div>
 
-      <Col>
+      <Div margin={"0 10px"} width={"33%"}>
         <ScriptKeyContainerTitle>
-          Elements
+          Values
         </ScriptKeyContainerTitle>
         <ScriptElementsContainer>
           <FlexVertical
             justifyContent={"start"}
             height={modalGraphTreeHeight}
           >
-            {datasets && keys.subGroupKey && Object.keys(datasets[keys.groupKey][keys.subGroupKey]).map(elem =>
-              (<ScriptKeyContainer key={keys.groupKey + keys.subGroupKey + elem}
+            {datasetIndex >=0 && sourceDataIndex >= 0 && datasets[datasetIndex].sourceData.map(elem =>
+              (<ScriptKeyContainer
                                    // selected={setValueNameKey && elem === keys.valueNameKey}
                                    // onClick={() => setValueNameKey && setValueNameKey(elem)}
               >
-                {elem}
+                {elem[sourceDataIndex]}
               </ScriptKeyContainer>)
             )}
           </FlexVertical>
         </ScriptElementsContainer>
-      </Col>
-
-      {/*{setValueFunction &&*/}
-      {/*<Col>*/}
-      {/*  <ScriptKeyContainerTitle>*/}
-      {/*    Values*/}
-      {/*  </ScriptKeyContainerTitle>*/}
-      {/*  <ScriptElementsContainer>*/}
-      {/*    <FlexVertical*/}
-      {/*      justifyContent={"start"}*/}
-      {/*      height={modalGraphTreeHeight}*/}
-      {/*    >*/}
-      {/*      {datasets && keys.valueNameKey &&*/}
-      {/*      <Fragment>*/}
-      {/*        <ScriptKeyContainer key={keys.groupKey + keys.subGroupKey + keys.valueNameKey + "last"}*/}
-      {/*                            selected={keys.valueFunctionName === getLastValue.name}*/}
-      {/*                            onClick={() => setValueFunction(getLastValue.name)}>*/}
-      {/*          Last*/}
-      {/*        </ScriptKeyContainer>*/}
-      {/*        <ScriptKeyContainer key={keys.groupKey + keys.subGroupKey + keys.valueNameKey + "first"}*/}
-      {/*                            selected={keys.valueFunctionName === getFirstValue.name}*/}
-      {/*                            onClick={() => setValueFunction(getFirstValue.name)}>*/}
-      {/*          First*/}
-      {/*        </ScriptKeyContainer>*/}
-      {/*      </Fragment>*/}
-      {/*      }*/}
-      {/*    </FlexVertical>*/}
-      {/*  </ScriptElementsContainer>*/}
-      {/*</Col>*/}
-      {/*}*/}
-    </Fragment>
+      </Div>
+    </Flex>
   )
 };

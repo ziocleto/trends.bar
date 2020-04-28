@@ -254,7 +254,6 @@ export const useRemoveDataSource = (layout, setLayout) => {
 // Functions
 // ------------------------------
 
-
 export const renameDataSource = (oldName, newName, state, dispatch, renameDataSourceMutation) => {
   renameDataSourceMutation({
     variables: {
@@ -291,4 +290,46 @@ export const addCell = (layout, setLayout) => {
     gridLayout: newGridLayout,
     gridContent: newGridContent
   });
+};
+
+export const setGridContent = (gc, dispatch) => {
+  dispatch( prevState => {
+    return {
+      ...prevState,
+      gridContent: gc
+    }
+  });
+};
+
+export const setWidgetType = (widgetType, layout, index, dispatch) => {
+  let gc = layout.gridContent;
+
+  gc[index] = {
+    ...gc[index],
+    type: widgetType
+  };
+
+  setGridContent(gc, dispatch);
+};
+
+export const setDatasetIndex = (gk, layout, index, dispatch) => {
+  let gc = layout.gridContent;
+
+  gc[index] = {
+    ...gc[index],
+    groupKey: gk
+  };
+
+  setGridContent(gc, dispatch);
+};
+
+export const setDataSourceIndex = (gsk, layout, index, dispatch) => {
+  let gc = layout.gridContent;
+
+  gc[index] = {
+    ...gc[index],
+    subGroupKey: gsk
+  };
+
+  setGridContent(gc, dispatch);
 };

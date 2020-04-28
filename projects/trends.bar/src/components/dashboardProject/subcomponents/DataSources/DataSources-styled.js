@@ -85,9 +85,10 @@ export const ScriptGraphContainer = styled.div`{
 
 export const ScriptKeyContainer = styled.div` {
   --margin:3px;
-  margin: var(--margin);
-  padding: 5px;
+  margin: var(--margin) 0;
+  padding: 5px 10px 5px 10px;
   width: calc(100% - (var(--margin) * 2));
+  min-height: 35px;
   border-radius: 3px;
   border: 1px solid var(--primary);
   background-color: ${props => checkBoolDefinedAndTrue(props.selected) ? "var(--primary)" : "none"};
@@ -100,6 +101,7 @@ export const ScriptKeyContainer = styled.div` {
   :active {
     box-shadow: 0 0 1px 1px var(--primary-color);
   }
+  overflow: hidden;
 }`;
 
 export const ScriptKeyContainerTitle = styled.h4` {
