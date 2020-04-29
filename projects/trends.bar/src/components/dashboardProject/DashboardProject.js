@@ -31,7 +31,6 @@ export const DashboardProject = ({state, dispatch}) => {
     return <SpinnerTopMiddle/>
   }
 
-  console.log(activeTab);
   return (
     <Fragment>
       <My1/>

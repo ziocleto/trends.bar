@@ -3,13 +3,14 @@ import {Div, Flex, FlexVertical} from "../../../../futuremodules/reactComponentS
 import {modalGraphTreeHeight} from "../Layout/LayoutCellEditor-styled";
 import React from "reactn";
 import {useState} from "react";
+import {mapEntries} from "../../../../futuremodules/utils/utils";
 
 export const DatasetElements = ({layout, setLayout, config}) => {
 
   const datasets = layout.dataSources;
-  const [datasetIndex, setDatasetIndex] = useState(-1);
-  const [sourceDataIndex, setSourceDataIndex] = useState(-1);
-  const [sourceDataValueIndex, setSourceDataValueIndex] = useState(-1);
+  const [datasetIndex, setDatasetIndex] = useState(0);
+  const [sourceDataIndex, setSourceDataIndex] = useState(0);
+  const [sourceDataValueIndex, setSourceDataValueIndex] = useState(0);
 
   const datasetIndexFromKeyName = (key) => {
     for (let i = 0; i < datasets.length; i++) {
@@ -43,7 +44,16 @@ export const DatasetElements = ({layout, setLayout, config}) => {
     return -1;
   }
 
-  const datasetSourceZindex = (key) => {
+  const datasetSourceZIndex = (key) => {
+    let gc = {...layout.gridContent};
+    gc[config.i].zGroupRow = key;
+    setLayout( prevState => {
+      return {
+        ...prevState,
+        gridContent: gc
+      }
+    });
+
     setSourceDataValueIndex(key);
     return -1;
   }
@@ -60,9 +70,9 @@ export const DatasetElements = ({layout, setLayout, config}) => {
             justifyContent={"start"}
             height={modalGraphTreeHeight}
           >
-            {datasets.map(elem =>
-              (<ScriptKeyContainer key={elem.name}
-                                   // selected={datasetIndex === keys.groupKey}
+            {mapEntries(datasets, (k,elem) =>
+              (<ScriptKeyContainer key={k}
+                                   selected={datasetIndex === parseInt(k)}
                                    onClick={() => setDatasetIndex(datasetIndexFromKeyName(elem.name))}>
                 {elem.name}
               </ScriptKeyContainer>)
@@ -81,10 +91,10 @@ export const DatasetElements = ({layout, setLayout, config}) => {
             justifyContent={"start"}
             height={modalGraphTreeHeight}
           >
-            {datasetIndex >= 0 && datasets[datasetIndex].headers.map(elem =>
+            {mapEntries(datasets[datasetIndex].headers, (k, elem) =>
               (<ScriptKeyContainer key={elem.name}
-                                   // selected={setSubGroupKey && elem === keys.subGroupKey}
-                                   onClick={(e) => setSourceDataIndex(datasetSourceIndexFromKeyName(elem.name))}
+                                   selected={sourceDataIndex === parseInt(k)}
+                                   onClick={() => setSourceDataIndex(datasetSourceIndexFromKeyName(elem.name))}
               >
                 {elem.name}
               </ScriptKeyContainer>)
@@ -103,14 +113,14 @@ export const DatasetElements = ({layout, setLayout, config}) => {
             justifyContent={"start"}
             height={modalGraphTreeHeight}
           >
-            {datasetIndex >=0 && sourceDataIndex >= 0 && datasets[datasetIndex].sourceData.map(elem =>
-              (<ScriptKeyContainer
-                                   // selected={setValueNameKey && elem === keys.zGroupIndex}
-                                   //  onClick={(e) => setSourceDataIndex(datasetSourceIndexFromKeyName(elem.name))}
-              >
-                {elem[sourceDataIndex]}
-              </ScriptKeyContainer>)
-            )}
+            {mapEntries(datasets[datasetIndex].sourceData, (k,elem) =>
+                (<ScriptKeyContainer key={k}
+                                     selected={sourceDataValueIndex === parseInt(k)}
+                                     onClick={() => datasetSourceZIndex(parseInt(k))}
+                >
+                  {elem[sourceDataIndex]}
+                </ScriptKeyContainer>)
+              )}
           </FlexVertical>
         </ScriptElementsContainer>
       </Div>
