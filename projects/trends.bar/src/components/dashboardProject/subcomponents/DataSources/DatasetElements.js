@@ -4,12 +4,13 @@ import {modalGraphTreeHeight} from "../Layout/LayoutCellEditor-styled";
 import React from "reactn";
 import {useState} from "react";
 
-export const DatasetElements = ({datasets, keys}) => {
+export const DatasetElements = ({layout, setLayout, config}) => {
 
+  const datasets = layout.dataSources;
   const [datasetIndex, setDatasetIndex] = useState(-1);
   const [sourceDataIndex, setSourceDataIndex] = useState(-1);
+  const [sourceDataValueIndex, setSourceDataValueIndex] = useState(-1);
 
-  console.log("sourceDataIndex ", sourceDataIndex);
   const datasetIndexFromKeyName = (key) => {
     for (let i = 0; i < datasets.length; i++) {
       if (datasets[i].name === key ) {
@@ -20,27 +21,42 @@ export const DatasetElements = ({datasets, keys}) => {
   }
 
   const datasetSourceIndexFromKeyName = (key) => {
-    console.log("checkin key:", key);
     for (let i = 0; i < datasets[datasetIndex].headers.length; i++) {
       if (datasets[datasetIndex].headers[i].name === key ) {
+        const isYGroup = datasets[datasetIndex].headers[i].key === "y";
+        const isZGroup = datasets[datasetIndex].headers[i].key === "z";
+        if ( isYGroup || isZGroup ) {
+          let gc = {...layout.gridContent};
+          gc[config.i].groupKey = datasetIndex;
+          if (isYGroup) gc[config.i].subGroupKey = i;
+          if (isZGroup) gc[config.i].zGroupIndex = i;
+          setLayout( prevState => {
+            return {
+              ...prevState,
+              gridContent: gc
+            }
+          });
+        }
         return i;
       }
     }
     return -1;
   }
 
-  // const datasetSourceValueOf = (datasetIndex, sourceDataIndex, row) => {
-  //   return datasets[datasetIndex].sourceData[row][sourceDataIndex];
-  // }
+  const datasetSourceZindex = (key) => {
+    setSourceDataValueIndex(key);
+    return -1;
+  }
 
   return (
     <Flex width={"100%"}>
-      <Div padding={"0 0 0 10px"} width={"33%"}>
+      <Div padding={"2px"} width={"33%"}>
         <ScriptKeyContainerTitle>
           Sources
         </ScriptKeyContainerTitle>
         <ScriptElementsContainer>
           <FlexVertical
+            padding={"2px"}
             justifyContent={"start"}
             height={modalGraphTreeHeight}
           >
@@ -55,12 +71,13 @@ export const DatasetElements = ({datasets, keys}) => {
         </ScriptElementsContainer>
       </Div>
 
-      <Div margin={"0 10px"} width={"34%"}>
+      <Div margin={"0 10px"} padding={"2px"} width={"34%"}>
         <ScriptKeyContainerTitle>
           Elements
         </ScriptKeyContainerTitle>
         <ScriptElementsContainer>
           <FlexVertical
+            padding={"2px"}
             justifyContent={"start"}
             height={modalGraphTreeHeight}
           >
@@ -76,19 +93,20 @@ export const DatasetElements = ({datasets, keys}) => {
         </ScriptElementsContainer>
       </Div>
 
-      <Div margin={"0 10px"} width={"33%"}>
+      <Div margin={"0 10px"} padding={"2px"} width={"33%"}>
         <ScriptKeyContainerTitle>
           Values
         </ScriptKeyContainerTitle>
         <ScriptElementsContainer>
           <FlexVertical
+            padding={"2px"}
             justifyContent={"start"}
             height={modalGraphTreeHeight}
           >
             {datasetIndex >=0 && sourceDataIndex >= 0 && datasets[datasetIndex].sourceData.map(elem =>
               (<ScriptKeyContainer
-                                   // selected={setValueNameKey && elem === keys.valueNameKey}
-                                   // onClick={() => setValueNameKey && setValueNameKey(elem)}
+                                   // selected={setValueNameKey && elem === keys.zGroupIndex}
+                                   //  onClick={(e) => setSourceDataIndex(datasetSourceIndexFromKeyName(elem.name))}
               >
                 {elem[sourceDataIndex]}
               </ScriptKeyContainer>)

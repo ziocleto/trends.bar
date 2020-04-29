@@ -6,8 +6,8 @@ import {resolveFunction} from "../../../../modules/trends/layout";
 export const ContentWidgetTextWithSubtitle = ({datasets, config}) => {
   return (
     <WidgetVertical>
-      <Title>{resolveFunction(config.valueFunctionName, config.groupKey, config.subGroupKey, config.valueNameKey, datasets)}</Title>
-      <Subtitle>{config.valueNameKey}</Subtitle>
+      <Title>{resolveFunction(config.valueFunctionName, config.groupKey, config.subGroupKey, config.zGroupIndex, datasets)}</Title>
+      <Subtitle>{config.zGroupIndex}</Subtitle>
     </WidgetVertical>
   )
 };

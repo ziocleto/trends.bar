@@ -35,7 +35,7 @@ export const LayoutCellEditor = ({layout, setLayout, config, onClose}) => {
           <DivBorder margin={"20px 0px"} padding={"10px"} width={"100%"} height={"550px"}>
           <ContentWidget datasets={datasets} config={keys}/>
           </DivBorder>
-          <DatasetElements datasets={datasets} keys={keys}/>
+          <DatasetElements layout={layout} setLayout={setLayout} config={config}/>
         </FlexVertical>
       </Modal.Body>
       <Modal.Footer>

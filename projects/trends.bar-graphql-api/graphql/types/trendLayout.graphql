@@ -43,14 +43,10 @@ type ContentWidget {
     type: String!
     i: String!
 
-    overtitle: String
-    title: String
-    subtitle: String
-
-    groupKey: String
-    subGroupKey: String
-    valueNameKey: String
-    valueFunctionName: String
+    groupKey: Int
+    subGroupKey: Int
+    zGroupIndex: Int
+    zGroupRow: Int
 
     tableKeyTitle: String
     tableKeyQuery: String
@@ -87,14 +83,10 @@ input ContentWidgetInput {
     type: String!
     i: String!
 
-    overtitle: String
-    title: String
-    subtitle: String
-
-    groupKey: String
-    subGroupKey: String
-    valueNameKey: String
-    valueFunctionName: String
+    groupKey: Int
+    subGroupKey: Int
+    zGroupIndex: Int
+    zGroupRow: Int
 
     tableKeyTitle: String
     tableKeyQuery: String

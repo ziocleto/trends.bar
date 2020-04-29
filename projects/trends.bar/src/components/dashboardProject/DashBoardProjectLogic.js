@@ -71,14 +71,10 @@ export const getTrend = (trendId, username) => {
                   type
                   i
 
-                  overtitle
-                  title
-                  subtitle
-
                   groupKey
                   subGroupKey
-                  valueNameKey
-                  valueFunctionName
+                  zGroupIndex
+                  zGroupRow
 
                   tableKeyTitle
                   tableKeyQuery

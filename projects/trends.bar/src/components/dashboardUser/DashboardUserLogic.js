@@ -9,7 +9,6 @@ import {
   useConfirmAlertWithWriteCheckShort
 } from "../../futuremodules/alerts/alerts";
 import {useMutation} from "@apollo/react-hooks";
-import {getEmptyDefaultValue, startupState} from "../../modules/trends/layout";
 import gql from "graphql-tag";
 
 // ------------------------------
@@ -178,20 +177,20 @@ export const useRemoveTrend = (dispatch) => {
   return updater;
 };
 
-export const upsertTrend = (prevState, updater, dataset) => {
-
-  updater( {
-      ...prevState,
-      // Check if it needs to update gridContent if the former is empty, a random act of kindness goes a long way!
-      gridContent: prevState.gridContent.map( elem => {
-        if (elem.valueFunctionName === getEmptyDefaultValue.name) {
-          elem = {
-            ...elem,
-            ...startupState(null) // will be dataset
-          };
-        }
-        return elem;
-      }),
-      datasets: prevState.datasets ? [...prevState.datasets, dataset] : [dataset]
-  });
-};
+// export const upsertTrend = (prevState, updater, dataset) => {
+//
+//   updater( {
+//       ...prevState,
+//       // Check if it needs to update gridContent if the former is empty, a random act of kindness goes a long way!
+//       gridContent: prevState.gridContent.map( elem => {
+//         if (elem.valueFunctionName === getEmptyDefaultValue.name) {
+//           elem = {
+//             ...elem,
+//             ...startupState()
+//           };
+//         }
+//         return elem;
+//       }),
+//       datasets: prevState.datasets ? [...prevState.datasets, dataset] : [dataset]
+//   });
+// };

@@ -1,70 +1,66 @@
-
-export const getFirstValue = (groupKey, subGroupKey, valueNameKey, datasets) => {
-  return datasets[groupKey][subGroupKey][valueNameKey][0].y;
+export const getFirstValue = (groupKey, subGroupKey, zGroupIndex, datasets) => {
+  return datasets[groupKey][subGroupKey][zGroupIndex][0].y;
 };
 
-export const getLastValue = (groupKey, subGroupKey, valueNameKey, datasets) => {
-  const ds = datasets[groupKey][subGroupKey][valueNameKey];
+export const getLastValue = (groupKey, subGroupKey, zGroupIndex, datasets) => {
+  const ds = datasets[groupKey][subGroupKey][zGroupIndex];
   return ds[ds.length - 1].y;
 };
 
-export const getEmptyDefaultValue = (groupKey, subGroupKey, valueNameKey, datasets) => {
-  return "Fill me with ideas";
+export const getValue = (groupKey, subGroupKey, zGroupIndex, zGroupRow, datasets) => {
+  if (!datasets) return "";
+  return datasets[groupKey].sourceData[zGroupRow][subGroupKey];
+  // return ds[ds.length - 1].y;
 };
 
-export const resolveFunction = (valueFunctionName, groupKey, subGroupKey, valueNameKey, datasets) => {
+export const getDatasetZGroupName = (groupKey, subGroupKey, zGroupIndex, zGroupRow, datasets) => {
+  if (!datasets) return "";
+  return datasets[groupKey].headers[zGroupIndex].name;
+};
+
+export const getDatasetZGroupValue = (groupKey, subGroupKey, zGroupIndex, zGroupRow, datasets) => {
+  if (!datasets) return "";
+  return datasets[groupKey].sourceData[zGroupRow][zGroupIndex];
+};
+
+export const getDatasetYGroupName = (groupKey, subGroupKey, zGroupIndex, zGroupRow, datasets) => {
+  if (!datasets) return "";
+  return datasets[groupKey].headers[subGroupKey].name;
+};
+
+export const resolveFunction = (valueFunctionName, groupKey, subGroupKey, zGroupIndex, zGroupRow, datasets) => {
   switch (valueFunctionName) {
-    case "getLastValue":
-      return getLastValue(groupKey, subGroupKey, valueNameKey, datasets);
-    case "getFirstValue":
-      return getFirstValue(groupKey, subGroupKey, valueNameKey, datasets);
+    case "getDatasetZGroupValue":
+      return getDatasetZGroupValue(groupKey, subGroupKey, zGroupIndex, zGroupRow, datasets);
+    case "getDatasetZGroupName":
+      return getDatasetZGroupName(groupKey, subGroupKey, zGroupIndex, zGroupRow, datasets);
+    case "getDatasetYGroupName":
+      return getDatasetYGroupName(groupKey, subGroupKey, zGroupIndex, zGroupRow, datasets);
+    case "getValue":
+      return getValue(groupKey, subGroupKey, zGroupIndex, zGroupRow, datasets);
     default:
-      return datasets ? datasets[0].headers[0].name : null;
+      return null;
   }
 };
 
-export const getDefaultCellContent = (i, datasets) => {
-  return getDefaultWidgetContent("text", i, datasets);
-};
-
-export const getDefaultWidgetContent = (type, i, datasets) => {
-  switch (type) {
-    case "text": {
-      return getDefaultWidgetTextContent(i, datasets);
-    }
-    case "table": {
-      return getDefaultWidgetTextContent(i, datasets);
-    }
-    case "graphxy": {
-      return getDefaultWidgetTextContent(i, datasets);
-    }
-    default: {
-      return getDefaultWidgetTextContent(i, datasets);
-    }
-  }
-};
-
-export const startupState = (datasets) => {
-  const groupKey = datasets && Object.keys(datasets)[0];
-  const subGroupKey = groupKey && Object.keys(datasets[Object.keys(datasets)[0]])[0];
-  const valueNameKey = subGroupKey && Object.keys(datasets[Object.keys(datasets)[0]][Object.keys(datasets[Object.keys(datasets)[0]])[0]])[0];
-  const valueFunction = valueNameKey ? getLastValue : getEmptyDefaultValue;
-  return {
-    groupKey,
-    subGroupKey,
-    valueNameKey,
-    valueFunctionName: valueFunction.name,
-    overtitle: "subGroupKey",
-    title: "valueFunction",
-    subtitle: "valueNameKey",
-  }
-};
-
-const getDefaultWidgetTextContent = (i, datasets) => {
-  const ds = startupState(datasets);
+export const getDefaultCellContent = (i) => {
+  const ds = startupState();
   return {
     i: i.toString(),
     type: "text",
     ...ds,
+  }
+};
+
+export const startupState = () => {
+  const groupKey = 0;
+  const subGroupKey = 0;
+  const zGroupIndex = 0;
+  const zGroupRow = 0;
+  return {
+    groupKey,
+    subGroupKey,
+    zGroupIndex,
+    zGroupRow,
   }
 };
