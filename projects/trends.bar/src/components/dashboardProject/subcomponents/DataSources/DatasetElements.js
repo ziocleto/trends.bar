@@ -1,21 +1,28 @@
 import {ScriptElementsContainer, ScriptKeyContainer, ScriptKeyContainerTitle} from "./DataSources-styled";
-import {Div, Flex, FlexVertical} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
+import {Div, Flex, FlexVertical, Mx1} from "../../../../futuremodules/reactComponentStyles/reactCommon.styled";
 import {modalGraphTreeHeight} from "../Layout/LayoutCellEditor-styled";
 import React from "reactn";
 import {useState} from "react";
 import {mapEntries} from "../../../../futuremodules/utils/utils";
 import {CustomColorTitle} from "../../../../futuremodules/reactComponentStyles/reactCommon";
+import {getFirstKeyIndexOf} from "../ContentWidgets/ContentWidgetGraphXY";
 
 export const DatasetElements = ({layout, setLayout, config}) => {
 
   const datasets = layout.dataSources;
   const [datasetIndex, setDatasetIndex] = useState(0);
-  const [sourceDataIndex, setSourceDataIndex] = useState(0);
-  const [sourceDataValueIndex, setSourceDataValueIndex] = useState(0);
+  const [sourceDataXIndex, setSourceDataXIndex] = useState(getFirstKeyIndexOf(datasets[0], "x"));
+  const [sourceDataYIndex, setSourceDataYIndex] = useState(getFirstKeyIndexOf(datasets[0], "y"));
+  const [sourceDataZIndex, setSourceDataZIndex] = useState(getFirstKeyIndexOf(datasets[0], "z"));
+  const [, setSourceDataValueIndex] = useState(0);
 
   const datasetIndexFromKeyName = (layout, setLayout, config, k) => {
     let gc = {...layout.gridContent};
     gc[config.i].groupKey = k;
+    setDatasetIndex(k);
+    setSourceDataXIndex(getFirstKeyIndexOf(datasets[k], "x"));
+    setSourceDataYIndex(getFirstKeyIndexOf(datasets[k], "y"));
+    setSourceDataZIndex(getFirstKeyIndexOf(datasets[k], "z"));
     setLayout( prevState => {
       return {
         ...prevState,
@@ -28,8 +35,18 @@ export const DatasetElements = ({layout, setLayout, config}) => {
   const datasetSourceIndexFromKeyName = (key) => {
     for (let i = 0; i < datasets[datasetIndex].headers.length; i++) {
       if (datasets[datasetIndex].headers[i].name === key ) {
+        const isXGroup = datasets[datasetIndex].headers[i].key === "x";
         const isYGroup = datasets[datasetIndex].headers[i].key === "y";
         const isZGroup = datasets[datasetIndex].headers[i].key === "z";
+        if ( isXGroup ) {
+          setSourceDataXIndex(i);
+        }
+        if ( isYGroup ) {
+          setSourceDataYIndex(i);
+        }
+        if ( isZGroup ) {
+          setSourceDataZIndex(i);
+        }
         if ( isYGroup || isZGroup ) {
           let gc = {...layout.gridContent};
           gc[config.i].groupKey = datasetIndex;
@@ -42,10 +59,8 @@ export const DatasetElements = ({layout, setLayout, config}) => {
             }
           });
         }
-        return i;
       }
     }
-    return -1;
   }
 
   const datasetSourceZIndex = (key) => {
@@ -60,6 +75,10 @@ export const DatasetElements = ({layout, setLayout, config}) => {
 
     setSourceDataValueIndex(key);
     return -1;
+  }
+
+  const isDataSourceIndexSelected = (key) => {
+    return sourceDataXIndex === key || sourceDataYIndex === key || sourceDataZIndex === key;
   }
 
   const getDatasetKeyIcon = key => {
@@ -92,7 +111,7 @@ export const DatasetElements = ({layout, setLayout, config}) => {
             {mapEntries(datasets, (k,elem) =>
               (<ScriptKeyContainer key={k}
                                    selected={datasetIndex === parseInt(k)}
-                                   onClick={() => setDatasetIndex(datasetIndexFromKeyName(layout, setLayout, config, k))}>
+                                   onClick={() => setDatasetIndex(datasetIndexFromKeyName(layout, setLayout, config, parseInt(k)))}>
                 {elem.name}
               </ScriptKeyContainer>)
             )}
@@ -112,8 +131,8 @@ export const DatasetElements = ({layout, setLayout, config}) => {
           >
             {mapEntries(datasets[datasetIndex].headers, (k, elem) =>
               (<ScriptKeyContainer key={elem.name}
-                                   selected={sourceDataIndex === parseInt(k)}
-                                   onClick={() => setSourceDataIndex(datasetSourceIndexFromKeyName(elem.name))}
+                                   selected={isDataSourceIndexSelected(parseInt(k))}
+                                   onClick={() => datasetSourceIndexFromKeyName(elem.name)}
               >
                 <CustomColorTitle icon={getDatasetKeyIcon(elem.key)} text={elem.name} color={getDatasetKeyColor(elem.key)}/>
               </ScriptKeyContainer>)
@@ -132,14 +151,32 @@ export const DatasetElements = ({layout, setLayout, config}) => {
             justifyContent={"start"}
             height={modalGraphTreeHeight}
           >
-            {mapEntries(datasets[datasetIndex].sourceData, (k,elem) =>
-                (<ScriptKeyContainer key={k}
-                                     selected={sourceDataValueIndex === parseInt(k)}
-                                     onClick={() => datasetSourceZIndex(parseInt(k))}
-                >
-                  {elem[sourceDataIndex]}
-                </ScriptKeyContainer>)
-              )}
+              <Flex width={"100%"}>
+              <CustomColorTitle icon={"step-forward"} text={"Last"} color={"var(--info)"}/>
+              <Mx1/>
+              <ScriptKeyContainer
+                onClick={() => datasetSourceZIndex(parseInt(datasets[datasetIndex].sourceData.length-1))}>
+                {datasets[datasetIndex].sourceData[datasets[datasetIndex].sourceData.length-1][sourceDataYIndex]}
+              </ScriptKeyContainer>
+              </Flex>
+
+            <Flex width={"100%"}>
+              <CustomColorTitle icon={"step-backward"} text={"First"} color={"var(--info)"}/>
+              <Mx1/>
+              <ScriptKeyContainer
+                onClick={() => datasetSourceZIndex(0)}>
+                {datasets[datasetIndex].sourceData[0][sourceDataYIndex] || "None"}
+              </ScriptKeyContainer>
+            </Flex>
+
+            {/*{mapEntries(datasets[datasetIndex].sourceData, (k,elem) =>*/}
+            {/*    (<ScriptKeyContainer key={k}*/}
+            {/*                         selected={sourceDataValueIndex === parseInt(k)}*/}
+            {/*                         onClick={() => datasetSourceZIndex(parseInt(k))}*/}
+            {/*    >*/}
+            {/*      {elem[sourceDataIndex]}*/}
+            {/*    </ScriptKeyContainer>)*/}
+            {/*  )}*/}
           </FlexVertical>
         </ScriptElementsContainer>
       </Div>

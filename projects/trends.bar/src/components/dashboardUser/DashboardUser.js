@@ -1,4 +1,4 @@
-import React, {Fragment, useReducer} from "react";
+import React, {Fragment, useContext, useReducer} from "react";
 import {DashboardUserFragment} from "./DashboardUser.styled";
 import {UserAssets} from "./subcomponents/UserAssets";
 import {AssetCreator} from "./subcomponents/AssetCreator";
@@ -7,14 +7,21 @@ import {Logoff} from "../../futuremodules/auth/components/Logoff";
 import {DashboardProject} from "../dashboardProject/DashboardProject";
 import {dashBoardManager, dashBoardManagerInitialState, useDispatchUserName} from "./DashboardUserLogic";
 import {SpinnerTopMiddle} from "../../futuremodules/spinner/Spinner";
+import {Redirect} from "react-router-dom";
+import {AuthContext} from "../../futuremodules/auth/authContext";
 
 export const DashboardUser = () => {
 
   const [state, dispatch] = useReducer(dashBoardManager, dashBoardManagerInitialState);
   useDispatchUserName(dispatch);
+  const auth = useContext(AuthContext);
 
-  if (!state.username) {
-    return <SpinnerTopMiddle/>;
+  if ( auth.user === null ) {
+    return (<Redirect to={"/"}/>)
+  }
+
+  if ( auth.user === undefined ) {
+    return (<SpinnerTopMiddle/>)
   }
 
   return (

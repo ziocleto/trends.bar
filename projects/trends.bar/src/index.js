@@ -14,14 +14,16 @@ import {getMainDefinition} from "apollo-utilities";
 import addReactNDevTools from 'reactn-devtools';
 import {createAntiForgeryTokenHeaders} from './futuremodules/auth/authApiCalls';
 import {initEH} from "./init";
+import {AuthContextProvider} from "./futuremodules/auth/authContext";
+
 const omitDeep = require("omit-deep-lodash");
 
 addReactNDevTools();
 initEH();
 
-const errorLink = onError(({ graphQLErrors, networkError }) => {
+const errorLink = onError(({graphQLErrors, networkError}) => {
   if (graphQLErrors)
-    graphQLErrors.map(({ message, locations, path }) =>
+    graphQLErrors.map(({message, locations, path}) =>
       console.log(
         `[GraphQL error]: Message: ${message}, Location: ${JSON.stringify(locations)}, Path: ${path}`,
       ),
@@ -42,16 +44,16 @@ const httpLink = createHttpLink({
 })
 
 const authLink = new ApolloLink((operation, forward) => {
-    const headers = createAntiForgeryTokenHeaders();
-    // console.log("AUTH:",headers);
-    operation.setContext(headers);
-    // Call the next link in the middleware chain.
-    return forward(operation);
-  });
+  const headers = createAntiForgeryTokenHeaders();
+  // console.log("AUTH:",headers);
+  operation.setContext(headers);
+  // Call the next link in the middleware chain.
+  return forward(operation);
+});
 
 const link = split(
   // split based on operation type
-  ({ query }) => {
+  ({query}) => {
     const definition = getMainDefinition(query);
     return (
       definition.kind === 'OperationDefinition' &&
@@ -74,14 +76,16 @@ const cleanTypenameLink = new ApolloLink((operation, forward) => {
 
 const client = new ApolloClient({
   link: ApolloLink.from([cleanTypenameLink, authLink, errorLink, link]),
-  cache: new InMemoryCache({ addTypename: false }),
+  cache: new InMemoryCache({addTypename: false}),
 });
 
 ReactDOM.render(
-  <ApolloProvider client={client}>
-    <BrowserRouter>
-      <App/>
-    </BrowserRouter>
-  </ApolloProvider>,
+  <AuthContextProvider>
+    <ApolloProvider client={client}>
+      <BrowserRouter>
+        <App/>
+      </BrowserRouter>
+    </ApolloProvider>
+  </AuthContextProvider>,
   document.getElementById("root")
 );

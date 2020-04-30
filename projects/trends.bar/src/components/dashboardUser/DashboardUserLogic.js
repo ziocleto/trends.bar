@@ -1,6 +1,5 @@
 import {useGlobal} from "reactn";
-import {Auth} from "../../futuremodules/auth/authAccessors";
-import {useEffect} from "react";
+import {useContext, useEffect} from "react";
 import {getQueryLoadedWithValue, getQueryLoadedWithValueArrayNotEmpty} from "../../futuremodules/graphqlclient/query";
 import {
   alertWarning,
@@ -10,6 +9,7 @@ import {
 } from "../../futuremodules/alerts/alerts";
 import {useMutation} from "@apollo/react-hooks";
 import gql from "graphql-tag";
+import {AuthContext} from "../../futuremodules/auth/authContext";
 
 // ------------------------------
 // GraphQL Mutations
@@ -43,7 +43,7 @@ export const dashBoardManagerInitialState = {
   editingTrend: null,
   editingDataSource: null,
   currentUserTrends: null,
-  username: null
+  username: undefined
 };
 
 export const dashBoardManager = (state, action) => {
@@ -108,7 +108,7 @@ export const dashBoardManager = (state, action) => {
 };
 
 export const useDispatchUserName = (dispatch) => {
-  const [auth] = useGlobal(Auth);
+  const auth = useContext(AuthContext);
 
   useEffect(() => {
     if (auth && auth.user) {
