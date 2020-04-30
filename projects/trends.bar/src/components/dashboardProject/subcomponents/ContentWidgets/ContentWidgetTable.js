@@ -1,6 +1,7 @@
 import React, {Fragment} from "react";
 import Table from "react-bootstrap/Table";
 import {TableWidgetContainer} from "./ContentWidgetTable.styled";
+import {mapEntries} from "../../../../futuremodules/utils/utils";
 
 export const ContentWidgetTable = ({datasets, config}) => {
 
@@ -8,8 +9,7 @@ export const ContentWidgetTable = ({datasets, config}) => {
     return <Fragment/>
   }
 
-  const dsIndex = 0;
-  const ds = datasets[dsIndex];
+  const ds = datasets[config.groupKey];
 
   return (
     <TableWidgetContainer>
@@ -24,10 +24,10 @@ export const ContentWidgetTable = ({datasets, config}) => {
         </tr>
         </thead>
         <tbody>
-        {ds.sourceData.map(gk =>
-          <tr key={gk}>
-            {gk.map(elem =>
-              <td>
+        {mapEntries(ds.sourceData, (k,gk) =>
+          <tr key={k}>
+            {mapEntries(gk, (kk, elem) =>
+              <td key={kk}>
                 {elem}
               </td>
             )}

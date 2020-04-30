@@ -4,6 +4,7 @@ import {modalGraphTreeHeight} from "../Layout/LayoutCellEditor-styled";
 import React from "reactn";
 import {useState} from "react";
 import {mapEntries} from "../../../../futuremodules/utils/utils";
+import {CustomColorTitle} from "../../../../futuremodules/reactComponentStyles/reactCommon";
 
 export const DatasetElements = ({layout, setLayout, config}) => {
 
@@ -12,13 +13,16 @@ export const DatasetElements = ({layout, setLayout, config}) => {
   const [sourceDataIndex, setSourceDataIndex] = useState(0);
   const [sourceDataValueIndex, setSourceDataValueIndex] = useState(0);
 
-  const datasetIndexFromKeyName = (key) => {
-    for (let i = 0; i < datasets.length; i++) {
-      if (datasets[i].name === key ) {
-        return i;
+  const datasetIndexFromKeyName = (layout, setLayout, config, k) => {
+    let gc = {...layout.gridContent};
+    gc[config.i].groupKey = k;
+    setLayout( prevState => {
+      return {
+        ...prevState,
+        gridContent: gc
       }
-    }
-    return -1;
+    });
+    return k;
   }
 
   const datasetSourceIndexFromKeyName = (key) => {
@@ -58,6 +62,21 @@ export const DatasetElements = ({layout, setLayout, config}) => {
     return -1;
   }
 
+  const getDatasetKeyIcon = key => {
+    if ( key === "x" ) return "clock";
+    if ( key === "y" ) return "sort-amount-down";
+    if ( key === "z" ) return "layer-group";
+    return "none";
+  }
+
+  const getDatasetKeyColor = key => {
+    if ( key === "x" ) return "var(--light)";
+    if ( key === "y" ) return "var(--info)";
+    if ( key === "z" ) return "var(--logo-color-1)";
+    return "var(--logo-color-1)";
+  }
+
+
   return (
     <Flex width={"100%"}>
       <Div padding={"2px"} width={"33%"}>
@@ -73,7 +92,7 @@ export const DatasetElements = ({layout, setLayout, config}) => {
             {mapEntries(datasets, (k,elem) =>
               (<ScriptKeyContainer key={k}
                                    selected={datasetIndex === parseInt(k)}
-                                   onClick={() => setDatasetIndex(datasetIndexFromKeyName(elem.name))}>
+                                   onClick={() => setDatasetIndex(datasetIndexFromKeyName(layout, setLayout, config, k))}>
                 {elem.name}
               </ScriptKeyContainer>)
             )}
@@ -96,7 +115,7 @@ export const DatasetElements = ({layout, setLayout, config}) => {
                                    selected={sourceDataIndex === parseInt(k)}
                                    onClick={() => setSourceDataIndex(datasetSourceIndexFromKeyName(elem.name))}
               >
-                {elem.name}
+                <CustomColorTitle icon={getDatasetKeyIcon(elem.key)} text={elem.name} color={getDatasetKeyColor(elem.key)}/>
               </ScriptKeyContainer>)
             )}
           </FlexVertical>

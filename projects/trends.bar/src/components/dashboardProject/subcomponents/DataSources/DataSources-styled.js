@@ -90,8 +90,9 @@ export const ScriptKeyContainer = styled.div` {
   width: calc(100% - (var(--margin) * 2));
   min-height: 35px;
   border-radius: 3px;
-  border: 1px solid var(--primary);
-  background-color: ${props => checkBoolDefinedAndTrue(props.selected) ? "var(--primary)" : "none"};
+  font-weight:  ${props => checkBoolDefinedAndTrue(props.selected) ? "bold" : "normal"};
+  border: ${props => checkBoolDefinedAndTrue(props.selected) ? "3px" : "1px"} solid ${props => checkBoolDefinedAndTrue(props.selected) ? "var(--info)" : "var(--primary)"};
+  background-color: ${props => props.backgroundColor || "none"};
   cursor: pointer;
   
   :hover {
