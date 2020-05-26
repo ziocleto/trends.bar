@@ -1,50 +1,124 @@
 type TrendGridLayout {
     i: String
-    x: Int
-    y: Int
-    w: Int
-    h: Int
+    x: Float
+    y: Float
+    w: Float
+    h: Float
     moved: Boolean
     static: Boolean
 }
 
+type TrendLayout {
+    _id: ID!
+    trendId: String
+    username: String
+    cols: Int
+    gridLayout: [TrendGridLayout]
+    gridContent: [ContentWidget]
+    datasets:[DataSource]
+}
+
+type ContentWidgetTableColumn {
+    title: String
+    query: String
+    field: String
+    transform: String
+}
+
+type ContentWidgetGraphXYContent {
+    title: String
+    query: String
+    fieldX: String
+    transformX: String
+    fieldY: String
+    transformY: String
+    fillArea: String
+    bullet: String
+    lineWidth: String
+    lineStyle: String
+
+}
+
+type ContentWidget {
+    type: String!
+    i: String!
+
+    groupKey: Int
+    subGroupKey: Int
+    zGroupIndex: Int
+    zGroupRow: Int
+
+    tableKeyTitle: String
+    tableKeyQuery: String
+    tableKeyField: String
+    tableKeyTransform: String
+    tableColumns: [ContentWidgetTableColumn]
+
+    graphXYTitle: String
+    graphXYXDataType: String
+    graphXYSeries: [ContentWidgetGraphXYContent]
+}
+
+input ContentWidgetTableColumnInput {
+    title: String
+    query: String
+    field: String
+    transform: String
+}
+
+input ContentWidgetGraphXYContentInput {
+    title: String
+    query: String
+    fieldX: String
+    transformX: String
+    fieldY: String
+    transformY: String
+    fillArea: String
+    bullet: String
+    lineWidth: String
+    lineStyle: String
+}
+
+input ContentWidgetInput {
+    type: String!
+    i: String!
+
+    groupKey: Int
+    subGroupKey: Int
+    zGroupIndex: Int
+    zGroupRow: Int
+
+    tableKeyTitle: String
+    tableKeyQuery: String
+    tableKeyField: String
+    tableKeyTransform: String
+    tableColumns: [ContentWidgetTableColumnInput]
+
+    graphXYTitle: String
+    graphXYXDataType: String
+    graphXYSeries: [ContentWidgetGraphXYContentInput]
+}
+
 input TrendGridLayoutInput {
     i: String
-    x: Int
-    y: Int
-    w: Int
-    h: Int
+    x: Float
+    y: Float
+    w: Float
+    h: Float
     moved: Boolean
     static: Boolean
 }
 
 input TrendLayoutInput {
-    name: String
     trendId: String
     username: String
-    granularity: Int
     cols: Int
-    width: Int
     gridLayout: [TrendGridLayoutInput!]
+    gridContent: [ContentWidgetInput!]
+    dataSources:[DataSourceInputRef]
 }
-
-type TrendLayout {
-    _id: ID!
-    name: String
-    trendId: String
-    username: String
-    granularity: Int
-    cols: Int
-    width: Int
-    gridLayout: [TrendGridLayout]
-}
-
 
 type Query {
-    trendLayouts(trendId: String!, username:String!): [TrendLayout]
-    trendLayout(layoutName: String!, trendId: String!, username:String!): TrendLayout
+    trendLayout(trendId: String!, username:String!): TrendLayout
 }
 
-type Mutation {
-    upsertTrendLayout(trendLayout: TrendLayoutInput): TrendLayout
-}

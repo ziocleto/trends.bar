@@ -21,7 +21,7 @@ jobs:
         ssh-private-key: ${{ secrets.SECRET_PRIVATE_DEPLOY_KEY }}
     
     - name: Build portal
-      run: docker build -t ${{ secrets.DOCKER_HUB_ID }}/${{ secrets.EH_CLOUD_HOST }} --build-arg REACT_APP_EH_CLOUD_HOST_ARG=${{ secrets.EH_CLOUD_HOST }} --build-arg REACT_APP_EH_ANTIFORGERYTOKEN_COOKIE_ARG=${{ secrets.EH_ANTIFORGERYTOKEN_COOKIE }} ./projects/${{ secrets.EH_CLOUD_HOST }}
+      run: docker build -t ${{ secrets.DOCKER_HUB_ID }}/${{ secrets.EH_CLOUD_HOST }} --build-arg REACT_APP_EH_STELLE_E_STRISCE_PK_ARG=${{ secrets.EH_STELLE_E_STRISCE_PK }} --build-arg REACT_APP_EH_STELLE_E_STRISCE_SK_ARG=${{ secrets.EH_STELLE_E_STRISCE_SK }} --build-arg REACT_APP_EH_CLOUD_HOST_ARG=${{ secrets.EH_CLOUD_HOST }} --build-arg REACT_APP_EH_ANTIFORGERYTOKEN_COOKIE_ARG=${{ secrets.EH_ANTIFORGERYTOKEN_COOKIE }} ./projects/${{ secrets.EH_CLOUD_HOST }}
 
     - name: Build portal-graphql-api
       run: docker build -t ${{ secrets.DOCKER_HUB_ID }}/${{ secrets.EH_CLOUD_HOST }}-graphql-api ./projects/${{ secrets.EH_CLOUD_HOST }}-graphql-api

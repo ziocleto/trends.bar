@@ -1,19 +1,9 @@
 import moment from "moment";
-import {
-  parseIntWithSpaces,
-  Parser,
-  regExResolver,
-  regExResolverAccumulator,
-  regExResolverPostTransform,
-  regExResolverSingle,
-  sanitizeExtraSpaces,
-  sanitizeNewLines
-} from "./parser-assistant";
 import * as countryAssistant from "./country-assistant";
+import {sanitizeExtraSpaces, sanitizeNewLines} from "eh_helpers/dataSanitizers";
 
 const graphAssistant = require("./graph-assistant");
 const crawler = require('crawler-request');
-const csv = require('csvtojson')
 const hash = require('object-hash');
 
 const findParseURLForTrendId = (timestamp, timestampURL) => {
@@ -43,13 +33,13 @@ const makeRegExpFromJSON = json => {
 }
 
 export class Cruncher {
-  constructor(trendId, username, text, graphType, defaultXValue) {
+  constructor(trendId, username, resjson, graphType, defaultXValue) {
     this.trendId = trendId;
     this.username = username;
     this.traces = "";
     this.graphQueries = [];
     this.graphQueriesMap = {};
-    this.parser = new Parser(text);
+    this.resjson = resjson;
     this.graphType = graphType;
     this.defaultXValue = defaultXValue;
   }
@@ -58,20 +48,29 @@ export class Cruncher {
     const query = {
       trendId: this.trendId,
       username: this.username,
-      title: graph.title,
-      label: graph.label,
-      subLabel: graph.subLabel,
+      yValueName: graph.yValueName,
+      yValueSubGroup: graph.yValueSubGroup,
+      yValueGroup: graph.yValueGroup,
       type: this.graphType,
-      dataSequence: graph.dataSequence
     };
     const ivalue = {
-      x: moment(value.x).valueOf(),
+      x: Date.parse(value.x),
       y: Number(value.y)
     };
     const qhash = hash(query);
 
     if (this.graphQueriesMap[qhash]) {
-      this.graphQueriesMap[qhash].values.push(ivalue)
+      let addValue = false;
+      for ( let elem of this.graphQueriesMap[qhash].values ) {
+        if ( elem.x === ivalue.x ) {
+          elem.y += ivalue.y;
+          addValue = true;
+          break;
+        }
+      }
+      if ( !addValue) {
+        this.graphQueriesMap[qhash].values.push(ivalue)
+      }
     } else {
       this.graphQueriesMap[qhash] = {
         ...query,
@@ -104,10 +103,11 @@ export class Cruncher {
     return match;
   }
 
-  finaliseCrunch(key, title, xValue, wc, dataSequence = null) {
-    const graphElem = graphAssistant.declare(this.graphType, key, title, "", dataSequence);
-    const value = graphAssistant.prepareSingleValue(graphElem.type, xValue, wc);
-    this.traces += (key + ", " + title + ", " + xValue + ", " + wc + "\n");
+  finaliseCrunch(group, subGroup, xValue, yValue) {
+    const key = yValue.key;
+    const groupName = group.yValueGroup;
+    const graphElem = graphAssistant.declare(this.graphType, key, subGroup, groupName);
+    const value = graphAssistant.prepareSingleValue(graphElem.type, xValue, yValue.y);
     this.dataEntry(graphElem, value);
   }
 
@@ -127,67 +127,77 @@ export class Cruncher {
     return this.parser.text.length;
   }
 
-  async applyPost(match, pbt, title) {
-    let r1 = title;
+  async applyPost(match, pbt, yValueName) {
+    let r1 = yValueName;
     let r2 = match[1];
     if (pbt) {
       const elem = this.applyPostTransformRule(pbt, match[pbt.sourceIndex]);
-      const titleFinal = title.replace(pbt.dest, elem);
+      const titleFinal = yValueName.replace(pbt.dest, elem);
       r1 = titleFinal;
       r2 = match[pbt.valueIndex];
     }
-    return {title: r1, y: parseIntWithSpaces(r2)}
+    return {yValueName: r1, y: parseIntWithSpaces(r2)}
   }
 
-  async crunchAction(key, title, action) {
-    const nparse = new Parser(this.parser.text.substring(this.getParserStartIndex(action.startRegex),
-      this.getParserEndIndex(action.endRegex)));
+  // async crunchAction(key, yValueName, action) {
+  //   const nparse = new Parser(this.parser.text.substring(this.getParserStartIndex(action.startRegex),
+  //     this.getParserEndIndex(action.endRegex)));
+  //
+  //   if (action.regex) {
+  //     let results = [];
+  //     const resolver = regExResolver(action.regex);
+  //     const regex = makeRegExpFromJSON(action.regex);
+  //     if (resolver === regExResolverSingle) {
+  //       const parsedData = nparse.find(regex);
+  //       if (!parsedData || parsedData.length === 0) throw "Error parsing";
+  //       results.push({y: parseIntWithSpaces(parsedData[1]), yValueName});
+  //     } else if (resolver === regExResolverAccumulator) {
+  //       results.push({y: nparse.findAllAccumulate(regex), yValueName});
+  //     } else if (resolver === regExResolverPostTransform) {
+  //       for (const r of nparse.findAll(regex)) {
+  //         results.push(await this.applyPost(r, action.postTransform, yValueName));
+  //       }
+  //     }
+  //
+  //     for (const result of results) {
+  //       this.finaliseCrunch(key, result.yValueName, this.defaultXValue, result.y);
+  //     }
+  //   } else if (action.csv) {
+  //     const resjson = await csv().fromString(nparse.text);
+  //     for (const elem of resjson) {
+  //       // If yValueSubGroup is present in the csv raw then used it, otherwise it as the string specified in the json field 'yValueSubGroup'
+  //       const cvsLabelField = elem[action.csv.yValueSubGroup] ? elem[action.csv.yValueSubGroup] : action.csv.yValueSubGroup;
+  //       this.finaliseCrunch(key, cvsLabelField, elem[action.csv.x], elem[action.csv.y]);
+  //     }
+  //   }
+  // }
 
-    if (action.regex) {
-      let results = [];
-      const resolver = regExResolver(action.regex);
-      const regex = makeRegExpFromJSON(action.regex);
-      if (resolver === regExResolverSingle) {
-        const parsedData = nparse.find(regex);
-        if (!parsedData || parsedData.length === 0) throw "Error parsing";
-        results.push({y: parseIntWithSpaces(parsedData[1]), title});
-      } else if (resolver === regExResolverAccumulator) {
-        results.push({y: nparse.findAllAccumulate(regex), title});
-      } else if (resolver === regExResolverPostTransform) {
-        for (const r of nparse.findAll(regex)) {
-          results.push(await this.applyPost(r, action.postTransform, title));
+  async crunchGroups(group, xValues, yValues) {
+    for (const elem of this.resjson) {
+      let subGroup = elem[group.yValueGroup];
+      if ( subGroup && subGroup.length > 0 ) {
+        if ( group.labelTransform && group.labelTransform === "Country" ) {
+          subGroup = this.applyCountryPostTransformRule(subGroup);
+        }
+        // Loop for every x values candidates found
+        for ( const xv of xValues ) {
+          const xValue = elem[xv.x];
+          // Loop for every y values candidates found
+          for ( const yv of yValues ) {
+            const yValue = {
+              y: elem[yv.y],
+              key: yv.key
+            };
+            this.finaliseCrunch(group, subGroup, xValue, yValue);
+          }
         }
       }
-
-      for (const result of results) {
-        this.finaliseCrunch(key, result.title, this.defaultXValue, result.y);
-      }
-    } else if (action.csv) {
-      const resjson = await csv().fromString(nparse.text);
-      for (const elem of resjson) {
-        // If label is present in the csv raw then used it, otherwise it as the string specified in the json field 'label'
-        const cvsLabelField = elem[action.csv.label] ? elem[action.csv.label] : action.csv.label;
-        this.finaliseCrunch(key, cvsLabelField, elem[action.csv.x], elem[action.csv.y], action.dataSequence);
-      }
-    }
-
-  }
-
-  async crunchFunctions(f, xValue) {
-    for (const dataset of f.datasets) {
-      const title = dataset.title;
-      for (const action of dataset.actions) {
-        if (this.checkTimeStampValid(action.validRange, xValue)) {
-          await this.crunchAction(f.key, title, action);
-          break;
-        }
-      }
     }
   }
 
-  async crunch(query) {
-    for (const f of query.functions) {
-      await this.crunchFunctions(f, this.defaultXValue);
+  async crunch(script) {
+    for (const group of script.keys.group) {
+      await this.crunchGroups(group, script.keys.x, script.keys.y);
     }
 
     // Remap to array
@@ -197,20 +207,62 @@ export class Cruncher {
 
     // Sanitize if needed
     // Sanitize cumulative
-    this.graphQueries.forEach( elem => {
-      if (elem.values.length > 1 && elem.dataSequence === "Cumulative") {
-        for (let i = 1; i < elem.values.length; i++) {
-          if (elem.values[i].y === 0 && elem.values[i - 1].y > 0) {
-            elem.values[i].y = elem.values[i - 1].y;
-          }
-        }
-      }
-    });
+    // this.graphQueries.forEach( elem => {
+    //   if (elem.values.length > 1 && elem.cumulative) {
+    //     for (let i = 1; i < elem.values.length; i++) {
+    //       if (elem.values[i].y === 0 && elem.values[i - 1].y > 0 &&
+    //         elem.values[i].x !== 0 && elem.values[i - 1].x ) {
+    //         elem.values[i].y = elem.values[i - 1].y;
+    //       }
+    //     }
+    //
+    //     let red = {};
+    //     for ( const v of elem.values ) {
+    //       if ( !red[v.x] ) red[v.x] = 0;
+    //       red[v.x] += v.y;
+    //     }
+    //     elem.values = [];
+    //     // Remap to red
+    //     for ( const e in red ) {
+    //       elem.values.push({ x:parseInt(e), y:red[e]});
+    //     }
+    //   }
+    //   this.traces += (elem.yValueName + ", " + elem.yValueSubGroup + ", " + JSON.stringify(elem.values) + "\n");
+    // });
 
-    return {
-      traces: this.traces,
-      graphQueries: this.graphQueries
-    }
+    return this.graphQueries;
   }
-
 }
+
+// {
+//   "source": "https://github.com/CSSEGISandData/COVID-19",
+//   "sourceDocument": "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/$timestamp.csv",
+//   "timestamp": "$timestamp",
+//   "timestampFormat": "MM-DD-YYYY",
+//   "urlParser": "documentDirect",
+//   "version": "v3",
+//   "dataSequence": "Cumulative",
+//   "groups": [
+//   {
+//     "yValueSubGroup": "Country/Region",
+//     "labelTransform": "Country",
+//     "key": "Cases",
+//     "x": "$timestamp",
+//     "y": "Confirmed"
+//   },
+//   {
+//     "yValueSubGroup": "Country/Region",
+//     "labelTransform": "Country",
+//     "key": "Deaths",
+//     "x": "$timestamp",
+//     "y": "Deaths"
+//   },
+//   {
+//     "yValueSubGroup": "Country/Region",
+//     "labelTransform": "Country",
+//     "key": "Recovered",
+//     "x": "$timestamp",
+//     "y": "Recovered"
+//   }
+// ]
+// }

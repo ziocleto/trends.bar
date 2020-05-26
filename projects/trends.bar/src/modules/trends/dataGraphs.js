@@ -1,40 +1,4 @@
-import gql from "graphql-tag";
 import {arrayExistsNotEmpty} from "../../futuremodules/utils/utils";
-
-export const getTrendGraphs = () => {
-
-  return gql`query trendGraphs($name:String!, $trendId:String!) {
-      user (name:$name) {
-          name
-          trend(trendId:$trendId) {
-              trendId
-              username
-              trendGraphs {
-                  title
-                  label
-                  subLabel
-                  values{
-                      x
-                      y
-                  }
-                  valuesDx{
-                      x
-                      y
-                  }
-                  valuesDxPerc{
-                      x
-                      y
-                  }
-                  valuesDx2{
-                      x
-                      y
-                  }
-              }
-          }
-      }
-  }
-  `;
-}
 
 export const hasGraphData = data => {
   return data !== undefined && data.length !== 0;
@@ -46,7 +10,7 @@ export const isEmptyGraph = data => {
 
 const checkTitleAndLabelBelongToGraph = (trendGraph, titles, label) => {
   for ( const title of titles ) {
-    if (trendGraph.title === title && trendGraph.label === label) return true;
+    if (trendGraph.yValueName === title && trendGraph.yValueSubGroup === label) return true;
   }
   return false;
 }
@@ -86,27 +50,27 @@ export const elaborateDataGraphs = (data, label, titles) => {
   for (const trendGraph of data) {
     if ( checkTitleAndLabelBelongToGraph(trendGraph, titles, label ) ) {
       allPoints.push( {
-        label: "Total " + trendGraph.title,
+        label: "Total " + trendGraph.yValueName,
         data: trendGraph.values,
         type: "area",
       });
       if ( arrayExistsNotEmpty(trendGraph.valuesDx) ) {
         allPoints.push( {
-          label: "Daily " + trendGraph.title,
+          label: "Daily " + trendGraph.yValueName,
           data: trendGraph.valuesDx,
           type: "column",
         });
       }
       // if ( arrayExistsNotEmpty(trendGraph.valuesDxPerc) ) {
       //   allPoints.push( {
-      //     label: trendGraph.title + " SpeedPerc",
+      //     label: trendGraph.yValueName + " SpeedPerc",
       //     data: trendGraph.valuesDxPerc,
       //     type: "column",
       //   });
       // }
       // if ( arrayExistsNotEmpty(trendGraph.valuesDx2) ) {
       //   allPoints.push( {
-      //     label: trendGraph.title + " Acceleration",
+      //     label: trendGraph.yValueName + " Acceleration",
       //     data: trendGraph.valuesDx2,
       //     type: "spline",
       //   });
@@ -120,7 +84,7 @@ export const elaborateDataGraphs = (data, label, titles) => {
       xValueType: "dateTime",
       showInLegend: true,
       type: points.type,
-      legendText: points.label,
+      legendText: points.yValueSubGroup,
       dataPoints: points.data
     });
   }
@@ -137,7 +101,7 @@ export const groupData = ( graphData, groupBy, fields, sortBy, sortOrder = 1 ) =
   let countries = {};
   for (const elem of graphData) {
     for ( const field of fields ) {
-      if ( elem.title === field ) {
+      if ( elem.yValueName === field ) {
         countries[elem[groupBy[0]]] = {
           ...countries[elem[groupBy[0]]],
           [field]: elem.values[elem.values.length - 1].y
@@ -172,7 +136,7 @@ export const groupDataWithDerivatives = ( graphData, groupBy, fields, sortBy, so
   let countries = {};
   for (const elem of graphData) {
     for ( const field of fields ) {
-      if ( elem.title === field ) {
+      if ( elem.yValueName === field ) {
         countries[elem[groupBy[0]]] = {
           ...countries[elem[groupBy[0]]],
           [field]: elem.values[elem.values.length - 1].y,
@@ -213,4 +177,67 @@ export const positiveSignForDx2 = (elem) => {
 
 export const float100ToPerc = (value) => {
   return Number(value).toFixed(2)+"%";
-}
+};
+
+export const arrayOfObjectsToSet = sourceArray => {
+  let sets = [];
+
+  const keys = new Set();
+  for ( const elem of Object.keys(sourceArray[0]) ) {
+    keys.add(elem);
+  }
+
+  for ( const key of keys ) {
+    let kset = new Set();
+    for ( const elem of sourceArray ) {
+      kset.add(elem[key])
+    }
+    sets.push(kset);
+  }
+
+  return sets;
+};
+
+export const arrayOfTrendIdAndUsernameToSet = (sourceArray) => {
+
+  let ret = [];
+  for (const elem of sourceArray) {
+    for ( const username of elem.username ) {
+      ret.push({
+        count: elem.count,
+        trendId: elem.trendId[0],
+        username
+      });
+    }
+  }
+  return ret;
+};
+
+export const graphArrayToGraphTree2 = ( sourceArray ) => {
+  let ret = {};
+  const key1="yValueGroup";
+  const key2="yValueSubGroup";
+  const key3= "yValueName";
+  const key4 = "values";
+  const groupsSet = new Set();
+  const yValueSet = new Set();
+  sourceArray.map(elem => groupsSet.add(elem[key1]));
+  sourceArray.map(elem => yValueSet.add(elem[key3]));
+  for ( const group of groupsSet.values() ) {
+    ret[group] = {};
+    for ( const elem of sourceArray) {
+      const subGroup = elem[key2];
+      if ( elem[key1] === group ) {
+        for ( const yv of yValueSet.values() ) {
+          if ( !ret[group][subGroup] ) {
+            ret[group][subGroup] = {};
+          }
+          if ( elem[key3] === yv ) {
+            ret[group][subGroup][yv] = elem[key4];
+          }
+        }
+      }
+    }
+  }
+  return ret;
+};

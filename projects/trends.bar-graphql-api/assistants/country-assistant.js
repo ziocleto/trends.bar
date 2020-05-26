@@ -41,7 +41,9 @@ export const countryListSimpleMap = {
   "Brazil": "Brazil",
   "British Indian Ocean Territory": "British Indian Ocean Territory",
   "Brunei Darussalam": "Brunei Darussalam",
+  "Brunei": "Brunei Darussalam",
   "Bulgaria": "Bulgaria",
+  "Burma": "Burma",
   "Burkina Faso": "Burkina Faso",
   "Burundi": "Burundi",
   "Cabo Verde": "Cabo Verde",
@@ -53,6 +55,7 @@ export const countryListSimpleMap = {
   "Chad": "Chad",
   "Chile": "Chile",
   "China": "China",
+  "Mainland China": "China",
   "Christmas Island": "Christmas Island",
   "Cocos Islands": "Cocos Islands",
   "Colombia": "Colombia",
@@ -70,6 +73,8 @@ export const countryListSimpleMap = {
   "Cote d’Ivoire":"Cote d’Ivoire",
   "Cote d Ivoire":"Cote d’Ivoire",
   "Côte d’Ivoire":"Cote d’Ivoire",
+  "Cote d'Ivoire":"Cote d’Ivoire",
+  "Ivory Coast":"Cote d’Ivoire",
   "Denmark":"Denmark",
   "Djibouti":"Djibouti",
   "Dominica":"Dominica",
@@ -131,9 +136,13 @@ export const countryListSimpleMap = {
   "Korea (the Democratic People's Republic of)":"North Korea",
   "Korea (the Republic of)":"South Korea",
   "Republic of Korea":"South Korea",
+  "South Korea":"South Korea",
+  "Korea, South":"South Korea",
+  "Kosovo":"Kosovo",
   "Kuwait":"Kuwait",
   "Kyrgyzstan":"Kyrgyzstan",
-  "Lao People's Democratic Republic":"Lao People's Democratic Republic",
+  "Lao People's Democratic Republic":"Laos",
+  "Laos":"Laos",
   "Latvia":"Latvia",
   "Lebanon":"Lebanon",
   "Lesotho":"Lesotho",
@@ -143,6 +152,7 @@ export const countryListSimpleMap = {
   "Lithuania":"Lithuania",
   "Luxembourg":"Luxembourg",
   "Macao":"Macao",
+  "Macau":"Macao",
   "Madagascar":"Madagascar",
   "Malawi":"Malawi",
   "Malaysia":"Malaysia",
@@ -197,6 +207,7 @@ export const countryListSimpleMap = {
   "North Macedonia":"North Macedonia",
   "Romania":"Romania",
   "Russian Federation":"Russian Federation",
+  "Russia":"Russian Federation",
   "Rwanda":"Rwanda",
   "Réunion":"Réunion",
   "Saint Barthélemy":"Saint Barthélemy",
@@ -230,10 +241,12 @@ export const countryListSimpleMap = {
   "Svalbard and Jan Mayen":"Svalbard and Jan Mayen",
   "Sweden":"Sweden",
   "Switzerland":"Switzerland",
-  "Syrian Arab Republic":"Syrian Arab Republic",
+  "Syrian Arab Republic":"Syria",
+  "Syria":"Syria",
   "Taiwan":"Taiwan",
   "Tajikistan":"Tajikistan",
   "Tanzania, United Republic of":"Tanzania",
+  "Tanzania":"Tanzania",
   "Thailand":"Thailand",
   "Timor-Leste":"Timor-Leste",
   "Togo":"Togo",
@@ -249,25 +262,32 @@ export const countryListSimpleMap = {
   "Ukraine":"Ukraine",
   "United Arab Emirates":"United Arab Emirates",
   "United Kingdom":"United Kingdom",
+  "UK":"United Kingdom",
   "United States Minor Outlying Islands":"United States Minor Outlying Islands",
   "United States of America":"United States of America",
   "the United States":"United States of America",
   "United States of":"United States of America",
+  "US":"United States of America",
   "Uruguay":"Uruguay",
   "Uzbekistan":"Uzbekistan",
   "Vanuatu":"Vanuatu",
   "Venezuela":"Venezuela",
   "Viet Nam":"VietNam",
+  "Vietnam":"VietNam",
   "British Virgin Islands":"British Virgin Islands",
   "U.S. Virgin Islands":"U.S. Virgin Islands",
   "Wallis and Futuna":"Wallis and Futuna",
+  "West Bank and Gaza":"West Bank and Gaza",
   "Western Sahara":"Western Sahara",
   "Yemen":"Yemen",
   "Zambia":"Zambia",
   "Zimbabwe":"Zimbabwe",
   "Åland Islands":"Åland Islands",
   "Saint Barthelemy":"Saint Barthelemy",
-  "International":"International"
+  "International":"International",
+  "Diamond Princess": "International",
+  "MS Zaandam": "International",
+  "Others":"International"
 };
 
 
@@ -1818,6 +1838,9 @@ export const findInternal = (source, list) => {
     if (source.includes(country)) {
       return countryListSimpleMap[country];
     }
+  }
+  if ( countryListAlpha3[source] ) {
+    return countryListAlpha3[source];
   }
   throw "country " + source + " not found in our database";
 }

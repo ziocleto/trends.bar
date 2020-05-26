@@ -1,27 +1,41 @@
-import React from "reactn";
+import React, {Fragment, useContext, useReducer} from "react";
 import {DashboardUserFragment} from "./DashboardUser.styled";
-import {isUserAuthenticated} from "../../futuremodules/auth/authAccessors";
-import {WelcomeToTheJungle} from "./subcomponents/WelcomeToTheJungle"
 import {UserAssets} from "./subcomponents/UserAssets";
-import {Logoff} from "./subcomponents/Logoff";
 import {AssetCreator} from "./subcomponents/AssetCreator";
+import {WelcomeToTheJungle} from "../../futuremodules/auth/components/WelcomeToTheJungle";
+import {Logoff} from "../../futuremodules/auth/components/Logoff";
+import {DashboardProject} from "../dashboardProject/DashboardProject";
+import {dashBoardManager, dashBoardManagerInitialState, useDispatchUserName} from "./DashboardUserLogic";
+import {SpinnerTopMiddle} from "../../futuremodules/spinner/Spinner";
 import {Redirect} from "react-router-dom";
+import {AuthContext} from "../../futuremodules/auth/authContext";
 
-const DashboardUser = ({auth}) => {
+export const DashboardUser = () => {
 
-  if (!isUserAuthenticated(auth)) {
+  const [state, dispatch] = useReducer(dashBoardManager, dashBoardManagerInitialState);
+  useDispatchUserName(dispatch);
+  const auth = useContext(AuthContext);
+
+  if ( auth.user === null ) {
     return (<Redirect to={"/"}/>)
   }
 
+  if ( auth.user === undefined ) {
+    return (<SpinnerTopMiddle/>)
+  }
+
   return (
-    <DashboardUserFragment>
-      <WelcomeToTheJungle auth={auth}/>
-      <UserAssets auth={auth}/>
-      <AssetCreator auth={auth}/>
-      {/*<AssetInvitations auth={auth}/>*/}
-      <Logoff auth={auth}/>
-    </DashboardUserFragment>
+    <Fragment>
+      {state.editingTrend &&
+      <DashboardProject state={state} dispatch={dispatch}/>}
+      {!state.editingTrend &&
+      <DashboardUserFragment>
+        <WelcomeToTheJungle username={state.username}/>
+        <UserAssets state={state} dispatch={dispatch}/>
+        <AssetCreator state={state} dispatch={dispatch}/>
+        <Logoff tagline={"Great Scott, let me out of here!"}/>
+      </DashboardUserFragment>
+      }
+    </Fragment>
   );
 };
-
-export default DashboardUser;

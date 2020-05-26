@@ -1,49 +1,40 @@
-import React, {Fragment, useGlobal, useState} from "reactn";
-import {alertWarning, NotificationAlert} from "../../../futuremodules/alerts/alerts";
-import {useMutation} from "@apollo/react-hooks";
-import {CREATE_TREND} from "../../../modules/trends/mutations";
+import React from "reactn";
 import {DashboardUserInnerMargins} from "../DashboardUser.styled";
-import {getUserName} from "../../../futuremodules/auth/authAccessors";
+import {Button, Form, InputGroup} from "react-bootstrap";
+import {Div50} from "../../../futuremodules/reactComponentStyles/reactCommon.styled";
+import {RocketTitle} from "../../../futuremodules/reactComponentStyles/reactCommon";
+import {useCreateTrend} from "../DashboardUserLogic";
+import {useState} from "react";
 
-export const AssetCreator = ({auth}) => {
+export const AssetCreator = ({state, dispatch}) => {
 
-  const [,alertStore] = useGlobal(NotificationAlert);
-  const [createTrendM] = useMutation(CREATE_TREND);
+  const {username} = state;
+  const createTrend = useCreateTrend(dispatch);
   const [newTrendFormInput, setNewTrendFormInput] = useState();
-  const name = getUserName(auth);
-
-  const onCreateProject = e => {
-    e.preventDefault();
-    if (!newTrendFormInput) {
-      alertWarning(alertStore, "I see no trend in here!");
-      return;
-    }
-    createTrendM({
-      variables: {
-        trendId: newTrendFormInput,
-        username: name
-      }
-    }).then().catch((e) => {
-      alertWarning(alertStore, "Big problem with this trend");
-    });;
-  };
 
   return (
-    <Fragment>
+    <Div50>
       <DashboardUserInnerMargins>
-        <i className="fas fa-plus-circle"/> Create New Trend
+        <RocketTitle text={"Create New Trend:"}/>
       </DashboardUserInnerMargins>
-      <form className="form" onSubmit={e => onCreateProject(e)}>
-        <div className="form-group">
-          <input
-            type="text"
-            placeholder="Trend Name"
-            name="projectNew"
-            onChange={e => setNewTrendFormInput(e.target.value)}
-          />
-        </div>
-        <input type="submit" className="btn btn-primary" value="Create"/>
-      </form>
-    </Fragment>
+      <InputGroup className="mb-1">
+        <Form.Control name="projectNew" placeholder="Trend Name"
+                      onChange={e => setNewTrendFormInput(e.target.value)}
+                      onKeyUp={(e) => {
+                        if ((e.keyCode === 13 || e.keyCode === 14)) {
+                          createTrend(newTrendFormInput, username);
+                          e.preventDefault();
+                        }
+                      }}
+        />
+        <InputGroup.Append>
+          <Button variant="info" onClick={e => {
+            createTrend(newTrendFormInput, username);
+            e.preventDefault();
+          }}>Create</Button>
+        </InputGroup.Append>
+      </InputGroup>
+    </Div50>
   );
-}
+};
+
