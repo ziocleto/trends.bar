@@ -41,52 +41,9 @@ export class trendGraphDataSource extends MongoDataSourceExtended {
     return trend._id;
   }
 
-  async upsertUniqueXValue(query) {
-    let queryOnly = query;
-    const values = query.values;
-    delete queryOnly.values;
-
-    const data = {
-      ...query,
-      $push: {
-        values: {
-          $each: values,
-          $sort: {x: 1}
-        }
-      }
-    };
-    const ret = await dbi.upsert(this.model, queryOnly, data);
-
-    let newValues = [];
-    let newValuesDx = [];
-    let newValuesDx2 = [];
-    let newValuesDxPerc = [];
-    for (let index = 0; index < ret.values.length - 1; index++) {
-      if (ret.values[index].x !== ret.values[index + 1].x) {
-        newValues.push(ret.values[index]);
-      }
-    }
-    newValues.push(ret.values[ret.values.length - 1]);
-
-    if (query.dataSequence === "Cumulative") {
-      newValuesDx = graphAssistant.firstDerivativeOf(newValues);
-      newValuesDx2 = graphAssistant.firstDerivativeOf(newValuesDx);
-      newValuesDxPerc = graphAssistant.firstDerivativePercOf(newValuesDx);
-    }
-
-    await this.model.updateOne(query, {
-      $set: {
-        values: newValues,
-        valuesDx: newValuesDx,
-        valuesDxPerc: newValuesDxPerc,
-        valuesDx2: newValuesDx2,
-      }
-    });
-  }
-
   async upsertGraphs(query) {
     for (const graph of query.graphQueries) {
-      await this.upsertUniqueXValue(graph);
+      await dbi.upsertUniqueXValue(graph);
     }
     return "OK";
   }

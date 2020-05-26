@@ -3,10 +3,6 @@ const mongoose = global.db;
 export const trendLayoutModel = mongoose.model("trend_layouts", new mongoose.Schema({
   trendId: {type: String},
   username: {type: String},
-  name: {type: String},
-  granularity: {type:Number},
-  cols: {type:Number},
-  width: {type:Number},
   gridLayout: [{
     i: {type:String},
     x: {type:Number},
@@ -15,5 +11,7 @@ export const trendLayoutModel = mongoose.model("trend_layouts", new mongoose.Sch
     h: {type:Number},
     moved: {type:Boolean},
     static: {type:Boolean}
-  }]
+  }],
+  gridContent: [],
+  dataSources: []
 }, {strict: false}));

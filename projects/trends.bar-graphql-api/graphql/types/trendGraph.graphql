@@ -19,9 +19,9 @@ type TrendGraph {
     _id: ID!
     trendId: String!
     username: String!
-    title: String
-    label: String
-    subLabel: String
+    yValueName: String
+    yValueSubGroup: String
+    yValueGroup: String
     type: String!
     values: [ DateInt ]!
     valuesDx: [ DateInt ]
@@ -29,32 +29,38 @@ type TrendGraph {
     valuesDxPerc: [ DateFloat ]
 }
 
+type TrendGraphSimilarSeach {
+    count: BigInt
+    trendId: [String!]
+    username:[String!]
+}
+
 type GraphQuery {
     trendId: String!
     username: String!
-    title: String
-    label: String
-    subLabel: String
+    yValueName: String
+    yValueSubGroup: String
+    yValueGroup: String
     type: String
-    dataSequence: String
     values: [DateInt]
 }
 
 input GraphQueryInput {
     trendId: String!
     username: String!
-    title: String
-    label: String
-    subLabel: String
+    yValueName: String
+    yValueSubGroup: String
+    yValueGroup: String
     type: String
-    dataSequence: String
     values: [DateIntInput]
 }
 
 
 type Query {
-    trendGraph(username:String!,trendId:String!,label:String!,title:String!): TrendGraph
-    trendGraphs(username:String,trendId:String,label:String,title:String): [TrendGraph]
+    trendGraph(username:String!,trendId:String!,yValueSubGroup:String!,yValueName:String!): TrendGraph
+    trendGraphs(username:String,trendId:String,yValueSubGroup:String,yValueName:String): [TrendGraph]
+    trendGraphsSimilar(trendId:String): [TrendGraphSimilarSeach]
+    yValueGroups(yValueGroup:String): [TrendGraph]
 }
 
 type Mutation {
