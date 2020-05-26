@@ -13,6 +13,7 @@ services:
     volumes:
       - /sslcerts/fullchain.pem:/etc/nginx/dns-cert.pem
       - /sslcerts/privkey.pem:/etc/nginx/dns-cert-key.pem
+      - /docker-volumes/data/letsencrypt:/data/letsencrypt
   portal:
     image: "eventhorizonprojects/${EH_CLOUD_HOST}"
     container_name: "portal"
